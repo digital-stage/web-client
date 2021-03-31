@@ -8,8 +8,8 @@ import {
   useStageSelector,
   User
 } from "@digitalstage/api-client-react";
-import {Button} from "baseui/button";
 import CreateStageModal from "../components/modals/CreateStageModal";
+import PrimaryButton from "../components/ui/button/PrimaryButton";
 
 
 const Stages = () => {
@@ -42,9 +42,9 @@ const Stages = () => {
   return (
     <div>
       {user && user.canCreateStage && (
-        <Button onClick={() => setCreatOpen(true)}>
+        <PrimaryButton onClick={() => setCreatOpen(true)}>
           Add stage
-        </Button>
+        </PrimaryButton>
       )}
       {stages.map(stage => (
         <div>

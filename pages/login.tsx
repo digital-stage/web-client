@@ -1,19 +1,13 @@
-import {Input} from "baseui/input";
 import React, {useCallback, useEffect, useState} from "react";
 import {useIntl} from "react-intl";
 import {Field, Form, Formik, FormikProps} from 'formik';
 import {useAuth} from "@digitalStage/api-client-react";
 import {useRouter} from "next/router";
 import * as Yup from "yup";
-import {styled} from "baseui";
-import {Notification, KIND} from "baseui/notification";
-import {Button} from "baseui/button";
+import Input from "../components/ui/form/Input";
+import Notification from "../components/ui/surface/Notification";
+import PrimaryButton from "../components/ui/button/PrimaryButton";
 
-const StyledForm = styled(Form, {
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center'
-});
 
 const Login = () => {
   const {signInWithEmailAndPassword, loading, user} = useAuth();
@@ -63,7 +57,7 @@ const Login = () => {
         })}
       >
         {(props: FormikProps<any>) => (
-          <StyledForm autoComplete="on">
+          <Form className="form" autoComplete="on">
             <Field
               as={Input}
               label={f('emailAddress')}
@@ -87,14 +81,20 @@ const Login = () => {
               maxLength={20}
             />
             {error && (
-              <Notification kind={KIND.negative}>
+              <Notification>
                 {error}
               </Notification>
             )}
-            <Button type="submit">{f('doLogin')}</Button>
-          </StyledForm>
+            <PrimaryButton type="submit">{f('doLogin')}</PrimaryButton>
+          </Form>
         )}
       </Formik>
+      <style jsx>{
+        `.form {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }`}</style>
     </div>
   )
 }

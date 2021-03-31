@@ -1,7 +1,6 @@
 import {useEffect} from "react";
 import {useRouter} from "next/router";
-import {useSelector} from "react-redux";
-import {RootReducer, useAuth, useStageSelector} from "@digitalStage/api-client-react";
+import {useAuth, useStageSelector} from "@digitalStage/api-client-react";
 
 export default function Home() {
   const {loading, user} = useAuth();

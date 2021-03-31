@@ -10,7 +10,7 @@ import Background from "../components/ui/surface/Background";
 import Tabs from "../components/ui/surface/Tabs";
 import Tab from "../components/ui/surface/Tab";
 import HeadlineLink from "../components/ui/button/HeadlineLink";
-import Link from "next/link";
+import Input from "../components/ui/form/Input";
 
 const UI = () => {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
@@ -33,7 +33,9 @@ const UI = () => {
 
         <Panel level="level1" style={{margin: "72px"}}>
           <Tabs>
-            <Tab title="Bla">Hello Tab 1</Tab>
+            <Tab title="Bla">
+              Hello Tab 1
+            </Tab>
             <Tab title="Blubb">Hello Tab2</Tab>
           </Tabs>
           <h1>Hello World</h1>
@@ -53,6 +55,9 @@ const UI = () => {
             </HeadlineLink>
           </div>
           <h1>Hello World</h1>
+          <Input label="Email Adresse" type="email"/>
+          <Input label="Passwort" type="password"/>
+          <Input label="Nummer" type="number"/>
           <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore
             et
             dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et</p>

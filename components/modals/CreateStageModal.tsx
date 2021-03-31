@@ -1,19 +1,12 @@
-import {Modal, ModalBody, ModalButton, ModalFooter, ModalHeader, ROLE, SIZE} from "baseui/modal";
-import {Button, KIND as ButtonKind} from "baseui/button";
 import * as Yup from "yup";
 import {Field, Form, Formik, FormikProps} from "formik";
 import React, {useCallback} from "react";
-import {Input} from "baseui/input";
-import {styled} from "baseui";
 import {useIntl} from "react-intl";
-import {FormControl} from "baseui/form-control";
 import {ClientDeviceEvents, Stage, useConnection} from "@digitalStage/api-client-react";
-
-const StyledForm = styled(Form, {
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center'
-});
+import Modal from "../ui/surface/Modal";
+import Input from "../ui/form/Input";
+import SecondaryButton from "../ui/button/SecondaryButton";
+import PrimaryButton from "../ui/button/PrimaryButton";
 
 const CreateStageModal = (props: { open: boolean, onClose: () => void }) => {
   const {open, onClose} = props;
@@ -38,12 +31,7 @@ const CreateStageModal = (props: { open: boolean, onClose: () => void }) => {
   return (
     <Modal
       onClose={onClose}
-      closeable
-      isOpen={open}
-      animate
-      autoFocus
-      size={SIZE.auto}
-      role={ROLE.dialog}
+      open={open}
     >
       <Formik
         initialValues={{
@@ -80,17 +68,14 @@ const CreateStageModal = (props: { open: boolean, onClose: () => void }) => {
       >
         {(props: FormikProps<any>) => (
           <>
-            <ModalHeader>Hello world</ModalHeader>
-            <ModalBody>
-              Proin ut dui sed metus pharetra hend rerit vel non
-              mi. Nulla ornare faucibus ex, non facilisis nisl.
-              Maecenas aliquet mauris ut tempus.
-              <StyledForm autoComplete="on">
-                <FormControl
-                  label={() => f('stageName')}
-                  caption={() => f('stageNameCaption')}
-                  error={props.errors.name}
-                >
+            <h3>Hello world</h3>
+            <div>
+              <p>
+                Proin ut dui sed metus pharetra hend rerit vel non
+                mi. Nulla ornare faucibus ex, non facilisis nisl.
+                Maecenas aliquet mauris ut tempus.
+              </p>
+              <Form className="form" autoComplete="on">
                   <Field
                     as={Input}
                     label={f('stageName')}
@@ -100,14 +85,9 @@ const CreateStageModal = (props: { open: boolean, onClose: () => void }) => {
                     autoComplete="name"
                     valid={!!props.errors.name}
                     notification={props.errors.name}
+                    error={props.touched.name && props.errors.name}
                     maxLength={100}
                   />
-                </FormControl>
-                <FormControl
-                  label={() => f('stageDescription')}
-                  caption={() => f('stageDescriptionCaption')}
-                  error={props.errors.description}
-                >
                   <Field
                     as={Input}
                     label={f('stageDescription')}
@@ -115,15 +95,10 @@ const CreateStageModal = (props: { open: boolean, onClose: () => void }) => {
                     type="description"
                     name="description"
                     valid={!!props.errors.description}
-                    notification={props.errors.description}
+                    error={props.touched.description && props.errors.description}
+                    notification={props.errors.description || f('stageDescriptionCaption')}
                     maxLength={100}
                   />
-                </FormControl>
-                <FormControl
-                  label={() => f('stagePassword')}
-                  caption={() => f('stagePasswordCaption')}
-                  error={props.errors.password}
-                >
                   <Field
                     as={Input}
                     label={f('stagePassword')}
@@ -131,15 +106,9 @@ const CreateStageModal = (props: { open: boolean, onClose: () => void }) => {
                     type="password"
                     name="password"
                     valid={!!props.errors.password}
-                    notification={props.errors.password}
+                    error={props.errors.password || f('stagePasswordCaption')}
                     maxLength={20}
                   />
-                </FormControl>
-                <FormControl
-                  label={() => f('stageWidth')}
-                  caption={() => f('stageWidthCaption')}
-                  error={props.errors.width}
-                >
                   <Field
                     as={Input}
                     label={f('stageWidth')}
@@ -147,15 +116,10 @@ const CreateStageModal = (props: { open: boolean, onClose: () => void }) => {
                     type="number"
                     name="width"
                     valid={!!props.errors.width}
-                    notification={props.errors.width}
+                    notification={f('stagePasswordCaption')}
+                    error={props.touched.width && props.errors.width}
                     min={1}
                   />
-                </FormControl>
-                <FormControl
-                  label={() => f('stageLength')}
-                  caption={() => f('stageLengthCaption')}
-                  error={props.errors.length}
-                >
                   <Field
                     as={Input}
                     label={f('stageLength')}
@@ -163,15 +127,9 @@ const CreateStageModal = (props: { open: boolean, onClose: () => void }) => {
                     type="number"
                     name="length"
                     valid={!!props.errors.length}
-                    notification={props.errors.length}
+                    error={props.touched.length && props.errors.length}
                     min={1}
                   />
-                </FormControl>
-                <FormControl
-                  label={() => f('stageHeight')}
-                  caption={() => f('stageHeightCaption')}
-                  error={props.errors.height}
-                >
                   <Field
                     as={Input}
                     label={f('stageHeight')}
@@ -179,15 +137,9 @@ const CreateStageModal = (props: { open: boolean, onClose: () => void }) => {
                     type="number"
                     name="height"
                     valid={!!props.errors.height}
-                    notification={props.errors.height}
+                    error={props.touched.height && props.errors.height}
                     min={1}
                   />
-                </FormControl>
-                <FormControl
-                  label={() => f('stageAbsorption')}
-                  caption={() => f('stageAbsorptionCaption')}
-                  error={props.errors.absorption}
-                >
                   <Field
                     as={Input}
                     label={f('stageAbsorption')}
@@ -195,17 +147,11 @@ const CreateStageModal = (props: { open: boolean, onClose: () => void }) => {
                     type="number"
                     name="absorption"
                     valid={!!props.errors.absorption}
-                    notification={props.errors.absorption}
+                    error={props.touched.absorption && props.errors.absorption}
                     step={0.1}
                     min={0}
                     max={1}
                   />
-                </FormControl>
-                <FormControl
-                  label={() => f('stageReflection')}
-                  caption={() => f('stageReflectionCaption')}
-                  error={props.errors.reflection}
-                >
                   <Field
                     as={Input}
                     label={f('stageReflection')}
@@ -213,23 +159,28 @@ const CreateStageModal = (props: { open: boolean, onClose: () => void }) => {
                     type="number"
                     name="reflection"
                     valid={!!props.errors.reflection}
-                    notification={props.errors.reflection}
+                    error={props.touched.reflection && props.errors.reflection}
                     step={0.1}
                     min={0}
                     max={1}
                   />
-                </FormControl>
-              </StyledForm>
-            </ModalBody>
-            <ModalFooter>
-              <ModalButton onClick={onClose} kind={ButtonKind.tertiary}>
+              </Form>
+            </div>
+            <div>
+              <SecondaryButton onClick={onClose}>
                 {f('cancel')}
-              </ModalButton>
-              <Button type="submit" disabled={!props.isValid} onClick={props.submitForm}>{f('create')}</Button>
-            </ModalFooter>
+              </SecondaryButton>
+              <PrimaryButton type="submit" disabled={!props.isValid} onClick={props.submitForm}>{f('create')}</PrimaryButton>
+            </div>
           </>
         )}
       </Formik>
+      <style jsx>{
+        `.form {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }`}</style>
     </Modal>
   );
 }

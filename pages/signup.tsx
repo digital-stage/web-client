@@ -1,19 +1,12 @@
-import {Input} from "baseui/input";
 import React, {useCallback, useEffect, useState} from "react";
 import {useIntl} from "react-intl";
 import {Field, Form, Formik, FormikProps} from 'formik';
 import {useAuth} from "@digitalStage/api-client-react";
 import {useRouter} from "next/router";
 import * as Yup from "yup";
-import {styled} from "baseui";
-import {Notification, KIND} from "baseui/notification";
-import {Button} from "baseui/button";
-
-const StyledForm = styled(Form, {
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center'
-});
+import Input from "../components/ui/form/Input";
+import PrimaryButton from "../components/ui/button/PrimaryButton";
+import Notification from "../components/ui/surface/Notification";
 
 const SignUp = () => {
   const {createUserWithEmailAndPassword, loading, user} = useAuth();
@@ -65,7 +58,7 @@ const SignUp = () => {
         })}
       >
         {(props: FormikProps<any>) => (
-          <StyledForm autoComplete="on">
+          <Form className="form" autoComplete="on">
             <Field
               as={Input}
               label={f('emailAddress')}
@@ -74,7 +67,7 @@ const SignUp = () => {
               name="email"
               autoComplete="email"
               valid={!!props.errors.email}
-              notification={props.errors.email}
+              error={props.touched.email && props.errors.email}
               maxLength={100}
             />
             <Field
@@ -85,7 +78,7 @@ const SignUp = () => {
               name="password"
               autoComplete="password"
               valid={!!props.errors.password}
-              notification={props.errors.password}
+              error={props.touched.password && props.errors.password}
               maxLength={20}
             />
             <Field
@@ -95,18 +88,24 @@ const SignUp = () => {
               type="text"
               name="displayName"
               valid={!!props.errors.displayName}
-              notification={props.errors.displayName}
+              error={props.touched.displayName && props.errors.displayName}
               maxLength={30}
             />
             {error && (
-              <Notification kind={KIND.negative}>
+              <Notification>
                 {error}
               </Notification>
             )}
-            <Button type="submit">{f('doSignUp')}</Button>
-          </StyledForm>
+            <PrimaryButton type="submit">{f('doSignUp')}</PrimaryButton>
+          </Form>
         )}
       </Formik>
+      <style jsx>{
+        `.form {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }`}</style>
     </div>
   )
 }

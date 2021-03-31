@@ -16,7 +16,6 @@
 
     ---secondary: transparent;
     ---secondary-contrast: #F4F4F4;
-    ---secondary-border: #415;
     ---secondary-disabled: rgba(87, 121, 217, 0.5);
     ---secondary-hover: #1313134D;
     ---secondary-focus: #253CEB;
@@ -41,7 +40,8 @@
     ---danger-disabled: rgba(242, 5, 68, 0.3);
 
     ---b50030-function-floating-hoover-: #B50030;
-    ---fa4d55-state-error-modal-info: #FA406B;
+    ---input-error: #9D131366;
+    ---input-error-border: #A41318;
     ---success: #41BD64;
     ---warn: #F0C11B;
     ---grey-3: #292929;
