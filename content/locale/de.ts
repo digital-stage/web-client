@@ -1,0 +1,28 @@
+const de = {
+  projectName: 'Digitale Bühne',
+  projectDescription:
+    'Deine digitale Bühne für Kunst-,\nMusik- und Theaterensembles',
+  welcome: 'Herzlich willkommen',
+  start: 'Starten',
+  welcomeSubline: 'Melde Dich mit Deinem Account an\noder erstelle einen neuen',
+  stage: 'Bühne',
+  mixer: 'Mischpult',
+  room: '3D Audio',
+  devices: 'Einstellungen',
+  feedback: 'Problem melden',
+  login: 'Login',
+  signUp: 'Registrierung',
+  name: 'Name',
+  emailAddress: 'E-Mail-Adresse',
+  enterValidEmail: 'Bitte eine valide E-Mail-Adresse eingeben',
+  emailRequired: 'E-Mail-Adresse wird benötigt',
+  password: 'Passwort',
+  repeatPassword: 'Passwort Wiederholung',
+  passwordRequired: 'Das Passwort ist notwendig',
+  passwordMinLength: 'Bitte mindestens 8 Zeichen verwenden',
+  doLogin: 'Einloggen',
+  doSignUp: 'Registrieren',
+  forgotPassword: 'Passwort vergessen?',
+  resendActivationLink: 'Aktivierungslink erneut senden?',
+};
+export default de;
