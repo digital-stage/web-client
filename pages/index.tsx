@@ -2,6 +2,8 @@ import {useEffect} from "react";
 import {useRouter} from "next/router";
 import {useAuth, useStageSelector} from "@digitalStage/api-client-react";
 
+const FORWARD = false;
+
 export default function Home() {
   const {loading, user} = useAuth();
   const {push} = useRouter();

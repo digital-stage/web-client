@@ -5,6 +5,7 @@ import {useRouter} from "next/router";
 import {IntlProvider} from "react-intl";
 import React, {Component} from "react";
 import * as locales from "../content/locale"
+import {SelectedDeviceProvider} from "../hooks/useSelectedDevice";
 
 function MyApp({Component, pageProps}) {
   const router = useRouter();
@@ -19,7 +20,9 @@ function MyApp({Component, pageProps}) {
       messages={messages}
     >
       <DigitalStageProvider apiUrl={process.env.NEXT_PUBLIC_API_URL} authUrl={process.env.NEXT_PUBLIC_AUTH_URL}>
-        <Component {...pageProps} />
+        <SelectedDeviceProvider>
+          <Component {...pageProps} />
+        </SelectedDeviceProvider>
       </DigitalStageProvider>
     </IntlProvider>
   )
