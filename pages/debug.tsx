@@ -116,7 +116,7 @@ const DEBUG = () => {
     <div>
       <h1>Devices</h1>
       <ul>
-        {deviceIds.map(deviceId => <DeviceView id={deviceId}/>)}
+        {deviceIds.map(deviceId => <DeviceView key={deviceId} id={deviceId}/>)}
       </ul>
       <h1>Stages</h1>
       <Link href="/stages">
