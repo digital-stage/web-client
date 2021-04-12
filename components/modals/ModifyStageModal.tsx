@@ -19,6 +19,8 @@ const ModifyStageModal = (props: { open: boolean, onClose: () => void, stage?: S
         const payload: Partial<Stage> = {
           _id: stage._id,
           name: values.name,
+          videoType: 'mediasoup',
+          audioType: values.audioType,
           description: values.description,
           password: values.password,
           width: values.width,
@@ -31,6 +33,8 @@ const ModifyStageModal = (props: { open: boolean, onClose: () => void, stage?: S
       } else {
         const payload: Omit<Stage, "_id"> = {
           name: values.name,
+          videoType: 'mediasoup',
+          audioType: values.audioType,
           description: values.description,
           password: values.password,
           width: values.width,
@@ -52,6 +56,7 @@ const ModifyStageModal = (props: { open: boolean, onClose: () => void, stage?: S
       <Formik
         initialValues={{
           name: stage && stage.name || '',
+          audioType: stage && stage.audioType || '',
           description: stage && stage.description || '',
           password: stage && stage.password || '',
           width: stage && stage.width || 25,
@@ -63,17 +68,20 @@ const ModifyStageModal = (props: { open: boolean, onClose: () => void, stage?: S
         onSubmit={handleSubmit}
         validationSchema={Yup.object().shape({
           name: Yup.string()
-            .min(4, f('stageNameMinLength'))
-            .required(f('stageNameRequired')),
+            .min(4, f('nameTooShort'))
+            .max(255, f('nameTooLong'))
+            .required(f('nameRequired')),
+          audioType: Yup.string()
+            .required(f('audioTypeRequired')),
           description: Yup.string(),
           password: Yup.string()
-            .min(2, f('stagePasswordMinLength')),
+            .min(2, f('passwordTooShort')),
           width: Yup.number()
-            .min(0),
+            .min(1),
           height: Yup.number()
-            .min(0),
+            .min(1),
           length: Yup.number()
-            .min(0),
+            .min(1),
           absorption: Yup.number()
             .min(0)
             .max(1),
@@ -84,10 +92,10 @@ const ModifyStageModal = (props: { open: boolean, onClose: () => void, stage?: S
       >
         {(props: FormikProps<any>) => (
           <>
-            <h3>{stage ? f('createStageTitle') : f('modifyStageTitle')}</h3>
+            <h3>{stage ? f('modifyStage') : f('createStage')}</h3>
             <div>
               <p>
-                {stage ? f('createStageDesc') : f('modifyStageDesc')}
+                {stage ? f('modifyStageDescription') : f('createStageDescription')}
               </p>
               <Form className="form" autoComplete="on">
                 <Field
@@ -96,48 +104,67 @@ const ModifyStageModal = (props: { open: boolean, onClose: () => void, stage?: S
                   placeholder={f('stageName')}
                   type="name"
                   name="name"
-                  autoComplete="name"
                   valid={!!props.errors.name}
                   notification={props.errors.name}
+                  autoComplete={false}
                   error={props.touched.name && props.errors.name}
                   maxLength={100}
                 />
+                <label>
+                  <Field type="radio" name="audioType" value="mediasoup"/>
+                  {f('audioTypeMediasoup')}
+                </label>
+                <label>
+                  <Field type="radio" name="audioType" value="jammer"/>
+                  {f('audioTypeJammer')}
+                </label>
+                <label>
+                  <Field type="radio" name="audioType" value="ov"/>
+                  {f('audioTypeOv')}
+                </label>
+                {props.values.audioType && (
+                  <p>
+                    {f('audioType' + props.values.audioType + 'Description')}
+                  </p>
+                )}
                 <Field
                   as={Input}
-                  label={f('stageDescription')}
-                  placeholder={f('stageDescription')}
+                  label={f('description')}
+                  placeholder={f('description')}
                   type="description"
                   name="description"
                   valid={!!props.errors.description}
                   error={props.touched.description && props.errors.description}
-                  notification={props.errors.description || f('stageDescriptionCaption')}
+                  autoComplete="off"
+                  notification={props.errors.description || f('descriptionCaption')}
                   maxLength={100}
                 />
                 <Field
                   as={Input}
-                  label={f('stagePassword')}
-                  placeholder={f('stagePassword')}
+                  label={f('password')}
+                  placeholder={f('password')}
                   type="password"
                   name="password"
                   valid={!!props.errors.password}
-                  error={props.errors.password || f('stagePasswordCaption')}
+                  autoComplete="new-password"
+                  notification={f('passwordCaption')}
+                  error={props.errors.password || f('passwordCaption')}
                   maxLength={20}
                 />
                 <Field
                   as={Input}
-                  label={f('stageWidth')}
-                  placeholder={f('stageWidth')}
+                  label={f('width')}
+                  placeholder={f('width')}
                   type="number"
                   name="width"
                   valid={!!props.errors.width}
-                  notification={f('stagePasswordCaption')}
                   error={props.touched.width && props.errors.width}
                   min={1}
                 />
                 <Field
                   as={Input}
-                  label={f('stageLength')}
-                  placeholder={f('stageLength')}
+                  label={f('length')}
+                  placeholder={f('length')}
                   type="number"
                   name="length"
                   valid={!!props.errors.length}
@@ -146,8 +173,8 @@ const ModifyStageModal = (props: { open: boolean, onClose: () => void, stage?: S
                 />
                 <Field
                   as={Input}
-                  label={f('stageHeight')}
-                  placeholder={f('stageHeight')}
+                  label={f('height')}
+                  placeholder={f('height')}
                   type="number"
                   name="height"
                   valid={!!props.errors.height}
@@ -156,8 +183,8 @@ const ModifyStageModal = (props: { open: boolean, onClose: () => void, stage?: S
                 />
                 <Field
                   as={Input}
-                  label={f('stageAbsorption')}
-                  placeholder={f('stageAbsorption')}
+                  label={f('absorption')}
+                  placeholder={f('absorption')}
                   type="number"
                   name="absorption"
                   valid={!!props.errors.absorption}
@@ -168,8 +195,8 @@ const ModifyStageModal = (props: { open: boolean, onClose: () => void, stage?: S
                 />
                 <Field
                   as={Input}
-                  label={f('stageReflection')}
-                  placeholder={f('stageReflection')}
+                  label={f('reflection')}
+                  placeholder={f('reflection')}
                   type="number"
                   name="reflection"
                   valid={!!props.errors.reflection}

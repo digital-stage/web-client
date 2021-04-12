@@ -48,22 +48,23 @@ const ModifyGroupModal = (props: { open: boolean, onClose: () => void, stage?: S
         onSubmit={handleSubmit}
         validationSchema={Yup.object().shape({
           name: Yup.string()
-            .min(4, f('groupNameMinLength'))
-            .required(f('groupNameRequired')),
+            .min(4, f('nameTooShort'))
+            .max(255, f('nameTooLong'))
+            .required(f('nameRequired')),
           description: Yup.string()
         })}
       >
         {(props: FormikProps<any>) => (
           <>
-            <h3>{group ? f('createGroupTitle') : f('modifyGroupTitle')}</h3>
+            <h3>{group ? f('modifyGroup') : f('createGroup')}</h3>
             <p>
-              {group ? f('createGroupDesc') : f('modifyGroupDesc')}
+              {group ? f('modifyGroupDescription') : f('createGroupDescription')}
             </p>
             <Form className="form" autoComplete="on">
               <Field
                 as={Input}
-                label={f('groupName')}
-                placeholder={f('groupName')}
+                label={f('name')}
+                placeholder={f('name')}
                 type="name"
                 name="name"
                 autoComplete="name"
@@ -74,13 +75,13 @@ const ModifyGroupModal = (props: { open: boolean, onClose: () => void, stage?: S
               />
               <Field
                 as={Input}
-                label={f('groupDescription')}
-                placeholder={f('groupDescription')}
+                label={f('description')}
+                placeholder={f('description')}
                 type="description"
                 name="description"
                 valid={!!props.errors.description}
                 error={props.touched.description && props.errors.description}
-                notification={props.errors.description || f('groupDescriptionCaption')}
+                notification={props.errors.description || f('descriptionCaption')}
                 maxLength={100}
               />
             </Form>
@@ -89,7 +90,7 @@ const ModifyGroupModal = (props: { open: boolean, onClose: () => void, stage?: S
                 {f('cancel')}
               </SecondaryButton>
               <PrimaryButton type="submit" disabled={!props.isValid}
-                             onClick={props.submitForm}>{group ? f('update') : f('create')}</PrimaryButton>
+                             onClick={props.submitForm}>{group ? f('create') : f('update')}</PrimaryButton>
             </Row>
           </>
         )}

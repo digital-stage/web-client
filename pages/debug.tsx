@@ -10,16 +10,20 @@ import {
   useStageSelector,
   useMediasoup,
   RemoteVideoTrack,
-  RemoteAudioTrack
+  RemoteAudioTrack,
+  MediasoupDevice,
+  OvDevice,
+  SoundCard,
+  JammerDevice
 } from "@digitalStage/api-client-react";
 import PrimaryButton from "../components/ui/button/PrimaryButton";
 import DangerButton from "../components/ui/button/DangerButton";
 import SecondaryButton from "../components/ui/button/SecondaryButton";
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef} from "react";
 import Link from "next/link";
 import SingleVideoPlayer from "../components/ui/media/SingleVideoPlayer";
 
-const AudioPlayer = (props: {track: MediaStreamTrack}) => {
+const AudioPlayer = (props: { track: MediaStreamTrack }) => {
   const {track} = props;
   const audioRef = useRef<HTMLAudioElement>();
 
@@ -36,7 +40,7 @@ const RemoteAudioTrackView = (props: {
   const {id} = props;
   const remoteAudioTrack = useStageSelector<RemoteAudioTrack>(state => state.remoteAudioTracks.byId[id]);
   const {audioConsumers} = useMediasoup();
-  if( remoteAudioTrack ) {
+  if (remoteAudioTrack) {
     return (<div>
       {remoteAudioTrack._id}
       {audioConsumers[remoteAudioTrack._id] && (
@@ -53,7 +57,7 @@ const RemoteVideoTrackView = (props: {
   const {id} = props;
   const remoteVideoTrack = useStageSelector<RemoteVideoTrack>(state => state.remoteVideoTracks.byId[id]);
   const {videoConsumers} = useMediasoup();
-  if( remoteVideoTrack ) {
+  if (remoteVideoTrack) {
     return (<div>
       {remoteVideoTrack._id}
       {videoConsumers[remoteVideoTrack._id] && (
@@ -130,6 +134,138 @@ const DeviceView = (props: { id: string }) => {
   const {id} = props;
   const connection = useConnection();
   const device = useStageSelector<Device>(state => state.devices.byId[id]);
+
+  let videoConfigurationPane = undefined
+  let audioConfigurationPane = undefined
+  if( device.canVideo ) {
+    // Assuming that video transmission always uses mediasoup
+    const mediasoupDevice = device as MediasoupDevice;
+    videoConfigurationPane = (
+      <>
+        <li>
+          Input video:
+          <select
+            value={mediasoupDevice.inputVideoDeviceId}
+            onChange={(event) =>
+              connection.emit(ClientDeviceEvents.ChangeDevice, {
+                _id: id,
+                inputVideoDeviceId: event.currentTarget.value
+              })}>
+            {mediasoupDevice.inputVideoDevices.map(inputVideoDevice => (
+              <option value={inputVideoDevice.id}>{inputVideoDevice.label}</option>
+            ))}
+          </select>
+        </li>
+      </>
+    )
+  }
+  if( device.canAudio ) {
+    if (device.type === "mediasoup") {
+      const mediasoupDevice = device as MediasoupDevice;
+      audioConfigurationPane = (
+        <>
+          <li>
+            Input audio:
+            <select
+              value={mediasoupDevice.inputAudioDeviceId}
+              onChange={(event) =>
+                connection.emit(ClientDeviceEvents.ChangeDevice, {
+                  _id: id,
+                  inputAudioDeviceId: event.currentTarget.value
+                })}>
+              {mediasoupDevice.inputAudioDevices.map(inputAudioDevice => (
+                <option value={inputAudioDevice.id}>{inputAudioDevice.label}</option>
+              ))}
+            </select>
+          </li>
+          <li>
+            Output audio:
+            <select
+              value={mediasoupDevice.outputAudioDeviceId}
+              onChange={(event) =>
+                connection.emit(ClientDeviceEvents.ChangeDevice, {
+                  _id: id,
+                  outputAudioDeviceId: event.currentTarget.value
+                })}>
+              {mediasoupDevice.outputAudioDevices.map(outputAudioDevice => (
+                <option value={outputAudioDevice.id}>{outputAudioDevice.label}</option>
+              ))}
+            </select>
+          </li>
+          <li>
+            <input
+              type="checkbox"
+              checked={mediasoupDevice.autoGainControl || false}
+              onChange={(event) => connection.emit(ClientDeviceEvents.ChangeDevice, {
+                _id: id,
+                autoGainControl: event.currentTarget.checked
+              })} />
+            <label>autoGainControl</label>
+          </li>
+          <li>
+            <input
+              type="checkbox"
+              checked={mediasoupDevice.echoCancellation || false}
+              onChange={(event) => connection.emit(ClientDeviceEvents.ChangeDevice, {
+                _id: id,
+                echoCancellation: event.currentTarget.checked
+              })} />
+            <label>echoCancellation</label>
+          </li>
+          <li>
+            <input
+              type="checkbox"
+              checked={mediasoupDevice.noiseSuppression || false}
+              onChange={(event) => connection.emit(ClientDeviceEvents.ChangeDevice, {
+                _id: id,
+                noiseSuppression: event.currentTarget.checked
+              })} />
+            <label>noiseSuppression</label>
+          </li>
+        </>
+      )
+    }
+    if (device.type === "ov") {
+      const ovDevice = device as OvDevice;
+      audioConfigurationPane = (
+        <>
+          <li>
+            <select value={ovDevice.soundCardId} onChange={(event) => connection.emit(ClientDeviceEvents.ChangeDevice, {
+              _id: id,
+              soundCardId: event.currentTarget.value
+            })}>
+              {ovDevice.availableSoundCardIds.map(id => {
+                const soundCard = useStageSelector<SoundCard>(state => state.soundCards.byId[id]);
+                return (
+                  <option value={soundCard._id}>{soundCard.label}</option>
+                )
+              })}
+            </select>
+          </li>
+        </>
+      )
+    }
+    if (device.type === "jammer") {
+      const jammerDevice = device as JammerDevice;
+      audioConfigurationPane = (
+        <>
+          <li>
+            <select value={jammerDevice.soundCardId} onChange={(event) => connection.emit(ClientDeviceEvents.ChangeDevice, {
+              _id: id,
+              soundCardId: event.currentTarget.value
+            })}>
+              {jammerDevice.availableSoundCardIds.map(id => {
+                const soundCard = useStageSelector<SoundCard>(state => state.soundCards.byId[id]);
+                return (
+                  <option value={soundCard._id}>{soundCard.label}</option>
+                )
+              })}
+            </select>
+          </li>
+        </>
+      )
+    }
+  }
   return (
     <li>
       {device.online ? <strong>{device.type}</strong> : <i>{device.type}</i>}
@@ -166,6 +302,8 @@ const DeviceView = (props: { id: string }) => {
           })}>{device.receiveAudio ? "YES" : "NO"}</SecondaryButton>
           </li>
         )}
+        {videoConfigurationPane}
+        {audioConfigurationPane}
       </ul>
     </li>
   )

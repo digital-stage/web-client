@@ -23,8 +23,8 @@ const DeleteGroupModal = (props: {
 
   return (
     <Modal open={open} onClose={onClose}>
-      <h1>{f('deleteGroupTitle')}</h1>
-      <p>{f('deleteGroupText')}</p>
+      <h1>{f('deleteGroup')}</h1>
+      <p>{f('deleteGroupDescription')}</p>
       <Row align="space-between">
         <TertiaryButton onClick={onClose}>{f('cancel')}</TertiaryButton>
         <DangerButton onClick={deleteGroup}>{f('delete')}</DangerButton>

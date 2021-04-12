@@ -25,3 +25,13 @@
 .panel {
     margin: 0 !important;
 }
+
+.full {
+    width: 100%
+}
+.default {
+    width: 800px
+}
+.auto {
+    width: auto
+}

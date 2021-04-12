@@ -23,8 +23,8 @@ const DeleteStageModal = (props: {
 
   return (
     <Modal open={open} onClose={onClose}>
-      <h1>{f('deleteStageTitle')}</h1>
-      <p>{f('deleteStageText')}</p>
+      <h1>{f('deleteStage')}</h1>
+      <p>{f('deleteStageDescription')}</p>
       <Row align="space-between">
         <TertiaryButton onClick={onClose}>{f('cancel')}</TertiaryButton>
         <DangerButton onClick={deleteStage}>{f('delete')}</DangerButton>
