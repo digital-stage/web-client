@@ -7,7 +7,7 @@ const Background = (props: React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivE
   return (
     <>
       <div {...other}/>
-      <style jsx>{`x
+      <style jsx>{`
         div {
           display: block;
           position: relative;
