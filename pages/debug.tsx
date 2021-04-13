@@ -229,6 +229,9 @@ const DeviceView = (props: { id: string }) => {
       const ovDevice = device as OvDevice;
       audioConfigurationPane = (
         <>
+        <li>
+          MAC: {ovDevice.uuid}
+        </li>
           <li>
             <select value={ovDevice.soundCardId} onChange={(event) => connection.emit(ClientDeviceEvents.ChangeDevice, {
               _id: id,

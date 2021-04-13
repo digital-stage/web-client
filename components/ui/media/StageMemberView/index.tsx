@@ -45,8 +45,6 @@ const StageMemberView = (props: {
   return (
     <div className={styles.wrapper}>
       <div className={styles.inner}>
-        {}
-        <RemoteVideoTrackView id/>
         <div className={styles.banner}>
           {remoteUser.name}
         </div>
