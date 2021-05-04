@@ -99,7 +99,7 @@ const StageMemberView = (props: {
   return (
     <li>
       Stage member: {remoteUser.name}
-      {stageDeviceIds.map(stageDeviceId => <StageDeviceView id={stageDeviceId}/>)}
+      <ul>{stageDeviceIds.map(stageDeviceId => <StageDeviceView key={stageDeviceId} id={stageDeviceId}/>)}</ul>
     </li>
   )
 }
@@ -221,22 +221,20 @@ const DeviceView = (props: { id: string }) => {
     // Assuming that video transmission always uses mediasoup
     const mediasoupDevice = device as MediasoupDevice;
     videoConfigurationPane = (
-      <>
-        <li>
-          Input video:
-          <select
-            value={mediasoupDevice.inputVideoDeviceId}
-            onChange={(event) =>
-              connection.emit(ClientDeviceEvents.ChangeDevice, {
-                _id: id,
-                inputVideoDeviceId: event.currentTarget.value
-              })}>
-            {mediasoupDevice.inputVideoDevices.map(inputVideoDevice => (
-              <option value={inputVideoDevice.id}>{inputVideoDevice.label}</option>
-            ))}
-          </select>
-        </li>
-      </>
+      <li>
+        Input video:
+        <select
+          value={mediasoupDevice.inputVideoDeviceId}
+          onChange={(event) =>
+            connection.emit(ClientDeviceEvents.ChangeDevice, {
+              _id: id,
+              inputVideoDeviceId: event.currentTarget.value
+            })}>
+          {mediasoupDevice.inputVideoDevices.map(inputVideoDevice => (
+            <option key={inputVideoDevice.id} value={inputVideoDevice.id}>{inputVideoDevice.label}</option>
+          ))}
+        </select>
+      </li>
     )
   }
   if (device.canAudio) {
@@ -254,7 +252,7 @@ const DeviceView = (props: { id: string }) => {
                   inputAudioDeviceId: event.currentTarget.value
                 })}>
               {mediasoupDevice.inputAudioDevices.map(inputAudioDevice => (
-                <option value={inputAudioDevice.id}>{inputAudioDevice.label}</option>
+                <option key={inputAudioDevice.id} value={inputAudioDevice.id}>{inputAudioDevice.label}</option>
               ))}
             </select>
           </li>
@@ -268,7 +266,7 @@ const DeviceView = (props: { id: string }) => {
                   outputAudioDeviceId: event.currentTarget.value
                 })}>
               {mediasoupDevice.outputAudioDevices.map(outputAudioDevice => (
-                <option value={outputAudioDevice.id}>{outputAudioDevice.label}</option>
+                <option key={outputAudioDevice.id} value={outputAudioDevice.id}>{outputAudioDevice.label}</option>
               ))}
             </select>
           </li>
@@ -320,7 +318,7 @@ const DeviceView = (props: { id: string }) => {
             MAC: {ovDevice.uuid}
           </li>
           {device.availableSoundCardIds.map(soundCardId => (
-            <SoundCardView id={soundCardId}/>
+            <SoundCardView key={soundCardId} id={soundCardId}/>
           ))}
         </>
       )
@@ -338,7 +336,7 @@ const DeviceView = (props: { id: string }) => {
               {jammerDevice.availableSoundCardIds.map(id => {
                 const soundCard = useStageSelector<SoundCard>(state => state.soundCards.byId[id]);
                 return (
-                  <option value={soundCard._id}>{soundCard.label}</option>
+                  <option key={soundCard._id} value={soundCard._id}>{soundCard.label}</option>
                 )
               })}
             </select>

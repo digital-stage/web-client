@@ -1,11 +1,11 @@
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 import {useRouter} from "next/router";
 import {
   useAuth,
   Stage,
   Group,
   useStageSelector,
-  User
+  User, useConnection
 } from "@digitalstage/api-client-react";
 import ModifyStageModal from "../components/modals/ModifyStageModal";
 import PrimaryButton from "../components/ui/button/PrimaryButton";
@@ -15,6 +15,7 @@ import DeleteStageModal from "../components/modals/DeleteStageModal";
 import ModifyGroupModal from "../components/modals/ModifyGroupModal";
 import DeleteGroupModal from "../components/modals/DeleteGroupModal";
 import {useIntl} from "react-intl";
+import {ClientDeviceEvents, ClientDevicePayloads} from "@digitalstage/api-types";
 
 const StageRow = (props: {
   id: string,
@@ -91,6 +92,35 @@ const StageRow = (props: {
   )
 }
 
+const JoinField = () => {
+  const stageRef = useRef<HTMLInputElement>();
+  const groupRef = useRef<HTMLInputElement>();
+  const connection = useConnection();
+
+  const handleJoin = useCallback(() => {
+    if( connection && stageRef.current && groupRef.current ) {
+      connection.emit(ClientDeviceEvents.JoinStage, {
+        stageId: stageRef.current.value,
+        groupId: groupRef.current.value,
+      } as ClientDevicePayloads.JoinStage);
+    }
+  }, [connection, stageRef, groupRef])
+
+  return (
+    <div>
+      <label>
+        STAGE ID:
+        <input type="text" ref={stageRef} />
+      </label>
+      <label>
+        GROUP ID:
+        <input type="text" ref={groupRef} />
+      </label>
+      <PrimaryButton onClick={handleJoin}>JOIN</PrimaryButton>
+    </div>
+  )
+}
+
 const Stages = () => {
   // Forward to login if not authenticated
   const {push} = useRouter();
@@ -114,6 +144,7 @@ const Stages = () => {
 
   return (
     <div>
+      <JoinField/>
       {user && user.canCreateStage && (
         <PrimaryButton onClick={() => {
           setSelectedStage(undefined);
