@@ -5,6 +5,7 @@ import {
   Group,
   Stage,
   StageMember,
+  StageDevice,
   useConnection,
   User,
   useStageSelector,
@@ -15,7 +16,7 @@ import {
   OvDevice,
   SoundCard,
   JammerDevice
-} from "@digitalStage/api-client-react";
+} from "@digitalstage/api-client-react";
 import PrimaryButton from "../components/ui/button/PrimaryButton";
 import DangerButton from "../components/ui/button/DangerButton";
 import SecondaryButton from "../components/ui/button/SecondaryButton";
@@ -68,21 +69,37 @@ const RemoteVideoTrackView = (props: {
   return <></>;
 }
 
+const StageDeviceView = (props: {
+  id: string
+}) => {
+  const {id} = props;
+  const stageDevice = useStageSelector<StageDevice>(state => state.stageDevices.byId[id]);
+  const remoteVideoTrackIds = useStageSelector<string[]>(state => state.remoteVideoTracks.byStageDevice[id] || []);
+  const remoteAudioTrackIds = useStageSelector<string[]>(state => state.remoteAudioTracks.byStageDevice[id] || []);
+
+  return (
+    <li>
+      {stageDevice._id}
+      ORDER: {stageDevice.order}
+      {remoteVideoTrackIds.map(remoteVideoTrackId => <RemoteVideoTrackView key={remoteVideoTrackId}
+                                                                           id={remoteVideoTrackId}/>)}
+      {remoteAudioTrackIds.map(remoteAudioTrackId => <RemoteAudioTrackView key={remoteAudioTrackId}
+                                                                           id={remoteAudioTrackId}/>)}
+    </li>
+  )
+}
+
 const StageMemberView = (props: {
   id: string
 }) => {
   const {id} = props;
   const stageMember = useStageSelector<StageMember>(state => state.stageMembers.byId[id]);
   const remoteUser = useStageSelector<User>(state => state.remoteUsers.byId[stageMember.userId]);
-  const remoteVideoTrackIds = useStageSelector<string[]>(state => state.remoteVideoTracks.byStageMember[id] || []);
-  const remoteAudioTrackIds = useStageSelector<string[]>(state => state.remoteAudioTracks.byStageMember[id] || []);
+  const stageDeviceIds = useStageSelector<string[]>(state => state.stageDevices.byStageMember[id] || []);
   return (
     <li>
       Stage member: {remoteUser.name}
-      {remoteVideoTrackIds.map(remoteVideoTrackId => <RemoteVideoTrackView key={remoteVideoTrackId}
-                                                                           id={remoteVideoTrackId}/>)}
-      {remoteAudioTrackIds.map(remoteAudioTrackId => <RemoteAudioTrackView key={remoteAudioTrackId}
-                                                                           id={remoteAudioTrackId}/>)}
+      {stageDeviceIds.map(stageDeviceId => <StageDeviceView id={stageDeviceId}/>)}
     </li>
   )
 }
@@ -114,6 +131,69 @@ const GroupView = (props: {
   );
 }
 
+const SoundCardView = (props: {
+  id: string
+}) => {
+  const {id} = props;
+  const soundCard = useStageSelector<SoundCard>(state => state.soundCards.byId[id]);
+  const connection = useConnection();
+  if (!soundCard)
+    return null;
+  return (
+    <div>
+      {soundCard.driver}
+      <ul>
+        <li>
+          Input channels:
+          <ul>
+            {Object.keys(soundCard.inputChannels).map(channelName => (
+              <li>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={soundCard.inputChannels[channelName]}
+                    onChange={(event) => connection.emit(ClientDeviceEvents.ChangeSoundCard, {
+                      _id: soundCard._id,
+                      inputChannels: {
+                        ...soundCard.inputChannels,
+                        [channelName]: event.currentTarget.checked
+                      }
+                    })}
+                  />
+                  {channelName}
+                </label>
+              </li>
+            ))}
+          </ul>
+        </li>
+        <li>
+          Output channels:
+          <ul>
+            {Object.keys(soundCard.outputChannels).map(channelName => (
+              <li>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={soundCard.outputChannels[channelName]}
+                    onChange={(event) => connection.emit(ClientDeviceEvents.ChangeSoundCard, {
+                      _id: soundCard._id,
+                      outputChannels: {
+                        ...soundCard.outputChannels,
+                        [channelName]: event.currentTarget.checked
+                      }
+                    })}
+                  />
+                  {channelName}
+                </label>
+              </li>
+            ))}
+          </ul>
+        </li>
+      </ul>
+    </div>
+  )
+};
+
 const StageView = (props: {
   id: string
 }) => {
@@ -137,7 +217,7 @@ const DeviceView = (props: { id: string }) => {
 
   let videoConfigurationPane = undefined
   let audioConfigurationPane = undefined
-  if( device.canVideo ) {
+  if (device.canVideo) {
     // Assuming that video transmission always uses mediasoup
     const mediasoupDevice = device as MediasoupDevice;
     videoConfigurationPane = (
@@ -159,7 +239,7 @@ const DeviceView = (props: { id: string }) => {
       </>
     )
   }
-  if( device.canAudio ) {
+  if (device.canAudio) {
     if (device.type === "mediasoup") {
       const mediasoupDevice = device as MediasoupDevice;
       audioConfigurationPane = (
@@ -193,34 +273,40 @@ const DeviceView = (props: { id: string }) => {
             </select>
           </li>
           <li>
-            <input
-              type="checkbox"
-              checked={mediasoupDevice.autoGainControl || false}
-              onChange={(event) => connection.emit(ClientDeviceEvents.ChangeDevice, {
-                _id: id,
-                autoGainControl: event.currentTarget.checked
-              })} />
-            <label>autoGainControl</label>
+            <label>
+              <input
+                type="checkbox"
+                checked={mediasoupDevice.autoGainControl || false}
+                onChange={(event) => connection.emit(ClientDeviceEvents.ChangeDevice, {
+                  _id: id,
+                  autoGainControl: event.currentTarget.checked
+                })}/>
+              autoGainControl
+            </label>
           </li>
           <li>
-            <input
-              type="checkbox"
-              checked={mediasoupDevice.echoCancellation || false}
-              onChange={(event) => connection.emit(ClientDeviceEvents.ChangeDevice, {
-                _id: id,
-                echoCancellation: event.currentTarget.checked
-              })} />
-            <label>echoCancellation</label>
+            <label>
+              <input
+                type="checkbox"
+                checked={mediasoupDevice.echoCancellation || false}
+                onChange={(event) => connection.emit(ClientDeviceEvents.ChangeDevice, {
+                  _id: id,
+                  echoCancellation: event.currentTarget.checked
+                })}/>
+              echoCancellation
+            </label>
           </li>
           <li>
-            <input
-              type="checkbox"
-              checked={mediasoupDevice.noiseSuppression || false}
-              onChange={(event) => connection.emit(ClientDeviceEvents.ChangeDevice, {
-                _id: id,
-                noiseSuppression: event.currentTarget.checked
-              })} />
-            <label>noiseSuppression</label>
+            <label>
+              <input
+                type="checkbox"
+                checked={mediasoupDevice.noiseSuppression || false}
+                onChange={(event) => connection.emit(ClientDeviceEvents.ChangeDevice, {
+                  _id: id,
+                  noiseSuppression: event.currentTarget.checked
+                })}/>
+              noiseSuppression
+            </label>
           </li>
         </>
       )
@@ -229,22 +315,13 @@ const DeviceView = (props: { id: string }) => {
       const ovDevice = device as OvDevice;
       audioConfigurationPane = (
         <>
-        <li>
-          MAC: {ovDevice.uuid}
-        </li>
           <li>
-            <select value={ovDevice.soundCardId} onChange={(event) => connection.emit(ClientDeviceEvents.ChangeDevice, {
-              _id: id,
-              soundCardId: event.currentTarget.value
-            })}>
-              {ovDevice.availableSoundCardIds.map(id => {
-                const soundCard = useStageSelector<SoundCard>(state => state.soundCards.byId[id]);
-                return (
-                  <option value={soundCard._id}>{soundCard.label}</option>
-                )
-              })}
-            </select>
+            ID: {ovDevice._id}
+            MAC: {ovDevice.uuid}
           </li>
+          {device.availableSoundCardIds.map(soundCardId => (
+            <SoundCardView id={soundCardId}/>
+          ))}
         </>
       )
     }
@@ -253,10 +330,11 @@ const DeviceView = (props: { id: string }) => {
       audioConfigurationPane = (
         <>
           <li>
-            <select value={jammerDevice.soundCardId} onChange={(event) => connection.emit(ClientDeviceEvents.ChangeDevice, {
-              _id: id,
-              soundCardId: event.currentTarget.value
-            })}>
+            <select value={jammerDevice.soundCardId}
+                    onChange={(event) => connection.emit(ClientDeviceEvents.ChangeDevice, {
+                      _id: id,
+                      soundCardId: event.currentTarget.value
+                    })}>
               {jammerDevice.availableSoundCardIds.map(id => {
                 const soundCard = useStageSelector<SoundCard>(state => state.soundCards.byId[id]);
                 return (

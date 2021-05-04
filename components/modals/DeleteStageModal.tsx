@@ -1,4 +1,4 @@
-import {ClientDeviceEvents, Stage, useConnection} from "@digitalStage/api-client-react";
+import {ClientDeviceEvents, Stage, useConnection} from "@digitalstage/api-client-react";
 import React, {useCallback} from "react";
 import Modal from "../ui/surface/Modal";
 import {useIntl} from "react-intl";

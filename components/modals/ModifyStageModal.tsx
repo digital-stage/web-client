@@ -2,7 +2,7 @@ import * as Yup from "yup";
 import {Field, Form, Formik, FormikProps} from "formik";
 import React, {useCallback} from "react";
 import {useIntl} from "react-intl";
-import {ClientDeviceEvents, Stage, useConnection} from "@digitalStage/api-client-react";
+import {ClientDeviceEvents, Stage, useConnection} from "@digitalstage/api-client-react";
 import Modal from "../ui/surface/Modal";
 import Input from "../ui/form/Input";
 import SecondaryButton from "../ui/button/SecondaryButton";

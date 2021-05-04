@@ -1,6 +1,6 @@
 import {useEffect} from "react";
 import {useRouter} from "next/router";
-import {useAuth, useStageSelector} from "@digitalStage/api-client-react";
+import {useAuth, useStageSelector} from "@digitalstage/api-client-react";
 
 const FORWARD = false;
 

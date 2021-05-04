@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useState} from "react";
 import {useIntl} from "react-intl";
 import {Field, Form, Formik, FormikProps} from 'formik';
-import {useAuth} from "@digitalStage/api-client-react";
+import {useAuth} from "@digitalstage/api-client-react";
 import {useRouter} from "next/router";
 import * as Yup from "yup";
 import Input from "../components/ui/form/Input";

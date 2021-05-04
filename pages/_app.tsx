@@ -1,6 +1,6 @@
 import '../styles/globals.css'
 import '../styles/dark.css'
-import {DigitalStageProvider} from "@digitalStage/api-client-react";
+import {DigitalStageProvider} from "@digitalstage/api-client-react";
 import {useRouter} from "next/router";
 import {IntlProvider} from "react-intl";
 import React, {Component} from "react";

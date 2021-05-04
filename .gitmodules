@@ -1,0 +1,3 @@
+[submodule "api-client-react"]
+	path = api-client-react
+	url = https://github.com/digital-stage/api-client-react.git
