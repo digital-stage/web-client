@@ -1,9 +1,10 @@
 {
   "name": "@digitalstage/web-client",
+  "private": true,
   "description": "Example usage of API client for javascript",
   "version": "0.1.0",
   "author": "Tobias Hegemann <tobias.hegemann@googlemail.com>",
-  "license": "GPL-3.0-or-later",
+  "license": "MIT",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
