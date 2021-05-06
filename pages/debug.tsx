@@ -10,8 +10,6 @@ import {
     User,
     useStageSelector,
     useMediasoup,
-    RemoteVideoTrack,
-    RemoteAudioTrack,
     MediasoupDevice,
     OvDevice,
     SoundCard,
@@ -19,6 +17,7 @@ import {
 } from '@digitalstage/api-client-react'
 import React, { useEffect, useRef } from 'react'
 import Link from 'next/link'
+import { AudioTrack, VideoTrack } from '@digitalstage/api-types'
 import PrimaryButton from '../components/ui/button/PrimaryButton'
 import DangerButton from '../components/ui/button/DangerButton'
 import SecondaryButton from '../components/ui/button/SecondaryButton'
@@ -35,18 +34,16 @@ const AudioPlayer = (props: { track: MediaStreamTrack }) => {
     return <audio autoPlay ref={audioRef} />
 }
 
-const RemoteAudioTrackView = (props: { id: string }) => {
+const AudioTrackView = (props: { id: string }) => {
     const { id } = props
-    const remoteAudioTrack = useStageSelector<RemoteAudioTrack>(
-        (state) => state.remoteAudioTracks.byId[id]
-    )
+    const audioTrack = useStageSelector<AudioTrack>((state) => state.audioTracks.byId[id])
     const { audioConsumers } = useMediasoup()
-    if (remoteAudioTrack) {
+    if (audioTrack) {
         return (
             <div>
-                {remoteAudioTrack._id}
-                {audioConsumers[remoteAudioTrack._id] && (
-                    <AudioPlayer track={audioConsumers[remoteAudioTrack._id].track} />
+                {audioTrack._id}
+                {audioConsumers[audioTrack._id] && (
+                    <AudioPlayer track={audioConsumers[audioTrack._id].track} />
                 )}
             </div>
         )
@@ -54,21 +51,19 @@ const RemoteAudioTrackView = (props: { id: string }) => {
     return <></>
 }
 
-const RemoteVideoTrackView = (props: { id: string }) => {
+const VideoTrackView = (props: { id: string }) => {
     const { id } = props
-    const remoteVideoTrack = useStageSelector<RemoteVideoTrack>(
-        (state) => state.remoteVideoTracks.byId[id]
-    )
+    const videoTrack = useStageSelector<VideoTrack>((state) => state.videoTracks.byId[id])
     const { videoConsumers } = useMediasoup()
-    if (remoteVideoTrack) {
+    if (videoTrack) {
         return (
             <div>
-                {remoteVideoTrack._id}
-                {videoConsumers[remoteVideoTrack._id] && (
+                {videoTrack._id}
+                {videoConsumers[videoTrack._id] && (
                     <SingleVideoPlayer
                         width="auto"
                         height="300px"
-                        track={videoConsumers[remoteVideoTrack._id].track}
+                        track={videoConsumers[videoTrack._id].track}
                     />
                 )}
             </div>
@@ -81,21 +76,21 @@ const StageDeviceView = (props: { id: string }) => {
     const { id } = props
     const stageDevice = useStageSelector<StageDevice>((state) => state.stageDevices.byId[id])
     const remoteVideoTrackIds = useStageSelector<string[]>(
-        (state) => state.remoteVideoTracks.byStageDevice[id] || []
+        (state) => state.videoTracks.byStageDevice[id] || []
     )
     const remoteAudioTrackIds = useStageSelector<string[]>(
-        (state) => state.remoteAudioTracks.byStageDevice[id] || []
+        (state) => state.videoTracks.byStageDevice[id] || []
     )
 
     return (
         <li>
             {stageDevice._id}
             ORDER: {stageDevice.order}
-            {remoteVideoTrackIds.map((remoteVideoTrackId) => (
-                <RemoteVideoTrackView key={remoteVideoTrackId} id={remoteVideoTrackId} />
+            {remoteVideoTrackIds.map((videoTrackId) => (
+                <VideoTrackView key={videoTrackId} id={videoTrackId} />
             ))}
-            {remoteAudioTrackIds.map((remoteAudioTrackId) => (
-                <RemoteAudioTrackView key={remoteAudioTrackId} id={remoteAudioTrackId} />
+            {remoteAudioTrackIds.map((audioTrackId) => (
+                <AudioTrackView key={audioTrackId} id={audioTrackId} />
             ))}
         </li>
     )
