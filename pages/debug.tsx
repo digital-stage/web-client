@@ -28,10 +28,19 @@ const AudioPlayer = (props: { track: MediaStreamTrack }) => {
     const audioRef = useRef<HTMLAudioElement>()
 
     useEffect(() => {
-        audioRef.current.srcObject = new MediaStream([track])
+        if (audioRef) {
+            audioRef.current.srcObject = new MediaStream([track])
+            audioRef.current.autoplay = true
+            audioRef.current.play()
+        }
     }, [track, audioRef])
 
-    return <audio autoPlay ref={audioRef} />
+    return (
+        <div>
+            PLAYER
+            <audio autoPlay playsInline ref={audioRef} />
+        </div>
+    )
 }
 
 const AudioTrackView = (props: { id: string }) => {
@@ -41,7 +50,7 @@ const AudioTrackView = (props: { id: string }) => {
     if (audioTrack) {
         return (
             <div>
-                {audioTrack._id}
+                <span>AUDIO TRACK {audioTrack._id}</span>
                 {audioConsumers[audioTrack._id] && (
                     <AudioPlayer track={audioConsumers[audioTrack._id].track} />
                 )}
@@ -75,21 +84,21 @@ const VideoTrackView = (props: { id: string }) => {
 const StageDeviceView = (props: { id: string }) => {
     const { id } = props
     const stageDevice = useStageSelector<StageDevice>((state) => state.stageDevices.byId[id])
-    const remoteVideoTrackIds = useStageSelector<string[]>(
+    const videoTrackIds = useStageSelector<string[]>(
         (state) => state.videoTracks.byStageDevice[id] || []
     )
-    const remoteAudioTrackIds = useStageSelector<string[]>(
-        (state) => state.videoTracks.byStageDevice[id] || []
+    const audioTrackIds = useStageSelector<string[]>(
+        (state) => state.audioTracks.byStageDevice[id] || []
     )
 
     return (
         <li>
             {stageDevice._id}
             ORDER: {stageDevice.order}
-            {remoteVideoTrackIds.map((videoTrackId) => (
+            {videoTrackIds.map((videoTrackId) => (
                 <VideoTrackView key={videoTrackId} id={videoTrackId} />
             ))}
-            {remoteAudioTrackIds.map((audioTrackId) => (
+            {audioTrackIds.map((audioTrackId) => (
                 <AudioTrackView key={audioTrackId} id={audioTrackId} />
             ))}
         </li>
