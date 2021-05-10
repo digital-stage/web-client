@@ -1,0 +1,22 @@
+.wrapper {
+    position: absolute;
+    display: flex;
+    flex-direction: row;
+    width: 100vw;
+    height: 100vh;
+}
+
+.sidebar {
+    display: flex;
+    flex-grow: 0;
+    width: auto;
+    height: 100%;
+}
+.content {
+    border: 1px solid red;
+    display: flex;
+    flex-grow: 1;
+    width: auto;
+    height: 100%;
+    overflow-y: scroll;
+}
