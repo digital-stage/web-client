@@ -1,0 +1,12 @@
+.wrapper {
+
+}
+
+
+.list {
+    border: 1px solid var(---level-1, #121212);
+    border-radius: 18px;
+}
+.groupItem {
+    background-color: var(---level-1, #121212)
+}

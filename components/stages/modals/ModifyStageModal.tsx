@@ -3,10 +3,10 @@ import { Field, Form, Formik, FormikProps } from 'formik'
 import React, { useCallback } from 'react'
 import { useIntl } from 'react-intl'
 import { ClientDeviceEvents, Stage, useConnection } from '@digitalstage/api-client-react'
-import Modal from '../../ui/surface/Modal'
-import Input from '../../ui/form/Input'
-import SecondaryButton from '../../ui/button/SecondaryButton'
-import PrimaryButton from '../../ui/button/PrimaryButton'
+import Modal from '../../../ui/surface/Modal'
+import Input from '../../../ui/form/Input'
+import SecondaryButton from '../../../ui/button/SecondaryButton'
+import PrimaryButton from '../../../ui/button/PrimaryButton'
 
 const ModifyStageModal = (props: { open: boolean; onClose: () => void; stage?: Stage }) => {
     const { open, onClose, stage } = props

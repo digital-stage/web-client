@@ -1,7 +1,9 @@
 import React, {useEffect, useRef} from 'react'
-import {useMediasoup} from '@digitalstage/api-client-react'
+import {useMediasoup, useStageSelector} from '@digitalstage/api-client-react'
 import styles from './PageWrapper.module.css'
 import NavigationBar from './navigation/NavigationBar'
+import Background from "../ui/surface/Background";
+import GlobalDeviceController from "./navigation/GlobalDeviceController";
 
 const AudioPlayer = (props: { track: MediaStreamTrack }) => {
   const {track} = props
@@ -26,13 +28,18 @@ const StageAudioPlayer = () => {
 
 const PageWrapper = (props: { children: React.ReactNode }) => {
   const {children} = props
+  const insideStage = useStageSelector<boolean>(state => !!state.globals.stageId)
   return (
     <div className={styles.wrapper}>
+      <div className={styles.backgroundWrapper}>
+        <Background insideStage={insideStage} />
+      </div>
       <div className={styles.sidebar}>
         <NavigationBar/>
       </div>
       <div className={styles.content}>{children}</div>
       <StageAudioPlayer/>
+      <GlobalDeviceController/>
     </div>
   )
 }

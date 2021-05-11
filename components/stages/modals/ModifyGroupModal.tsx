@@ -3,11 +3,11 @@ import { Field, Form, Formik, FormikProps } from 'formik'
 import React, { useCallback } from 'react'
 import { useIntl } from 'react-intl'
 import { ClientDeviceEvents, Group, Stage, useConnection } from '@digitalstage/api-client-react'
-import Modal from '../../ui/surface/Modal'
-import Input from '../../ui/form/Input'
-import SecondaryButton from '../../ui/button/SecondaryButton'
-import PrimaryButton from '../../ui/button/PrimaryButton'
-import Row from '../../ui/surface/Row'
+import Modal from '../../../ui/surface/Modal'
+import Input from '../../../ui/form/Input'
+import SecondaryButton from '../../../ui/button/SecondaryButton'
+import PrimaryButton from '../../../ui/button/PrimaryButton'
+import Row from '../../../ui/surface/Row'
 
 const ModifyGroupModal = (props: {
     open: boolean

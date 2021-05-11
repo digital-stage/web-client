@@ -4,9 +4,9 @@ import {Field, Form, Formik, FormikProps} from 'formik';
 import {useAuth} from "@digitalstage/api-client-react";
 import {useRouter} from "next/router";
 import * as Yup from "yup";
-import Input from "../components/ui/form/Input";
-import Notification from "../components/ui/surface/Notification";
-import PrimaryButton from "../components/ui/button/PrimaryButton";
+import Input from "../ui/form/Input";
+import Notification from "../ui/surface/Notification";
+import PrimaryButton from "../ui/button/PrimaryButton";
 
 
 const Login = () => {

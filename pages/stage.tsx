@@ -5,7 +5,7 @@ import {
   useStageSelector,
 } from "@digitalstage/api-client-react";
 import React from "react";
-import SingleVideoPlayer from "../components/ui/media/SingleVideoPlayer";
+import SingleVideoPlayer from "../ui/media/SingleVideoPlayer";
 
 const StageMemberView = (props: { id: string }) => {
   const {id} = props

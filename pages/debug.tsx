@@ -13,10 +13,10 @@ import {
 import React, { useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { AudioTrack, VideoTrack } from '@digitalstage/api-types'
-import PrimaryButton from '../components/ui/button/PrimaryButton'
-import DangerButton from '../components/ui/button/DangerButton'
-import SecondaryButton from '../components/ui/button/SecondaryButton'
-import SingleVideoPlayer from '../components/ui/media/SingleVideoPlayer'
+import PrimaryButton from '../ui/button/PrimaryButton'
+import DangerButton from '../ui/button/DangerButton'
+import SecondaryButton from '../ui/button/SecondaryButton'
+import SingleVideoPlayer from '../ui/media/SingleVideoPlayer'
 import DevicePanel from '../components/devices/DevicePanel'
 
 const AudioPlayer = (props: { track: MediaStreamTrack }) => {

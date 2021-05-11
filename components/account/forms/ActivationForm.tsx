@@ -4,9 +4,9 @@ import * as Yup from 'yup';
 import {useRouter} from 'next/router';
 import {useIntl} from 'react-intl';
 import {useAuth} from "@digitalstage/api-client-react";
-import PrimaryButton from "../../ui/button/PrimaryButton";
-import Input from "../../ui/form/Input";
-import Notification from "../../ui/surface/Notification";
+import PrimaryButton from "../../../ui/button/PrimaryButton";
+import Input from "../../../ui/form/Input";
+import Notification from "../../../ui/surface/Notification";
 
 export interface Values {
   code: string;

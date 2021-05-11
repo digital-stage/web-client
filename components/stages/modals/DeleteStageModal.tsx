@@ -1,10 +1,10 @@
 import { ClientDeviceEvents, Stage, useConnection } from '@digitalstage/api-client-react'
 import React, { useCallback } from 'react'
 import { useIntl } from 'react-intl'
-import Modal from '../../ui/surface/Modal'
-import Row from '../../ui/surface/Row'
-import TertiaryButton from '../../ui/button/TertiaryButton'
-import DangerButton from '../../ui/button/DangerButton'
+import Modal from '../../../ui/surface/Modal'
+import Row from '../../../ui/surface/Row'
+import TertiaryButton from '../../../ui/button/TertiaryButton'
+import DangerButton from '../../../ui/button/DangerButton'
 
 const DeleteStageModal = (props: { open: boolean; onClose: () => void; stage: Stage }) => {
     const { open, onClose, stage } = props

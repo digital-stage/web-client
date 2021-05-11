@@ -5,12 +5,29 @@
     width: 100vw;
     height: 100vh;
 }
+.backgroundWrapper {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
 
 .sidebar {
     display: flex;
-    flex-grow: 0;
-    width: auto;
     height: 100%;
+    flex-grow: 0;
+    position: relative;
+    align-content: space-between;
+    width: 0;
+    transition-duration: 200ms;
+    transition-property: width;
+    transition-timing-function: cubic-bezier(0, 0, 1, 1);
+    overflow: hidden;
+}
+@media only screen and (min-width: 600px) {
+    .sidebar {
+        width: 72px;
+    }
 }
 .content {
     border: 1px solid red;

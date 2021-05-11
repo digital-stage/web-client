@@ -1,16 +1,16 @@
-import PrimaryButton from "../components/ui/button/PrimaryButton";
+import PrimaryButton from "../ui/button/PrimaryButton";
 import React, {useState} from "react";
-import SecondaryButton from "../components/ui/button/SecondaryButton";
-import TertiaryButton from "../components/ui/button/TertiaryButton";
-import DangerButton from "../components/ui/button/DangerButton";
-import Panel from "../components/ui/surface/Panel";
-import Modal from "../components/ui/surface/Modal";
-import Container from "../components/ui/surface/Container";
-import Background from "../components/ui/surface/Background";
-import Tabs from "../components/ui/surface/Tabs";
-import Tab from "../components/ui/surface/Tab";
-import HeadlineLink from "../components/ui/button/HeadlineLink";
-import Input from "../components/ui/form/Input";
+import SecondaryButton from "../ui/button/SecondaryButton";
+import TertiaryButton from "../ui/button/TertiaryButton";
+import DangerButton from "../ui/button/DangerButton";
+import Panel from "../ui/surface/Panel";
+import Modal from "../ui/surface/Modal";
+import Container from "../ui/surface/Container";
+import Background from "../ui/surface/Background";
+import Tabs from "../ui/surface/Tabs";
+import Tab from "../ui/surface/Tab";
+import HeadlineLink from "../ui/button/HeadlineLink";
+import Input from "../ui/form/Input";
 
 const UI = () => {
   const [modalOpen, setModalOpen] = useState<boolean>(false);

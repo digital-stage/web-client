@@ -6,9 +6,9 @@ import {
     useConnection,
     useStageSelector,
 } from '@digitalstage/api-client-react'
-import Panel from '../ui/surface/Panel'
+import Panel from '../../ui/surface/Panel'
 import SoundCardSelect from '../settings/SoundCardSelect'
-import SecondaryButton from '../ui/button/SecondaryButton'
+import SecondaryButton from '../../ui/button/SecondaryButton'
 
 const MediasoupSettings = (props: { device: MediasoupDevice }) => {
     const { device } = props
