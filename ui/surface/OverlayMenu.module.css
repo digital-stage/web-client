@@ -1,0 +1,30 @@
+.wrapper {
+  position: relative
+}
+.menuButton {
+  position: relative;
+  width: 32px;
+  height: 32px;
+}
+.backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: block;
+  z-index: -1;
+  width: 100%;
+  background: var(---level-2, #1F1F1F)
+}
+.menuWrapper {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  overflow-y: scroll;
+}
+.menu {
+
+}
+
+

@@ -21,3 +21,13 @@ a {
 * {
     box-sizing: border-box;
 }
+
+
+.authPanel {
+    box-shadow: 0 16px 20px #00000040;
+    border-radius: 18px;
+    padding: 24px;
+    margin: 72px;
+    color: var(---text, #F4F4F4);
+    background-color: var(---level-1, #121212);
+}

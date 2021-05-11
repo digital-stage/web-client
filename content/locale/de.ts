@@ -140,5 +140,8 @@ const de = {
     createGroupDescription: 'Beschreibung',
     modifyGroup: 'Gruppe ändern',
     modifyGroupDescription: 'Beschreibung',
+    passwordMinLength: 'Bitte mindestens 8 Zeichen verwenden',
+    passwordFormat:
+        'Das Passwort muss folgendes beinhalten: mindestens eine Zahl, ein kleiner und ein großer Buchstabe sowie insgesamt eine Länge von 8 Zeichen haben',
 }
 export default de

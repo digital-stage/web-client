@@ -3,11 +3,12 @@ import '../styles/dark.css'
 import { DigitalStageProvider } from '@digitalstage/api-client-react'
 import { useRouter } from 'next/router'
 import { IntlProvider } from 'react-intl'
-import React, { Component } from 'react'
+import React from 'react'
 import * as locales from '../content/locale'
 import { SelectedDeviceProvider } from '../hooks/useSelectedDevice'
 import PageWrapper from '../components/PageWrapper'
 
+// eslint-disable-next-line react/prop-types
 function MyApp({ Component, pageProps }) {
     const router = useRouter()
     const { locale, defaultLocale } = router
@@ -22,6 +23,7 @@ function MyApp({ Component, pageProps }) {
             >
                 <SelectedDeviceProvider>
                     <PageWrapper>
+                        {/* eslint-disable-next-line react/jsx-props-no-spreading */}
                         <Component {...pageProps} />
                     </PageWrapper>
                 </SelectedDeviceProvider>
