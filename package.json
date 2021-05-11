@@ -12,7 +12,7 @@
     "start": "next start"
   },
   "dependencies": {
-    "@digitalstage/api-client-react": "^0.0.12",
+    "@digitalstage/api-client-react": "^0.0.13",
     "body-scroll-lock": "^3.1.5",
     "debug": "^4.3.1",
     "formik": "^2.2.6",
