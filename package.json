@@ -14,6 +14,7 @@
   "dependencies": {
     "@digitalstage/api-client-react": "^0.0.17",
     "body-scroll-lock": "^3.1.5",
+    "concurrently": "^6.0.2",
     "debug": "^4.3.1",
     "formik": "^2.2.6",
     "konva": "^7.2.5",

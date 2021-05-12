@@ -1,11 +1,11 @@
 import React, {useCallback, useState} from "react";
 import {useEffect} from "react";
 import {IAnalyserNode, IAudioContext} from "standardized-audio-context";
-import {VolumeProperties} from "../../../../../packages/api-client-react/dist";
 import VolumeSlider from "../VolumeSlider";
 import styles from "./ChannelStrip.module.css"
 import SecondaryButton from "../../../ui/button/SecondaryButton";
 import {IoIosVolumeHigh, IoIosVolumeOff} from "react-icons/io";
+import { VolumeProperties } from "@digitalstage/api-types";
 
 const ChannelStrip = (props: {
   channel: VolumeProperties;
