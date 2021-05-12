@@ -177,8 +177,8 @@ const GroupPanel = (props: {
         }} color={group.color}/>
         <div className={styles.stripBottom}>
           {group && (
-            <SecondaryButton round toggled={group.muted}>
-              {group.muted ? <IoIosVolumeHigh/> : <IoIosVolumeOff/>}
+            <SecondaryButton className={styles.button} size="small" round toggled={group.muted}>
+              {group.muted ? <IoIosVolumeHigh size={18}/> : <IoIosVolumeOff size={18}/>}
             </SecondaryButton>
           )}
         </div>
