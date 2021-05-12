@@ -19,17 +19,19 @@ function MyApp({Component, pageProps}) {
   return (
     <IntlProvider locale={locale} defaultLocale={defaultLocale} messages={messages}>
       <ColorProvider>
-        <DigitalStageProvider
-          apiUrl={process.env.NEXT_PUBLIC_API_URL}
-          authUrl={process.env.NEXT_PUBLIC_AUTH_URL}
-        >
-          <SelectedDeviceProvider>
-            <PageWrapper>
-              {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-              <Component {...pageProps} />
-            </PageWrapper>
-          </SelectedDeviceProvider>
-        </DigitalStageProvider>
+        <SelectedDeviceProvider>
+          <DigitalStageProvider
+            apiUrl={process.env.NEXT_PUBLIC_API_URL}
+            authUrl={process.env.NEXT_PUBLIC_AUTH_URL}
+          >
+            <SelectedDeviceProvider>
+              <PageWrapper>
+                {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+                <Component {...pageProps} />
+              </PageWrapper>
+            </SelectedDeviceProvider>
+          </DigitalStageProvider>
+        </SelectedDeviceProvider>
       </ColorProvider>
     </IntlProvider>
   )

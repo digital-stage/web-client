@@ -1,15 +1,31 @@
-import {StageDevice, StageMember, useConnection, User, useStageSelector} from "@digitalstage/api-client-react";
-import {AudioTrack, ClientDeviceEvents, Group} from "@digitalstage/api-types";
+import {
+  CustomStageMemberVolumes,
+  StageDevice,
+  StageMember,
+  useConnection,
+  User,
+  useStageSelector
+} from "@digitalstage/api-client-react";
+import {
+  AudioTrack,
+  ClientDeviceEvents,
+  ClientDevicePayloads,
+  CustomGroupVolume,
+  CustomStageMemberVolume,
+  Group
+} from "@digitalstage/api-types";
 import React, {useEffect, useState} from "react";
 import styles from "./MixingPanel.module.css"
-import {IoIosArrowBack, IoIosArrowForward, IoIosVolumeOff, IoIosVolumeHigh} from "react-icons/io"
+import {IoIosArrowBack, IoIosArrowForward} from "react-icons/io"
 import VolumeSlider from "../VolumeSlider";
 import useColors from "../../../hooks/useColors";
 import HSLColor from "../../../hooks/useColors/HSLColor";
-import SecondaryButton from "../../../ui/button/SecondaryButton";
 import {useCallback} from "react";
 import Tabs from "../../../ui/surface/Tabs";
 import Tab from "../../../ui/surface/Tab";
+import ChannelStrip from "./ChannelStrip";
+import useSelectedDevice from "../../../hooks/useSelectedDevice";
+import DeviceSelector from "../../global/DeviceSelector";
 
 const AudioTrackPanel = (props: {
   id: string
@@ -78,20 +94,43 @@ const StageDevicePanel = (props: {
 }
 const StageMemberPanel = (props: {
   id: string
+  global: boolean
 }) => {
-  const {id} = props;
+  const {id, global} = props;
+  const {device: deviceId} = useSelectedDevice();
   const stageMember = useStageSelector<StageMember | undefined>(state => state.stageMembers.byId[id]);
   const user = useStageSelector<User | undefined>(state => stageMember && state.remoteUsers.byId[stageMember.userId])
   const stageDeviceIds = useStageSelector<string[]>(state => state.stageDevices.byStageMember[id] || []);
+  const customized = useStageSelector<CustomStageMemberVolume | undefined>(state => state.customStageMemberVolumes.byDeviceAndStageMember[deviceId] && state.customStageMemberVolumes.byDeviceAndStageMember[deviceId][id] && state.customStageMemberVolumes.byId[state.customStageMemberVolumes.byDeviceAndStageMember[deviceId][id]])
   const [expanded, setExpanded] = useState<boolean>(false);
   const getColor = useColors()
   const color = getColor(id)
+  const connection = useConnection()
 
   useEffect(() => {
     if (stageDeviceIds.length === 0) {
       setExpanded(false)
     }
   }, [stageDeviceIds.length])
+
+  const handleChange = useCallback((volume: number, muted: boolean) => {
+    if (connection) {
+      if (global) {
+        return connection.emit(ClientDeviceEvents.ChangeStageMember, {
+          _id: id,
+          volume: volume,
+          muted: muted
+        });
+      } else {
+        return connection.emit(ClientDeviceEvents.SetCustomStageMemberVolume, {
+          _id: id,
+          volume: volume,
+          muted: muted
+        });
+      }
+    }
+    return null;
+  }, [connection])
 
   return (
     <div className={styles.panel}>
@@ -112,8 +151,8 @@ const StageMemberPanel = (props: {
             {user?.name || stageMember._id}
           </h5>
         )}
-        <VolumeSlider className={styles.slider} min={0} middle={1} max={2} value={1} onChange={() => {
-        }} color={color.toProperty()}/>
+        <ChannelStrip className={styles.channelStrip} channel={global ? stageMember : customized || stageMember}
+                      onChange={handleChange} color={color.toProperty()}/>
       </div>
       {expanded && (
         <div className={`${styles.row} ${styles.stageDeviceRow}`}>
@@ -128,43 +167,37 @@ const GroupPanel = (props: {
   id: string
   global?: boolean
 }) => {
-  const {id} = props;
+  const {id, global} = props;
+  const {device} = useSelectedDevice();
   const group = useStageSelector<Group>(state => state.groups.byId[id]);
+  const customized = useStageSelector<CustomGroupVolume | undefined>(state => state.customGroupVolumes.byDeviceAndGroup[device] && state.customGroupVolumes.byDeviceAndGroup[device][id] && state.customGroupVolumes.byId[state.customGroupVolumes.byDeviceAndGroup[device][id]])
   const stageMemberIds = useStageSelector<string[]>(state => state.stageMembers.byGroup[id] || []);
   const [expanded, setExpanded] = useState<boolean>(false);
   const connection = useConnection()
 
-  const changeVolume = useCallback((value: number) => {
-    if (connection) {
+  const handleChange = useCallback((volume: number, muted: boolean) => {
+    if (device && connection) {
+      console.log(device)
+      console.log(volume, muted)
       if (global) {
+        console.log("global")
         return connection.emit(ClientDeviceEvents.ChangeGroup, {
           _id: id,
-          volume: value
-        });
-      } else {
-        return connection.emit(ClientDeviceEvents.SetCustomGroupVolume, {
-          _id: id,
-          volume: value
-        });
-      }
-    }
-  }, [connection])
-
-  const toggleMute = useCallback((muted: boolean) => {
-    if (connection) {
-      if (global) {
-        return connection.emit(ClientDeviceEvents.ChangeGroup, {
-          _id: id,
+          volume: volume,
           muted: muted
-        });
+        } as ClientDevicePayloads.ChangeGroup);
       } else {
+        console.log("personal")
         return connection.emit(ClientDeviceEvents.SetCustomGroupVolume, {
-          _id: id,
-          volume: muted
-        });
+          groupId: id,
+          deviceId: device,
+          volume: volume,
+          muted: muted
+        } as ClientDevicePayloads.SetCustomGroupVolume);
       }
     }
-  }, [connection])
+    return null;
+  }, [device, connection])
 
   useEffect(() => {
     if (stageMemberIds.length === 0) {
@@ -193,20 +226,13 @@ const GroupPanel = (props: {
             {group.name}
           </h5>
         )}
-        <VolumeSlider className={styles.slider} min={0} middle={1} max={2} value={1} onChange={changeVolume}
-                      color={group.color}/>
-        <div className={styles.stripBottom}>
-          {group && (
-            <SecondaryButton className={styles.button} size="small" round toggled={group.muted}
-                             onClick={() => toggleMute(!group.muted)}>
-              {group.muted ? <IoIosVolumeHigh size={18}/> : <IoIosVolumeOff size={18}/>}
-            </SecondaryButton>
-          )}
-        </div>
+        <ChannelStrip className={styles.channelStrip} channel={global ? group : customized || group}
+                      onChange={handleChange} color={group.color}/>
       </div>
       {expanded && (
         <div className={`${styles.row} ${styles.stageMemberRow}`}>
-          {stageMemberIds.map(stageMemberId => <StageMemberPanel key={stageMemberId} id={stageMemberId}/>)}
+          {stageMemberIds.map(stageMemberId => <StageMemberPanel key={stageMemberId} id={stageMemberId}
+                                                                 global={global}/>)}
         </div>
       )}
     </div>
@@ -234,6 +260,7 @@ const MixingPanel = () => {
             </Tab>
           </Tabs>
         )}
+        <DeviceSelector/>
         <div className={styles.inner}>
           {groupIds.map(groupId => <div key={groupId} className={styles.groupWrapper}><GroupPanel id={groupId}
                                                                                                   global={global}/>

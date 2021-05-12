@@ -111,13 +111,9 @@
     border-radius: 100%;
 }
 
-.slider {
+.channelStrip {
     padding: 12px 0;
     flex-grow: 1;
-}
-
-.stripBottom {
-    flex-grow: 0;
 }
 
 .groupPanel {
