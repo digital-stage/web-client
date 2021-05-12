@@ -55,9 +55,9 @@ const ProfileMenu = (): JSX.Element => {
                 </OverlayMenu>
                 <style jsx>{`
               .menu {
-                  position: 'fixed',
-                  top: '1rem',
-                  right: '1rem',
+                  position: fixed;
+                  top: 1rem;
+                  right: 1rem;
               }`}</style>
             </>
         )

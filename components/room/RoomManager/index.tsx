@@ -57,7 +57,8 @@ const RoomManager = (): JSX.Element => {
           <RoomEditor
             className={styles.editor}
             elements={stageMembers.map((stageMember) => {
-              if (!globalMode && customStageMemberPositions.byDeviceAndStageMember[device][stageMember._id]) {
+              if (!globalMode && customStageMemberPositions.byDeviceAndStageMember[device] &&
+                customStageDevicePositions.byDeviceAndStageDevice[device][stageMember._id]) {
                 const customStageMember =
                   customStageMemberPositions.byId[customStageMemberPositions.byDeviceAndStageMember[device][stageMember._id]];
                 return {
