@@ -1,14 +1,13 @@
 import React, {useState} from "react";
 
-const Tabs = (props: {
-  children: React.ReactNodeArray,
+const Tabs = (props: React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> & {
   color?: "primary" | "secondary"
 }): JSX.Element => {
-  const {children, color} = props;
+  const {children, className, color, ...other} = props;
   const [active, setActive] = useState<number>(0);
 
   return (
-    <div className="wrapper">
+    <div className={`wrapper ${className}`} {...other}>
       <div className="header">
         {React.Children.map(children, (child, index) => {
           if (!React.isValidElement(child)) return;
@@ -28,7 +27,7 @@ const Tabs = (props: {
           );
         })}
       </div>
-        {React.Children.map(children, (child, index) => index === active ? child : undefined)}
+      {React.Children.map(children, (child, index) => index === active ? child : undefined)}
 
       <style jsx>{`
         .wrapper {

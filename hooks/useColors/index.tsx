@@ -10,7 +10,7 @@ export interface ColorContext {
     [id: string]: HSLColor;
   };
 
-  generateColor(id: string);
+  generateColor(id: string): HSLColor;
 }
 
 const Context = createContext<ColorContext>(undefined);
@@ -25,11 +25,13 @@ const ColorProvider = (props: { children: React.ReactNode }): JSX.Element => {
     <Context.Provider
       value={{
         generatedColors,
-        generateColor: (id: string) => {
+        generateColor: (id: string): HSLColor => {
+          const color = randomHue();
           setGeneratedColors((prev) => ({
             ...prev,
-            [id]: randomHue(),
+            [id]: color
           }));
+          return color;
         },
       }}
     >

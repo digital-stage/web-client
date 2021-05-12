@@ -13,10 +13,6 @@ const Mixer = () => {
     }
   }, [loading, user, push])
 
-  return (
-    <div>
-      <MixingPanel/>
-    </div>
-  )
+  return <MixingPanel/>
 }
 export default Mixer;

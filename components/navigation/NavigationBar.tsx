@@ -7,6 +7,7 @@ import {GoBroadcast, GoListUnordered, GoSettings} from 'react-icons/go';
 import {FaBug, FaTools} from 'react-icons/fa';
 import {useStageSelector} from "@digitalstage/api-client-react";
 import {BiChat, BiCube} from 'react-icons/bi';
+import Image from 'next/image'
 
 const SideBarItem = (props: {
   href: string | UrlObject;
@@ -56,7 +57,7 @@ const NavigationBar = () => {
     <div className={styles.wrapper}>
       <div className={styles.start}>
         <div className={styles.logo}>
-          <img alt={"Digital stage"} src={"/static/logo.svg"}/>
+          <Image width={40} height={40} alt={"Digital stage"} src={"/static/logo.svg"}/>
         </div>
       </div>
       <div className={styles.spacer}/>

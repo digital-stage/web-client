@@ -24,7 +24,7 @@
     height: 100%;
 }
 
-@media only screen and (min-width: 600px) {
+@media only screen and (min-width: 600px) and (min-height: 600px) {
     .wrapper {
         width: 25vw;
     }

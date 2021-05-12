@@ -16,7 +16,7 @@
     width: 100%;
     border-radius: 0;
 }
-@media only screen and (min-width: 600px) {
+@media only screen and (min-width: 600px) and (min-height: 600px) {
     .editor {
         border-radius: 18px
     }
@@ -32,7 +32,7 @@
     right: 1rem;
     top: 8rem;
 }
-@media only screen and (min-width: 600px) {
+@media only screen and (min-width: 600px) and (min-height: 600px) {
     .buttonResetSingle {
         top: 4rem;
     }
@@ -48,7 +48,7 @@
     display: flex;
 }
 
-@media only screen and (min-width: 600px) {
+@media only screen and (min-width: 600px) and (min-height: 600px) {
     .mobileSelectWrapper {
         display: none;
     }

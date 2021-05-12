@@ -44,7 +44,6 @@ const PageWrapper = (props: { children: React.ReactNode }) => {
       <div className={styles.content}>{children}</div>
       <StageAudioPlayer/>
       <GlobalDeviceController/>
-      <ProfileMenu/>
       <MobileMenu/>
     </div>
   )

@@ -46,6 +46,7 @@ const VolumeSlider = (props: React.DetailedHTMLProps<React.ButtonHTMLAttributes<
     analyserR,
     color,
     className,
+    style,
     ...other
   } = props;
   const [internalValue, setInternalValue] = useState<number>();
@@ -105,13 +106,10 @@ const VolumeSlider = (props: React.DetailedHTMLProps<React.ButtonHTMLAttributes<
   );
 
   return (
-    <div className={`${styles.wrapper} wrapperAlignment ${className}`} {...other}>
-      <style jsx>{`
-        .wrapperAlignment {
-          align-items: ${alignLabel === 'right' ? 'flex-start' : 'flex-end'};
-        }
-        `}
-      </style>
+    <div className={`${styles.wrapper} ${className}`} style={{
+      alignItems: alignLabel === 'right' ? 'flex-start' : 'flex-end',
+      ...style
+    }} {...other}>
       <Range
         direction={Direction.Up}
         step={STEP}
@@ -124,29 +122,27 @@ const VolumeSlider = (props: React.DetailedHTMLProps<React.ButtonHTMLAttributes<
           <div {...markProps}>
             {index % 2 === 0 && (
               <>
-                <style jsx>{`
-                .mark {
-                  position: absolute;
-                  top: 0;
-                  left: ${alignLabel === 'right' ? '22px' : '0'};
-                  right: ${alignLabel === 'right' ? '0' : '22px'};
-                  width: 3px;
-                  height: 3px;
-                  border-radius: 50%;
-                  background-color: ${color};
-                }
-                .caption {
-                  position: absolute;
-                  top: 0;
-                  left: ${alignLabel === 'right' ? '28px' : '0'};
-                  right: ${alignLabel === 'right' ? '0' : '28px'};
-                  transform: translateY(-50%);
-                  color: ${color};
-                }
-                `}
-                </style>
-                <div className="mark"/>
-                <p className="caption micro">
+                <div
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: alignLabel === 'right' ? '22px' : undefined,
+                    right: alignLabel === 'right' ? undefined : '22px',
+                    width: 3,
+                    height: 3,
+                    borderRadius: '50%',
+                    backgroundColor: color
+                  }}
+                />
+                <p className="micro"
+                   style={{
+                     position: "absolute",
+                     top: 0,
+                     left: alignLabel === 'right' ? '28px' : undefined,
+                     right: alignLabel === 'right' ? undefined : '28px',
+                     transform: 'translateY(-50%)',
+                     color: color
+                   }}>
                   {formatDbMeasure(convertRangeToDbMeasure(convertLinearToLog((20 - index) * 5)))}
                 </p>
               </>
