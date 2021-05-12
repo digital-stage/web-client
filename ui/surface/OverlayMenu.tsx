@@ -2,7 +2,7 @@
 import React, { useEffect, useRef } from 'react'
 import { disableBodyScroll, enableBodyScroll } from 'body-scroll-lock'
 import styles from './OverlayMenu.module.css'
-import PrimaryToggleButton from '../button/PrimaryToogleButton'
+import PrimaryButton from "../button/PrimaryButton";
 
 const OverlayMenu = (
     props: React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLDivElement>, HTMLDivElement> & {
@@ -28,13 +28,14 @@ const OverlayMenu = (
 
     return (
         <div className={`${styles.wrapper} ${className}`} {...other}>
-            <PrimaryToggleButton
+            <PrimaryButton
+              round
                 className={styles.menuButton}
                 onClick={open ? onClose : onOpen}
                 toggled={open}
             >
                 {icon}
-            </PrimaryToggleButton>
+            </PrimaryButton>
             {open && (
                 <>
                     <div onClick={onClose} className={styles.backdrop} role="banner" />

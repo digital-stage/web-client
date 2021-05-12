@@ -22,14 +22,14 @@
     ---secondary-active: #5779D94D;
     ---secondary-dark: #012340;
 
-    ---tertiary: transparent;
-    ---tertiary-contrast: #F4F4F4;
-    ---tertiary-border: #808080;
+    ---tertiary: #F4F4F4;
+    ---tertiary-contrast: #121212;
+    ---tertiary-border: transparent;
     ---tertiary-disabled: rgba(87, 121, 217, 0.5);
-    ---tertiary-hover: #12121226;
-    ---tertiary-hover-border: #676767;
+    ---tertiary-hover: #8a8a8a;
+    ---tertiary-hover-border: transparent;
     ---tertiary-focus: #253CEB;
-    ---tertiary-active: #5779D94D;
+    ---tertiary-active: #415CA74D;
     ---tertiary-dark: #012340;
 
 

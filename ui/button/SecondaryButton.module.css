@@ -5,11 +5,9 @@
     text-align: center;
     line-height: inherit;
     text-decoration: none;
-    padding: 8px 12px;
     border-width: 2px;
     border-style: solid;
     border-color: var(---primary, #597BD6);
-    border-radius:21px;
     color: var(---secondary-contrast, #f4f4f4);
     background-color: var(---secondary, transparent);
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.16);
@@ -18,6 +16,21 @@
     transition-duration: 200ms;
     transition-property: background;
     transition-timing-function: cubic-bezier(0, 0, 1, 1);
+}
+
+.button.elliptic {
+    border-radius: 21px;
+    padding: 8px 12px;
+}
+
+.button.round {
+    border-radius: 50%;
+    padding: 12px;
+}
+
+.button.inactive {
+    color: var(---muted, #808080);
+    border-color: var(---muted, #808080);
 }
 
 .button:not(:disabled):hover {
@@ -34,9 +47,17 @@
 
 .button:not(:disabled):focus {
     border-color: var(---secondary-focus, #253CEB);
+    outline: none;
+}
+
+.button.elliptic:not(:disabled):focus {
     padding: 6px 10px;
     border-width: 4px;
-    outline: none;
+}
+
+.button.round:not(:disabled):focus {
+    padding: 10px;
+    border-width: 4px;
 }
 
 .button:disabled {

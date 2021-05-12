@@ -1,9 +1,9 @@
 import {useConnection, useStageSelector} from "@digitalstage/api-client-react";
-import PrimaryToggleButton from "../../ui/button/PrimaryToogleButton";
 import {FaMicrophone, FaMicrophoneSlash, FaVideo, FaVideoSlash} from 'react-icons/fa';
 import React from "react";
 import styles from './GlobalDeviceController.module.css'
 import {ClientDeviceEvents, ClientDevicePayloads, Device} from "@digitalstage/api-types";
+import PrimaryButton from "../../ui/button/PrimaryButton";
 
 const GlobalDeviceController = () => {
   const devices = useStageSelector<Device[]>(state => state.devices.allIds.map(id => state.devices.byId[id]))
@@ -15,7 +15,10 @@ const GlobalDeviceController = () => {
   if (insideStage) {
     return (
       <div className={styles.wrapper}>
-        <PrimaryToggleButton
+        <PrimaryButton
+          className={styles.button}
+          round
+          toggled={sendVideo}
           onClick={() => {
             devices
               .filter(device => device.canVideo)
@@ -24,12 +27,14 @@ const GlobalDeviceController = () => {
                 sendVideo: !sendVideo
               } as ClientDevicePayloads.ChangeDevice))
           }}
-          toggled={sendVideo}
           title={sendVideo ? 'Kameras deaktivieren' : 'Kameras aktivieren'}
         >
           {sendVideo ? <FaVideo size="24px"/> : <FaVideoSlash size="24px"/>}
-        </PrimaryToggleButton>
-        <PrimaryToggleButton
+        </PrimaryButton>
+        <PrimaryButton
+          className={styles.button}
+          round
+          toggled={sendAudio}
           onClick={() => {
             devices
               .filter(device => device.canAudio)
@@ -39,10 +44,9 @@ const GlobalDeviceController = () => {
               } as ClientDevicePayloads.ChangeDevice))
           }}
           title={sendAudio ? 'Mikrofone deaktivieren' : 'Mikrofone aktivieren'}
-          toggled={sendAudio}
         >
           {sendAudio ? <FaMicrophone size="24px"/> : <FaMicrophoneSlash size="24px"/>}
-        </PrimaryToggleButton>
+        </PrimaryButton>
       </div>
     )
   }
