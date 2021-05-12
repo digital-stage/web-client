@@ -1,3 +1,4 @@
+import '../styles/reset.css'
 import '../styles/globals.css'
 import '../styles/dark.css'
 import {DigitalStageProvider} from '@digitalstage/api-client-react'

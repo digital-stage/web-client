@@ -12,8 +12,17 @@
     }
 }
 
-.globalSwitch {
-    padding: .5rem .5rem 2rem;
+.globalModePanel {
+    padding: .5rem;
+    flex-grow: 0;
+}
+
+.globalModeSelect {
+    padding-bottom: 12px;
+}
+
+.deviceSelect {
+    padding: .5rem 1rem;
     flex-grow: 0;
 }
 

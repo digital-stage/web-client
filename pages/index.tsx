@@ -1,27 +1,34 @@
-import { useEffect } from 'react'
-import { useRouter } from 'next/router'
-import { useAuth, useStageSelector } from '@digitalstage/api-client-react'
+import {useEffect, useState} from 'react'
+import {useRouter} from 'next/router'
+import {useAuth, useStageSelector} from '@digitalstage/api-client-react'
 import LoadingOverlay from '../components/LoadingOverlay'
 
 export default function Home() {
-    const { loading, user } = useAuth()
-    const { push } = useRouter()
-    const ready = useStageSelector<boolean>((state) => state.globals.ready)
-    const stageId = useStageSelector<string>((state) => state.globals.stageId)
+  const {loading, user} = useAuth()
+  const {push} = useRouter()
+  const ready = useStageSelector<boolean>((state) => state.globals.ready)
+  const stageId = useStageSelector<string>((state) => state.globals.stageId)
+  const [state, setState] = useState<string>("Anmeldeinfos");
 
-    useEffect(() => {
-        if (push && !loading) {
-            if (!user) {
-                push('/account/login')
-            } else if (ready) {
-                if (stageId) {
-                    push('/stage')
-                } else {
-                    push('/stages')
-                }
-            }
+  useEffect(() => {
+    if (push && !loading) {
+      if (!user) {
+        setState("Anmeldeformular")
+        push('/account/login')
+      } else if (ready) {
+        setState("Bühneninfos")
+        if (stageId) {
+          push('/stage')
+        } else {
+          push('/stages')
         }
-    }, [user, loading, push, ready, stageId])
+      } else {
+        setState("Nutzerinfos")
+      }
+    }
+  }, [user, loading, push, ready, stageId])
 
-    return <LoadingOverlay>Loading...</LoadingOverlay>
+  return (<LoadingOverlay>
+    <h1>Lade {state}...</h1>
+  </LoadingOverlay>)
 }

@@ -5,7 +5,8 @@ import VolumeSlider from "../VolumeSlider";
 import styles from "./ChannelStrip.module.css"
 import SecondaryButton from "../../../ui/button/SecondaryButton";
 import {IoIosVolumeHigh, IoIosVolumeOff} from "react-icons/io";
-import { VolumeProperties } from "@digitalstage/api-types";
+import {VolumeProperties} from "@digitalstage/api-types";
+import {BiReset} from "react-icons/bi";
 
 const ChannelStrip = (props: {
   channel: VolumeProperties;
@@ -64,9 +65,24 @@ const ChannelStrip = (props: {
         }}
       />
       <div className={styles.bottom}>
-        <SecondaryButton className={styles.button} size="small" round toggled={muted}
-                         onClick={handleMute}>
+        <SecondaryButton
+          className={styles.button}
+          size="small" round toggled={muted}
+          onClick={handleMute}>
           {channel.muted ? <IoIosVolumeHigh size={18}/> : <IoIosVolumeOff size={18}/>}
+        </SecondaryButton>
+        <SecondaryButton
+          className={styles.button}
+          round
+          size="small"
+          disabled={!resettable}
+          onClick={() => {
+            if( onReset ) {
+              onReset()
+            }
+          }}
+        >
+          <BiReset size={18}/>
         </SecondaryButton>
       </div>
     </div>
