@@ -36,6 +36,7 @@ const SideBarItem = (props: {
         transition-duration: 200ms;
         transition-timing-function: cubic-bezier(0.2, 0.8, 0.4, 1);
         width: 100%;  
+        text-align: center;
       }
       a:hover {
           text-shadow: 0 0 10px #fff;

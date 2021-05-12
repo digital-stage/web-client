@@ -134,15 +134,35 @@ const GroupPanel = (props: {
   const [expanded, setExpanded] = useState<boolean>(false);
   const connection = useConnection()
 
-  const changeVolume = useCallback(() => {
+  const changeVolume = useCallback((value: number) => {
     if (connection) {
-      connection.emit(ClientDeviceEvents.ChangeGroup,)
+      if (global) {
+        return connection.emit(ClientDeviceEvents.ChangeGroup, {
+          _id: id,
+          volume: value
+        });
+      } else {
+        return connection.emit(ClientDeviceEvents.SetCustomGroupVolume, {
+          _id: id,
+          volume: value
+        });
+      }
     }
   }, [connection])
 
-  const toggleMute = useCallback(() => {
+  const toggleMute = useCallback((muted: boolean) => {
     if (connection) {
-      connection.emit(ClientDeviceEvents.ChangeGroup,)
+      if (global) {
+        return connection.emit(ClientDeviceEvents.ChangeGroup, {
+          _id: id,
+          muted: muted
+        });
+      } else {
+        return connection.emit(ClientDeviceEvents.SetCustomGroupVolume, {
+          _id: id,
+          volume: muted
+        });
+      }
     }
   }, [connection])
 
@@ -173,11 +193,12 @@ const GroupPanel = (props: {
             {group.name}
           </h5>
         )}
-        <VolumeSlider className={styles.slider} min={0} middle={1} max={2} value={1} onChange={() => {
-        }} color={group.color}/>
+        <VolumeSlider className={styles.slider} min={0} middle={1} max={2} value={1} onChange={changeVolume}
+                      color={group.color}/>
         <div className={styles.stripBottom}>
           {group && (
-            <SecondaryButton className={styles.button} size="small" round toggled={group.muted}>
+            <SecondaryButton className={styles.button} size="small" round toggled={group.muted}
+                             onClick={() => toggleMute(!group.muted)}>
               {group.muted ? <IoIosVolumeHigh size={18}/> : <IoIosVolumeOff size={18}/>}
             </SecondaryButton>
           )}
@@ -191,6 +212,7 @@ const GroupPanel = (props: {
     </div>
   )
 }
+
 
 const MixingPanel = () => {
   const isReady = useStageSelector<boolean>(state => state.globals.ready);

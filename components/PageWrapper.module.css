@@ -5,6 +5,7 @@
     width: 100vw;
     height: 100vh;
 }
+
 .backgroundWrapper {
     position: absolute;
     width: 100%;
@@ -24,15 +25,23 @@
     transition-timing-function: cubic-bezier(0, 0, 1, 1);
     overflow: hidden;
 }
+
 @media only screen and (min-width: 600px) and (min-height: 600px) {
     .sidebar {
         width: 72px;
     }
 }
+
 .content {
     position: relative;
     flex-grow: 1;
     width: 100%;
     height: 100%;
-    overflow-y: scroll;
+    overflow: scroll;
+}
+
+@supports (-webkit-touch-callout: none) {
+    .content {
+        height: 101%;
+    }
 }
