@@ -4,7 +4,6 @@ import styles from './PageWrapper.module.css'
 import NavigationBar from './navigation/NavigationBar'
 import Background from '../ui/surface/Background'
 import GlobalDeviceController from './global/GlobalDeviceController'
-import ProfileMenu from './account/ProfileMenu'
 import MobileMenu from "./navigation/MobileMenu";
 
 const AudioPlayer = (props: { track: MediaStreamTrack }) => {

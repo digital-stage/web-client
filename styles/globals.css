@@ -4,6 +4,7 @@ body {
     margin: 0;
     color: var(---text, #F4F4F4);
     background-color: var(---grey-4, #343434);
+    -webkit-overflow-scrolling: touch;
 }
 
 body {
