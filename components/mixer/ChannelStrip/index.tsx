@@ -1,25 +1,22 @@
-/** @jsxRuntime classic */
-/** @jsx jsx */
-import React, { useCallback, useEffect, useState } from 'react';
-import { Flex, Heading, SxStyleProp, jsx, IconButton } from 'theme-ui';
+import React, {useCallback, useEffect, useState} from 'react';
 import VolumeSlider from '../VolumeSlider';
-import { ThreeDimensionAudioProperties } from '../../../lib/use-digital-stage';
-import { IAnalyserNode, IAudioContext } from 'standardized-audio-context';
-import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-import { BiReset, BiVolumeMute } from 'react-icons/bi';
-import { useIntl } from 'react-intl';
+import {IAnalyserNode, IAudioContext} from 'standardized-audio-context';
+import {FaChevronLeft, FaChevronRight} from 'react-icons/fa';
+import {BiReset, BiVolumeMute} from 'react-icons/bi';
+import {useIntl} from 'react-intl';
+import styles from "./ChannelStrip.module.css"
+import {ThreeDimensionalProperties, VolumeProperties} from '@digitalstage/api-client-react';
+import PrimaryButton from "../../../ui/button/PrimaryButton";
 
 const CHANNEL_PADDING_REM = 0.2;
 
-const ChannelStrip = (props: {
-  children?: React.ReactNode;
+const ChannelStrip = (props: React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLDivElement>, HTMLDivElement> & {
   name: string;
   elevation?: number;
-  sx?: SxStyleProp;
   initialCollapse?: boolean;
   icon?: React.ReactNode;
 
-  channel: ThreeDimensionAudioProperties;
+  channel: ThreeDimensionalProperties & VolumeProperties;
   onChange: (volume: number, muted: boolean) => void;
   global?: boolean;
 
@@ -32,7 +29,7 @@ const ChannelStrip = (props: {
     children,
     name,
     elevation,
-    sx,
+    className,
     initialCollapse,
     icon,
     channel,
@@ -47,8 +44,8 @@ const ChannelStrip = (props: {
   const [muted, setMuted] = useState<boolean>();
   const [value, setValue] = useState<number>();
   const [hasChildren, setHasChildren] = useState<boolean>(false);
-  const { formatMessage } = useIntl();
-  const f = (id) => formatMessage({ id });
+  const {formatMessage} = useIntl();
+  const f = (id) => formatMessage({id});
 
   useEffect(() => {
     setHasChildren(React.Children.count(children) > 0);
@@ -78,88 +75,45 @@ const ChannelStrip = (props: {
   }, [onChange, channel, value]);
 
   return (
-    <Flex
-      sx={{
-        flexDirection: 'row',
-        flexWrap: 'nowrap',
-        justifyContent: 'flex-start',
-        alignItems: 'stretch',
-        borderRadius: 'card',
-        minHeight: '100%',
-        ...sx,
-      }}
+    <div
+      className={`${styles.row} ${className}`}
     >
-      <Flex
-        sx={{
-          width: '140px',
-          flexDirection: 'column',
-          padding: elevation * CHANNEL_PADDING_REM * 2 + 'rem',
-        }}
+      <div
+        className={"column"}
       >
-        <Flex
-          sx={{
-            width: '100%',
-            alignItems: 'center',
-            cursor: hasChildren && 'pointer',
-          }}
+        <div
+          className="strip"
           onClick={() => {
             console.log(React.Children.count(children));
             setCollapsed((prev) => !prev);
           }}
         >
           {icon ? (
-            <Flex
-              sx={{
-                width: '50%',
-                marginLeft: '25%',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
+            <div className={styles.icon}>
               {icon}
-            </Flex>
+            </div>
           ) : (
-            <Heading
-              variant="h4"
-              sx={{
-                flexGrow: 1,
-              }}
-            >
+            <h4 className={styles.grow}>
               {name}
-            </Heading>
+            </h4>
           )}
           {hasChildren && (
-            <IconButton
-              sx={{
-                flexGrow: 0,
-              }}
-              variant="icon"
+            <PrimaryButton
+              round
+              className={styles.noGrow}
             >
-              {collapsed ? <FaChevronLeft size="32px" /> : <FaChevronRight size="32px" />}
-            </IconButton>
+              {collapsed ? <FaChevronLeft size="32px"/> : <FaChevronRight size="32px"/>}
+            </PrimaryButton>
           )}
-        </Flex>
+        </div>
 
         {icon && (
-          <Heading
-            variant="h4"
-            sx={{
-              py: 4,
-            }}
-          >
+          <h4 className={styles.headingWithoutIcon}>
             {name}
-          </Heading>
+          </h4>
         )}
 
-        <Flex
-          sx={{
-            flexDirection: 'column',
-            flexGrow: 1,
-            pt: 4,
-            alignItems: 'center',
-            justifyContent: 'flex-end',
-          }}
-        >
+        <div className={styles.sliderWrapper}>
           <VolumeSlider
             min={0}
             middle={1}
@@ -171,45 +125,60 @@ const ChannelStrip = (props: {
             analyserR={analyserR}
             color={resettable ? (global ? '#9A9A9A' : '#6f92f8') : '#393939'}
           />
-          <Flex sx={{}}>
-            <IconButton
-              sx={{
-                flexGrow: 0,
-              }}
+          <div>
+            <PrimaryButton
+              round
+              className={styles.noGrow}
               aria-label={f(muted ? 'unmute' : 'mute')}
               title={f(muted ? 'unmute' : 'mute')}
-              variant={muted ? 'iconPrimary' : 'iconTertiary'}
+              toggled={muted}
               onClick={handleMute}
               aria-pressed={muted}
             >
-              <BiVolumeMute />
-            </IconButton>
+              <BiVolumeMute/>
+            </PrimaryButton>
 
-            <IconButton
-              sx={{
-                flexGrow: 0,
-              }}
+            <PrimaryButton
+              round
+              className={styles.noGrow}
               aria-label={f(global ? 'resetGlobalMix' : 'resetCustomMix')}
               title={f(global ? 'resetGlobalMix' : 'resetCustomMix')}
-              variant="iconTertiary"
               onClick={onReset}
               disabled={!resettable}
             >
-              <BiReset />
-            </IconButton>
-          </Flex>
-        </Flex>
-      </Flex>
+              <BiReset/>
+            </PrimaryButton>
+          </div>
+        </div>
+      </div>
       {hasChildren && collapsed && (
-        <Flex
-          sx={{
-            padding: elevation * CHANNEL_PADDING_REM + 'rem',
-          }}
-        >
+        <div className="childrenWrapper">
           {children}
-        </Flex>
+        </div>
       )}
-    </Flex>
+      <style jsx>{`
+      .column {
+            display: flex;
+            width: 140px;
+            flex-direction: column;
+        }
+        .strip {
+          width: 100%;
+          align-items: center;
+        }
+        `}</style>
+      <style jsx>{`
+      .column {
+          padding: ${elevation * CHANNEL_PADDING_REM * 2 + 'rem'};
+        }
+        .strip {
+          cursor: ${hasChildren ? 'pointer' : 'default'};
+        }
+        .childrenWrapper {
+            padding: ${elevation * CHANNEL_PADDING_REM + 'rem'};
+        }
+        `}</style>
+    </div>
   );
 };
 export default ChannelStrip;

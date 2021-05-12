@@ -1,11 +1,9 @@
-/** @jsxRuntime classic */
-/** @jsx jsx */
-import { jsx, Text, Flex, SxStyleProp, Box } from 'theme-ui';
-import { Direction, Range } from 'react-range';
-import React, { useCallback, useEffect, useState } from 'react';
-import { convertRangeToDbMeasure, formatDbMeasure, getBaseLog } from './utils';
-import { IAnalyserNode, IAudioContext } from 'standardized-audio-context';
+import {Direction, Range} from 'react-range';
+import React, {useCallback, useEffect, useState} from 'react';
+import {convertRangeToDbMeasure, formatDbMeasure, getBaseLog} from './utils';
+import {IAnalyserNode, IAudioContext} from 'standardized-audio-context';
 import LevelMeter from './LevelMeter';
+import styles from "./VolumeSlider.module.css"
 
 /**
  * Base for the logarithmic ratio below 0db
@@ -24,7 +22,7 @@ const MAX = 100;
 const STEP = 5;
 const NULL_VALUE = 70;
 
-const VolumeSlider = (props: {
+const VolumeSlider = (props: React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLDivElement>, HTMLDivElement> & {
   min: number;
   middle: number;
   max: number;
@@ -35,7 +33,6 @@ const VolumeSlider = (props: {
   onFinalChange?: (value: number) => any;
   alignLabel?: 'left' | 'right';
   color: string;
-  sx?: SxStyleProp;
 }): JSX.Element => {
   const {
     onChange,
@@ -48,7 +45,8 @@ const VolumeSlider = (props: {
     analyserL,
     analyserR,
     color,
-    sx,
+    className,
+    ...other
   } = props;
   const [internalValue, setInternalValue] = useState<number>();
   const [dbValue, setDbValue] = useState<number>();
@@ -107,19 +105,14 @@ const VolumeSlider = (props: {
   );
 
   return (
-    <Flex
-      sx={{
-        flexDirection: 'column',
-        alignItems: alignLabel === 'right' ? 'flex-start' : 'flex-end',
-        width: '60px',
-        height: '251px',
-        ...sx,
-      }}
-    >
+    <div className={`${styles.wrapper} wrapperAlignment ${className}`} {...other}>
+      <style jsx>{`
+        .wrapperAlignment {
+          align-items: ${alignLabel === 'right' ? 'flex-start' : 'flex-end'};
+        }
+        `}
+      </style>
       <Range
-        sx={{
-          flexGrow: 1,
-        }}
         direction={Direction.Up}
         step={STEP}
         min={MIN}
@@ -127,40 +120,40 @@ const VolumeSlider = (props: {
         values={[internalValue]}
         onChange={(values) => handleSliderChange(values[0])}
         onFinalChange={(values) => handleFinalSliderChange(values[0])}
-        renderMark={({ props: markProps, index }) => (
+        renderMark={({props: markProps, index}) => (
           <div {...markProps}>
             {index % 2 === 0 && (
-              <React.Fragment>
-                <Box
-                  sx={{
-                    position: 'absolute',
-                    top: 0,
-                    left: alignLabel === 'right' ? '22px' : undefined,
-                    right: alignLabel === 'right' ? undefined : '22px',
-                    width: '3px',
-                    height: '3px',
-                    borderRadius: '50%',
-                    backgroundColor: color,
-                  }}
-                />
-                <Text
-                  variant="micro"
-                  sx={{
-                    position: 'absolute',
-                    top: 0,
-                    left: alignLabel === 'right' ? '28px' : undefined,
-                    right: alignLabel === 'right' ? undefined : '28px',
-                    transform: 'translateY(-50%)',
-                    color: color,
-                  }}
-                >
+              <>
+                <style jsx>{`
+                .mark {
+                  position: absolute;
+                  top: 0;
+                  left: ${alignLabel === 'right' ? '22px' : '0'};
+                  right: ${alignLabel === 'right' ? '0' : '22px'};
+                  width: 3px;
+                  height: 3px;
+                  border-radius: 50%;
+                  background-color: ${color};
+                }
+                .caption {
+                  position: absolute;
+                  top: 0;
+                  left: ${alignLabel === 'right' ? '28px' : '0'};
+                  right: ${alignLabel === 'right' ? '0' : '28px'};
+                  transform: translateY(-50%);
+                  color: ${color};
+                }
+                `}
+                </style>
+                <div className="mark"/>
+                <p className="caption micro">
                   {formatDbMeasure(convertRangeToDbMeasure(convertLinearToLog((20 - index) * 5)))}
-                </Text>
-              </React.Fragment>
+                </p>
+              </>
             )}
           </div>
         )}
-        renderTrack={({ props: trackProps, children }) => (
+        renderTrack={({props: trackProps, children}) => (
           <div
             {...trackProps}
             style={{
@@ -185,18 +178,18 @@ const VolumeSlider = (props: {
               {analyserL ? (
                 analyserR ? (
                   <React.Fragment>
-                    <LevelMeter sx={{ width: '50%', height: '100%' }} analyser={analyserL} />
-                    <LevelMeter sx={{ width: '50%', height: '100%' }} analyser={analyserR} />
+                    <LevelMeter className={styles.half} analyser={analyserL}/>
+                    <LevelMeter className={styles.half} analyser={analyserR}/>
                   </React.Fragment>
                 ) : (
-                  <LevelMeter sx={{ width: '100%', height: '100%' }} analyser={analyserL} />
+                  <LevelMeter className={styles.full} analyser={analyserL}/>
                 )
               ) : undefined}
             </div>
             {children}
           </div>
         )}
-        renderThumb={({ props: thumbProps, isDragged }) => {
+        renderThumb={({props: thumbProps, isDragged}) => {
           return (
             <div
               {...thumbProps}
@@ -214,18 +207,10 @@ const VolumeSlider = (props: {
           );
         }}
       />
-      <Text
-        sx={{
-          flexGrow: 0,
-          textAlign: 'center',
-          width: '100%',
-          py: 4,
-        }}
-        variant="micro"
-      >
+      <p className={`${styles.measureText} micro`}>
         {formatDbMeasure(dbValue)} db
-      </Text>
-    </Flex>
+      </p>
+    </div>
   );
 };
 export default VolumeSlider;

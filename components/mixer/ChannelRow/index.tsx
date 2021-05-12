@@ -1,21 +1,14 @@
-/** @jsxRuntime classic */
-/** @jsx jsx */
 import React from 'react';
-import { jsx, Flex, SxStyleProp } from 'theme-ui';
+import styles from "./ChannelRow.module.css"
 
-const ChannelRow = (props: { children?: React.ReactNode; sx: SxStyleProp }): JSX.Element => {
-  const { children, sx } = props;
+const ChannelRow = ({children, className, ...other}: React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLDivElement>, HTMLDivElement>): JSX.Element => {
   return (
-    <Flex
-      sx={{
-        flexDirection: 'row',
-        flexWrap: 'nowrap',
-        borderRadius: 'card',
-        ...sx,
-      }}
+    <div
+      className={`${styles.wrapper} ${className}`}
+      {...other}
     >
       {children}
-    </Flex>
+    </div>
   );
 };
 export default ChannelRow;
