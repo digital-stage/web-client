@@ -4,14 +4,14 @@ import {IAnalyserNode, IAudioContext} from "standardized-audio-context";
 import VolumeSlider from "../VolumeSlider";
 import styles from "./ChannelStrip.module.css"
 import SecondaryButton from "../../../ui/button/SecondaryButton";
-import {IoIosVolumeHigh, IoIosVolumeOff} from "react-icons/io";
+import {IoIosVolumeOff} from "react-icons/io";
 import {VolumeProperties} from "@digitalstage/api-types";
 import {BiReset} from "react-icons/bi";
+import DangerButton from "../../../ui/button/DangerButton";
 
 const ChannelStrip = (props: {
   channel: VolumeProperties;
   onChange: (volume: number, muted: boolean) => void;
-  global?: boolean;
   resettable?: boolean;
   onReset?: () => void;
   analyserL?: IAnalyserNode<IAudioContext>;
@@ -20,10 +20,11 @@ const ChannelStrip = (props: {
   className?: string;
 }) => {
   const {
-    channel, onChange, global, resettable, onReset, analyserL, analyserR, className, color
+    channel, onChange, resettable, onReset, analyserL, analyserR, className, color
   } = props;
   const [muted, setMuted] = useState<boolean>();
   const [value, setValue] = useState<number>();
+
   useEffect(() => {
     if (channel) {
       setValue(channel.volume);
@@ -65,19 +66,21 @@ const ChannelStrip = (props: {
         }}
       />
       <div className={styles.bottom}>
-        <SecondaryButton
+        <DangerButton
           className={styles.button}
-          size="small" round toggled={muted}
+          size="small"
+          round
+          toggled={muted}
           onClick={handleMute}>
-          {channel.muted ? <IoIosVolumeHigh size={18}/> : <IoIosVolumeOff size={18}/>}
-        </SecondaryButton>
+          <IoIosVolumeOff size={18}/>
+        </DangerButton>
         <SecondaryButton
           className={styles.button}
           round
           size="small"
           disabled={!resettable}
           onClick={() => {
-            if( onReset ) {
+            if (onReset) {
               onReset()
             }
           }}

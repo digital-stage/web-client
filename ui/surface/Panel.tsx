@@ -13,7 +13,7 @@ const Panel = (props: React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElemen
   level?: LEVEL[keyof LEVEL];
   fill?: boolean;
 }) => {
-  const {level, fill, ...other} = props;
+  const {level, fill, className, ...other} = props;
   let levelStyle = styles.level1;
   switch (level) {
     case 'level2': {
@@ -36,6 +36,6 @@ const Panel = (props: React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElemen
       break;
     }
   }
-  return <div className={`${styles.panel} ${fill ? styles.fill : ""} ${levelStyle} ${other.className || ""}`} {...other}/>
+  return <div className={`${styles.panel} ${fill ? styles.fill : ""} ${levelStyle} ${className}`} {...other}/>
 }
 export default Panel;

@@ -6,6 +6,7 @@ import {
 } from "@digitalstage/api-client-react";
 import React from "react";
 import SingleVideoPlayer from "../ui/media/SingleVideoPlayer";
+import GlobalDeviceController from "../components/global/GlobalDeviceController";
 
 const StageMemberView = (props: { id: string }) => {
   const {id} = props
@@ -55,6 +56,8 @@ const Stage = () => {
   return (
     <div>
       {groupIds.map(groupId => <GroupView key={groupId} id={groupId}/>)}
+
+      <GlobalDeviceController/>
     </div>
   )
 }

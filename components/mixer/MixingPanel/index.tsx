@@ -18,7 +18,6 @@ import {
 import React, {useEffect, useState} from "react";
 import styles from "./MixingPanel.module.css"
 import {IoIosArrowBack, IoIosArrowForward} from "react-icons/io"
-import VolumeSlider from "../VolumeSlider";
 import useColors from "../../../hooks/useColors";
 import HSLColor from "../../../hooks/useColors/HSLColor";
 import {useCallback} from "react";
@@ -416,8 +415,9 @@ const MixingPanel = () => {
           </div>
         )}
         <div className={styles.inner}>
-          {groupIds.map(groupId => <div key={groupId} className={styles.groupWrapper}><GroupPanel id={groupId}
-                                                                                                  globalMode={globalMode}/>
+          {groupIds.map(groupId => <div key={groupId} className={styles.groupWrapper}>
+            <GroupPanel id={groupId}
+                        globalMode={globalMode}/>
           </div>)}
         </div>
       </div>

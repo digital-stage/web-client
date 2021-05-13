@@ -3,7 +3,6 @@ import {useMediasoup, useStageSelector} from '@digitalstage/api-client-react'
 import styles from './PageWrapper.module.css'
 import NavigationBar from './navigation/NavigationBar'
 import Background from '../ui/surface/Background'
-import GlobalDeviceController from './global/GlobalDeviceController'
 import MobileMenu from "./navigation/MobileMenu";
 
 const AudioPlayer = (props: { track: MediaStreamTrack }) => {
@@ -42,7 +41,6 @@ const PageWrapper = (props: { children: React.ReactNode }) => {
       </div>
       <div className={styles.content}>{children}</div>
       <StageAudioPlayer/>
-      <GlobalDeviceController/>
       <MobileMenu/>
     </div>
   )

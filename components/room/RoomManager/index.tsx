@@ -16,13 +16,15 @@ import Tab from "../../../ui/surface/Tab";
 import {ClientDeviceEvents} from '@digitalstage/api-types';
 import {ClientDevicePayloads} from '@digitalstage/api-types';
 import useSelectedDevice from "../../../hooks/useSelectedDevice";
+import HeadlineButton from "../../../ui/button/HeadlineButton";
+import DeviceSelector from "../../global/DeviceSelector";
 
 const RoomManager = (): JSX.Element => {
   const connection = useConnection()
   const {device} = useSelectedDevice();
   const users = useStageSelector<RemoteUsers>(state => state.remoteUsers);
   const stage = useStageSelector<Stage>(state => state.globals.stageId && state.stages.byId[state.globals.stageId])
-  const isStageAdmin = useStageSelector<boolean>(state => stage && state.globals.localUser && stage.admins.some(admin => admin === state.globals.localUser._id))
+  const isSoundEditor = useStageSelector<boolean>(state => state.globals.localUser && state.globals.stageId && state.stages.byId[state.globals.stageId].soundEditors.some(admin => admin === state.globals.localUser._id))
 
   const stageMembers = useStageSelector<StageMember[]>(state => stage ? state.stageMembers.byStage[stage._id].map(id => state.stageMembers.byId[id]) : []);
   const customStageMemberPositions = useStageSelector<CustomStageMemberPositions>(state => state.customStageMemberPositions);
@@ -35,23 +37,33 @@ const RoomManager = (): JSX.Element => {
   const [globalMode, setGlobalMode] = useState<boolean>(false);
   const {formatMessage} = useIntl();
   const f = (id) => formatMessage({id});
-
+  
   if (stage) {
     return (
       <div
         className={styles.wrapper}
       >
-        {isStageAdmin ? (
-          <React.Fragment>
-            <Tabs>
-              <Tab title={f('monitor')} onClick={() => setGlobalMode(false)}/>
-              <Tab title={f('global')} onClick={() => setGlobalMode(true)}/>
-            </Tabs>
-            <p className="micro">
-              {f(globalMode ? 'globalDescription' : 'monitorDescription')}
-            </p>
-          </React.Fragment>
-        ) : null}
+        {isSoundEditor && (
+          <div className={styles.globalModePanel}>
+            <div className={styles.globalModeSelect}>
+              <HeadlineButton toggled={!globalMode} onClick={() => setGlobalMode(false)}>
+                Personal mix
+              </HeadlineButton>
+              <HeadlineButton toggled={globalMode} onClick={() => setGlobalMode(true)}>
+                Global mix
+              </HeadlineButton>
+            </div>
+            <p className="micro">{f(globalMode ? 'globalDescription' : 'monitorDescription')}</p>
+          </div>
+        )}
+        {!globalMode && (
+          <div className={styles.deviceSelect}>
+            <label className="micro">
+              Betreffendes Gerät:&nbsp;&nbsp;
+              <DeviceSelector/>
+            </label>
+          </div>
+        )}
 
         <div className={styles.editorWrapper}>
           <RoomEditor
@@ -86,7 +98,7 @@ const RoomManager = (): JSX.Element => {
             width={stage.width}
             height={stage.height}
             onChange={(element) => {
-              if (globalMode && isStageAdmin) {
+              if (globalMode && isSoundEditor) {
                 connection.emit(ClientDeviceEvents.ChangeStageMember, {
                   _id: element._id,
                   x: element.x,
@@ -110,7 +122,7 @@ const RoomManager = (): JSX.Element => {
           <PrimaryButton
             className={styles.buttonResetAll}
             onClick={() => {
-              if (globalMode && isStageAdmin) {
+              if (globalMode && isSoundEditor) {
                 // Also reset stage members
                 stageMembers.forEach((stageMember) => {
                   connection.emit(ClientDeviceEvents.ChangeStageMember, {
@@ -134,7 +146,7 @@ const RoomManager = (): JSX.Element => {
               className={styles.buttonResetSingle}
               onClick={() => {
                 if (selected) {
-                  if (globalMode && isStageAdmin) {
+                  if (globalMode && isSoundEditor) {
                     connection.emit(ClientDeviceEvents.ChangeStageMember, {
                       _id: selected._id,
                       x: 0,
@@ -155,20 +167,6 @@ const RoomManager = (): JSX.Element => {
             </PrimaryButton>
           )}
         </div>
-
-        {/* Mobile extra */}
-        {isStageAdmin ? (
-          <div className={styles.mobileSelectWrapper}>
-            <Select
-              className={styles.select}
-              onChange={(e) => setGlobalMode(e.target.value === 'global')}
-              value={globalMode ? 'global' : 'monitor'}
-            >
-              <option value="global">{f('global')}</option>
-              <option value="monitor">{f('monitor')}</option>
-            </Select>
-          </div>
-        ) : null}
       </div>
     );
   }
