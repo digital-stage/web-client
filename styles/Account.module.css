@@ -53,3 +53,9 @@
     text-align: left;
     width: 100%;
 }
+.formTitle {
+    padding-bottom: 1rem;
+}
+.formText {
+    padding-bottom: 1rem;
+}

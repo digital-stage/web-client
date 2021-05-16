@@ -1,4 +1,4 @@
-import { AuthError, ErrorCodes } from '@digitalstage/api-client-react/dist/hooks/useAuth'
+import { AuthError, ErrorCodes } from "@digitalstage/api-client-react"
 
 const translateError = (error: Error): string => {
     if ((error as AuthError).code !== undefined) {

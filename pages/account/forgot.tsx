@@ -8,18 +8,14 @@ import styles from '../../styles/Account.module.css'
 import AuthNavigation from '../../components/account/AuthNavigation'
 import LoginForm from '../../components/account/forms/LoginForm'
 import AuthContainer from "../../components/account/AuthContainer";
+import ForgetPasswordForm from "../../components/account/forms/ForgetPasswordForm";
+import TertiaryButton from "../../ui/button/TertiaryButton";
 
 const Login = () => {
   const {loading, user} = useAuth()
   const {push, prefetch} = useRouter()
   const {formatMessage} = useIntl()
   const f = (id) => formatMessage({id})
-
-  useEffect(() => {
-    if (prefetch) {
-      prefetch('/account/signup')
-    }
-  }, [prefetch])
 
   useEffect(() => {
     if (push && !loading && user) {
@@ -29,13 +25,13 @@ const Login = () => {
 
   return (
     <AuthContainer>
-      <AuthNavigation/>
-      <LoginForm/>
-      <Link href="/account/forgot" passHref>
-        <a className={styles.link}>{f('forgotPassword')}</a>
-      </Link>
-      <Link href="/account/reactivate" passHref>
-        <a className={styles.link}>{f('resendActivationLink')}</a>
+      <div className={styles.formHeader}>
+        <h3 className={styles.formTitle}>{f('resetPassword')}</h3>
+        <p className={`${styles.formText} micro`}>{f('enterEmailToReset')}</p>
+      </div>
+      <ForgetPasswordForm/>
+      <Link href="/account/login" passHref>
+        <a className={styles.link}>{f('cancel')}</a>
       </Link>
     </AuthContainer>
   )

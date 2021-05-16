@@ -1,28 +1,95 @@
-import {useStageSelector} from "@digitalstage/api-client-react";
-import {Group, Stage} from "@digitalstage/api-types";
+import {StageMember, useConnection, User, useStageSelector} from "@digitalstage/api-client-react";
+import {ClientDeviceEvents, ClientDevicePayloads, Group, Stage} from "@digitalstage/api-types";
 import styles from './StageList.module.css'
-import Panel from "../../ui/surface/Panel";
+import DangerButton from "../../ui/button/DangerButton";
 
-const StageMemberItem = (props: {
-  id: string
+const StageMemberRow = (props: {
+  id: string,
+  stage: Stage
 }) => {
-  return (
-    <ul className={styles.list}>
-      <li className={styles.listItem}>
+  const {id, stage} = props;
+  const stageMember = useStageSelector<StageMember>(state => state.stageMembers.byId[id])
+  const user = useStageSelector<User>(state => state.remoteUsers.byId[stageMember.userId])
+  const connection = useConnection()
+  const isSoundEditor = stage.soundEditors.some(editor => editor === user._id)
+  const isAdmin = stage.admins.some(admin => admin === user._id)
 
-      </li>
-    </ul>
+  return (
+    <div>
+      {user.name}
+      {isAdmin && (
+        <>
+
+          <label>
+            <input type="checkbox" checked={isSoundEditor} onChange={() => {
+              if (isSoundEditor) {
+                connection.emit(ClientDeviceEvents.ChangeStage, {
+                  _id: stage._id,
+                  soundEditors: stage.soundEditors.filter(editor => editor !== user._id)
+                })
+              } else {
+                connection.emit(ClientDeviceEvents.ChangeStage, {
+                  _id: stage._id,
+                  soundEditors: [stage.soundEditors, user._id]
+                } as ClientDevicePayloads.ChangeStage)
+              }
+            }}/>
+            Sound editor
+          </label>
+          <label>
+            <input type="checkbox"
+                   disabled={stage.admins.length === 1}
+                   checked={isAdmin}
+                   onChange={() => {
+                     if (isAdmin && stage.admins.length > 1) {
+                       connection.emit(ClientDeviceEvents.ChangeStage, {
+                         _id: stage._id,
+                         admins: stage.admins.filter(editor => editor !== user._id)
+                       })
+                     } else {
+                       connection.emit(ClientDeviceEvents.ChangeStage, {
+                         _id: stage._id,
+                         admins: [stage.admins, user._id]
+                       } as ClientDevicePayloads.ChangeStage)
+                     }
+                   }}/>
+            Stage administrator
+          </label>
+          <DangerButton onClick={() => connection.emit(ClientDeviceEvents.RemoveStageMember, id)}>
+            Kick
+          </DangerButton>
+        </>
+      )}
+    </div>
   )
 }
-const GroupItem = (props: {
+const GroupRow = (props: {
   id: string
+  stage: Stage
 }) => {
-  const {id} = props
+  const {id, stage} = props;
   const group = useStageSelector<Group>(state => state.groups.byId[id])
+  const stageMemberIds = useStageSelector<string[]>(state => state.stageMembers.byGroup[id] || [])
+
   return (
-    <li className={styles.group}>
+    <div>
       {group.name}
-    </li>
+      {stageMemberIds.map(stageMemberId =>
+        <StageMemberRow id={stageMemberId} stage={stage}/>)}
+    </div>
+  )
+}
+const StageView = () => {
+  const stage = useStageSelector<Stage | undefined>(state => state.globals.stageId && state.stages.byId[state.globals.stageId])
+  const groupIds = useStageSelector<string[]>(state => stage && state.groups.byStage[stage._id])
+
+  return (
+    <div>
+      {stage.name}
+      <div>
+        {groupIds.map(groupId => <GroupRow key={groupId} id={groupId} stage={stage}/>)}
+      </div>
+    </div>
   )
 }
 
@@ -30,18 +97,12 @@ const StageList = () => {
   const stage = useStageSelector<Stage | undefined>(state => state.globals.stageId && state.stages.byId[state.globals.stageId])
   const groupIds = useStageSelector<string[]>(state => stage && state.groups.byStage[stage._id])
 
-  if( stage ) {
+  if (stage) {
     return (
       <div className={styles.wrapper}>
         <h3>Aktuelle Bühne</h3>
         <h2>{stage.name}</h2>
-        <div className={styles.list}>
-          <div className={styles.groupItem}>
-            GRUPPE
-          </div>
-
-        </div>
-        {groupIds.map(groupId => <GroupItem id={groupId}/>)}
+        <StageView  />
       </div>
     )
   }
