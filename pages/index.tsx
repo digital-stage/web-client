@@ -1,6 +1,7 @@
 import {useEffect, useState} from 'react'
 import {useRouter} from 'next/router'
 import {useAuth, useStageSelector} from '@digitalstage/api-client-react'
+import LoadingOverlay from "../components/LoadingOverlay";
 
 export default function Home() {
   const {loading, user} = useAuth()
@@ -27,7 +28,7 @@ export default function Home() {
     }
   }, [user, loading, push, ready, stageId])
 
-  return (<div className={}>
+  return (<LoadingOverlay>
     <h1>Lade {state}...</h1>
-  </div>)
+  </LoadingOverlay>)
 }

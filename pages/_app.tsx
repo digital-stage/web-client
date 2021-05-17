@@ -1,4 +1,5 @@
-import '../styles/root.scss'
+import '../styles/reset.css'
+import '../styles/root.css'
 import {DigitalStageProvider} from '@digitalstage/api-client-react'
 import {useRouter} from 'next/router'
 import React from 'react'
