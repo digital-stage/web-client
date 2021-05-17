@@ -1,20 +1,23 @@
-import React, {useEffect, useState} from "react";
-import {useRouter} from "next/router";
-import Link from "next/link";
-import {LinkProps} from "next/dist/client/link";
-import styles from "./HeadlineButton.module.css"
+import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+import Link from 'next/link';
+import { LinkProps } from 'next/dist/client/link';
+import styles from './HeadlineButton.module.css';
 
-const PrimaryHeadlineLink = (props: React.DetailedHTMLProps<React.AnchorHTMLAttributes<HTMLAnchorElement>, HTMLAnchorElement> &
-  LinkProps): JSX.Element => {
-  const {href, locale, as, replace, scroll, shallow, passHref, prefetch, className, ...other} = props;
-  const {pathname} = useRouter();
+const PrimaryHeadlineLink = (
+  props: React.DetailedHTMLProps<React.AnchorHTMLAttributes<HTMLAnchorElement>, HTMLAnchorElement> &
+    LinkProps
+): JSX.Element => {
+  const { href, locale, as, replace, scroll, shallow, passHref, prefetch, className, ...other } =
+    props;
+  const { pathname } = useRouter();
   const [active, setActive] = useState<boolean>(false);
 
   useEffect(() => {
     if (pathname) {
-      setActive(pathname.endsWith(href))
+      setActive(pathname.endsWith(href));
     }
-  }, [href, pathname])
+  }, [href, pathname]);
 
   return (
     <Link
@@ -27,23 +30,28 @@ const PrimaryHeadlineLink = (props: React.DetailedHTMLProps<React.AnchorHTMLAttr
       passHref={passHref}
       prefetch={prefetch}
     >
-      <a className={`${styles.button} ${styles.secondary} ${active && styles.active} ${className}`} {...other}/>
+      <a
+        className={`${styles.button} ${styles.secondary} ${active && styles.active} ${className}`}
+        {...other}
+      />
     </Link>
-  )
-}
+  );
+};
 
-
-const SecondaryHeadlineLink = (props: React.DetailedHTMLProps<React.AnchorHTMLAttributes<HTMLAnchorElement>, HTMLAnchorElement> &
-  LinkProps): JSX.Element => {
-  const {href, locale, as, replace, scroll, shallow, passHref, prefetch, className, ...other} = props;
-  const {pathname} = useRouter();
+const SecondaryHeadlineLink = (
+  props: React.DetailedHTMLProps<React.AnchorHTMLAttributes<HTMLAnchorElement>, HTMLAnchorElement> &
+    LinkProps
+): JSX.Element => {
+  const { href, locale, as, replace, scroll, shallow, passHref, prefetch, className, ...other } =
+    props;
+  const { pathname } = useRouter();
   const [active, setActive] = useState<boolean>(false);
 
   useEffect(() => {
     if (pathname) {
-      setActive(pathname.endsWith(href))
+      setActive(pathname.endsWith(href));
     }
-  }, [href, pathname])
+  }, [href, pathname]);
 
   return (
     <Link
@@ -56,14 +64,14 @@ const SecondaryHeadlineLink = (props: React.DetailedHTMLProps<React.AnchorHTMLAt
       passHref={passHref}
       prefetch={prefetch}
     >
-      <a className={`${styles.button} ${styles.secondary} ${active && styles.active} ${className}`} {...other}/>
+      <a
+        className={`${styles.button} ${styles.secondary} ${active && styles.active} ${className}`}
+        {...other}
+      />
     </Link>
-  )
-}
+  );
+};
 
-export {
-  PrimaryHeadlineLink,
-  SecondaryHeadlineLink
-}
+export { PrimaryHeadlineLink, SecondaryHeadlineLink };
 
-export default PrimaryHeadlineLink
+export default PrimaryHeadlineLink;

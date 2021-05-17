@@ -44,10 +44,11 @@
     ---input-error-border: #A41318;
     ---success: #41BD64;
     ---warn: #F0C11B;
-    ---grey-3: #292929;
     ---grey-1: #121212;
     ---grey-2: #1F1F1F;
+    ---grey-3: #292929;
     ---grey-4: #393939;
+    ---grey-5: #676767;
     ---text: #F4F4F4;
     ---text-contrast: #292929;
     ---muted: #808080;
@@ -62,4 +63,5 @@
     ---tab-border-secondary: #F20544;
 
     ---overlay: rgba(0, 0, 0, 0.3);
+
 }

@@ -12,7 +12,8 @@
     "start": "next start"
   },
   "dependencies": {
-    "@digitalstage/api-client-react": "^0.0.17",
+    "@digitalstage/api-client-react": "latest",
+    "@digitalstage/api-types": "latest",
     "body-scroll-lock": "^3.1.5",
     "concurrently": "^6.0.2",
     "debug": "^4.3.1",
@@ -30,6 +31,7 @@
     "react-range": "^1.8.7",
     "react-redux": "^7.2.4",
     "redux": "^4.1.0",
+    "sass": "^1.32.13",
     "standardized-audio-context": "^25.2.1",
     "yup": "^0.32.9"
   },

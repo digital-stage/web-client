@@ -1,77 +1,45 @@
-import styles from "./ProfileMenu.module.css"
-import SecondaryButton from "../../ui/button/SecondaryButton";
-import {disableBodyScroll, enableBodyScroll} from 'body-scroll-lock';
-import React, {useEffect, useRef, useState} from "react";
-import {FaUser} from "react-icons/fa";
-import DangerButton from "../../ui/button/DangerButton";
-import {useRouter} from "next/router";
-import TertiaryButton from "../../ui/button/TertiaryButton";
-import {useAuth, useStageSelector} from "@digitalstage/api-client-react";
-import Link from "next/link";
+/* eslint-disable jsx-a11y/anchor-is-valid */
+import React from 'react'
+import {FaUser} from 'react-icons/fa'
+import {useRouter} from 'next/router'
+import {useAuth, useStageSelector} from '@digitalstage/api-client-react'
+import Link from 'next/link'
+import DangerButton from '../../ui/button/DangerButton'
+import ProfileMenuComponent from "../../ui/new/navigation/ProfileMenu"
 
-const ProfileMenu = (props: React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>) => {
-  const {onClick, className, ...other} = props;
-  const [open, setOpen] = useState<boolean>(false);
-  const ref = useRef<HTMLDivElement>();
+const ProfileMenu = (
+  props: React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>
+) => {
+  const {onClick, className, ...other} = props
   const {push} = useRouter()
-  const {user: authUser} = useAuth();
-  const user = useStageSelector(state => state.globals.localUser);
+  const {user: authUser} = useAuth()
+  const user = useStageSelector((state) => state.globals.localUser)
 
-  useEffect(() => {
-    if (ref.current) {
-      const target = ref.current;
-      if (open) {
-        disableBodyScroll(target);
-        return () => {
-          enableBodyScroll(target);
-        }
-      }
-    }
-  }, [ref, open]);
+  if (user && authUser) {
+    return (
+      <ProfileMenuComponent icon={<FaUser/>}>
+        {user && (
+          <>
+              <p className="micro">Angemeldet als</p>
+            <h6>{user?.name}</h6>
+            <p className="micro">
+              <i>{authUser?.email}</i>
+            </p>
+              <hr/>
+              <p className="micro">
+                <Link href="/account/profile" passHref>
+                  <a>Profil bearbeiten</a>
+                </Link>
+              </p>
+            <DangerButton onClick={() => push('/account/logout')}>
+              Logout
+            </DangerButton>
+          </>
+        )}
+      </ProfileMenuComponent>
+    )
+  }
 
-  return (
-    <div className={styles.wrapper}>
-      <SecondaryButton
-        round
-        toggled={!open}
-        className={`${styles.button} ${className}`}
-        onClick={(e) => {
-          setOpen(prev => !prev)
-          if (onClick)
-            onClick(e)
-        }} {...other}>
-        <FaUser/>
-      </SecondaryButton>
-      {open && (
-        <>
-          <div className={styles.backdrop} onClick={() => setOpen(false)}/>
-          <div className={styles.menuPanel} ref={ref}>
-            {!user && (
-              <>
-                <p className="micro">
-                  Angemeldet als
-                </p>
-                <p className="micro">
-                  <strong>
-                    {user?.name}
-                  </strong>
-                </p>
-                <p className="micro">
-                  {authUser?.email}
-                </p>
-                <p className="micro">
-                  <hr />
-                  <Link href="/account/profile">
-                    <a className={styles.profileButton}>Profil bearbeiten</a>
-                  </Link>
-                </p>
-                <DangerButton onClick={() => push("/account/logout")}>Logout</DangerButton>
-              </>
-            )}
-          </div>
-        </>
-      )}
-    </div>
-  )
+  return null
 }
 export default ProfileMenu

@@ -4,7 +4,7 @@ import React, {useEffect} from 'react'
 import {useAuth} from '@digitalstage/api-client-react'
 import AuthNavigation from '../../components/account/AuthNavigation'
 import SignUpForm from '../../components/account/forms/SignUpForm'
-import AuthContainer from "../../components/account/AuthContainer";
+import AuthContainer from "../../ui/new/auth/AuthContainer";
 
 const SignUp = () => {
   const {loading, user} = useAuth()

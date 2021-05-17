@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import uniqueId from 'lodash/uniqueId'
 import { useState } from 'react'
 import { BsEyeSlashFill, BsFillEyeFill } from 'react-icons/bs'
@@ -23,7 +24,9 @@ const Input = (
                 <input
                     id={id}
                     type={inputType}
-                    className={`${styles.input} ${className} ${type === 'password' ? styles.inputPassword : ''}`}
+                    className={`${styles.input} ${className} ${
+                        type === 'password' ? styles.inputPassword : ''
+                    }`}
                     aria-label={label}
                     aria-required={other.required}
                     aria-describedby={errorId}

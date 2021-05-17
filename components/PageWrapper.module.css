@@ -12,6 +12,7 @@
 .sidebar {
     display: flex;
     height: 100%;
+    flex-shrink: 0;
     flex-grow: 0;
     position: relative;
     align-content: space-between;

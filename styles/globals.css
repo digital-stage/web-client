@@ -40,6 +40,7 @@ body {
 
 p.micro {
     font-size: 0.8rem;
+    font-weight: 400;
 }
 
 input, select {
@@ -48,6 +49,14 @@ input, select {
 
 button {
     font-size: 0.8rem;
+}
+
+strong {
+    font-weight: 600
+}
+
+i {
+    font-style: italic;
 }
 
 h1 {

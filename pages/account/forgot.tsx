@@ -4,16 +4,12 @@ import {useAuth} from '@digitalstage/api-client-react'
 import {useRouter} from 'next/router'
 import {useIntl} from 'react-intl'
 import Link from 'next/link'
-import styles from '../../styles/Account.module.css'
-import AuthNavigation from '../../components/account/AuthNavigation'
-import LoginForm from '../../components/account/forms/LoginForm'
-import AuthContainer from "../../components/account/AuthContainer";
 import ForgetPasswordForm from "../../components/account/forms/ForgetPasswordForm";
-import TertiaryButton from "../../ui/button/TertiaryButton";
+import AuthFormLink from "../../ui/new/auth/AuthForm/AuthFormLink";
 
 const Login = () => {
   const {loading, user} = useAuth()
-  const {push, prefetch} = useRouter()
+  const {push} = useRouter()
   const {formatMessage} = useIntl()
   const f = (id) => formatMessage({id})
 
@@ -24,16 +20,16 @@ const Login = () => {
   }, [user, loading, push])
 
   return (
-    <AuthContainer>
-      <div className={styles.formHeader}>
-        <h3 className={styles.formTitle}>{f('resetPassword')}</h3>
-        <p className={`${styles.formText} micro`}>{f('enterEmailToReset')}</p>
+    <div className="auth container">
+      <div className="header">
+        <h3>{f('resetPassword')}</h3>
+        <p className="micro">{f('enterEmailToReset')}</p>
       </div>
       <ForgetPasswordForm/>
       <Link href="/account/login" passHref>
-        <a className={styles.link}>{f('cancel')}</a>
+        <AuthFormLink>{f('cancel')}</AuthFormLink>
       </Link>
-    </AuthContainer>
+    </div>
   )
 }
 export default Login

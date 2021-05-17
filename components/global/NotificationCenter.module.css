@@ -1,0 +1,15 @@
+.wrapper {
+    width: 100%;
+}
+.notification {
+    width: 100%;
+}
+.notification.warn {
+
+}
+.notification.error {
+
+}
+.notification.info {
+
+}

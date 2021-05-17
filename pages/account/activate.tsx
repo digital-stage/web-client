@@ -1,7 +1,7 @@
 import {useRouter} from 'next/router'
 import React from 'react'
 import ActivationForm from '../../components/account/forms/ActivationForm'
-import AuthContainer from "../../components/account/AuthContainer";
+import AuthContainer from "../../ui/new/auth/AuthContainer";
 
 const Activate = (): JSX.Element => {
   const {query} = useRouter()

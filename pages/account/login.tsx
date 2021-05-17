@@ -4,10 +4,8 @@ import {useAuth} from '@digitalstage/api-client-react'
 import {useRouter} from 'next/router'
 import {useIntl} from 'react-intl'
 import Link from 'next/link'
-import styles from '../../styles/Account.module.css'
-import AuthNavigation from '../../components/account/AuthNavigation'
 import LoginForm from '../../components/account/forms/LoginForm'
-import AuthContainer from "../../components/account/AuthContainer";
+import styles from "../../styles/Auth.module.scss"
 
 const Login = () => {
   const {loading, user} = useAuth()
@@ -28,16 +26,27 @@ const Login = () => {
   }, [user, loading, push])
 
   return (
-    <AuthContainer>
-      <AuthNavigation/>
+    <div className={styles.container}>
+      <header>
+        <Link href="/account/login" passHref>
+          <a>
+            {f('login')}
+          </a>
+        </Link>
+        <Link href="/account/signup" passHref>
+          <a>
+            {f('signUp')}
+          </a>
+        </Link>
+      </header>
       <LoginForm/>
       <Link href="/account/forgot" passHref>
-        <a className={styles.link}>{f('forgotPassword')}</a>
+        <a>{f('forgotPassword')}</a>
       </Link>
       <Link href="/account/reactivate" passHref>
-        <a className={styles.link}>{f('resendActivationLink')}</a>
+        <a>{f('resendActivationLink')}</a>
       </Link>
-    </AuthContainer>
+    </div>
   )
 }
 export default Login
