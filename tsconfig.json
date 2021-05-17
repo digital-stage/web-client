@@ -24,7 +24,6 @@
     "**/*.tsx"
   ],
   "exclude": [
-    "api-client-react",
     "node_modules"
   ]
 }

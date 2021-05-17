@@ -1,24 +1,25 @@
-import '../styles/reset.css'
-import '../styles/globals.css'
-import '../styles/dark.css'
+import '../styles/root.scss'
 import {DigitalStageProvider} from '@digitalstage/api-client-react'
 import {useRouter} from 'next/router'
-import {IntlProvider} from 'react-intl'
 import React from 'react'
-import * as locales from '../content/locale'
+import Head from 'next/Head'
 import {SelectedDeviceProvider} from '../hooks/useSelectedDevice'
-import PageWrapper from '../components/PageWrapper'
-import {ColorProvider} from "../hooks/useColors";
+import {ColorProvider} from '../hooks/useColors'
+import Layout from "../components/Layout";
 
-// eslint-disable-next-line react/prop-types
 function MyApp({Component, pageProps}) {
   const router = useRouter()
-  const {locale, defaultLocale} = router
-  const localeCopy = locales[locale]
-  const messages = localeCopy.default
 
   return (
-    <IntlProvider locale={locale} defaultLocale={defaultLocale} messages={messages}>
+    <>
+      <Head>
+        <title>Digital Stage</title>
+        <link href="/static/fonts/fonts.css" rel="stylesheet"/>
+        <meta
+          name="viewport"
+          content="initial-scale=1.0, width=device-width, shrink-to-fit=no"
+        />
+      </Head>
       <ColorProvider>
         <SelectedDeviceProvider>
           <DigitalStageProvider
@@ -26,15 +27,15 @@ function MyApp({Component, pageProps}) {
             authUrl={process.env.NEXT_PUBLIC_AUTH_URL}
           >
             <SelectedDeviceProvider>
-              <PageWrapper>
+              <Layout>
                 {/* eslint-disable-next-line react/jsx-props-no-spreading */}
                 <Component {...pageProps} />
-              </PageWrapper>
+              </Layout>
             </SelectedDeviceProvider>
           </DigitalStageProvider>
         </SelectedDeviceProvider>
       </ColorProvider>
-    </IntlProvider>
+    </>
   )
 }
 

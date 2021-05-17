@@ -1,14 +1,5 @@
-import React from 'react'
-import styles from './LoadingOverlay.module.css'
-import Image from 'next/image'
+import styles from "./LoadingOverlay.module.scss"
+import {ReactNode} from "react";
 
-const LoadingOverlay = (props: { children: React.ReactNode }) => {
-    const { children } = props
-    return (
-        <div className={styles.wrapper}>
-            <Image width={200} height={200} alt="Loading..." src="/static/logo.svg" />
-            {children}
-        </div>
-    )
-}
+const LoadingOverlay = ({children}: { children: ReactNode }) => <div className={styles.overlay}>{children}</div>
 export default LoadingOverlay
