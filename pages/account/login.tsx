@@ -1,11 +1,22 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Link from 'next/link'
+import { useAuth } from '@digitalstage/api-client-react'
+import { useRouter } from 'next/router'
 import AuthContainer from '../../components/AuthContainer'
 import LoginForm from '../../components/forms/LoginForm'
 import Block from '../../components/ui/Block'
 import { SecondaryHeadlineLink } from '../../components/ui/HeadlineLink'
 
 const Login = () => {
+    const { loading, user } = useAuth()
+    const { push } = useRouter()
+
+    useEffect(() => {
+        if (push && !loading && user) {
+            push('/')
+        }
+    }, [user, loading, push])
+
     return (
         <AuthContainer>
             <Block paddingBottom={4}>

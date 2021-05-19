@@ -1,4 +1,5 @@
 import { useAuth, useStageSelector } from '@digitalstage/api-client-react'
+import React from 'react'
 import styles from './Layout.module.scss'
 import Sidebar from './Sidebar'
 import Background from './ui/Background'
