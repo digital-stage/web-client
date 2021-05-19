@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import React from 'react'
 import Container from './ui/Container'
 import Panel from './ui/Panel'
 import Block from './ui/Block'
