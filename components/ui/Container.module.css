@@ -1,0 +1,13 @@
+.container {
+    display: block;
+    padding: 0 24px;
+    margin: 0 auto;
+}
+
+.container.narrow {
+    max-width: 428px;
+}
+
+.container.wide {
+    max-width: 800px;
+}

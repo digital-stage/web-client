@@ -1,0 +1,67 @@
+.button {
+    box-sizing: border-box;
+    -webkit-appearance: none;
+    display: inline-block;
+    text-align: center;
+    line-height: inherit;
+    text-decoration: none;
+    border-width: 2px;
+    border-style: solid;
+    border-color: transparent;
+    color: var(---danger-contrast, #F4F4F4);
+    background-color: var(---danger, #F20544);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.16);
+    white-space: nowrap;
+
+    transition-duration: 200ms;
+    transition-property: background;
+    transition-timing-function: cubic-bezier(0, 0, 1, 1);
+}
+
+.button.elliptic {
+    border-radius: 16px;
+    padding: 6px 12px;
+}
+
+.button.elliptic.small {
+    padding: 3px 6px;
+}
+
+.button.round {
+    border-radius: 50%;
+    padding: 12px;
+}
+
+.button.round.small {
+    padding: 6px;
+}
+
+
+.button.inactive {
+    color: var(---muted, #808080);
+    border-color: var(---muted, #808080);
+    background-color: var(---level-4, #808080);
+}
+
+.button:not(:disabled):hover {
+    border-color: var(---danger-hover, #B50030);
+    background-color: var(---danger-hover, #B50030);
+    cursor: pointer;
+}
+
+.button:not(:disabled):active {
+    border-color: var(---danger-active, #FA406B);
+    background-color: var(---danger-active, #FA406B);
+}
+
+.button:not(:disabled):focus {
+    border-color: var(---focus, #253CEB);
+    border-width: 4px;
+    outline: none;
+}
+
+.button:disabled {
+    opacity: 0.5;
+    cursor: default !important;
+    box-shadow: none;
+}

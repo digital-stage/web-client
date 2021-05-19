@@ -1,69 +1,72 @@
-import React, { useEffect, useState } from 'react';
-import { Field, Formik, FormikHelpers } from 'formik';
-import * as Yup from 'yup';
-import { useRouter } from 'next/router';
-import { useIntl } from 'react-intl';
-import { useAuth } from '@digitalstage/api-client-react';
-import translateError from '../utils/translateError';
-import Input from '../../../ui/form/Input';
-import PrimaryButton from '../../../ui/button/PrimaryButton';
-import Notification from '../../../ui/surface/Notification';
-import AuthForm from '../../../ui/new/auth/AuthForm';
+import React, { useEffect, useState } from 'react'
+import { Field, Form, Formik, FormikHelpers } from 'formik'
+import * as Yup from 'yup'
+import { useRouter } from 'next/router'
+import { useAuth } from '@digitalstage/api-client-react'
+import PrimaryButton from '../ui/PrimaryButton'
+import Input from '../ui/Input'
+import Block from '../ui/Block'
+import Notification from '../ui/Notification'
 
 export interface Values {
-  email: string;
+    email: string
 }
 
 const ResendActivationForm = (): JSX.Element => {
-  const { push } = useRouter();
-  const [message, setMessage] = useState<string>();
-  const { loading, user, resendActivationLink } = useAuth();
-  const { formatMessage } = useIntl();
-  const f = (id) => formatMessage({ id });
+    const { push } = useRouter()
+    const [message, setMessage] = useState<string>()
+    const { loading, user, resendActivationLink } = useAuth()
 
-  const Schema = Yup.object().shape({
-    email: Yup.string().email(f('enterValidEmail')).required(f('emailRequired')),
-  });
+    const Schema = Yup.object().shape({
+        email: Yup.string()
+            .email('E-Mail Adresse ist nicht gültig')
+            .required('E-Mail Adresse wird benötigt'),
+    })
 
-  useEffect(() => {
-    if (!loading && user) {
-      push('/');
-    }
-  }, [loading, user, push]);
+    useEffect(() => {
+        if (!loading && user) {
+            push('/')
+        }
+    }, [loading, user, push])
 
-  const notification = message ? <Notification>{message}</Notification> : null;
-
-  return (
-    <Formik
-      initialValues={{
-        email: '',
-      }}
-      validationSchema={Schema}
-      onSubmit={(values: Values, { resetForm }: FormikHelpers<Values>) => {
-        setMessage(undefined);
-        return resendActivationLink(values.email)
-          .then(() => resetForm(null))
-          .catch((err) => {
-            setMessage(translateError(err));
-          });
-      }}
-    >
-      {({ errors, touched, handleReset, handleSubmit }) => (
-        <AuthForm onReset={handleReset} onSubmit={handleSubmit}>
-          <Field
-            as={Input}
-            id="email"
-            label={f('emailAddress')}
-            type="text"
-            name="email"
-            autocomplete="email"
-            error={errors.email && touched.email}
-          />
-          {notification}
-          <PrimaryButton type="submit">{f('send')}</PrimaryButton>
-        </AuthForm>
-      )}
-    </Formik>
-  );
-};
-export default ResendActivationForm;
+    return (
+        <Formik
+            initialValues={{
+                email: '',
+            }}
+            validationSchema={Schema}
+            onSubmit={(values: Values, { resetForm }: FormikHelpers<Values>) => {
+                setMessage(undefined)
+                return resendActivationLink(values.email)
+                    .then(() => resetForm(null))
+                    .catch((err) => {
+                        setMessage(err)
+                    })
+            }}
+        >
+            {({ errors, touched, handleReset, handleSubmit }) => (
+                <Form onReset={handleReset} onSubmit={handleSubmit}>
+                    <Field
+                        as={Input}
+                        id="email"
+                        label="E-Mail Adresse"
+                        placeholder="E-Mail Adresse"
+                        type="text"
+                        name="email"
+                        autocomplete="email"
+                        error={errors.email && touched.email}
+                    />
+                    {message && (
+                        <Block paddingBottom={4}>
+                            <Notification type="error">{message}</Notification>
+                        </Block>
+                    )}
+                    <Block align="center">
+                        <PrimaryButton type="submit">Erneut senden</PrimaryButton>
+                    </Block>
+                </Form>
+            )}
+        </Formik>
+    )
+}
+export default ResendActivationForm

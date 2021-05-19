@@ -31,6 +31,7 @@
 
 
   ---danger: #F20544;
+  ---danger-dark: #B50030;
   ---danger-contrast: #F4F4F4;
   ---danger-hover: #B50030;
   ---danger-active: #FA406B;
@@ -40,7 +41,11 @@
   ---input-error: #9D131366;
   ---input-error-border: #A41318;
   ---success: #41BD64;
+  ---success-contrast: #F4F4F4;
+  ---success-dark: #2f8a49;
   ---warn: #F0C11B;
+  ---warn-dark: #bd9815;
+  ---warn-contrast: #F4F4F4;
   ---grey-1: #121212;
   ---grey-2: #1F1F1F;
   ---grey-3: #292929;

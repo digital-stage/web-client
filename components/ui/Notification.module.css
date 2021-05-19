@@ -1,0 +1,29 @@
+.notification {
+  padding: .5rem;
+  border-width: 1px;
+  flex-grow: 1;
+}
+
+.success {
+  color: var(---success-contrast, #F4F4F4);
+  background-color: var(---success, #41BD64);
+  border-color: var(---success-dark, #2f8a49);
+}
+
+.info {
+  color: var(---primary-contrast, #F4F4F4);
+  background-color: var(---primary, #5779D9);
+  border-color: var(---primary-dark, #012340);
+}
+
+.warn {
+  color: var(---warn-contrast, #F4F4F4);
+  background-color: var(---warn, #F0C11B);
+  border-color: var(---warn-dark, #bd9815);
+}
+
+.error {
+  color: var(---danger-contrast, #F4F4F4);
+  background-color: var(---danger, #F20544);
+  border-color: var(---danger-dark, #B50030);
+}

@@ -1,0 +1,191 @@
+$tablet: ("min-width": 600px, "min-height": 600px);
+$desktop: ("min-width": 800px, "min-height": 800px);
+$breakpoints: (
+        $tablet,
+        $desktop
+) !default;
+
+$paddings: (4px, 8px, 16px, 24px, 32px) !default;
+
+.block {
+  display: block;
+  flex-wrap: wrap;
+}
+
+.flex {
+  display: flex;
+}
+
+.column {
+  flex-direction: column;
+}
+
+/**
+  ALIGNMENT
+ */
+
+.block.stretch:not(.column) {
+  justify-content: stretch;
+}
+
+.block.column.stretch {
+  align-items: stretch;
+}
+
+.block.stretch:not(.column) {
+  justify-content: stretch;
+}
+
+.block.column.stretch {
+  align-items: stretch;
+}
+
+.block.start:not(.column) {
+  justify-content: flex-start;
+}
+
+.block.column.start {
+  align-items: flex-start;
+}
+
+.block.center:not(.column) {
+  justify-content: center;
+}
+
+.block.column.center {
+  align-items: center;
+}
+
+.block.end:not(.column) {
+  justify-content: flex-end;
+}
+
+.block.column.end {
+  align-items: flex-end;
+}
+
+@each $breakpoint in $breakpoints {
+  $index: index($breakpoints, $breakpoint);
+  @media only screen and (min-width: map-get($breakpoint, "min-width")) and (min-height: map-get($breakpoint, "min-height")) {
+
+    .block.stretch-#{$index}:not(.column) {
+      justify-content: stretch;
+    }
+    .block.column.stretch-#{$index} {
+      align-items: stretch;
+    }
+
+    .block.stretch-#{$index}:not(.column) {
+      justify-content: stretch;
+    }
+    .block.column.stretch-#{$index} {
+      align-items: stretch;
+    }
+
+    .block.start-#{$index}:not(.column) {
+      justify-content: flex-start;
+    }
+    .block.column.start-#{$index} {
+      align-items: flex-start;
+    }
+
+    .block.center-#{$index}:not(.column) {
+      justify-content: center;
+    }
+    .block.column.center-#{$index} {
+      align-items: center;
+    }
+
+    .block.end-#{$index}:not(.column) {
+      justify-content: flex-end;
+    }
+    .block.column.end-#{$index} {
+      align-items: flex-end;
+    }
+  }
+}
+
+/**
+PADDING
+ */
+@each $padding in $paddings {
+  $index: index($paddings, $padding);
+  @debug p-#{$index};
+  .block.p-#{$index} {
+    padding: $padding;
+  }
+  .block.pt-#{$index} {
+    padding-top: $padding;
+  }
+  .block.pl-#{$index} {
+    padding-left: $padding;
+  }
+  .block.pb-#{$index} {
+    padding-bottom: $padding;
+  }
+  .block.pr-#{$index} {
+    padding-right: $padding;
+  }
+
+  @each $breakpoint in $breakpoints {
+    $breakpointIndex: index($breakpoints, $breakpoint);
+    @media only screen and (min-width: map-get($breakpoint, "min-width")) and (min-height: map-get($breakpoint, "min-height")) {
+      .block.p-#{$breakpointIndex}-#{$index} {
+        padding: $padding;
+      }
+      .block.pt-#{$breakpointIndex}-#{$index} {
+        padding-top: $padding;
+      }
+      .block.pl-#{$breakpointIndex}-#{$index} {
+        padding-left: $padding;
+      }
+      .block.pb-#{$breakpointIndex}-#{$index} {
+        padding-bottom: $padding;
+      }
+      .block.pr-#{$breakpointIndex}-#{$index} {
+        padding-right: $padding;
+      }
+    }
+  }
+}
+
+
+/**
+  WIDTH
+ */
+
+.block.w-auto {
+  flex-basis: auto;
+}
+
+.block.w-full {
+  width: 100%;
+}
+
+
+.block.w-0 {
+  display: none;
+}
+
+@for $width from 1 through 12 {
+  .block.w-#{$width} {
+    display: flex;
+    flex-basis: $width / 12 * 100%;
+  }
+}
+
+@each $breakpoint in $breakpoints {
+  $index: index($breakpoints, $breakpoint);
+  @media only screen and (min-width: map-get($breakpoint, "min-width")) and (min-height: map-get($breakpoint, "min-height")) {
+    .block.w-#{$index}-0 {
+      display: none;
+    }
+    @for $width from 1 through 12 {
+      .block.w-#{$index}-#{$width} {
+        display: flex;
+        flex-basis: $width / 12 * 100%;
+      }
+    }
+  }
+}
+

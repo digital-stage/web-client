@@ -1,10 +1,7 @@
-import styles from "./../styles/Layout.module.scss"
+import React from 'react'
+import Container from '../components/ui/Container'
 
 const Stages = () => {
-  return (
-    <div className={styles.container}>
-      STAGES
-    </div>
-  )
+    return <Container>STAGES</Container>
 }
 export default Stages

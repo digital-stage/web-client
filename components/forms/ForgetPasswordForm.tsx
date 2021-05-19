@@ -1,88 +1,93 @@
-import * as React from 'react';
-import { Formik, Field, FormikHelpers } from 'formik';
-import * as Yup from 'yup';
-import { useIntl } from 'react-intl';
-import { useAuth } from '@digitalstage/api-client-react';
-import translateError from '../utils/translateError';
-import Input from '../../../ui/form/Input';
-import Notification from '../../../ui/surface/Notification';
-import PrimaryButton from '../../../ui/button/PrimaryButton';
-import AuthForm from '../../../ui/new/auth/AuthForm';
+import * as React from 'react'
+import { Formik, Field, FormikHelpers, Form } from 'formik'
+import * as Yup from 'yup'
+import { useAuth } from '@digitalstage/api-client-react'
+import Notification from '../ui/Notification'
+import Input from '../ui/Input'
+import PrimaryButton from '../ui/PrimaryButton'
+import Block from '../ui/Block'
 
 interface Values {
-  email: string;
-  repeatEmail: string;
+    email: string
+    repeatEmail: string
 }
 
 const ForgetPasswordForm = (): JSX.Element => {
-  const { requestPasswordReset, user } = useAuth();
-  const { formatMessage } = useIntl();
-  const f = (id) => formatMessage({ id });
+    const { requestPasswordReset, user } = useAuth()
 
-  const [msg, setMsg] = React.useState({
-    state: false,
-    type: null,
-    kids: null,
-  });
+    const [msg, setMsg] = React.useState({
+        state: false,
+        type: null,
+        kids: null,
+    })
 
-  const ForgetPasswordSchema = Yup.object().shape({
-    email: Yup.string().email(f('enterValidEmail')).required(f('emailRequired')),
-    repeatEmail: Yup.string()
-      .oneOf([Yup.ref('email'), null], f('passwordMismatch'))
-      .required(f('passwordConfirmRequired')),
-  });
+    const ForgetPasswordSchema = Yup.object().shape({
+        email: Yup.string()
+            .email('E-Mail Adresse ist nicht gültig')
+            .required('E-Mail Adresse wird benötigt'),
+        repeatEmail: Yup.string()
+            .oneOf([Yup.ref('email'), null], 'Die E-Mail Adressen stimmen nicht überein')
+            .required('Bitte gebe hier nochmals Deine E-Mail Adresse ein'),
+    })
 
-  return (
-    <Formik
-      initialValues={{ email: '', repeatEmail: '' }}
-      validationSchema={ForgetPasswordSchema}
-      // eslint-disable-next-line max-len
-      onSubmit={async (values: Values, { resetForm }: FormikHelpers<Values>) =>
-        requestPasswordReset(values.email)
-          .then(() => {
-            setMsg({
-              state: true,
-              type: 'success',
-              kids: f('resetLinkSent'),
-            });
-          })
-          .then(() => resetForm())
-          .catch((err) => {
-            setMsg({
-              state: true,
-              type: 'danger',
-              kids: translateError(err),
-            });
-          })
-      }
-    >
-      {({ errors, touched, handleReset, handleSubmit }) => (
-        <AuthForm onReset={handleReset} onSubmit={handleSubmit}>
-          {msg.state && <Notification>{msg.kids}</Notification>}
+    return (
+        <Formik
+            initialValues={{ email: '', repeatEmail: '' }}
+            validationSchema={ForgetPasswordSchema}
+            // eslint-disable-next-line max-len
+            onSubmit={async (values: Values, { resetForm }: FormikHelpers<Values>) =>
+                requestPasswordReset(values.email)
+                    .then(() => {
+                        setMsg({
+                            state: true,
+                            type: 'success',
+                            kids: 'Wir haben Dir eine E-Mail mit einem Link zum Zurücksetzen Deines Passwortes geschickt!',
+                        })
+                    })
+                    .then(() => resetForm())
+                    .catch((err) => {
+                        setMsg({
+                            state: true,
+                            type: 'danger',
+                            kids: err,
+                        })
+                    })
+            }
+        >
+            {({ errors, touched, handleReset, handleSubmit }) => (
+                <Form onReset={handleReset} onSubmit={handleSubmit}>
+                    {msg.state && (
+                        <Block paddingBottom={4}>
+                            <Notification type={msg.type}>{msg.kids}</Notification>
+                        </Block>
+                    )}
+                    <Field
+                        as={Input}
+                        id="email"
+                        label="E-Mail Adresse"
+                        placeholder="E-Mail Adresse"
+                        name="email"
+                        type="text"
+                        error={errors.email && touched.email}
+                        value={user && user.email}
+                    />
+                    <Field
+                        as={Input}
+                        id="repeatEmail"
+                        label="E-Mail Adresse (wiederholen)"
+                        placeholder="E-Mail Adresse (wiederholen)"
+                        name="repeatEmail"
+                        type="text"
+                        error={errors.repeatEmail && touched.repeatEmail}
+                        value={user && user.email}
+                    />
+                    <Block align="center">
+                        <PrimaryButton type="submit">Passwort zurücksetzen</PrimaryButton>
+                    </Block>
+                </Form>
+            )}
+        </Formik>
+    )
+}
 
-          <Field
-            as={Input}
-            id="email"
-            label={f('emailAddress')}
-            name="email"
-            type="text"
-            error={errors.email && touched.email}
-            value={user && user.email}
-          />
-          <Field
-            as={Input}
-            id="repeatEmail"
-            label={f('emailConfirmation')}
-            name="repeatEmail"
-            type="text"
-            error={errors.repeatEmail && touched.repeatEmail}
-            value={user && user.email}
-          />
-          <PrimaryButton type="submit">{f('send')}</PrimaryButton>
-        </AuthForm>
-      )}
-    </Formik>
-  );
-};
-
-export default ForgetPasswordForm;
+export default ForgetPasswordForm

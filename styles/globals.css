@@ -106,3 +106,7 @@ p {
     font-weight: 600;
     font-size: 0.75rem;
 }
+
+form {
+    width: 100%;
+}

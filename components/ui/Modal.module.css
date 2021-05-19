@@ -1,0 +1,37 @@
+.backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: var(---overlay, rgba(0, 0, 0, 0.3));
+    overflow: scroll;
+    display: flex;
+    justify-content: center;
+    padding: 72px 12px;
+    min-height: 100%;
+}
+
+.modal {
+    display: block;
+    align-self: flex-start;
+    position: relative;
+    margin: 0 auto;
+    max-width: 800px;
+}
+
+.panel {
+    margin: 0 !important;
+}
+
+.full {
+    width: 100%
+}
+.default {
+    width: 800px
+}
+.auto {
+    width: auto
+}
