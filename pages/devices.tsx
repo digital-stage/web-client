@@ -3,7 +3,8 @@ import styles from "./../styles/Layout.module.scss"
 const Devices = () => {
   return (
     <div className={styles.container}>
-      DEVICES
+      <h2>Dieses Gerät</h2>
+      <h2>Anderen Geräte</h2>
     </div>
   )
 }

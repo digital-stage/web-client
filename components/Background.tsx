@@ -6,9 +6,7 @@ const Background = (props: React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivE
 }) => {
   const {insideStage, className, ...other} = props;
   return (
-    <>
-      <div className={`${styles.background} ${insideStage && styles.active} ${className}`} {...other}/>
-    </>
+    <div className={`${styles.background} ${insideStage ? styles.active : ""} ${className}`} {...other}/>
   );
 }
 

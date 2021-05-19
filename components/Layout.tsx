@@ -7,7 +7,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     const insideStage = useStageSelector<boolean>((state) => !!state.globals.stageId)
     return (
         <div className={`${styles.layout} ${insideStage && styles.insideStage}`}>
-            <Background />
+            <Background insideStage={insideStage} />
             <div className={styles.sidebar}>
                 <div className={styles.fixedSidebar}>
                     <Sidebar />

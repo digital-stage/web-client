@@ -12,7 +12,7 @@ const SidebarItem = ({href, children}: { href: string, children: React.ReactNode
   const {pathname} = useRouter()
   return (
     <Link href={href} passHref>
-      <a className={pathname === href && styles.active}>
+      <a className={pathname === href ? styles.active : ""}>
         {children}
       </a>
     </Link>
