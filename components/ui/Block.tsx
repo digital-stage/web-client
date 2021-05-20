@@ -36,7 +36,7 @@ function getResponsiveClasses<T>(
                 if (maxValue && maxValue < v)
                     throw new Error(`Invalid value '${v}', use a value below ${maxValue}`)
                 if (index === 0) {
-                    // return styles[`${prefix}-${v}${postfix}`]
+                    return styles[`${prefix}-${v}${postfix}`]
                 }
                 return styles[`${prefix}-${index}-${v}${postfix}`]
             })

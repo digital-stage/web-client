@@ -3,7 +3,6 @@ import Image from 'next/image'
 import { FaTrash, FaPlus, FaArrowRight, FaEdit } from 'react-icons/fa'
 import { useConnection, useStageSelector } from '@digitalstage/api-client-react'
 import { ClientDeviceEvents, ClientDevicePayloads, Group, Stage } from '@digitalstage/api-types'
-import { MdEdit } from 'react-icons/md'
 import Block from '../components/ui/Block'
 import Collapse from '../components/ui/Collapse'
 import Container from '../components/ui/Container'
@@ -11,6 +10,9 @@ import Panel from '../components/ui/Panel'
 import List, { ListItem } from '../components/ui/List'
 import styles from '../styles/Stages.module.css'
 import Button, { SecondaryButton, DangerButton } from '../components/ui/Button'
+import RemoveGroupModal from '../components/modals/RemoveGroupModal'
+import RemoveStageModal from '../components/modals/RemoveStageModal'
+import GroupModal from '../components/modals/GroupModal'
 import StageModal from '../components/modals/StageModal'
 
 const GroupRow = ({
@@ -18,11 +20,13 @@ const GroupRow = ({
     stageId,
     isAdmin,
     onGroupModalRequested,
+    onRemoveGroupModalRequested,
 }: {
     id: string
     stageId: string
     isAdmin?: boolean
     onGroupModalRequested: () => void
+    onRemoveGroupModalRequested: () => void
 }) => {
     const group = useStageSelector<Group>((state) => state.groups.byId[id])
     const currentGroupId = useStageSelector<string | undefined>((state) => state.globals.groupId)
@@ -36,9 +40,9 @@ const GroupRow = ({
                     {isAdmin && (
                         <>
                             <SecondaryButton round size="small" onClick={onGroupModalRequested}>
-                                <MdEdit />
+                                <FaEdit />
                             </SecondaryButton>
-                            <DangerButton round size="small">
+                            <DangerButton round size="small" onClick={onRemoveGroupModalRequested}>
                                 <FaTrash />
                             </DangerButton>
                             <SecondaryButton>
@@ -78,9 +82,13 @@ const StageRow = ({
     id,
     onStageModalRequested,
     onGroupModalRequested,
+    onRemoveStageModalRequested,
+    onRemoveGroupModalRequested,
 }: {
     id: string
     onStageModalRequested: () => void
+    onRemoveStageModalRequested: () => void
+    onRemoveGroupModalRequested: (groupId: string) => void
     onGroupModalRequested: (groupId: string) => void
 }) => {
     const stage = useStageSelector<Stage>((state) => state.stages.byId[id])
@@ -91,19 +99,30 @@ const StageRow = ({
     const groupIds = useStageSelector<string[]>((state) => state.groups.byStage[id])
     return (
         <Collapse
+            initialCollapsed
             icon={<Image width="30" height="30" src="/static/stage.svg" />}
             title={<h3>{stage.name}</h3>}
             actions={
-                <Block>
-                    <DangerButton
-                        title="Bühne bearbeiten"
-                        round
-                        size="small"
-                        onClick={onStageModalRequested}
-                    >
-                        <FaEdit size={18} />
-                    </DangerButton>
-                </Block>
+                isStageAdmin && (
+                    <Block>
+                        <DangerButton
+                            title="Bühne bearbeiten"
+                            round
+                            size="small"
+                            onClick={onStageModalRequested}
+                        >
+                            <FaEdit size={18} />
+                        </DangerButton>
+                        <DangerButton
+                            title="Bühne entfernen"
+                            round
+                            size="small"
+                            onClick={onRemoveStageModalRequested}
+                        >
+                            <FaTrash size={18} />
+                        </DangerButton>
+                    </Block>
+                )
             }
         >
             <List>
@@ -115,8 +134,20 @@ const StageRow = ({
                             stageId={id}
                             isAdmin={isStageAdmin}
                             onGroupModalRequested={() => onGroupModalRequested(groupId)}
+                            onRemoveGroupModalRequested={() => onRemoveGroupModalRequested(groupId)}
                         />
                     ))}
+                {isStageAdmin && (
+                    <Block width="full">
+                        <Button
+                            kind="minimal"
+                            icon={<FaPlus />}
+                            onClick={() => onGroupModalRequested(undefined)}
+                        >
+                            Neue Gruppe erstellen
+                        </Button>
+                    </Block>
+                )}
             </List>
         </Collapse>
     )
@@ -126,6 +157,9 @@ const Stages = () => {
     const stageIds = useStageSelector<string[]>((state) => state.stages.allIds)
     const [stageModalOpen, setStageModalOpen] = useState<boolean>(false)
     const [groupModalOpen, setGroupModalOpen] = useState<boolean>(false)
+    const [removeStageModalOpen, setRemoveStageModalOpen] = useState<boolean>(false)
+    const [removeGroupModalOpen, setRemoveGroupModalOpen] = useState<boolean>(false)
+
     const [selectedStageId, setSelectedStageId] = useState<string>()
     const [selectedGroupId, setSelectedGroupId] = useState<string>()
     return (
@@ -135,13 +169,7 @@ const Stages = () => {
                 <Panel padding={0}>
                     <Block vertical paddingLeft={4} paddingRight={4}>
                         <Block style={{ borderBottom: '1px solid #676767' }}>
-                            <Block
-                                align="center"
-                                justify="center"
-                                padding={1}
-                                width={6}
-                                style={{ borderRight: '1px solid #676767' }}
-                            >
+                            <Block align="center" justify="center" padding={1} width={[12, 6]}>
                                 <Button
                                     kind="minimal"
                                     icon={<FaPlus />}
@@ -154,7 +182,7 @@ const Stages = () => {
                                     &nbsp;Neue Bühne erstellen
                                 </Button>
                             </Block>
-                            <Block align="center" justify="center" padding={1} width={6}>
+                            <Block align="center" justify="center" padding={1} width={[12, 6]}>
                                 <Button kind="minimal" icon={<FaArrowRight />}>
                                     &nbsp;Neue Teilnahme
                                 </Button>
@@ -176,6 +204,14 @@ const Stages = () => {
                                         setSelectedGroupId(groupId)
                                         setGroupModalOpen(true)
                                     }}
+                                    onRemoveStageModalRequested={() => {
+                                        setSelectedStageId(id)
+                                        setRemoveStageModalOpen(true)
+                                    }}
+                                    onRemoveGroupModalRequested={(groupId) => {
+                                        setSelectedGroupId(groupId)
+                                        setRemoveGroupModalOpen(true)
+                                    }}
                                 />
                             ))}
                     </Block>
@@ -185,6 +221,22 @@ const Stages = () => {
                 stageId={selectedStageId}
                 open={stageModalOpen}
                 onClose={() => setStageModalOpen(false)}
+            />
+            <GroupModal
+                stageId={selectedStageId}
+                groupId={selectedGroupId}
+                open={groupModalOpen}
+                onClose={() => setGroupModalOpen(false)}
+            />
+            <RemoveStageModal
+                stageId={selectedStageId}
+                open={removeStageModalOpen}
+                onClose={() => setRemoveStageModalOpen(false)}
+            />
+            <RemoveGroupModal
+                groupId={selectedGroupId}
+                open={removeGroupModalOpen}
+                onClose={() => setRemoveGroupModalOpen(false)}
             />
         </Container>
     )

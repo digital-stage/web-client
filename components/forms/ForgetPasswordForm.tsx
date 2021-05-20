@@ -68,7 +68,7 @@ const ForgetPasswordForm = (): JSX.Element => {
                         placeholder="E-Mail Adresse"
                         name="email"
                         type="text"
-                        error={errors.email && touched.email}
+                        error={touched.email && errors.email}
                         value={user && user.email}
                     />
                     <Field
@@ -78,7 +78,7 @@ const ForgetPasswordForm = (): JSX.Element => {
                         placeholder="E-Mail Adresse (wiederholen)"
                         name="repeatEmail"
                         type="text"
-                        error={errors.repeatEmail && touched.repeatEmail}
+                        error={touched.repeatEmail && errors.repeatEmail}
                         value={user && user.email}
                     />
                     <Block align="center">

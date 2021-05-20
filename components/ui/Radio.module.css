@@ -1,0 +1,40 @@
+.radio {
+}
+.wrapper {
+    position: relative;
+    flex-grow: 1;
+}
+.wrapper > .radio {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+}
+.wrapper > .label {;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100%;
+    border-style: solid;
+    border-width: 1px;
+    border-color: transparent;
+    background-color: var(---secondary, transparent);
+}
+.wrapper > .label:hover {
+    background-color: var(---tertiary-hover, #8a8a8a);
+}
+
+.wrapper > .radio:checked + .label {
+    background-color: var(---primary, #415CA7);
+    border-color: var(---primary, #5779D9);
+}
+.wrapper > .radio:checked + .label:hover {
+    background-color: var(---primary-hover, #415CA7);
+}
+

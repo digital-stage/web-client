@@ -3,16 +3,16 @@ import React, { useRef, useState } from 'react'
 import { BsEyeSlashFill, BsFillEyeFill } from 'react-icons/bs'
 import styles from './Input.module.css'
 
-const Input = (
-    props: React.DetailedHTMLProps<
-        React.InputHTMLAttributes<HTMLInputElement>,
-        HTMLInputElement
-    > & {
-        label: string
-        error?: string
-    }
-) => {
-    const { type, label, error, className, ...other } = props
+const Input = ({
+    type,
+    label,
+    error,
+    className,
+    ...other
+}: React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> & {
+    label: string
+    error?: string
+}) => {
     const [inputType, setInputType] = useState<string>(type)
     const errorRef = useRef<HTMLDivElement>()
 

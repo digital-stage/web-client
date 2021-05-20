@@ -76,7 +76,7 @@ function ResetPasswordForm({ resetToken }: Props): JSX.Element {
                         placeholder="Passwort"
                         name="password"
                         type="password"
-                        error={errors.password && touched.password}
+                        error={touched.password && errors.password}
                     />
                     <Field
                         as={Input}
@@ -85,7 +85,7 @@ function ResetPasswordForm({ resetToken }: Props): JSX.Element {
                         placeholder="Passwort wiederholen"
                         type="password"
                         name="repeatPassword"
-                        error={errors.repeatPassword && touched.repeatPassword}
+                        error={touched.repeatPassword && errors.repeatPassword}
                     />
                     <Button type="submit">Passwort setzen</Button>
                 </Form>

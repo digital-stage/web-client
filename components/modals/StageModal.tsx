@@ -1,8 +1,17 @@
-import { useStageSelector } from '@digitalstage/api-client-react'
-import { Stage } from '@digitalstage/api-types'
-import React from 'react'
-import Modal, { ModalHeader } from '../ui/Modal'
-import StageForm from '../forms/StageForm'
+/* eslint-disable jsx-a11y/label-has-associated-control */
+import { Stage, useConnection, useStageSelector } from '@digitalstage/api-client-react'
+import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
+import React, { useCallback, useState } from 'react'
+import { Field, Form, Formik } from 'formik'
+import * as Yup from 'yup'
+import Image from 'next/image'
+import Modal, { ModalButton, ModalFooter, ModalHeader } from '../ui/Modal'
+import Input from '../ui/Input'
+import Notification from '../ui/Notification'
+import Block from '../ui/Block'
+import Paragraph from '../ui/Paragraph'
+import Collapse from '../ui/Collapse'
+import Radio from '../ui/Radio'
 
 const StageModal = ({
     open,
@@ -13,15 +22,242 @@ const StageModal = ({
     onClose: () => void
     stageId?: string
 }) => {
+    const [error, setError] = useState<string>()
+    const connection = useConnection()
     const stage = useStageSelector<Stage | undefined>(
         (state) => stageId && state.stages.byId[stageId]
     )
+
+    const save = useCallback(
+        ({ _id, ...values }: Partial<Stage>) => {
+            if (connection) {
+                return new Promise<void>((resolve, reject) => {
+                    if (stage) {
+                        // Update stage
+                        connection.emit(
+                            ClientDeviceEvents.ChangeStage,
+                            {
+                                _id: stage._id,
+                                ...values,
+                            } as ClientDevicePayloads.ChangeStage,
+                            (eventError: string | null) => {
+                                if (eventError) reject(eventError)
+                                resolve()
+                            }
+                        )
+                    } else {
+                        // Create stage
+                        connection.emit(
+                            ClientDeviceEvents.CreateStage,
+                            values as ClientDevicePayloads.CreateStage,
+                            (eventError: string | null) => {
+                                if (eventError) reject(eventError)
+                                resolve()
+                            }
+                        )
+                    }
+                })
+            }
+            return undefined
+        },
+        [connection, stage]
+    )
+
     return (
         <Modal open={open} onClose={onClose}>
             <ModalHeader>
-                <h2>{stage ? 'Bühne bearbeiten' : 'Neue Bühne erstellen'}</h2>
+                <h3>{stage ? 'Bühne bearbeiten' : 'Neue Bühne erstellen'}</h3>
             </ModalHeader>
-            <StageForm stage={stage} onSave={onClose} onAbort={onClose} />
+            <Formik
+                initialValues={
+                    {
+                        name: (stage && stage.name) || '',
+                        audioType: (stage && stage.audioType) || '',
+                        description: (stage && stage.description) || '',
+                        password: (stage && stage.password) || null,
+                        width: (stage && stage.width) || 25,
+                        height: (stage && stage.height) || 20,
+                        length: (stage && stage.length) || 20,
+                        absorption: (stage && stage.absorption) || 0.7,
+                        reflection: (stage && stage.reflection) || 0.7,
+                        videoType: 'mediasoup',
+                        preferredPosition: {
+                            lat: 50.110924,
+                            lng: 8.682127,
+                        },
+                    } as Partial<Stage>
+                }
+                validationSchema={Yup.object().shape({
+                    name: Yup.string()
+                        .min(3, 'zu kurz')
+                        .max(100, 'zu lang')
+                        .required('Eine Bühne braucht einen Namen'),
+                    description: Yup.string().max(255, 'zu lang'),
+                    password: Yup.string().min(2, 'zu kurz'),
+                    audioType: Yup.string().required('Bitte wähle eine Übertragungsart aus'),
+                    width: Yup.number().min(1).max(100),
+                    length: Yup.number().min(1).max(100),
+                    height: Yup.number().min(1).max(100),
+                    absorption: Yup.number().min(0).max(1),
+                    reflection: Yup.number().min(0).max(1),
+                    // eslint-disable-next-line react/forbid-prop-types
+                    preferredPosition: Yup.object({
+                        lat: Yup.number().min(-90).max(90),
+                        lng: Yup.number().min(-180).max(-180),
+                    }),
+                })}
+                onSubmit={(values) => {
+                    save(values)
+                        .then(() => onClose())
+                        .catch((err) => setError(err))
+                }}
+            >
+                {({ errors, values, touched, handleReset, handleSubmit }) => (
+                    <Form onReset={handleReset} onSubmit={handleSubmit}>
+                        <Field
+                            as={Input}
+                            id="name"
+                            label="Name der Bühne"
+                            placeholder="Name der Bühne"
+                            type="text"
+                            name="name"
+                            error={touched.name && errors.name}
+                        />
+                        <Block vertical>
+                            <h5 className="muted">Audioübertragung</h5>
+                        </Block>
+                        <Block vertical align="center">
+                            <Block padding={4}>
+                                <Field
+                                    as={Radio}
+                                    type="radio"
+                                    name="audioType"
+                                    value="mediasoup"
+                                    label={
+                                        <>
+                                            <Image
+                                                width={48}
+                                                height={48}
+                                                src="/static/mediasoup.png"
+                                            />
+                                            Mediasoup
+                                        </>
+                                    }
+                                />
+                                <Field
+                                    as={Radio}
+                                    type="radio"
+                                    name="audioType"
+                                    value="jammer"
+                                    label="Jammer"
+                                />
+                                <Field
+                                    as={Radio}
+                                    type="radio"
+                                    name="audioType"
+                                    value="ov"
+                                    label="OV"
+                                />
+                            </Block>
+                            {errors.audioType && touched.audioType && (
+                                <Notification type="error">{errors.audioType}</Notification>
+                            )}
+                            {values.audioType && (
+                                <Block paddingBottom={4}>
+                                    <Paragraph>
+                                        {values.audioType === 'mediasoup' && 'Web only'}
+                                        {values.audioType === 'jammer' &&
+                                            'Gut für Chöre, alle Betriebssysteme unterstützt'}
+                                        {values.audioType === 'ov' &&
+                                            'Gut für Musiker, läuft nur unter MacOS oder unter Verwendung der ovbox'}
+                                    </Paragraph>
+                                </Block>
+                            )}
+                        </Block>
+                        <Field
+                            as={Input}
+                            id="password"
+                            label="Passwort"
+                            placeholder="Kann auch leer bleiben"
+                            type="text"
+                            name="password"
+                            error={touched.password && errors.password}
+                        />
+                        <Field
+                            as={Input}
+                            id="description"
+                            label="Beschreibung"
+                            placeholder="Kurze Beschreibung"
+                            type="text"
+                            name="description"
+                            error={touched.description && errors.description}
+                        />
+                        <Collapse title="Erweiterte Einstellungen">
+                            <Field
+                                as={Input}
+                                label="Breite"
+                                type="number"
+                                name="width"
+                                valid={!!errors.width}
+                                error={touched.width && errors.width}
+                                min={1}
+                                max={100}
+                            />
+                            <Field
+                                as={Input}
+                                label="Länge"
+                                type="number"
+                                name="length"
+                                valid={!!errors.length}
+                                error={touched.length && errors.length}
+                                min={1}
+                                max={100}
+                            />
+                            <Field
+                                as={Input}
+                                label="Höhe"
+                                type="number"
+                                name="height"
+                                valid={!!errors.height}
+                                error={touched.height && errors.height}
+                                min={1}
+                                max={100}
+                            />
+                            <Field
+                                as={Input}
+                                label="Absorptionsgrad der Wände"
+                                type="number"
+                                name="absorption"
+                                valid={!!errors.absorption}
+                                error={touched.absorption && errors.absorption}
+                                step={0.1}
+                                min={0}
+                                max={1}
+                            />
+                            <Field
+                                as={Input}
+                                label="Reflektionsgrad der Wände"
+                                type="number"
+                                name="reflection"
+                                valid={!!errors.reflection}
+                                error={touched.reflection && errors.reflection}
+                                step={0.1}
+                                min={0}
+                                max={1}
+                            />
+                        </Collapse>
+                        {error && <Notification type="error">{error}</Notification>}
+                        <ModalFooter>
+                            <ModalButton kind="tertiary" onClick={onClose}>
+                                Abbrechen
+                            </ModalButton>
+                            <ModalButton kind="danger" type="submit">
+                                {stage ? 'Speichern' : 'Neue Bühne erstellen'}
+                            </ModalButton>
+                        </ModalFooter>
+                    </Form>
+                )}
+            </Formik>
         </Modal>
     )
 }

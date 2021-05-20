@@ -82,7 +82,7 @@ const ActivationForm = (props: { initialCode?: string }): JSX.Element => {
                             placeholder="Aktivierungscode"
                             type="text"
                             name="code"
-                            error={errors.code && touched.code}
+                            error={touched.code && errors.code}
                         />
                         <Block align="center">
                             <Button type="submit">Konto aktivieren</Button>

@@ -54,7 +54,7 @@ const ResendActivationForm = (): JSX.Element => {
                         type="text"
                         name="email"
                         autocomplete="email"
-                        error={errors.email && touched.email}
+                        error={touched.email && errors.email}
                     />
                     {message && (
                         <Block paddingBottom={4}>

@@ -5,6 +5,7 @@ import styles from './Collapse.module.css'
 import Button from './Button'
 
 const Collapse = ({
+    initialCollapsed,
     children,
     title,
     icon,
@@ -16,12 +17,15 @@ const Collapse = ({
     title: React.ReactNode
     icon?: React.ReactNode
     actions?: React.ReactNode
+    initialCollapsed?: boolean
     collapsed?: boolean
     onChange?: (collapsed: boolean) => void
 }) => {
-    const [intCollapsed, setIntCollapsed] = useState<boolean>(collapsed)
+    const [intCollapsed, setIntCollapsed] = useState<boolean>(initialCollapsed)
     useEffect(() => {
-        setIntCollapsed(collapsed)
+        if (collapsed !== undefined) {
+            setIntCollapsed(collapsed)
+        }
     }, [collapsed])
     const toggleCollapsed = useCallback(() => {
         if (onChange) {
@@ -63,6 +67,7 @@ const Collapse = ({
     )
 }
 Collapse.defaultProps = {
+    initialCollapsed: undefined,
     icon: undefined,
     actions: undefined,
     collapsed: undefined,
