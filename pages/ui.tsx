@@ -31,6 +31,9 @@ const UI = () => {
                 <Button kind="tertiary" onClick={() => setModalOpen(true)}>
                     Click me
                 </Button>
+                <Button kind="warn" onClick={() => setModalOpen(true)}>
+                    Click me
+                </Button>
                 <Button kind="danger" onClick={() => setLongModalOpen(true)}>
                     Click me
                 </Button>
@@ -44,6 +47,9 @@ const UI = () => {
                 </Button>
                 <TertiaryButton disabled>Don&apos;t Click me</TertiaryButton>
                 <Button kind="danger" disabled>
+                    Click me
+                </Button>
+                <Button kind="warn" disabled>
                     Click me
                 </Button>
             </Container>

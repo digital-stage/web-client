@@ -9,6 +9,13 @@ interface ALIGNMENT {
     stretch: 'stretch'
 }
 
+interface JUSTIFICATION {
+    start: 'start'
+    center: 'center'
+    end: 'end'
+    stretch: 'stretch'
+}
+
 interface BEHAVIOR {
     fixed: 'fixed'
     fluid: 'fluid'
@@ -29,7 +36,7 @@ function getResponsiveClasses<T>(
                 if (maxValue && maxValue < v)
                     throw new Error(`Invalid value '${v}', use a value below ${maxValue}`)
                 if (index === 0) {
-                    return styles[`${prefix}-${v}${postfix}`]
+                    // return styles[`${prefix}-${v}${postfix}`]
                 }
                 return styles[`${prefix}-${index}-${v}${postfix}`]
             })
@@ -46,6 +53,7 @@ const Block = ({
     children,
     width,
     align,
+    justify,
     behavior,
     vertical,
     padding,
@@ -58,6 +66,7 @@ const Block = ({
     children: React.ReactNode
     width?: 'full' | 'auto' | number | number[]
     align?: ALIGNMENT[keyof ALIGNMENT]
+    justify?: JUSTIFICATION[keyof JUSTIFICATION]
     behavior?: BEHAVIOR[keyof BEHAVIOR]
     vertical?: boolean
     padding?: number | number[]
@@ -66,23 +75,26 @@ const Block = ({
     paddingBottom?: number | number[]
     paddingRight?: number | number[]
 }): JSX.Element => {
-    let needsFlex = false
+    // let needsFlex = false
     let classes = ''
     if (width) {
         classes += getResponsiveClasses<number | string>(width, 'w', '', 0, 12)
     }
     if (align) {
-        classes += ` ${styles[align]}`
-        // classes += ` ${getResponsiveClasses<string>(align, '')}`
-        needsFlex = true
+        classes += ` ${getResponsiveClasses<string>(align, 'align')}`
+        // needsFlex = true
+    }
+    if (justify) {
+        classes += ` ${getResponsiveClasses<string>(justify, 'justify')}`
+        // needsFlex = true
     }
     if (behavior) {
         classes += ` ${styles[behavior]}`
-        needsFlex = true
+        // needsFlex = true
     }
     if (vertical) {
         classes += ` ${styles.column}`
-        needsFlex = true
+        // needsFlex = true
     }
     if (padding) {
         classes += ` ${getResponsiveClasses<number>(padding, 'p')}`
@@ -100,9 +112,9 @@ const Block = ({
         classes += ` ${getResponsiveClasses<number>(paddingRight, 'pr')}`
     }
 
-    if (needsFlex) {
+    /* if (needsFlex) {
         classes += ` ${styles.flex}`
-    }
+    } */
 
     return (
         <div className={`${styles.block} ${classes}`} {...other}>
@@ -111,15 +123,16 @@ const Block = ({
     )
 }
 Block.defaultProps = {
-    width: 'auto',
-    align: 'start',
-    behavior: 'fluid',
-    vertical: false,
+    width: undefined,
+    align: undefined,
+    justify: undefined,
+    behavior: undefined,
+    vertical: undefined,
     padding: undefined,
     paddingTop: undefined,
     paddingLeft: undefined,
     paddingBottom: undefined,
     paddingRight: undefined,
 }
-export type { ALIGNMENT, BEHAVIOR }
+export type { ALIGNMENT, BEHAVIOR, JUSTIFICATION }
 export default Block

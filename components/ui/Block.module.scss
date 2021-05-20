@@ -8,13 +8,14 @@ $breakpoints: (
 $paddings: (4px, 8px, 16px, 24px, 32px) !default;
 
 .block {
-  display: block;
+  display: flex;
   flex-wrap: wrap;
 }
 
+/*
 .flex {
   display: flex;
-}
+}*/
 
 .column {
   flex-direction: column;
@@ -24,83 +25,63 @@ $paddings: (4px, 8px, 16px, 24px, 32px) !default;
   ALIGNMENT
  */
 
-.block.stretch:not(.column) {
-  justify-content: stretch;
-}
-
-.block.column.stretch {
+.block.align-stretch {
   align-items: stretch;
 }
 
-.block.stretch:not(.column) {
-  justify-content: stretch;
-}
-
-.block.column.stretch {
-  align-items: stretch;
-}
-
-.block.start:not(.column) {
-  justify-content: flex-start;
-}
-
-.block.column.start {
-  align-items: flex-start;
-}
-
-.block.center:not(.column) {
-  justify-content: center;
-}
-
-.block.column.center {
+.block.align-center {
   align-items: center;
 }
 
-.block.end:not(.column) {
-  justify-content: flex-end;
-}
-
-.block.column.end {
+.block.align-end {
   align-items: flex-end;
 }
 
 @each $breakpoint in $breakpoints {
   $index: index($breakpoints, $breakpoint);
   @media only screen and (min-width: map-get($breakpoint, "min-width")) and (min-height: map-get($breakpoint, "min-height")) {
-
-    .block.stretch-#{$index}:not(.column) {
-      justify-content: stretch;
-    }
-    .block.column.stretch-#{$index} {
+    .block.align-stretch-#{$index} {
       align-items: stretch;
     }
 
-    .block.stretch-#{$index}:not(.column) {
-      justify-content: stretch;
-    }
-    .block.column.stretch-#{$index} {
-      align-items: stretch;
-    }
-
-    .block.start-#{$index}:not(.column) {
-      justify-content: flex-start;
-    }
-    .block.column.start-#{$index} {
-      align-items: flex-start;
-    }
-
-    .block.center-#{$index}:not(.column) {
-      justify-content: center;
-    }
-    .block.column.center-#{$index} {
+    .block.align-center-#{$index} {
       align-items: center;
     }
 
-    .block.end-#{$index}:not(.column) {
-      justify-content: flex-end;
-    }
-    .block.column.end-#{$index} {
+    .block.align-end-#{$index} {
       align-items: flex-end;
+    }
+  }
+}
+
+/**
+  JUSTIFICATION
+ */
+.block.justify-stretch {
+  justify-content: stretch;
+}
+
+.block.justify-center {
+  justify-content: center;
+}
+
+.block.justify-end {
+  justify-content: flex-end;
+}
+
+@each $breakpoint in $breakpoints {
+  $index: index($breakpoints, $breakpoint);
+  @media only screen and (min-width: map-get($breakpoint, "min-width")) and (min-height: map-get($breakpoint, "min-height")) {
+    .block.justify-stretch-#{$index} {
+      justify-content: stretch;
+    }
+
+    .block.justify-center-#{$index} {
+      justify-content: center;
+    }
+
+    .block.justify-end-#{$index} {
+      justify-content: flex-end;
     }
   }
 }
@@ -110,7 +91,6 @@ PADDING
  */
 @each $padding in $paddings {
   $index: index($paddings, $padding);
-  @debug p-#{$index};
   .block.p-#{$index} {
     padding: $padding;
   }

@@ -1,4 +1,6 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import React from 'react'
+import Block from './Block'
 import styles from './Panel.module.css'
 
 export interface LEVEL {
@@ -13,9 +15,10 @@ const Panel = (
     props: React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> & {
         level?: LEVEL[keyof LEVEL]
         fill?: boolean
+        padding?: number | number[]
     }
 ) => {
-    const { level, fill, className, ...other } = props
+    const { level, fill, className, children, padding, ...other } = props
     let levelStyle = styles.level1
     switch (level) {
         case 'level2': {
@@ -42,11 +45,16 @@ const Panel = (
         <div
             className={`${styles.panel} ${fill ? styles.fill : ''} ${levelStyle} ${className}`}
             {...other}
-        />
+        >
+            <Block vertical width="full" padding={padding !== undefined ? padding : 4}>
+                {children}
+            </Block>
+        </div>
     )
 }
 Panel.defaultProps = {
-    level: 'level1',
-    fill: false,
+    level: undefined,
+    fill: undefined,
+    padding: undefined,
 }
 export default Panel

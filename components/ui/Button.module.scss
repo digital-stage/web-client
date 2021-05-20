@@ -1,7 +1,9 @@
 .button {
   box-sizing: border-box;
   -webkit-appearance: none;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
   line-height: inherit;
   text-decoration: none;
@@ -55,6 +57,25 @@
     opacity: 0.5;
     cursor: default !important;
     box-shadow: none;
+  }
+
+  /**
+  ICON DEFAULTS
+   */
+  .icon {
+    box-sizing: border-box;
+    margin: 0;
+    min-width: 0;
+    appearance: none;
+    display: inline-flex;
+    -webkit-box-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    justify-content: center;
+    background-color: transparent;
+    border-radius: 50%;
+    border: 1px solid transparent;
+    padding: 8px;
   }
 }
 
@@ -114,13 +135,9 @@ SECONDARY COLOR
       }
     }
     &.round {
-      &:focus {
-        padding: 10px;
-        border-width: 2px;
-      }
       &.small {
+        padding: 8px;
         &:focus {
-          padding: 4px;
         }
       }
     }
@@ -181,6 +198,37 @@ TERTIARY COLOR
 }
 
 /**
+WARN COLOR
+ */
+.button.warn {
+  border-color: transparent;
+  color: var(---warn-contrast, #F4F4F4);
+  background-color: var(---warn, #F0C11B);
+
+  &:not(:disabled) {
+    &:hover {
+      border-color: var(---warn-dark, #bd9815);
+      background-color: var(---warn-dark, #bd9815);
+    }
+
+
+    &.inactive {
+      background-color: var(---level-4, #393939);
+
+      &:hover {
+        border-color: var(---warn-dark, #bd9815);
+        background-color: var(---warn-dark, #bd9815);
+      }
+    }
+
+    &:active {
+      border-color: var(---warn-dark, #bd9815);
+      background-color: var(---warn-dark, #bd9815);
+    }
+  }
+}
+
+/**
 DANGER COLOR
  */
 .button.danger {
@@ -219,29 +267,16 @@ MINIMAL COLOR
   color: var(---text, #F4F4F4);
   background-color: transparent;
   border-radius: unset;
+
+
+  .icon {
+    background-color: transparent;
+    color: var(---primary, #5779D9);
+
+    &:hover {
+      color: var(---primary-hover, #415CA7);
+      background-color: var(---grey-3, #292929);
+    }
+  }
 }
 
-.icon {
-  box-sizing: border-box;
-  margin: 0;
-  min-width: 0;
-  appearance: none;
-  display: inline-flex;
-  -webkit-box-align: center;
-  align-items: center;
-  -webkit-box-pack: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  background-color: transparent;
-  color: var(---primary, #5779D9);
-  border-radius: 50%;
-  border: 1px solid transparent;
-  padding: 8px;
-}
-
-.icon:hover {
-  color: var(---primary-hover, #415CA7);
-  background-color: var(---grey-3, #292929);
-
-}

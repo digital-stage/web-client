@@ -1,7 +1,7 @@
 .wrapper {
 }
 .spacer {
-    padding: 24px 8px;
+    padding: 24px;
 }
 .row {
     display: flex;
@@ -70,5 +70,6 @@
 }
 
 .hr {
-
+    margin-left: 24px;
+    margin-right: 24px;
 }

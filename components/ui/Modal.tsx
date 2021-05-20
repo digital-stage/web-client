@@ -28,7 +28,7 @@ const ModalButton = (props: ButtonProps) => {
 
 const ModalFooter = ({ children }: { children: React.ReactNode }) => {
     return (
-        <Block paddingTop={4} align="end">
+        <Block paddingTop={4} justify="end">
             {children}
         </Block>
     )
@@ -78,10 +78,19 @@ const Modal = (
     return (
         open && (
             <Portal>
-                <div ref={ref} className={styles.backdrop} onClick={onClose} role="button">
+                <div
+                    ref={ref}
+                    className={styles.backdrop}
+                    onTouchStart={onClose}
+                    onMouseDown={onClose}
+                    role="button"
+                >
                     <div
                         className={`${styles.modal} ${sizeClass}`}
-                        onClick={(e) => {
+                        onTouchStart={(e) => {
+                            e.stopPropagation()
+                        }}
+                        onMouseDown={(e) => {
                             e.stopPropagation()
                         }}
                         role="dialog"

@@ -19,6 +19,7 @@ interface KIND {
     tertiary: 'tertiary'
     minimal: 'minimal'
     danger: 'danger'
+    warn: 'warn'
 }
 
 type ButtonProps = React.DetailedHTMLProps<
@@ -30,6 +31,7 @@ type ButtonProps = React.DetailedHTMLProps<
     width?: WIDTH[keyof WIDTH]
     size?: SIZE[keyof SIZE]
     kind?: KIND[keyof KIND]
+    icon?: React.ReactNode
 }
 
 const Button = ({
@@ -39,6 +41,8 @@ const Button = ({
     className,
     width,
     kind,
+    icon,
+    children,
     ...props
 }: ButtonProps): JSX.Element => (
     <button
@@ -50,7 +54,10 @@ const Button = ({
         ${kind ? styles[kind] : styles.primary} 
         ${className}`}
         {...props}
-    />
+    >
+        {icon && <div className={styles.icon}>{icon}</div>}
+        {children}
+    </button>
 )
 Button.defaultProps = {
     round: undefined,
@@ -58,6 +65,7 @@ Button.defaultProps = {
     width: undefined,
     size: undefined,
     kind: undefined,
+    icon: undefined,
 }
 
 const PrimaryButton = (props: Exclude<ButtonProps, 'kind'>): JSX.Element => (
@@ -72,21 +80,12 @@ const TertiaryButton = (props: Exclude<ButtonProps, 'kind'>): JSX.Element => (
 const DangerButton = (props: Exclude<ButtonProps, 'kind'>): JSX.Element => (
     <Button kind="danger" {...props} />
 )
-const MinimalButton = ({
-    children,
-    icon,
-    ...other
-}: Exclude<ButtonProps, 'kind'> & {
-    icon?: React.ReactNode
-}): JSX.Element => (
-    <Button kind="minimal" {...other}>
-        {icon && <div className={styles.icon}>{icon}</div>}
-        {children}
-    </Button>
+const WarnButton = (props: Exclude<ButtonProps, 'kind'>): JSX.Element => (
+    <Button kind="warn" {...props} />
 )
-MinimalButton.defaultProps = {
-    icon: undefined,
-}
+const MinimalButton = (props: Exclude<ButtonProps, 'kind'>): JSX.Element => (
+    <Button kind="minimal" {...props} />
+)
 export type { ButtonProps, SIZE, WIDTH, KIND }
-export { PrimaryButton, SecondaryButton, TertiaryButton, DangerButton, MinimalButton }
+export { PrimaryButton, SecondaryButton, TertiaryButton, WarnButton, DangerButton, MinimalButton }
 export default Button
