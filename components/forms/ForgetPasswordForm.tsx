@@ -4,7 +4,7 @@ import * as Yup from 'yup'
 import { useAuth } from '@digitalstage/api-client-react'
 import Notification from '../ui/Notification'
 import Input from '../ui/Input'
-import PrimaryButton from '../ui/PrimaryButton'
+import Button from '../ui/Button'
 import Block from '../ui/Block'
 
 interface Values {
@@ -82,7 +82,7 @@ const ForgetPasswordForm = (): JSX.Element => {
                         value={user && user.email}
                     />
                     <Block align="center">
-                        <PrimaryButton type="submit">Passwort zurücksetzen</PrimaryButton>
+                        <Button type="submit">Passwort zurücksetzen</Button>
                     </Block>
                 </Form>
             )}

@@ -1,13 +1,37 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events,jsx-a11y/interactive-supports-focus,jsx-a11y/no-noninteractive-element-interactions */
 import React, { useEffect, useRef } from 'react'
 import { Portal } from 'react-portal'
 import { disableBodyScroll, enableBodyScroll } from 'body-scroll-lock'
 import styles from './Modal.module.css'
 import Panel, { LEVEL } from './Panel'
+import Block from './Block'
+import Button, { ButtonProps } from './Button'
 
-export interface SIZE {
+interface SIZE {
     Default: 'default'
     Full: 'full'
     Auto: 'auto'
+}
+
+const ModalHeader = ({ children }: { children: React.ReactNode }) => {
+    return <Block paddingBottom={4}>{children}</Block>
+}
+
+const ModalButton = (props: ButtonProps) => {
+    return (
+        <div className={styles.modalButton}>
+            {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+            <Button {...props} />
+        </div>
+    )
+}
+
+const ModalFooter = ({ children }: { children: React.ReactNode }) => {
+    return (
+        <Block paddingTop={4} align="end">
+            {children}
+        </Block>
+    )
 }
 
 const Modal = (
@@ -70,4 +94,10 @@ const Modal = (
         )
     )
 }
+Modal.defaultProps = {
+    level: undefined,
+    size: undefined,
+}
+export type { SIZE, LEVEL }
+export { ModalHeader, ModalFooter, ModalButton }
 export default Modal

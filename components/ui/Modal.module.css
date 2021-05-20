@@ -6,7 +6,8 @@
     right: 0;
     width: 100vw;
     height: 100vh;
-    background-color: var(---overlay, rgba(0, 0, 0, 0.3));
+    background-color: var(---overlay, rgba(0, 0, 0, 0.4));
+    backdrop-filter: blur(10px);
     overflow: scroll;
     display: flex;
     justify-content: center;
@@ -34,4 +35,11 @@
 }
 .auto {
     width: auto
+}
+
+.modalButton {
+    padding-left: 8px;
+}
+.modalButton:first-of-type {
+    padding-left: 0 !important;
 }

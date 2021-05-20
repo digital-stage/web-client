@@ -3,7 +3,7 @@ import { Field, Form, Formik, FormikHelpers } from 'formik'
 import * as Yup from 'yup'
 import { useRouter } from 'next/router'
 import { useAuth } from '@digitalstage/api-client-react'
-import PrimaryButton from '../ui/PrimaryButton'
+import Button from '../ui/Button'
 import Input from '../ui/Input'
 import Block from '../ui/Block'
 import Notification from '../ui/Notification'
@@ -62,7 +62,7 @@ const ResendActivationForm = (): JSX.Element => {
                         </Block>
                     )}
                     <Block align="center">
-                        <PrimaryButton type="submit">Erneut senden</PrimaryButton>
+                        <Button type="submit">Erneut senden</Button>
                     </Block>
                 </Form>
             )}

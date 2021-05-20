@@ -5,7 +5,7 @@ import * as Yup from 'yup'
 import { useAuth } from '@digitalstage/api-client-react'
 import Block from '../ui/Block'
 import Notification from '../ui/Notification'
-import PrimaryButton from '../ui/PrimaryButton'
+import Button from '../ui/Button'
 import Input from '../ui/Input'
 
 interface Values {
@@ -87,7 +87,7 @@ function ResetPasswordForm({ resetToken }: Props): JSX.Element {
                         name="repeatPassword"
                         error={errors.repeatPassword && touched.repeatPassword}
                     />
-                    <PrimaryButton type="submit">Passwort setzen</PrimaryButton>
+                    <Button type="submit">Passwort setzen</Button>
                 </Form>
             )}
         </Formik>

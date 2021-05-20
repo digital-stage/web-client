@@ -2,7 +2,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { IoIosArrowBack, IoIosArrowDown } from 'react-icons/io'
 import styles from './Collapse.module.css'
-import PrimaryButton from './PrimaryButton'
+import Button from './Button'
 
 const Collapse = ({
     children,
@@ -45,13 +45,13 @@ const Collapse = ({
                     </div>
                     {actions && <div className={styles.actions}>{actions}</div>}
                     <div className={styles.toggle} onClick={toggleCollapsed}>
-                        <PrimaryButton round size="small">
+                        <Button round size="small">
                             {intCollapsed ? (
                                 <IoIosArrowDown size={18} />
                             ) : (
                                 <IoIosArrowBack size={18} />
                             )}
-                        </PrimaryButton>
+                        </Button>
                     </div>
                 </div>
             </div>

@@ -4,7 +4,7 @@ import { useAuth } from '@digitalstage/api-client-react'
 import { useRouter } from 'next/router'
 import * as Yup from 'yup'
 import Input from '../ui/Input'
-import PrimaryButton from '../ui/PrimaryButton'
+import Button from '../ui/Button'
 import Notification from '../ui/Notification'
 import Block from '../ui/Block'
 
@@ -82,7 +82,7 @@ const LoginForm = (): JSX.Element => {
                             </Block>
                         )}
                         <Block width={12} align="center">
-                            <PrimaryButton type="submit">Anmelden</PrimaryButton>
+                            <Button type="submit">Anmelden</Button>
                         </Block>
                     </Form>
                 )}

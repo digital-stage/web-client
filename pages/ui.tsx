@@ -4,19 +4,17 @@ import Image from 'next/image'
 import { FaTrash } from 'react-icons/fa'
 import Background from '../components/ui/Background'
 import Container from '../components/ui/Container'
-import DangerButton from '../components/ui/DangerButton'
 import Panel from '../components/ui/Panel'
-import PrimaryButton from '../components/ui/PrimaryButton'
-import SecondaryButton from '../components/ui/SecondaryButton'
-import TertiaryButton from '../components/ui/TertiaryButton'
+import Button, { TertiaryButton } from '../components/ui/Button'
 import HeadlineLink, {
     PrimaryHeadlineLink,
     SecondaryHeadlineLink,
 } from '../components/ui/HeadlineLink'
-import Modal from '../components/ui/Modal'
+import Modal, { ModalButton, ModalFooter, ModalHeader } from '../components/ui/Modal'
 import Input from '../components/ui/Input'
 import Block from '../components/ui/Block'
 import Collapse from '../components/ui/Collapse'
+import Paragraph from '../components/ui/Paragraph'
 
 const UI = () => {
     const [modalOpen, setModalOpen] = useState<boolean>(false)
@@ -26,14 +24,28 @@ const UI = () => {
     return (
         <Background insideStage={insideStage}>
             <Container>
-                <PrimaryButton onClick={() => setModalOpen(true)}>Click me</PrimaryButton>
-                <SecondaryButton onClick={() => setModalOpen(true)}>Click me</SecondaryButton>
-                <TertiaryButton onClick={() => setModalOpen(true)}>Click me</TertiaryButton>
-                <DangerButton onClick={() => setLongModalOpen(true)}>Click me</DangerButton>
-                <PrimaryButton disabled>Don&apos;t Click me</PrimaryButton>
-                <SecondaryButton disabled>Don&apos;t Click me</SecondaryButton>
+                <Button onClick={() => setModalOpen(true)}>Click me</Button>
+                <Button kind="secondary" onClick={() => setModalOpen(true)}>
+                    Click me
+                </Button>
+                <Button kind="tertiary" onClick={() => setModalOpen(true)}>
+                    Click me
+                </Button>
+                <Button kind="danger" onClick={() => setLongModalOpen(true)}>
+                    Click me
+                </Button>
+                <Button disabled>Click me</Button>
+                <Button disabled>Don&apos;t Click me</Button>
+                <Button kind="secondary" disabled>
+                    Click me
+                </Button>
+                <Button kind="tertiary" disabled>
+                    Click me
+                </Button>
                 <TertiaryButton disabled>Don&apos;t Click me</TertiaryButton>
-                <DangerButton disabled>Click me</DangerButton>
+                <Button kind="danger" disabled>
+                    Click me
+                </Button>
             </Container>
             <Container>
                 <Panel level="level1">
@@ -122,9 +134,7 @@ const UI = () => {
                             voluptua. At vero eos et accusam et
                         </p>
                     </Block>
-                    <PrimaryButton onClick={() => setInsideStage((prev) => !prev)}>
-                        Click me
-                    </PrimaryButton>
+                    <Button onClick={() => setInsideStage((prev) => !prev)}>Click me</Button>
                 </Panel>
 
                 <Panel level="level2">
@@ -145,7 +155,7 @@ const UI = () => {
                         eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam
                         voluptua. At vero eos et accusam et
                     </p>
-                    <PrimaryButton>Click me</PrimaryButton>
+                    <Button>Click me</Button>
                 </Panel>
 
                 <Panel level="level3">
@@ -155,7 +165,7 @@ const UI = () => {
                         eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam
                         voluptua. At vero eos et accusam et
                     </p>
-                    <PrimaryButton>Click me</PrimaryButton>
+                    <Button>Click me</Button>
                 </Panel>
 
                 <Panel level="level4">
@@ -165,7 +175,7 @@ const UI = () => {
                         eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam
                         voluptua. At vero eos et accusam et
                     </p>
-                    <PrimaryButton>Click me</PrimaryButton>
+                    <Button>Click me</Button>
                 </Panel>
 
                 <Panel level="level5">
@@ -175,23 +185,29 @@ const UI = () => {
                         eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam
                         voluptua. At vero eos et accusam et
                     </p>
-                    <PrimaryButton>Click me</PrimaryButton>
+                    <Button>Click me</Button>
                 </Panel>
 
                 <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
-                    <h1>Modal title</h1>
-                    <p>
+                    <ModalHeader>
+                        <h1>Modal title</h1>
+                    </ModalHeader>
+                    <Paragraph kind="micro">
                         Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy
                         eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam
                         voluptua. At vero eos et accusam et
-                    </p>
-                    <TertiaryButton onClick={() => setModalOpen(false)}>Cancel</TertiaryButton>
-                    <PrimaryButton onClick={() => setModalOpen(false)}>Ok</PrimaryButton>
+                    </Paragraph>
+                    <ModalFooter>
+                        <ModalButton kind="tertiary" onClick={() => setModalOpen(false)}>
+                            Cancel
+                        </ModalButton>
+                        <ModalButton onClick={() => setModalOpen(false)}>Ok</ModalButton>
+                    </ModalFooter>
                 </Modal>
 
                 <Modal open={longModalOpen} onClose={() => setLongModalOpen(false)}>
                     <h1>Very long modal title</h1>
-                    <p>
+                    <Paragraph>
                         Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy
                         eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam
                         voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet
@@ -205,7 +221,7 @@ const UI = () => {
                         diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet
                         clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit
                         amet.
-                    </p>
+                    </Paragraph>
                     <p>
                         Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy
                         eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam
@@ -327,7 +343,7 @@ const UI = () => {
                         amet.
                     </p>
                     <TertiaryButton onClick={() => setLongModalOpen(false)}>Cancel</TertiaryButton>
-                    <PrimaryButton onClick={() => setLongModalOpen(false)}>Ok</PrimaryButton>
+                    <Button onClick={() => setLongModalOpen(false)}>Ok</Button>
                 </Modal>
             </Container>
         </Background>

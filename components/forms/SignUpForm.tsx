@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 import * as Yup from 'yup'
 import Notification from '../ui/Notification'
 import Input from '../ui/Input'
-import PrimaryButton from '../ui/PrimaryButton'
+import Button from '../ui/Button'
 import Block from '../ui/Block'
 
 const SignUpForm = () => {
@@ -111,7 +111,7 @@ const SignUpForm = () => {
                             </Block>
                         )}
                         <Block width={12} align="center">
-                            <PrimaryButton type="submit">Registrieren</PrimaryButton>
+                            <Button type="submit">Registrieren</Button>
                         </Block>
                     </Form>
                 )}

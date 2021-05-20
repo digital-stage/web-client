@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 import { useAuth } from '@digitalstage/api-client-react'
 import Input from '../ui/Input'
 import Notification from '../ui/Notification'
-import PrimaryButton from '../ui/PrimaryButton'
+import Button from '../ui/Button'
 import Block from '../ui/Block'
 
 export interface Values {
@@ -85,7 +85,7 @@ const ActivationForm = (props: { initialCode?: string }): JSX.Element => {
                             error={errors.code && touched.code}
                         />
                         <Block align="center">
-                            <PrimaryButton type="submit">Konto aktivieren</PrimaryButton>
+                            <Button type="submit">Konto aktivieren</Button>
                         </Block>
                     </Form>
                 )}

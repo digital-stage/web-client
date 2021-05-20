@@ -11,9 +11,7 @@ import Panel from '../components/ui/Panel'
 import TransparentButton from '../components/ui/TransparentButton'
 import List, { ListItem } from '../components/ui/List'
 import styles from '../styles/Stages.module.css'
-import PrimaryButton from '../components/ui/PrimaryButton'
-import SecondaryButton from '../components/ui/SecondaryButton'
-import DangerButton from '../components/ui/DangerButton'
+import Button, { SecondaryButton, DangerButton } from '../components/ui/Button'
 
 const GroupRow = ({ id, stageId, isAdmin }: { id: string; stageId: string; isAdmin?: boolean }) => {
     const group = useStageSelector<Group>((state) => state.groups.byId[id])
@@ -45,7 +43,7 @@ const GroupRow = ({ id, stageId, isAdmin }: { id: string; stageId: string; isAdm
                             <strong>Verlassen</strong>
                         </DangerButton>
                     ) : (
-                        <PrimaryButton
+                        <Button
                             onClick={() =>
                                 connection.emit(ClientDeviceEvents.JoinStage, {
                                     stageId,
@@ -55,7 +53,7 @@ const GroupRow = ({ id, stageId, isAdmin }: { id: string; stageId: string; isAdm
                             }
                         >
                             <strong>Beitreten</strong>
-                        </PrimaryButton>
+                        </Button>
                     )}
                 </>
             }
