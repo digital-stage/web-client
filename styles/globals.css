@@ -8,7 +8,6 @@ body {
 
 body {
     position: relative;
-    overflow: hidden;
 }
 
 a {
@@ -109,4 +108,18 @@ p {
 
 form {
     width: 100%;
+}
+
+hr {
+    box-sizing: border-box;
+    min-width: 0;
+    margin: 4px 0;
+    border-width: 0 0 1px;
+    border-top-style: initial;
+    border-right-style: initial;
+    border-left-style: initial;
+    border-color: initial;
+    border-image: initial;
+    border-bottom-style: solid;
+    color: var(---grey-5, #676767);
 }

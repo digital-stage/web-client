@@ -60,6 +60,10 @@
     outline: none;
 }
 
+.button.round.small:not(:disabled):focus {
+    padding: 4px;
+}
+
 .button:disabled {
     opacity: 0.5;
     cursor: default !important;

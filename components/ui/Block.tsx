@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import React from 'react'
 import styles from './Block.module.scss'
 
@@ -52,7 +53,8 @@ const Block = ({
     paddingLeft,
     paddingBottom,
     paddingRight,
-}: {
+    ...other
+}: React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> & {
     children: React.ReactNode
     width?: 'full' | 'auto' | number | number[]
     align?: ALIGNMENT[keyof ALIGNMENT]
@@ -102,7 +104,11 @@ const Block = ({
         classes += ` ${styles.flex}`
     }
 
-    return <div className={`${styles.block} ${classes}`}>{children}</div>
+    return (
+        <div className={`${styles.block} ${classes}`} {...other}>
+            {children}
+        </div>
+    )
 }
 Block.defaultProps = {
     width: 'auto',

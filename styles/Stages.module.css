@@ -1,0 +1,8 @@
+.circle {
+    box-sizing: border-box;
+    margin: 0 8px 0 0;
+    min-width: 30px;
+    min-height: 30px;
+    border-radius: 50%;
+    background-color: var(---tab-border-secondary,#F20544);
+}

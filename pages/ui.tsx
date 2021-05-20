@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 
+import Image from 'next/image'
+import { FaTrash } from 'react-icons/fa'
 import Background from '../components/ui/Background'
 import Container from '../components/ui/Container'
 import DangerButton from '../components/ui/DangerButton'
@@ -14,6 +16,7 @@ import HeadlineLink, {
 import Modal from '../components/ui/Modal'
 import Input from '../components/ui/Input'
 import Block from '../components/ui/Block'
+import Collapse from '../components/ui/Collapse'
 
 const UI = () => {
     const [modalOpen, setModalOpen] = useState<boolean>(false)
@@ -33,6 +36,48 @@ const UI = () => {
                 <DangerButton disabled>Click me</DangerButton>
             </Container>
             <Container>
+                <Panel level="level1">
+                    <Collapse
+                        icon={<Image width="30" height="30" src="/static/stage.svg" />}
+                        title={<h3>TITLE</h3>}
+                        actions={
+                            <Block>
+                                <FaTrash size={24} color="red" />
+                                <FaTrash size={24} color="red" />
+                                <FaTrash size={24} color="red" />
+                            </Block>
+                        }
+                    >
+                        CONTENT
+                    </Collapse>
+                    <Collapse
+                        icon={<Image width="30" height="30" src="/static/stage.svg" />}
+                        title={<h3>TITLE</h3>}
+                        actions={
+                            <Block>
+                                <FaTrash size={24} color="red" />
+                                <FaTrash size={24} color="red" />
+                                <FaTrash size={24} color="red" />
+                            </Block>
+                        }
+                    >
+                        CONTENT
+                    </Collapse>
+                    <Collapse
+                        icon={<Image width="30" height="30" src="/static/stage.svg" />}
+                        title={<h3>TITLE</h3>}
+                        actions={
+                            <Block>
+                                <FaTrash size={24} color="red" />
+                                <FaTrash size={24} color="red" />
+                                <FaTrash size={24} color="red" />
+                            </Block>
+                        }
+                    >
+                        CONTENT
+                    </Collapse>
+                </Panel>
+
                 <Panel level="level1">
                     <Block>
                         <Block width={[6, 0]} padding={3}>
