@@ -56,10 +56,10 @@ const VolumeSlider = (
     const [dbValue, setDbValue] = useState<number>()
 
     const convertLinearToLog = useCallback(
-        (v: number): number => {
-            if (v > NULL_VALUE) {
+        (value: number): number => {
+            if (value > NULL_VALUE) {
                 const y = (value - NULL_VALUE) / (MAX - NULL_VALUE)
-                return y ** UPPER_BASE * (max - middle) + middle
+                return Math.pow(y, UPPER_BASE) * (max - middle) + middle
             }
             const y = (value / NULL_VALUE) * (LOWER_BASE - 1) + 1
             return getBaseLog(LOWER_BASE, y)
@@ -68,15 +68,16 @@ const VolumeSlider = (
     )
 
     const convertLogToLinear = useCallback(
-        (v: number): number => {
-            if (v > middle) {
+        (value: number): number => {
+            if (value > middle) {
                 return (
                     Math.round(
-                        Math.pow((v - middle) / (max - middle), 1 / UPPER_BASE) * (MAX - NULL_VALUE)
+                        Math.pow((value - middle) / (max - middle), 1 / UPPER_BASE) *
+                            (MAX - NULL_VALUE)
                     ) + NULL_VALUE
                 )
             }
-            return Math.round(((Math.pow(LOWER_BASE, v) - 1) / (LOWER_BASE - 1)) * NULL_VALUE)
+            return Math.round(((Math.pow(LOWER_BASE, value) - 1) / (LOWER_BASE - 1)) * NULL_VALUE)
         },
         [middle, max]
     )

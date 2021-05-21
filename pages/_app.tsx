@@ -7,6 +7,8 @@ import Head from 'next/head'
 import { SelectedDeviceProvider } from '../hooks/useSelectedDevice'
 import { ColorProvider } from '../hooks/useColors'
 import Layout from '../components/Layout'
+import { StageJoinerProvider } from '../hooks/useStageJoiner'
+import StageJoiner from '../components/StageJoiner'
 
 function MyApp({ Component, pageProps }) {
     return (
@@ -26,10 +28,13 @@ function MyApp({ Component, pageProps }) {
                         authUrl={process.env.NEXT_PUBLIC_AUTH_URL}
                     >
                         <SelectedDeviceProvider>
-                            <Layout>
-                                {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-                                <Component {...pageProps} />
-                            </Layout>
+                            <StageJoinerProvider>
+                                <Layout>
+                                    {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+                                    <Component {...pageProps} />
+                                </Layout>
+                                <StageJoiner />
+                            </StageJoinerProvider>
                         </SelectedDeviceProvider>
                     </DigitalStageProvider>
                 </SelectedDeviceProvider>

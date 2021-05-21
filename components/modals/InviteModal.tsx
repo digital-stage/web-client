@@ -7,6 +7,7 @@ import Notification from '../ui/Notification'
 import Button from '../ui/Button'
 import Block from '../ui/Block'
 import Input from '../ui/Input'
+import Paragraph from '../ui/Paragraph'
 
 const InviteModal = ({
     open,
@@ -22,6 +23,7 @@ const InviteModal = ({
     const connection = useConnection()
     const [resetOpen, setResetOpen] = useState<boolean>(false)
     const [code, setCode] = useState<string>()
+    const [info, setInfo] = useState<string>()
     const [error, setError] = useState<string>()
 
     const resetCode = useCallback((): Promise<string> => {
@@ -58,25 +60,67 @@ const InviteModal = ({
         }
     }, [connection, stageId, groupId])
 
+    useEffect(() => {
+        if (open) {
+            return () => {
+                setInfo(undefined)
+                setError(undefined)
+                setCode(undefined)
+            }
+        }
+        return undefined
+    }, [open])
+
     return (
         <Modal size="small" open={open} onClose={onClose}>
             <ModalHeader>
                 <h3>Einladen</h3>
             </ModalHeader>
             <Block width="full" align="center" justify="center">
-                <Input type="text" readOnly value={code} label="Einladungscode" />
+                {code ? <Input type="text" readOnly value={code} label="Einladungscode" /> : '...'}
                 <Button round onClick={() => setResetOpen(true)}>
                     <BiReset />
                 </Button>
             </Block>
             <Block justify="center">
                 <Block padding={2}>
-                    <Button>Code kopieren</Button>
+                    <Button
+                        onClick={() => {
+                            navigator.clipboard
+                                .writeText(code)
+                                .then(() => setInfo('Code in die Zwischenablage kopiert!'))
+                                .catch(() =>
+                                    setError(
+                                        'Konnte Code leider nicht in die Zwischenlage einfügen'
+                                    )
+                                )
+                        }}
+                    >
+                        Code kopieren
+                    </Button>
                 </Block>
                 <Block padding={2}>
-                    <Button>Link kopieren</Button>
+                    <Button
+                        onClick={() => {
+                            const port: string = window.location.port
+                                ? `:${window.location.port}`
+                                : ''
+                            const generatedLink = `${window.location.protocol}//${window.location.hostname}${port}/join/${code}`
+                            navigator.clipboard
+                                .writeText(generatedLink)
+                                .then(() => setInfo('Link in die Zwischenablage kopiert!'))
+                                .catch(() =>
+                                    setError(
+                                        'Konnte den Link leider nicht in die Zwischenlage einfügen'
+                                    )
+                                )
+                        }}
+                    >
+                        Link kopieren
+                    </Button>
                 </Block>
             </Block>
+            {info && <Notification type="success">{info}</Notification>}
             {error && <Notification type="error">{error}</Notification>}
             <ModalFooter>
                 <ModalButton onClick={onClose}>Schließen</ModalButton>
