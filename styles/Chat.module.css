@@ -1,0 +1,15 @@
+.wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 50vh;
+}
+.messages {
+    display: block;
+    flex-grow: 1;
+    overflow-y: scroll;
+}
+.sendField {
+    width: 100%;
+    flex-grow: 0;
+}
