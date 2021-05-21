@@ -29,7 +29,7 @@ const Input = ({
                         `}
                         aria-label={label}
                         aria-required={other.required}
-                        aria-describedby={errorRef.current && errorRef.current.id}
+                        aria-describedby={errorRef.current ? errorRef.current.id : undefined}
                         {...other}
                     />
                     <span className={styles.label}>{label}</span>

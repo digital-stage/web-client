@@ -14,6 +14,7 @@ import RemoveGroupModal from '../components/modals/RemoveGroupModal'
 import RemoveStageModal from '../components/modals/RemoveStageModal'
 import GroupModal from '../components/modals/GroupModal'
 import StageModal from '../components/modals/StageModal'
+import InviteModal from '../components/modals/InviteModal'
 
 const GroupRow = ({
     id,
@@ -21,12 +22,14 @@ const GroupRow = ({
     isAdmin,
     onGroupModalRequested,
     onRemoveGroupModalRequested,
+    onInviteModalRequested,
 }: {
     id: string
     stageId: string
     isAdmin?: boolean
     onGroupModalRequested: () => void
     onRemoveGroupModalRequested: () => void
+    onInviteModalRequested: () => void
 }) => {
     const group = useStageSelector<Group>((state) => state.groups.byId[id])
     const currentGroupId = useStageSelector<string | undefined>((state) => state.globals.groupId)
@@ -45,7 +48,7 @@ const GroupRow = ({
                             <DangerButton round size="small" onClick={onRemoveGroupModalRequested}>
                                 <FaTrash />
                             </DangerButton>
-                            <SecondaryButton>
+                            <SecondaryButton onClick={onInviteModalRequested}>
                                 <strong>Einladen</strong>
                             </SecondaryButton>
                         </>
@@ -84,12 +87,14 @@ const StageRow = ({
     onGroupModalRequested,
     onRemoveStageModalRequested,
     onRemoveGroupModalRequested,
+    onInviteModalRequested,
 }: {
     id: string
     onStageModalRequested: () => void
     onRemoveStageModalRequested: () => void
     onRemoveGroupModalRequested: (groupId: string) => void
     onGroupModalRequested: (groupId: string) => void
+    onInviteModalRequested: (groupId: string) => void
 }) => {
     const stage = useStageSelector<Stage>((state) => state.stages.byId[id])
     const localUserId = useStageSelector<string | undefined>(
@@ -135,6 +140,7 @@ const StageRow = ({
                             isAdmin={isStageAdmin}
                             onGroupModalRequested={() => onGroupModalRequested(groupId)}
                             onRemoveGroupModalRequested={() => onRemoveGroupModalRequested(groupId)}
+                            onInviteModalRequested={() => onInviteModalRequested(groupId)}
                         />
                     ))}
                 {isStageAdmin && (
@@ -155,6 +161,7 @@ const StageRow = ({
 
 const Stages = () => {
     const stageIds = useStageSelector<string[]>((state) => state.stages.allIds)
+    const [inviteModalOpen, setInviteModalOpen] = useState<boolean>(false)
     const [stageModalOpen, setStageModalOpen] = useState<boolean>(false)
     const [groupModalOpen, setGroupModalOpen] = useState<boolean>(false)
     const [removeStageModalOpen, setRemoveStageModalOpen] = useState<boolean>(false)
@@ -212,6 +219,11 @@ const Stages = () => {
                                         setSelectedGroupId(groupId)
                                         setRemoveGroupModalOpen(true)
                                     }}
+                                    onInviteModalRequested={(groupId) => {
+                                        setSelectedStageId(id)
+                                        setSelectedGroupId(groupId)
+                                        setInviteModalOpen(true)
+                                    }}
                                 />
                             ))}
                     </Block>
@@ -238,6 +250,14 @@ const Stages = () => {
                 open={removeGroupModalOpen}
                 onClose={() => setRemoveGroupModalOpen(false)}
             />
+            {selectedStageId && selectedGroupId && (
+                <InviteModal
+                    stageId={selectedStageId}
+                    groupId={selectedGroupId}
+                    open={inviteModalOpen}
+                    onClose={() => setInviteModalOpen(false)}
+                />
+            )}
         </Container>
     )
 }

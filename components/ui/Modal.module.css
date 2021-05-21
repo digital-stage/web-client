@@ -1,5 +1,5 @@
 .backdrop {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     bottom: 0;
@@ -30,8 +30,13 @@
 .full {
     width: 100%
 }
+.small {
+    width: 100%;
+    max-width: 400px;
+}
 .default {
-    width: 800px
+    width: 100%;
+    max-width: 800px;
 }
 .auto {
     width: auto

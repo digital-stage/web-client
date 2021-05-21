@@ -1,0 +1,176 @@
+.wrapper {
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    width: 100%;
+    min-height: 100%;
+}
+@media only screen and (min-width: 600px) and (min-height: 600px) {
+    .wrapper {
+        display: block;
+        min-height: auto;
+    }
+}
+
+.globalModePanel {
+    padding: .5rem;
+    flex-grow: 0;
+}
+
+.globalModeSelect {
+    padding-bottom: 12px;
+}
+
+.deviceSelect {
+    padding: .5rem 1rem;
+    flex-grow: 0;
+}
+
+.inner {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    overflow: hidden;
+    overflow-x: scroll;
+    flex-grow: 1;
+    flex-wrap: nowrap;
+}
+
+@media only screen and (min-width: 600px) and (min-height: 600px) {
+    .inner {
+        /*flex-direction: column;*/
+        align-items: flex-start;
+        flex-wrap: wrap;
+        flex-grow: 1;
+        overflow: hidden;
+        height: auto;
+    }
+}
+.groupWrapper {
+    padding: .5rem;
+    flex-shrink: 0;
+    max-height: 600px;
+}
+
+@media only screen and (min-width: 600px) and (min-height: 600px) {
+    .groupWrapper {
+        padding: 1rem;
+        height: auto;
+        position: relative;
+        overflow-y: hidden;
+        overflow-x: scroll;
+    }
+}
+
+.panel {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    padding: 1rem 1rem;
+    flex-shrink: 0;
+    flex-grow: 0;
+    flex-wrap: nowrap;
+    overflow: visible;
+    width: auto;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    border-radius: 18px;
+    flex-shrink: 0;
+    flex-grow: 1;
+    overflow: visible;
+}
+
+.strip {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: stretch;
+    flex-shrink: 0;
+    overflow: visible;
+}
+
+.stripHeadline {
+    margin: 0;
+    padding-left: 8px;
+    padding-right: 8px;
+    flex-grow: 0;
+}
+
+.stripExpander {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding-left: 8px;
+    padding-right: 8px;
+    flex-grow: 0;
+}
+
+.stripExpanderButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(---primary, #415CA7);
+    padding: 2px;
+    border-radius: 100%;
+}
+
+.channelStrip {
+    padding: 12px 0;
+    flex-grow: 1;
+}
+
+.groupPanel {
+    border-style: solid;
+    border-width: 3px;
+    border-radius: 18px;
+    background-color: var(---level-1, #121212);
+    height: 100%;
+    min-height: 300px;
+}
+
+@media only screen and (min-width: 600px) and (min-height: 600px) {
+    .groupPanel {
+        height: auto;
+        min-height: 480px;
+    }
+}
+
+
+.groupStrip {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+}
+
+.stageMemberRow {
+    background-color: var(---level-2, #1F1F1F);
+}
+
+.stageMemberStrip {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+
+.stageDeviceRow {
+    background-color: var(---level-3, #292929);
+}
+
+.stageDeviceStrip {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+.audioTrackRow {
+    background-color: var(---level-4, #393939);
+}
+
+.audioTrackStrip {
+    padding-top: 0;
+    padding-bottom: 0;
+}

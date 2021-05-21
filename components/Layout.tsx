@@ -3,6 +3,8 @@ import React from 'react'
 import styles from './Layout.module.scss'
 import Sidebar from './Sidebar'
 import Background from './ui/Background'
+import ProfileMenu from './ProfileMenu'
+import MobileMenu from './MobileMenu'
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
     const { user, loading } = useAuth()
@@ -18,6 +20,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 </div>
             )}
             <div className={styles.content}>{children}</div>
+            {!loading && user && <ProfileMenu />}
+            {insideStage && <MobileMenu />}
         </div>
     )
 }

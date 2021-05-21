@@ -10,6 +10,7 @@ import Button, { ButtonProps } from './Button'
 interface SIZE {
     Default: 'default'
     Full: 'full'
+    Small: 'small'
     Auto: 'auto'
 }
 
@@ -62,6 +63,10 @@ const Modal = (
     switch (size) {
         case 'full': {
             sizeClass = styles.full
+            break
+        }
+        case 'small': {
+            sizeClass = styles.small
             break
         }
         case 'auto': {

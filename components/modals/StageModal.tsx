@@ -11,7 +11,7 @@ import Notification from '../ui/Notification'
 import Block from '../ui/Block'
 import Paragraph from '../ui/Paragraph'
 import Collapse from '../ui/Collapse'
-import Radio from '../ui/Radio'
+import Radio, { RadioPanel } from '../ui/Radio'
 
 const StageModal = ({
     open,
@@ -33,6 +33,7 @@ const StageModal = ({
             if (connection) {
                 return new Promise<void>((resolve, reject) => {
                     if (stage) {
+                        console.log('Updating stage')
                         // Update stage
                         connection.emit(
                             ClientDeviceEvents.ChangeStage,
@@ -46,6 +47,7 @@ const StageModal = ({
                             }
                         )
                     } else {
+                        console.log('Creating stage')
                         // Create stage
                         connection.emit(
                             ClientDeviceEvents.CreateStage,
@@ -74,17 +76,13 @@ const StageModal = ({
                         name: (stage && stage.name) || '',
                         audioType: (stage && stage.audioType) || '',
                         description: (stage && stage.description) || '',
-                        password: (stage && stage.password) || null,
+                        password: (stage && stage.password) || undefined,
                         width: (stage && stage.width) || 25,
                         height: (stage && stage.height) || 20,
                         length: (stage && stage.length) || 20,
                         absorption: (stage && stage.absorption) || 0.7,
                         reflection: (stage && stage.reflection) || 0.7,
                         videoType: 'mediasoup',
-                        preferredPosition: {
-                            lat: 50.110924,
-                            lng: 8.682127,
-                        },
                     } as Partial<Stage>
                 }
                 validationSchema={Yup.object().shape({
@@ -100,13 +98,9 @@ const StageModal = ({
                     height: Yup.number().min(1).max(100),
                     absorption: Yup.number().min(0).max(1),
                     reflection: Yup.number().min(0).max(1),
-                    // eslint-disable-next-line react/forbid-prop-types
-                    preferredPosition: Yup.object({
-                        lat: Yup.number().min(-90).max(90),
-                        lng: Yup.number().min(-180).max(-180),
-                    }),
                 })}
                 onSubmit={(values) => {
+                    console.log('TRIGGER')
                     save(values)
                         .then(() => onClose())
                         .catch((err) => setError(err))
@@ -128,36 +122,58 @@ const StageModal = ({
                         </Block>
                         <Block vertical align="center">
                             <Block padding={4}>
-                                <Field
-                                    as={Radio}
-                                    type="radio"
-                                    name="audioType"
-                                    value="mediasoup"
-                                    label={
-                                        <>
-                                            <Image
-                                                width={48}
-                                                height={48}
-                                                src="/static/mediasoup.png"
-                                            />
-                                            Mediasoup
-                                        </>
-                                    }
-                                />
-                                <Field
-                                    as={Radio}
-                                    type="radio"
-                                    name="audioType"
-                                    value="jammer"
-                                    label="Jammer"
-                                />
-                                <Field
-                                    as={Radio}
-                                    type="radio"
-                                    name="audioType"
-                                    value="ov"
-                                    label="OV"
-                                />
+                                <RadioPanel>
+                                    <Field
+                                        as={Radio}
+                                        type="radio"
+                                        name="audioType"
+                                        value="mediasoup"
+                                        label={
+                                            <>
+                                                <Image
+                                                    width={48}
+                                                    height={48}
+                                                    src="/static/mediasoup.png"
+                                                />
+                                                <Paragraph kind="micro">Mediasoup</Paragraph>
+                                                <h6 style={{ textAlign: 'center' }}>BROWSER</h6>
+                                            </>
+                                        }
+                                    />
+                                    <Field
+                                        as={Radio}
+                                        type="radio"
+                                        name="audioType"
+                                        value="jammer"
+                                        label={
+                                            <>
+                                                <Paragraph kind="micro">Jammernetz</Paragraph>
+                                                <h6 style={{ textAlign: 'center' }}>
+                                                    Windows, macOS &amp; Linux
+                                                </h6>
+                                            </>
+                                        }
+                                    />
+                                    <Field
+                                        as={Radio}
+                                        type="radio"
+                                        name="audioType"
+                                        value="ov"
+                                        label={
+                                            <>
+                                                <Image
+                                                    width={48}
+                                                    height={48}
+                                                    src="/static/ov.png"
+                                                />
+                                                <Paragraph kind="micro">Orlandoviols</Paragraph>
+                                                <h5 style={{ textAlign: 'center' }}>
+                                                    macOS, Linux &amp; BOX
+                                                </h5>
+                                            </>
+                                        }
+                                    />
+                                </RadioPanel>
                             </Block>
                             {errors.audioType && touched.audioType && (
                                 <Notification type="error">{errors.audioType}</Notification>
@@ -198,7 +214,6 @@ const StageModal = ({
                                 label="Breite"
                                 type="number"
                                 name="width"
-                                valid={!!errors.width}
                                 error={touched.width && errors.width}
                                 min={1}
                                 max={100}
@@ -208,7 +223,6 @@ const StageModal = ({
                                 label="Länge"
                                 type="number"
                                 name="length"
-                                valid={!!errors.length}
                                 error={touched.length && errors.length}
                                 min={1}
                                 max={100}
@@ -218,7 +232,6 @@ const StageModal = ({
                                 label="Höhe"
                                 type="number"
                                 name="height"
-                                valid={!!errors.height}
                                 error={touched.height && errors.height}
                                 min={1}
                                 max={100}
@@ -228,7 +241,6 @@ const StageModal = ({
                                 label="Absorptionsgrad der Wände"
                                 type="number"
                                 name="absorption"
-                                valid={!!errors.absorption}
                                 error={touched.absorption && errors.absorption}
                                 step={0.1}
                                 min={0}
@@ -239,7 +251,6 @@ const StageModal = ({
                                 label="Reflektionsgrad der Wände"
                                 type="number"
                                 name="reflection"
-                                valid={!!errors.reflection}
                                 error={touched.reflection && errors.reflection}
                                 step={0.1}
                                 min={0}

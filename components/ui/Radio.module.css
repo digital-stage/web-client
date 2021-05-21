@@ -1,3 +1,9 @@
+.panel {
+    display: flex;
+    /*border: 1px solid var(---text, #1F1F1F);*/
+    border-radius: 24px;
+    overflow: hidden;
+}
 .radio {
 }
 .wrapper {
@@ -16,6 +22,7 @@
 }
 .wrapper > .label {;
     position: relative;
+    padding: 8px 16px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -24,17 +31,28 @@
     border-style: solid;
     border-width: 1px;
     border-color: transparent;
-    background-color: var(---secondary, transparent);
+    color: var(---muted, #808080);
+    background-color: var(---level-3, #292929);
+
+    transition-duration: 200ms;
+    transition-property: background, border-bottom-color;
+    transition-timing-function: cubic-bezier(0, 0, 1, 1);;
 }
 .wrapper > .label:hover {
-    background-color: var(---tertiary-hover, #8a8a8a);
+    background-color: var(---level-2, #1F1F1F);
+    border-bottom-color: var(---primary, #5779D9);
+    box-shadow: rgba(40 40 40 0.2) 0 0 0 inset;
+    color: var(---text, #f4f4f4);
 }
 
 .wrapper > .radio:checked + .label {
     background-color: var(---primary, #415CA7);
-    border-color: var(---primary, #5779D9);
+    color: var(---text, #f4f4f4);
+    /*border-bottom-color: var(---primary-hover, #415CA7);*/
+    border-bottom-color: transparent;
 }
 .wrapper > .radio:checked + .label:hover {
     background-color: var(---primary-hover, #415CA7);
+    /*border-bottom-color: var(---primary-dark, #012340);*/
 }
 

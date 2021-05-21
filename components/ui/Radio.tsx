@@ -8,6 +8,13 @@ type RadioProps = React.DetailedHTMLProps<
     label?: React.ReactNode
 }
 
+const RadioPanel = ({
+    className,
+    ...others
+}: React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLDivElement>, HTMLDivElement>) => {
+    return <div className={`${styles.panel} ${className}`} {...others} />
+}
+
 const Radio = ({ className, label, ...others }: RadioProps) => {
     if (label)
         return (
@@ -34,4 +41,5 @@ Radio.defaultProps = {
     label: undefined,
 }
 export type { RadioProps }
+export { RadioPanel }
 export default Radio
