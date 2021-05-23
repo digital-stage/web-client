@@ -10,7 +10,11 @@ const AuthContainer = ({ children }: { children: React.ReactNode }) => {
             <Block width={12} align="center" padding={4}>
                 <Image src="/static/logo-full.svg" width={180} height={93} />
             </Block>
-            <Panel>{children}</Panel>
+            <Panel>
+                <Block padding={4} vertical>
+                    {children}
+                </Block>
+            </Panel>
         </Container>
     )
 }
