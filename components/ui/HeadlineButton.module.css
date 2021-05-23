@@ -16,7 +16,7 @@
     transition-property: color, border-color;
     transition-timing-function: cubic-bezier(0, 0, 1, 1);
     cursor: pointer;
-    padding: 10px 12px;
+    margin: 0;
 }
 
 .button:not(.active):hover {

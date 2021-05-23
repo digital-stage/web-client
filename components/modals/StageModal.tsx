@@ -116,13 +116,14 @@ const StageModal = ({
                             type="text"
                             name="name"
                             error={touched.name && errors.name}
+                            light
                         />
                         <Block vertical>
                             <h5 className="muted">Audioübertragung</h5>
                         </Block>
                         <Block vertical align="center">
                             <Block padding={4}>
-                                <RadioPanel>
+                                <RadioPanel light>
                                     <Field
                                         as={Radio}
                                         type="radio"
@@ -139,6 +140,7 @@ const StageModal = ({
                                                 <h6 style={{ textAlign: 'center' }}>BROWSER</h6>
                                             </>
                                         }
+                                        light
                                     />
                                     <Field
                                         as={Radio}
@@ -153,6 +155,7 @@ const StageModal = ({
                                                 </h6>
                                             </>
                                         }
+                                        light
                                     />
                                     <Field
                                         as={Radio}
@@ -172,6 +175,7 @@ const StageModal = ({
                                                 </h5>
                                             </>
                                         }
+                                        light
                                     />
                                 </RadioPanel>
                             </Block>
@@ -198,6 +202,7 @@ const StageModal = ({
                             type="text"
                             name="password"
                             error={touched.password && errors.password}
+                            light
                         />
                         <Field
                             as={Input}
@@ -207,6 +212,7 @@ const StageModal = ({
                             type="text"
                             name="description"
                             error={touched.description && errors.description}
+                            light
                         />
                         <Collapse title="Erweiterte Einstellungen">
                             <Field
@@ -217,6 +223,7 @@ const StageModal = ({
                                 error={touched.width && errors.width}
                                 min={1}
                                 max={100}
+                                light
                             />
                             <Field
                                 as={Input}
@@ -226,6 +233,7 @@ const StageModal = ({
                                 error={touched.length && errors.length}
                                 min={1}
                                 max={100}
+                                light
                             />
                             <Field
                                 as={Input}
@@ -235,6 +243,7 @@ const StageModal = ({
                                 error={touched.height && errors.height}
                                 min={1}
                                 max={100}
+                                light
                             />
                             <Field
                                 as={Input}
@@ -245,6 +254,7 @@ const StageModal = ({
                                 step={0.1}
                                 min={0}
                                 max={1}
+                                light
                             />
                             <Field
                                 as={Input}
@@ -255,6 +265,7 @@ const StageModal = ({
                                 step={0.1}
                                 min={0}
                                 max={1}
+                                light
                             />
                         </Collapse>
                         {error && <Notification type="error">{error}</Notification>}

@@ -46,7 +46,7 @@ const ChannelStrip = (props: {
     }, [onChange, channel, value])
 
     return (
-        <div className={`${styles.wrapper} ${className}`}>
+        <div className={`${styles.wrapper} ${className || ''}`}>
             <VolumeSlider
                 min={0}
                 middle={1}

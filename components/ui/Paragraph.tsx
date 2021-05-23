@@ -16,7 +16,7 @@ const Paragraph = ({
 }) => {
     return (
         <p
-            className={`${styles.p} ${kind ? styles[kind] : styles.default} ${className}`}
+            className={`${styles.p} ${kind ? styles[kind] : styles.default} ${className || ''}`}
             // eslint-disable-next-line react/jsx-props-no-spreading
             {...other}
         >

@@ -77,13 +77,17 @@ const InviteModal = ({
                 <h3>Einladen</h3>
             </ModalHeader>
             <Block width="full" align="center" justify="center">
-                {code ? <Input type="text" readOnly value={code} label="Einladungscode" /> : '...'}
+                {code ? (
+                    <Input type="text" readOnly value={code} label="Einladungscode" light />
+                ) : (
+                    '...'
+                )}
                 <Button round onClick={() => setResetOpen(true)}>
                     <BiReset />
                 </Button>
             </Block>
-            <Block justify="center">
-                <Block padding={2}>
+            <Block width="full" align="center" justify="center" paddingBottom={2}>
+                <Block paddingRight={2}>
                     <Button
                         onClick={() => {
                             navigator.clipboard
@@ -99,26 +103,22 @@ const InviteModal = ({
                         Code kopieren
                     </Button>
                 </Block>
-                <Block padding={2}>
-                    <Button
-                        onClick={() => {
-                            const port: string = window.location.port
-                                ? `:${window.location.port}`
-                                : ''
-                            const generatedLink = `${window.location.protocol}//${window.location.hostname}${port}/join/${code}`
-                            navigator.clipboard
-                                .writeText(generatedLink)
-                                .then(() => setInfo('Link in die Zwischenablage kopiert!'))
-                                .catch(() =>
-                                    setError(
-                                        'Konnte den Link leider nicht in die Zwischenlage einfügen'
-                                    )
+                <Button
+                    onClick={() => {
+                        const port: string = window.location.port ? `:${window.location.port}` : ''
+                        const generatedLink = `${window.location.protocol}//${window.location.hostname}${port}/join/${code}`
+                        navigator.clipboard
+                            .writeText(generatedLink)
+                            .then(() => setInfo('Link in die Zwischenablage kopiert!'))
+                            .catch(() =>
+                                setError(
+                                    'Konnte den Link leider nicht in die Zwischenlage einfügen'
                                 )
-                        }}
-                    >
-                        Link kopieren
-                    </Button>
-                </Block>
+                            )
+                    }}
+                >
+                    Link kopieren
+                </Button>
             </Block>
             {info && <Notification type="success">{info}</Notification>}
             {error && <Notification type="error">{error}</Notification>}

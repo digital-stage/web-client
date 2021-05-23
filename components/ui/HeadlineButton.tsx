@@ -15,7 +15,7 @@ const PrimaryHeadlineButton = (
         <button
             className={`${styles.button} ${styles.primary} ${toggled && styles.active} ${
                 styles.toggled
-            } ${className} ${other}`}
+            } ${className || ''} ${other}`}
             {...other}
         />
     )
@@ -37,7 +37,7 @@ const SecondaryHeadlineButton = (
         <button
             className={`${styles.button} ${styles.secondary} ${toggled && styles.active} ${
                 styles.toggled
-            } ${className} ${other}`}
+            } ${className || ''} ${other}`}
             {...other}
         />
     )

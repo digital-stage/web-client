@@ -2,14 +2,20 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    height: 50vh;
+    height: 100vh;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
 }
 .messages {
-    display: block;
+    display: flex;
+    flex-direction: column;
     flex-grow: 1;
     overflow-y: scroll;
 }
 .sendField {
     width: 100%;
     flex-grow: 0;
+}
+.outerPanel {
+    flex-grow: 1;
 }

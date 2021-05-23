@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events,jsx-a11y/interactive-supports-focus,jsx-a11y/no-noninteractive-element-interactions */
-import React, { useEffect, useRef } from 'react'
+import React, { ReactNode, useEffect, useRef } from 'react'
 import { Portal } from 'react-portal'
 import { disableBodyScroll, enableBodyScroll } from 'body-scroll-lock'
 import styles from './Modal.module.css'
@@ -29,7 +29,7 @@ const ModalButton = (props: ButtonProps) => {
 
 const ModalFooter = ({ children }: { children: React.ReactNode }) => {
     return (
-        <Block paddingTop={4} justify="end">
+        <Block width="full" paddingTop={4} justify="end">
             {children}
         </Block>
     )
@@ -37,6 +37,7 @@ const ModalFooter = ({ children }: { children: React.ReactNode }) => {
 
 const Modal = (
     props: React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> & {
+        children: ReactNode
         level?: LEVEL[keyof LEVEL]
         size?: SIZE[keyof SIZE]
         open: boolean
@@ -100,8 +101,10 @@ const Modal = (
                         }}
                         role="dialog"
                     >
-                        {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-                        <Panel aria-modal="true" {...other} />
+                        <Panel level="level5" aria-modal="true">
+                            {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+                            <Block padding={4} {...other} />
+                        </Panel>
                     </div>
                 </div>
             </Portal>

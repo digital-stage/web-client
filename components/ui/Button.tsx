@@ -52,7 +52,7 @@ const Button = ({
         ${size ? styles[size] : ''} 
         ${width ? styles[width] : ''} 
         ${kind ? styles[kind] : styles.primary} 
-        ${className}`}
+        ${className || ''}`}
         {...props}
     >
         {icon && <div className={styles.icon}>{icon}</div>}

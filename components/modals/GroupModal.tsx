@@ -98,6 +98,7 @@ const GroupModal = ({
                             type="text"
                             name="name"
                             error={touched.name && errors.name}
+                            light
                         />
                         <Field
                             as={Input}
@@ -107,6 +108,7 @@ const GroupModal = ({
                             type="text"
                             name="description"
                             error={touched.description && errors.description}
+                            light
                         />
                         {values.color && (
                             <Block vertical>

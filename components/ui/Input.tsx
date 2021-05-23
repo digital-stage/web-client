@@ -1,9 +1,10 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useRef, useState } from 'react'
 import { BsEyeSlashFill, BsFillEyeFill } from 'react-icons/bs'
-import styles from './Input.module.css'
+import styles from './Input.module.scss'
 
 const Input = ({
+    light,
     type,
     label,
     error,
@@ -12,12 +13,13 @@ const Input = ({
 }: React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> & {
     label: string
     error?: string
+    light?: boolean
 }) => {
     const [inputType, setInputType] = useState<string>(type)
     const errorRef = useRef<HTMLDivElement>()
 
     return (
-        <div className={styles.wrapper}>
+        <div className={`${styles.wrapper} ${light ? styles.light : ''}`}>
             <div className={`${styles.inputWrapper}  ${error ? styles.error : ''}`}>
                 <label>
                     <input
@@ -25,7 +27,7 @@ const Input = ({
                         className={`
                           ${styles.input} 
                           ${type === 'password' ? styles.inputPassword : ''}
-                          ${className}
+                          ${className || ''}
                         `}
                         aria-label={label}
                         aria-required={other.required}
@@ -53,5 +55,6 @@ const Input = ({
 }
 Input.defaultProps = {
     error: undefined,
+    light: undefined,
 }
 export default Input

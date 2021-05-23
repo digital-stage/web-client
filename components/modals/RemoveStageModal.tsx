@@ -28,7 +28,7 @@ const RemoveStageModal = ({
     }, [stageId, connection])
     if (stage) {
         return (
-            <Modal open={open} onClose={onClose}>
+            <Modal open={open} onClose={onClose} size="small">
                 <ModalHeader>
                     <h4>Bühne {stage.name || stage._id} wirklich löschen?</h4>
                 </ModalHeader>

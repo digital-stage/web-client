@@ -29,7 +29,7 @@ const PrimaryHeadlineLink = (
             <a
                 className={`${styles.button} ${styles.primary} ${
                     asPath === href ? styles.active : ''
-                } ${className}`}
+                } ${className || ''}`}
                 {...other}
             />
         </Link>
@@ -60,7 +60,7 @@ const SecondaryHeadlineLink = (
             <a
                 className={`${styles.button} ${styles.secondary} ${
                     asPath === href ? styles.active : ''
-                } ${className}`}
+                } ${className || ''}`}
                 {...other}
             />
         </Link>

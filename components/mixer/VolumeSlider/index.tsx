@@ -109,7 +109,7 @@ const VolumeSlider = (
 
     return (
         <div
-            className={`${styles.wrapper} ${className}`}
+            className={`${styles.wrapper} ${className || ''}`}
             style={{
                 alignItems: alignLabel === 'right' ? 'flex-start' : 'flex-end',
                 ...style,

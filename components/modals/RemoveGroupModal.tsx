@@ -28,7 +28,7 @@ const RemoveGroupModal = ({
     }, [groupId, connection])
     if (group) {
         return (
-            <Modal open={open} onClose={onClose}>
+            <Modal open={open} onClose={onClose} size="small">
                 <ModalHeader>
                     <h4>Gruppe {group.name || group._id} wirklich löschen?</h4>
                 </ModalHeader>

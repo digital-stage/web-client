@@ -9,7 +9,7 @@ import Container from '../components/ui/Container'
 import Panel from '../components/ui/Panel'
 import List, { ListItem } from '../components/ui/List'
 import styles from '../styles/Stages.module.css'
-import Button, { SecondaryButton, DangerButton } from '../components/ui/Button'
+import Button, { DangerButton } from '../components/ui/Button'
 import RemoveGroupModal from '../components/modals/RemoveGroupModal'
 import RemoveStageModal from '../components/modals/RemoveStageModal'
 import GroupModal from '../components/modals/GroupModal'
@@ -192,7 +192,7 @@ const Stages = () => {
         <Container>
             <Block paddingTop={4} paddingBottom={5}>
                 <h1>Meine Bühnen</h1>
-                <Panel padding={0}>
+                <Panel>
                     <Block vertical paddingLeft={4} paddingRight={4}>
                         <Block style={{ borderBottom: '1px solid #676767' }}>
                             <Block align="center" justify="center" padding={1} width={[12, 6]}>

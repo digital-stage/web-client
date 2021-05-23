@@ -1,27 +1,39 @@
 import React from 'react'
-import styles from './Radio.module.css'
+import styles from './Radio.module.scss'
 
 type RadioProps = React.DetailedHTMLProps<
     React.InputHTMLAttributes<HTMLInputElement>,
     HTMLInputElement
 > & {
     label?: React.ReactNode
+    light?: boolean
 }
 
 const RadioPanel = ({
     className,
+    light,
     ...others
-}: React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLDivElement>, HTMLDivElement>) => {
-    return <div className={`${styles.panel} ${className}`} {...others} />
+}: React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLDivElement>, HTMLDivElement> & {
+    light?: boolean
+}) => {
+    return (
+        <div
+            className={`${styles.panel} ${light ? styles.light : ''} ${className || ''}`}
+            {...others}
+        />
+    )
+}
+RadioPanel.defaultProps = {
+    light: undefined,
 }
 
-const Radio = ({ className, label, ...others }: RadioProps) => {
+const Radio = ({ className, label, light, ...others }: RadioProps) => {
     if (label)
         return (
-            <label className={styles.wrapper}>
+            <label className={`${styles.wrapper} ${light ? styles.light : ''}`}>
                 <input
                     type="radio"
-                    className={`${styles.radio} ${styles.withLabel} ${className}`}
+                    className={`${styles.radio} ${styles.withLabel} ${className || ''}`}
                     // eslint-disable-next-line react/jsx-props-no-spreading
                     {...others}
                 />
@@ -31,7 +43,7 @@ const Radio = ({ className, label, ...others }: RadioProps) => {
     return (
         <input
             type="radio"
-            className={`${styles.radio} ${className}`}
+            className={`${styles.radio} ${className || ''}`}
             // eslint-disable-next-line react/jsx-props-no-spreading
             {...others}
         />
@@ -39,6 +51,7 @@ const Radio = ({ className, label, ...others }: RadioProps) => {
 }
 Radio.defaultProps = {
     label: undefined,
+    light: undefined,
 }
 export type { RadioProps }
 export { RadioPanel }

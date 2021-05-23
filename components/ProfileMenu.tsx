@@ -34,7 +34,7 @@ const ProfileMenu = (
             <SecondaryButton
                 round
                 toggled={!open}
-                className={`${styles.button} ${className}`}
+                className={`${styles.button} ${className || ''}`}
                 onClick={(e) => {
                     setOpen((prev) => !prev)
                     if (onClick) onClick(e)

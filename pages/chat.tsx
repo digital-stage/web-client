@@ -17,9 +17,9 @@ const Chat = () => {
     const users = useStageSelector<RemoteUsers>((state) => state.remoteUsers)
     return (
         <Container>
-            <Panel>
-                <div className={styles.wrapper}>
-                    <div className={styles.messages}>
+            <div className={styles.wrapper}>
+                <Panel fill level="level1" className={styles.outerPanel}>
+                    <Panel fill level="level2" className={styles.messages}>
                         {messages.map((msg) => {
                             let dateStr
                             const min = (Date.now() - msg.time) / 60000
@@ -38,7 +38,7 @@ const Chat = () => {
                                 </div>
                             )
                         })}
-                    </div>
+                    </Panel>
                     {error && <Notification type="error">{error}</Notification>}
                     <div className={styles.sendField}>
                         <Input
@@ -58,8 +58,8 @@ const Chat = () => {
                             <AiOutlineSend />
                         </Button>
                     </div>
-                </div>
-            </Panel>
+                </Panel>
+            </div>
         </Container>
     )
 }
