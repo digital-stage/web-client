@@ -6,13 +6,31 @@
     right: 0;
     width: 100vw;
     height: 100vh;
-    background-color: var(---overlay, rgba(0, 0, 0, 0.4));
-    backdrop-filter: blur(10px);
     overflow: scroll;
     display: flex;
     justify-content: center;
     padding: 72px 12px;
     min-height: 100%;
+    transition-duration: 200ms;
+    transition-property: background-color, backdrop-filter;
+    transition-timing-function: cubic-bezier(0, 0, 1, 1);
+
+    /* Closed state */
+    background-color: transparent;
+    backdrop-filter: blur(10px) opacity(0);
+}
+
+.backdrop.opening {
+    background-color: transparent;
+    backdrop-filter: blur(10px) opacity(0);
+}
+.backdrop.open {
+    background-color: var(---overlay, rgba(0, 0, 0, 0.4));
+    backdrop-filter: blur(10px) opacity(1);
+}
+.backdrop.closing {
+    background-color: transparent;
+    backdrop-filter: blur(10px) opacity(0);
 }
 
 .modal {
@@ -21,6 +39,22 @@
     position: relative;
     margin: 0 auto;
     max-width: 800px;
+    transition-duration: 200ms;
+    transition-property: transform, opacity;
+    transition-timing-function: cubic-bezier(0, 0, 1, 1);
+}
+
+.modal.opening {
+    opacity: 0;
+    transform: translateY(30px);
+}
+.modal.open {
+    opacity: 1;
+    transform: translateY(0);
+}
+.modal.closing {
+    opacity: 0;
+    transform: translateY(30px);
 }
 
 .panel {
