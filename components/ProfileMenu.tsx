@@ -6,6 +6,8 @@ import { useAuth, useStageSelector } from '@digitalstage/api-client-react'
 import Link from 'next/link'
 import styles from './ProfileMenu.module.css'
 import { DangerButton, SecondaryButton } from './ui/Button'
+import Paragraph from './ui/Paragraph'
+import Block from './ui/Block'
 
 const ProfileMenu = (
     props: React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>
@@ -47,19 +49,22 @@ const ProfileMenu = (
                 <>
                     <div className={styles.backdrop} onClick={() => setOpen(false)} />
                     <div className={styles.menuPanel} ref={ref}>
-                        {!user && (
+                        {user && (
                             <>
-                                <p className="micro">Angemeldet als</p>
-                                <p className="micro">
-                                    <strong>{user?.name}</strong>
-                                </p>
-                                <p className="micro">{authUser?.email}</p>
-                                <p className="micro">
-                                    <hr />
+                                <Paragraph kind="micro">Angemeldet als</Paragraph>
+                                <h5>{user?.name}</h5>
+                                <Paragraph kind="micro">{authUser?.email}</Paragraph>
+                                <hr />
+                                <Block vertical paddingTop={2} paddingBottom={4}>
                                     <Link href="/account/profile">
-                                        <a className={styles.profileButton}>Profil bearbeiten</a>
+                                        <a
+                                            className={styles.profileButton}
+                                            onClick={() => setOpen(false)}
+                                        >
+                                            Profil bearbeiten
+                                        </a>
                                     </Link>
-                                </p>
+                                </Block>
                                 <DangerButton onClick={() => push('/account/logout')}>
                                     Logout
                                 </DangerButton>

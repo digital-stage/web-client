@@ -169,3 +169,40 @@ PADDING
   }
 }
 
+
+/**
+ROW
+ */
+.container {
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    position: relative;
+    width: 100%;
+  }
+}
+
+@each $padding in $paddings {
+  $index: index($paddings, $padding);
+  .container.p-#{$index} {
+    padding-left: $padding;
+    padding-right: $padding;
+  }
+  .row.p-#{$index} {
+    margin-left: $padding*-1;
+    margin-right: $padding*-1;
+  }
+  @each $breakpoint in $breakpoints {
+    $breakpointIndex: index($breakpoints, $breakpoint);
+    @media only screen and (min-width: map-get($breakpoint, "min-width")) and (min-height: map-get($breakpoint, "min-height")) {
+      .row.p-#{$breakpointIndex}-#{$index} {
+        margin-left: $padding*-1;
+        margin-right: $padding*-1;
+      }
+      .container.p-#{$breakpointIndex}-#{$index} {
+        padding-left: $padding;
+        padding-right: $padding;
+      }
+    }
+  }
+}

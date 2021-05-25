@@ -7,7 +7,7 @@ import LiveInput from '../components/ui/LiveInput'
 import SoundCardSelect from '../components/SoundCardSelect'
 import Button from '../components/ui/Button'
 import MediasoupSettings from '../components/MediasoupSettings'
-import Block from '../components/ui/Block'
+import Block, { Row } from '../components/ui/Block'
 
 const DeviceView = ({ id }: { id: string }) => {
     const connection = useConnection()
@@ -108,19 +108,31 @@ const Devices = () => {
     )
     return (
         <Container>
-            <h2>Dieses Gerät</h2>
-            <Block vertical width={12} padding={2} paddingBottom={5}>
-                {localDeviceId && <DeviceView id={localDeviceId} />}
-            </Block>
-            <h2>Anderen Geräte</h2>
-            <Block width={12} paddingBottom={5}>
-                {deviceIds.map((id) => (
-                    <Block width={[12, 6]}>
-                        <Panel>
-                            <DeviceView id={id} />
+            <Block vertical paddingTop={4} paddingBottom={5}>
+                <h2>Dieses Gerät</h2>
+                <Block vertical width={12} padding={2} paddingBottom={5}>
+                    {localDeviceId && (
+                        <Panel level="level3">
+                            <Block padding={4} vertical>
+                                <DeviceView id={localDeviceId} />
+                            </Block>
                         </Panel>
-                    </Block>
-                ))}
+                    )}
+                </Block>
+                <h2>Anderen Geräte</h2>
+                <Block width={12} paddingBottom={5}>
+                    <Row padding={4}>
+                        {deviceIds.map((id) => (
+                            <Block width={[12, 6]} padding={4}>
+                                <Panel>
+                                    <Block padding={4} vertical>
+                                        <DeviceView id={id} />
+                                    </Block>
+                                </Panel>
+                            </Block>
+                        ))}
+                    </Row>
+                </Block>
             </Block>
         </Container>
     )

@@ -134,5 +134,17 @@ Block.defaultProps = {
     paddingBottom: undefined,
     paddingRight: undefined,
 }
+const Row = ({ children, padding }: { children: React.ReactNode; padding?: number | number[] }) => {
+    let classes = ''
+    if (padding) {
+        classes += ` ${getResponsiveClasses<number>(padding, 'p')}`
+    }
+    return (
+        <div className={`${styles.container} ${classes}`}>
+            <div className={`${styles.row} ${classes}`}>{children}</div>
+        </div>
+    )
+}
+export { Row }
 export type { ALIGNMENT, BEHAVIOR, JUSTIFICATION }
 export default Block
