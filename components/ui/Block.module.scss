@@ -133,7 +133,6 @@ PADDING
 /**
   WIDTH
  */
-
 .block.w-auto {
   flex-basis: auto;
 }
@@ -165,6 +164,30 @@ PADDING
         display: flex;
         flex-basis: $width / 12 * 100%;
       }
+    }
+  }
+}
+
+/**
+  HEIGHT
+ */
+.block.h-auto {
+  height: auto;
+}
+
+.block.h-full {
+  height: 100%;
+}
+
+@each $breakpoint in $breakpoints {
+  $index: index($breakpoints, $breakpoint);
+  @media only screen and (min-width: map-get($breakpoint, "min-width")) and (min-height: map-get($breakpoint, "min-height")) {
+    .block.h-#{$index}-auto {
+      height: auto;
+    }
+
+    .block.h-#{$index}-full {
+      height: 100%;
     }
   }
 }
@@ -203,6 +226,36 @@ ROW
         padding-left: $padding;
         padding-right: $padding;
       }
+    }
+  }
+}
+
+/**
+GROW
+ */
+.block.grow {
+  flex-grow: 0
+}
+
+.block.grow-1 {
+  flex-grow: 1
+}
+
+.block.grow-2 {
+  flex-grow: 2
+}
+
+@each $breakpoint in $breakpoints {
+  $index: index($breakpoints, $breakpoint);
+  @media only screen and (min-width: map-get($breakpoint, "min-width")) and (min-height: map-get($breakpoint, "min-height")) {
+    .block.grow-#{$index}-0 {
+      flex-grow: 0
+    }
+    .block.grow-#{$index}-1 {
+      flex-grow: 1
+    }
+    .block.grow-#{$index}-2 {
+      flex-grow: 2
     }
   }
 }

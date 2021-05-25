@@ -5,7 +5,6 @@ import Sidebar from './Sidebar'
 import Background from './ui/Background'
 import ProfileMenu from './ProfileMenu'
 import MobileMenu from './MobileMenu'
-import StageJoiner from './StageJoiner'
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
     const { user, loading } = useAuth()

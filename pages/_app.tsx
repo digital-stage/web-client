@@ -22,22 +22,20 @@ function MyApp({ Component, pageProps }) {
                 />
             </Head>
             <ColorProvider>
-                <SelectedDeviceProvider>
-                    <DigitalStageProvider
-                        apiUrl={process.env.NEXT_PUBLIC_API_URL}
-                        authUrl={process.env.NEXT_PUBLIC_AUTH_URL}
-                    >
-                        <SelectedDeviceProvider>
-                            <StageJoinerProvider>
-                                <Layout>
-                                    {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-                                    <Component {...pageProps} />
-                                </Layout>
-                                <StageJoiner />
-                            </StageJoinerProvider>
-                        </SelectedDeviceProvider>
-                    </DigitalStageProvider>
-                </SelectedDeviceProvider>
+                <DigitalStageProvider
+                    apiUrl={process.env.NEXT_PUBLIC_API_URL}
+                    authUrl={process.env.NEXT_PUBLIC_AUTH_URL}
+                >
+                    <SelectedDeviceProvider>
+                        <StageJoinerProvider>
+                            <Layout>
+                                {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+                                <Component {...pageProps} />
+                            </Layout>
+                            <StageJoiner />
+                        </StageJoinerProvider>
+                    </SelectedDeviceProvider>
+                </DigitalStageProvider>
             </ColorProvider>
         </>
     )

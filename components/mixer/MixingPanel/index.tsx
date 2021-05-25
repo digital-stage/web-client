@@ -26,6 +26,8 @@ import ChannelStrip from './ChannelStrip'
 import useSelectedDevice from '../../../hooks/useSelectedDevice'
 import HeadlineButton from '../../ui/HeadlineButton'
 import DeviceSelector from '../../DeviceSelector'
+import Block from '../../ui/Block'
+import Paragraph from '../../ui/Paragraph'
 
 const AudioTrackPanel = (props: { id: string; color: HSLColor; globalMode: boolean }) => {
     const { id, color, globalMode } = props
@@ -478,35 +480,37 @@ const MixingPanel = () => {
         return (
             <div className={styles.wrapper}>
                 {isSoundEditor && (
-                    <div className={styles.globalModePanel}>
-                        <div className={styles.globalModeSelect}>
+                    <Block vertical>
+                        <div>
                             <HeadlineButton
                                 toggled={!globalMode}
                                 onClick={() => setGlobalMode(false)}
                             >
-                                Personal mix
+                                Persönliche Einstellungen
                             </HeadlineButton>
                             <HeadlineButton
                                 toggled={globalMode}
                                 onClick={() => setGlobalMode(true)}
                             >
-                                Global mix
+                                Voreinstellungen
                             </HeadlineButton>
                         </div>
-                        <p className="micro">
-                            {globalMode
-                                ? 'Diese Einstellungen gelten für alle'
-                                : 'Diese Einstellungen gelten nur für Dich'}
-                        </p>
-                    </div>
+                        <Block padding={2}>
+                            <Paragraph kind="micro">
+                                {globalMode
+                                    ? 'Diese Einstellungen gelten als Voreinstellung für alle'
+                                    : 'Diese Einstellungen gelten nur für Dich'}
+                            </Paragraph>
+                        </Block>
+                    </Block>
                 )}
                 {!globalMode && (
-                    <div className={styles.deviceSelect}>
+                    <Block padding={2}>
                         <label className="micro">
                             Betreffendes Gerät:&nbsp;&nbsp;
                             <DeviceSelector />
                         </label>
-                    </div>
+                    </Block>
                 )}
                 <div className={styles.inner}>
                     {groupIds.map((groupId) => (

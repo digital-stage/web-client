@@ -21,6 +21,16 @@ interface BEHAVIOR {
     fluid: 'fluid'
 }
 
+interface WIDTH {
+    full: 'full'
+    auto: 'auto'
+}
+
+interface HEIGHT {
+    full: 'full'
+    auto: 'auto'
+}
+
 function getResponsiveClasses<T>(
     value: T | T[],
     prefix: string,
@@ -52,6 +62,7 @@ function getResponsiveClasses<T>(
 const Block = ({
     children,
     width,
+    height,
     align,
     justify,
     behavior,
@@ -61,10 +72,13 @@ const Block = ({
     paddingLeft,
     paddingBottom,
     paddingRight,
+    flexGrow,
+    className,
     ...other
 }: React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> & {
     children: React.ReactNode
-    width?: 'full' | 'auto' | number | number[]
+    width?: WIDTH[keyof WIDTH] | number | number[]
+    height?: HEIGHT[keyof HEIGHT]
     align?: ALIGNMENT[keyof ALIGNMENT]
     justify?: JUSTIFICATION[keyof JUSTIFICATION]
     behavior?: BEHAVIOR[keyof BEHAVIOR]
@@ -74,27 +88,26 @@ const Block = ({
     paddingLeft?: number | number[]
     paddingBottom?: number | number[]
     paddingRight?: number | number[]
+    flexGrow?: number | number[]
 }): JSX.Element => {
-    // let needsFlex = false
     let classes = ''
     if (width) {
         classes += getResponsiveClasses<number | string>(width, 'w', '', 0, 12)
     }
+    if (height) {
+        classes += getResponsiveClasses<number | string>(height, 'h', '', 0, 12)
+    }
     if (align) {
         classes += ` ${getResponsiveClasses<string>(align, 'align')}`
-        // needsFlex = true
     }
     if (justify) {
         classes += ` ${getResponsiveClasses<string>(justify, 'justify')}`
-        // needsFlex = true
     }
     if (behavior) {
         classes += ` ${styles[behavior]}`
-        // needsFlex = true
     }
     if (vertical) {
         classes += ` ${styles.column}`
-        // needsFlex = true
     }
     if (padding) {
         classes += ` ${getResponsiveClasses<number>(padding, 'p')}`
@@ -111,19 +124,19 @@ const Block = ({
     if (paddingRight) {
         classes += ` ${getResponsiveClasses<number>(paddingRight, 'pr')}`
     }
-
-    /* if (needsFlex) {
-        classes += ` ${styles.flex}`
-    } */
+    if (flexGrow) {
+        classes += ` ${getResponsiveClasses<number>(flexGrow, 'grow', '', 0, 2)}`
+    }
 
     return (
-        <div className={`${styles.block} ${classes}`} {...other}>
+        <div className={`${styles.block} ${classes} ${className || ''}`} {...other}>
             {children}
         </div>
     )
 }
 Block.defaultProps = {
     width: undefined,
+    height: undefined,
     align: undefined,
     justify: undefined,
     behavior: undefined,
@@ -133,6 +146,7 @@ Block.defaultProps = {
     paddingLeft: undefined,
     paddingBottom: undefined,
     paddingRight: undefined,
+    flexGrow: undefined,
 }
 const Row = ({ children, padding }: { children: React.ReactNode; padding?: number | number[] }) => {
     let classes = ''
@@ -145,6 +159,9 @@ const Row = ({ children, padding }: { children: React.ReactNode; padding?: numbe
         </div>
     )
 }
+Row.defaultProps = {
+    padding: undefined,
+}
 export { Row }
-export type { ALIGNMENT, BEHAVIOR, JUSTIFICATION }
+export type { ALIGNMENT, BEHAVIOR, JUSTIFICATION, WIDTH, HEIGHT }
 export default Block

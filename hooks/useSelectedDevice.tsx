@@ -1,4 +1,5 @@
-import React, { createContext, useState } from 'react'
+import React, { createContext, useEffect, useState } from 'react'
+import { useStageSelector } from '@digitalstage/api-client-react'
 
 interface ISelectedDeviceContext {
     device?: string
@@ -13,7 +14,19 @@ const SelectedDeviceContext = createContext<ISelectedDeviceContext>({
 
 export const SelectedDeviceProvider = (props: { children: React.ReactNode }) => {
     const { children } = props
+    const localDeviceId = useStageSelector<string | undefined>(
+        (state) => state.globals.localDeviceId
+    )
     const [device, setDevice] = useState<string>()
+
+    useEffect(() => {
+        if (localDeviceId) {
+            setDevice((prev) => {
+                if (!prev) return localDeviceId
+                return prev
+            })
+        }
+    }, [localDeviceId])
 
     return (
         <SelectedDeviceContext.Provider
