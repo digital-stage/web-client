@@ -1,6 +1,7 @@
-import { Device, useConnection, useStageSelector } from '@digitalstage/api-client-react'
-import React from 'react'
+import { Device, useAuth, useConnection, useStageSelector } from '@digitalstage/api-client-react'
+import React, { useEffect } from 'react'
 import { ClientDeviceEvents, ClientDevicePayloads, MediasoupDevice } from '@digitalstage/api-types'
+import { useRouter } from 'next/router'
 import Container from '../components/ui/Container'
 import Panel from '../components/ui/Panel'
 import LiveInput from '../components/ui/LiveInput'
@@ -102,6 +103,14 @@ const DeviceView = ({ id }: { id: string }) => {
 }
 
 const Devices = () => {
+    const { loading, user } = useAuth()
+    const { replace } = useRouter()
+    useEffect(() => {
+        if (!loading && !user && replace) {
+            replace('/account/login')
+        }
+    }, [loading, user, replace])
+
     const localDeviceId = useStageSelector<string>((state) => state.globals.localDeviceId)
     const deviceIds = useStageSelector<string[]>((state) => state.devices.allIds).filter(
         (id) => id !== localDeviceId

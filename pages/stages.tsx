@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { FaTrash, FaPlus, FaArrowRight, FaEdit, FaShareSquare } from 'react-icons/fa'
-import { useConnection, useStageSelector } from '@digitalstage/api-client-react'
+import { useAuth, useConnection, useStageSelector } from '@digitalstage/api-client-react'
 import { ClientDeviceEvents, Group, Stage } from '@digitalstage/api-types'
+import { useRouter } from 'next/router'
 import Block from '../components/ui/Block'
 import Collapse from '../components/ui/Collapse'
 import Container from '../components/ui/Container'
@@ -179,6 +180,14 @@ const StageRow = ({
 }
 
 const Stages = () => {
+    const { loading, user } = useAuth()
+    const { replace } = useRouter()
+    useEffect(() => {
+        if (!loading && !user && replace) {
+            replace('/account/login')
+        }
+    }, [loading, user, replace])
+
     const stageIds = useStageSelector<string[]>((state) => state.stages.allIds)
     const [inviteModalOpen, setInviteModalOpen] = useState<boolean>(false)
     const [stageModalOpen, setStageModalOpen] = useState<boolean>(false)

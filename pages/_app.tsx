@@ -9,6 +9,8 @@ import { ColorProvider } from '../hooks/useColors'
 import Layout from '../components/Layout'
 import { StageJoinerProvider } from '../hooks/useStageJoiner'
 import StageJoiner from '../components/StageJoiner'
+import { AudioContextProvider } from '../hooks/useAudioContext'
+import AudioRendererProvider from '../hooks/useAudioRenderer'
 
 function MyApp({ Component, pageProps }) {
     return (
@@ -27,13 +29,17 @@ function MyApp({ Component, pageProps }) {
                     authUrl={process.env.NEXT_PUBLIC_AUTH_URL}
                 >
                     <SelectedDeviceProvider>
-                        <StageJoinerProvider>
-                            <Layout>
-                                {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-                                <Component {...pageProps} />
-                            </Layout>
-                            <StageJoiner />
-                        </StageJoinerProvider>
+                        <AudioContextProvider>
+                            <AudioRendererProvider>
+                                <StageJoinerProvider>
+                                    <Layout>
+                                        {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+                                        <Component {...pageProps} />
+                                    </Layout>
+                                    <StageJoiner />
+                                </StageJoinerProvider>
+                            </AudioRendererProvider>
+                        </AudioContextProvider>
                     </SelectedDeviceProvider>
                 </DigitalStageProvider>
             </ColorProvider>

@@ -1,11 +1,12 @@
 import * as React from 'react'
 import { Formik, Field, FormikHelpers, Form } from 'formik'
 import * as Yup from 'yup'
-import { useAuth } from '@digitalstage/api-client-react'
+import { AuthError, useAuth } from '@digitalstage/api-client-react'
 import Notification from '../ui/Notification'
 import Input from '../ui/Input'
 import Button from '../ui/Button'
 import Block from '../ui/Block'
+import translateError from './translateError'
 
 interface Values {
     email: string
@@ -45,11 +46,11 @@ const ForgetPasswordForm = (): JSX.Element => {
                         })
                     })
                     .then(() => resetForm())
-                    .catch((err) => {
+                    .catch((err: AuthError) => {
                         setMsg({
                             state: true,
                             type: 'danger',
-                            kids: err,
+                            kids: translateError(err.code),
                         })
                     })
             }

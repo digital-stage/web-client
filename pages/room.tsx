@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { useAuth, useStageSelector } from '@digitalstage/api-client-react'
 import RoomManager from '../components/room/RoomManager'

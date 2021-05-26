@@ -2,11 +2,12 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { Field, Form, Formik, FormikHelpers } from 'formik'
 import * as Yup from 'yup'
 import { useRouter } from 'next/router'
-import { useAuth } from '@digitalstage/api-client-react'
+import { AuthError, useAuth } from '@digitalstage/api-client-react'
 import Input from '../ui/Input'
 import Notification from '../ui/Notification'
 import Button from '../ui/Button'
 import Block from '../ui/Block'
+import translateError from './translateError'
 
 export interface Values {
     code: string
@@ -35,10 +36,10 @@ const ActivationForm = (props: { initialCode?: string }): JSX.Element => {
                         push('/')
                     }, 1000)
                 })
-                .catch((error) => {
+                .catch((error: AuthError) => {
                     setMessage({
                         type: 'danger',
-                        content: error,
+                        content: translateError(error.code),
                     })
                 })
         },

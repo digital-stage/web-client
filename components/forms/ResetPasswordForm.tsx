@@ -2,11 +2,12 @@ import * as React from 'react'
 import { useRouter } from 'next/router'
 import { Formik, Field, FormikHelpers, Form } from 'formik'
 import * as Yup from 'yup'
-import { useAuth } from '@digitalstage/api-client-react'
+import { AuthError, useAuth } from '@digitalstage/api-client-react'
 import Block from '../ui/Block'
 import Notification from '../ui/Notification'
 import Button from '../ui/Button'
 import Input from '../ui/Input'
+import translateError from './translateError'
 
 interface Values {
     password?: string
@@ -52,11 +53,11 @@ function ResetPasswordForm({ resetToken }: Props): JSX.Element {
                 resetPassword(resetToken, values.password)
                     .then(() => resetForm(null))
                     .then(() => router.push('/account/login'))
-                    .catch((err) =>
+                    .catch((err: AuthError) =>
                         setMsg({
                             state: true,
                             type: 'danger',
-                            kids: err,
+                            kids: translateError(err.code),
                         })
                     )
             }

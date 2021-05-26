@@ -54,10 +54,10 @@
     lodash "^4.17.13"
     to-fast-properties "^2.0.0"
 
-"@digitalstage/api-client-react@^0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@digitalstage/api-client-react/-/api-client-react-0.1.1.tgz#f43c0354ba25e932f2c4cc11ef434479bf80bdc2"
-  integrity sha512-xNpG+vfZ6OskiHCazm/0SpDbkKovY3anUflyL8fXw635FRSzRaLv3WMlJBiqvCnXv5kuzDZIb+W+pRQnja9DTQ==
+"@digitalstage/api-client-react@^0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@digitalstage/api-client-react/-/api-client-react-0.1.2.tgz#69a48a5fc739a73557a51ab751117db0d299cbeb"
+  integrity sha512-bTwp/csJFM8Dqr4t2pC860Bu2Pk+sbzJ9JTYXgqn/KmyBKDgIrYXYFHled3A8cFGH6X0y2uSYRL3Gjp9OeioFQ==
   dependencies:
     bufferutil "^4.0.3"
     debug "^4.3.1"
@@ -70,7 +70,7 @@
     redux-devtools-extension "^2.13.9"
     teckos-client "^0.1.5"
     utf-8-validate "^5.0.5"
-    ws "^7.4.5"
+    ws "^7.4.6"
 
 "@digitalstage/api-types@^0.1.0":
   version "0.1.0"
@@ -3633,10 +3633,15 @@ wrappy@1:
   resolved "https://registry.yarnpkg.com/wrappy/-/wrappy-1.0.2.tgz#b5243d8f3ec1aa35f1364605bc0d1036e30ab69f"
   integrity sha1-tSQ9jz7BqjXxNkYFvA0QNuMKtp8=
 
-ws@^7.4.0, ws@^7.4.5:
+ws@^7.4.0:
   version "7.4.5"
   resolved "https://registry.yarnpkg.com/ws/-/ws-7.4.5.tgz#a484dd851e9beb6fdb420027e3885e8ce48986c1"
   integrity sha512-xzyu3hFvomRfXKH8vOFMU3OguG6oOvhXMo3xsGy3xWExqaM2dxBbVxuD99O7m3ZUFMvvscsZDqxfgMaRr/Nr1g==
+
+ws@^7.4.6:
+  version "7.4.6"
+  resolved "https://registry.yarnpkg.com/ws/-/ws-7.4.6.tgz#5654ca8ecdeee47c33a9a4bf6d28e2be2980377c"
+  integrity sha512-YmhHDO4MzaDLB+M9ym/mDA5z0naX8j7SIlT8f8z+I0VtzsRbekxEutHSme7NPS2qE8StCYQNUnfWdXta/Yu85A==
 
 xtend@^4.0.0, xtend@^4.0.2:
   version "4.0.2"

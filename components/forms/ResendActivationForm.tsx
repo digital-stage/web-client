@@ -2,11 +2,12 @@ import React, { useEffect, useState } from 'react'
 import { Field, Form, Formik, FormikHelpers } from 'formik'
 import * as Yup from 'yup'
 import { useRouter } from 'next/router'
-import { useAuth } from '@digitalstage/api-client-react'
+import { AuthError, useAuth } from '@digitalstage/api-client-react'
 import Button from '../ui/Button'
 import Input from '../ui/Input'
 import Block from '../ui/Block'
 import Notification from '../ui/Notification'
+import translateError from './translateError'
 
 export interface Values {
     email: string
@@ -39,9 +40,7 @@ const ResendActivationForm = (): JSX.Element => {
                 setMessage(undefined)
                 return resendActivationLink(values.email)
                     .then(() => resetForm(null))
-                    .catch((err) => {
-                        setMessage(err)
-                    })
+                    .catch((err: AuthError) => setMessage(translateError(err.code)))
             }}
         >
             {({ errors, touched, handleReset, handleSubmit }) => (

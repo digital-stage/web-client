@@ -1,12 +1,13 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { Field, Form, Formik, FormikProps } from 'formik'
-import { useAuth } from '@digitalstage/api-client-react'
+import { AuthError, useAuth } from '@digitalstage/api-client-react'
 import { useRouter } from 'next/router'
 import * as Yup from 'yup'
 import Input from '../ui/Input'
 import Button from '../ui/Button'
 import Notification from '../ui/Notification'
 import Block from '../ui/Block'
+import translateError from './translateError'
 
 const LoginForm = (): JSX.Element => {
     const { signInWithEmailAndPassword, loading, user } = useAuth()
@@ -30,7 +31,7 @@ const LoginForm = (): JSX.Element => {
             if (signInWithEmailAndPassword) {
                 signInWithEmailAndPassword(values.email, values.password)
                     .then(() => push('/'))
-                    .catch((loginError) => setError(loginError.message))
+                    .catch((err: AuthError) => setError(translateError(err.code)))
             }
         },
         [signInWithEmailAndPassword]

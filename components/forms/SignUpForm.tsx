@@ -7,6 +7,8 @@ import Notification from '../ui/Notification'
 import Input from '../ui/Input'
 import Button from '../ui/Button'
 import Block from '../ui/Block'
+import { AuthError } from '../../../monorepo/packages/api-client-react/src'
+import translateError from './translateError'
 
 const SignUpForm = () => {
     const { createUserWithEmailAndPassword, loading, user } = useAuth()
@@ -27,27 +29,26 @@ const SignUpForm = () => {
 
     const handleSubmit = useCallback(
         (values) => {
+            console.log('SUBMIT')
             if (createUserWithEmailAndPassword) {
-                createUserWithEmailAndPassword(values.email, values.password, values.displayName)
+                createUserWithEmailAndPassword(values.email, values.password, values.name)
                     .then(() => push('/'))
-                    .catch((err) => setError(err.message))
+                    .catch((err: AuthError) => {
+                        setError(translateError(err.code))
+                    })
             }
         },
-        [createUserWithEmailAndPassword]
+        [createUserWithEmailAndPassword, push]
     )
 
     return (
         <Formik
-            initialValues={{ email: '', password: '', passwordRepeat: '', displayName: '' }}
+            initialValues={{ email: '', password: '', passwordRepeat: '', name: '' }}
             onSubmit={handleSubmit}
             validationSchema={Yup.object().shape({
                 email: Yup.string()
                     .email('E-Mail Adresse ist nicht gültig')
                     .required('E-Mail Adresse wird benötigt'),
-                name: Yup.string()
-                    .min(2, 'zu kurz')
-                    .max(70, 'zu lang')
-                    .required('Ein Name wird benötigt'),
                 password: Yup.string()
                     .min(8, 'zu kurz')
                     .matches(
@@ -58,46 +59,54 @@ const SignUpForm = () => {
                 passwordRepeat: Yup.string()
                     .oneOf([Yup.ref('password'), null], 'Die Passwörter sind nicht gleich')
                     .required('Bitte gebe hier nochmals Dein Passwort ein'),
+                name: Yup.string()
+                    .min(2, 'zu kurz')
+                    .max(70, 'zu lang')
+                    .required('Ein Name wird benötigt'),
             })}
         >
             {(props: FormikProps<any>) => (
                 <Form onReset={props.handleReset} onSubmit={props.handleSubmit} autoComplete="on">
                     <Field
                         as={Input}
-                        label="E-Mail Adresse"
-                        placeholder="E-Mail Adresse"
+                        id="email"
                         type="email"
                         name="email"
+                        label="E-Mail Adresse"
+                        placeholder="E-Mail Adresse"
                         autoComplete="email"
                         error={props.touched.email && props.errors.email}
                         maxLength={100}
                     />
                     <Field
                         as={Input}
-                        label="Passwort"
-                        placeholder="Passwort"
+                        id="password"
                         type="password"
                         name="password"
+                        label="Passwort"
+                        placeholder="Passwort"
                         autoComplete="password"
                         error={props.touched.password && props.errors.password}
                         maxLength={20}
                     />
                     <Field
                         as={Input}
-                        label="Passwort wiederholen"
-                        placeholder="Passwort wiederholen"
+                        id="passwordRepeat"
                         type="password"
                         name="passwordRepeat"
+                        label="Passwort wiederholen"
+                        placeholder="Passwort wiederholen"
                         autoComplete="password"
-                        error={props.errors.passwordRepeat && props.touched.passwordRepeat}
+                        error={props.touched.passwordRepeat && props.errors.passwordRepeat}
                     />
                     <Field
                         as={Input}
+                        id="name"
                         label="Name"
-                        placeholder="Name"
                         type="text"
-                        name="displayName"
-                        error={props.touched.displayName && props.errors.displayName}
+                        name="name"
+                        placeholder="Name"
+                        error={props.touched.name && props.errors.name}
                         maxLength={30}
                     />
                     {error && (
@@ -106,7 +115,13 @@ const SignUpForm = () => {
                         </Block>
                     )}
                     <Block width={12} align="center">
-                        <Button type="submit">Registrieren</Button>
+                        <div>{Object.keys(props.errors).length}</div>
+                        <Button
+                            type="submit"
+                            disabled={!props.dirty || Object.keys(props.errors).length > 0}
+                        >
+                            Registrieren
+                        </Button>
                     </Block>
                 </Form>
             )}

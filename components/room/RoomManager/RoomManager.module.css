@@ -1,20 +1,26 @@
 
-.editorWrapper {
-    position: relative;;
+.wrapper {
+    position: relative;
+    border: 1px solid red;
     width: 100%;
     height: 100%;
 }
 
-.editor {
+.inner {
     position: relative;
     width: 100%;
-    border-radius: 0;
+    height: 100%;
+    border: 1px solid yellow;
+    overflow: scroll;
 }
 
-@media only screen and (min-width: 600px) and (min-height: 600px) {
-    .editor {
-        border-radius: 18px
-    }
+.stage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    border: 1px solid blue;
+    background-image: url('/static/images/room-bg.svg');
+    background-position: center center;
 }
 
 .buttonResetAll {
@@ -37,33 +43,4 @@
     .buttonResetAll {
         top: 2rem;
     }
-}
-
-.select {
-    flex-grow: 0;
-}
-
-/**
-NEW
- */
-.wrapper {
-    position: relative;
-    border: 1px solid red;
-    width: 100%;
-    height: 100%;
-}
-.inner {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    border: 1px solid yellow;
-    overflow: scroll;
-}
-.stage {
-    position: absolute;
-    top: 0;
-    left: 0;
-    border: 1px solid blue;
-    background-image: url('/static/images/room-bg.svg');
-    background-position: center center;
 }

@@ -1,66 +1,133 @@
-import { RemoteUsers, useConnection, useStageSelector } from '@digitalstage/api-client-react'
+import {
+    RemoteUsers,
+    useAuth,
+    useConnection,
+    User,
+    useStageSelector,
+} from '@digitalstage/api-client-react'
 import { ChatMessage, ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
-import { useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { AiOutlineSend } from 'react-icons/ai'
-import Container from '../components/ui/Container'
-import Panel from '../components/ui/Panel'
-import Input from '../components/ui/Input'
+import { useRouter } from 'next/router'
 import Button from '../components/ui/Button'
 import Notification from '../components/ui/Notification'
 import styles from '../styles/Chat.module.css'
+import useForceUpdate from '../hooks/useForceUpdate'
+
+const convertTime = (time: number): string => {
+    const min = (Date.now() - time) / 60000
+    if (min < 1) {
+        return `Vor ${Math.round(60 * min)} Sekunden`
+    }
+    if (min > 60) {
+        return `Vor ${Math.round((min / 60) * 10) / 10} Stunde*n'`
+    }
+    return `Vor ${Math.round(min)} Minuten`
+}
 
 const Chat = () => {
-    const [message, setMessage] = useState<string>()
-    const [error, setError] = useState<string>()
+    const { loading, user } = useAuth()
+    const { replace } = useRouter()
+    useEffect(() => {
+        if (!loading && !user && replace) {
+            replace('/account/login')
+        }
+    }, [loading, user, replace])
+    const [error, setError] = useState<string>('Bla')
     const connection = useConnection()
     const messages = useStageSelector<ChatMessage[]>((state) => state.chatMessages)
     const users = useStageSelector<RemoteUsers>((state) => state.remoteUsers)
+    const currentUser = useStageSelector<User | undefined>((state) => state.globals.localUser)
+    const messageRef = useRef<HTMLInputElement>()
+    const messagesEndRef = useRef<HTMLDivElement>()
+    const forceUpdate = useForceUpdate()
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            forceUpdate()
+        }, 1000)
+        return () => {
+            clearInterval(interval)
+        }
+    })
+
+    const onSendClicked = useCallback(() => {
+        if (messageRef.current && connection) {
+            const msg = messageRef.current.value
+            if (msg.length > 0) {
+                connection.emit(
+                    ClientDeviceEvents.SendChatMessage,
+                    msg as ClientDevicePayloads.SendChatMessage,
+                    (err: string | null) => err && setError(err)
+                )
+                messageRef.current.value = ''
+            }
+        }
+    }, [messageRef, connection])
+
     return (
-        <Container>
-            <div className={styles.wrapper}>
-                <Panel fill level="level1" className={styles.outerPanel}>
-                    <Panel fill level="level2" className={styles.messages}>
-                        {messages.map((msg) => {
-                            let dateStr
-                            const min = (Date.now() - msg.time) / 60000
-                            if (min < 1) {
-                                dateStr = `Vor ${Math.round(60 * min)} Sekunden`
-                            } else if (min > 60) {
-                                dateStr = `Vor ${Math.round((min / 60) * 10) / 10} Stunde*n'`
-                            } else {
-                                dateStr = `Vor ${Math.round(min)} Minuten`
-                            }
+        <div className={styles.wrapper}>
+            <div className={styles.outerPanel}>
+                <h4 className={styles.title}>Chat</h4>
+                <div className={styles.innerPanel}>
+                    <div className={styles.messages}>
+                        {messages.map((msg, index) => {
                             return (
-                                <div>
-                                    <div>{users.byId[msg.userId]?.name}</div>
-                                    <div>{dateStr}</div>
-                                    <div>{msg.message}</div>
+                                <div
+                                    /* eslint-disable-next-line react/no-array-index-key */
+                                    key={`${msg.time}${index}`}
+                                    className={`${styles.messageWrapper} ${
+                                        currentUser?._id === msg.userId && styles.self
+                                    }`}
+                                >
+                                    {msg.userId !== currentUser?._id && (
+                                        <h5 className={styles.messageName}>
+                                            {users.byId[msg.userId]?.name}
+                                        </h5>
+                                    )}
+                                    <div className={styles.message}>{msg.message}</div>
+                                    <div className={styles.messageTime}>
+                                        {convertTime(msg.time)}
+                                    </div>
                                 </div>
                             )
                         })}
-                    </Panel>
-                    {error && <Notification type="error">{error}</Notification>}
-                    <div className={styles.sendField}>
-                        <Input
-                            value={message}
-                            label="Nachricht"
-                            onChange={(e) => setMessage(e.currentTarget.value)}
-                        />
+                        <div ref={messagesEndRef} />
+                    </div>
+                    {error && (
+                        <Notification className={styles.notification} type="error">
+                            {error}
+                        </Notification>
+                    )}
+                    <form
+                        className={styles.messageForm}
+                        onSubmit={(e) => {
+                            e.preventDefault()
+                            onSendClicked()
+                        }}
+                    >
+                        <input ref={messageRef} type="text" className={styles.input} />
                         <Button
-                            onClick={() => {
-                                connection.emit(
-                                    ClientDeviceEvents.SendChatMessage,
-                                    message as ClientDevicePayloads.SendChatMessage,
-                                    (err: string | null) => (err ? setError(err) : setMessage(''))
-                                )
-                            }}
+                            className={styles.mobileButton}
+                            type="submit"
+                            round
+                            size="small"
+                            onClick={onSendClicked}
                         >
                             <AiOutlineSend />
                         </Button>
-                    </div>
-                </Panel>
+                        <Button
+                            className={styles.button}
+                            type="submit"
+                            size="small"
+                            onClick={onSendClicked}
+                        >
+                            Nachricht senden
+                        </Button>
+                    </form>
+                </div>
             </div>
-        </Container>
+        </div>
     )
 }
 export default Chat

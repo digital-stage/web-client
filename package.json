@@ -13,11 +13,13 @@
     "start": "next start"
   },
   "dependencies": {
-    "@digitalstage/api-client-react": "^0.1.1",
+    "@digitalstage/api-client-react": "^0.1.2",
     "@digitalstage/api-types": "^0.1.0",
     "body-scroll-lock": "^3.1.5",
+    "debug": "^4.3.1",
     "formik": "^2.2.8",
     "konva": "7.2.5",
+    "mediasoup-client": "^3.6.30",
     "next": "^10.2.3",
     "react": "^17.0.2",
     "react-color": "^2.19.3",

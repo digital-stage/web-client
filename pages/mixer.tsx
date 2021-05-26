@@ -5,14 +5,13 @@ import MixingPanel from '../components/mixer/MixingPanel'
 import Block from '../components/ui/Block'
 
 const Mixer = () => {
-    const { push } = useRouter()
     const { loading, user } = useAuth()
-
+    const { replace } = useRouter()
     useEffect(() => {
-        if (!loading && !user && push) {
-            push('/account/login')
+        if (!loading && !user && replace) {
+            replace('/account/login')
         }
-    }, [loading, user, push])
+    }, [loading, user, replace])
 
     return (
         <Block padding={2}>

@@ -1,21 +1,117 @@
 .wrapper {
-    position: relative;
     display: flex;
-    flex-direction: column;
-    height: 100vh;
-    padding-top: 1rem;
-    padding-bottom: 1rem;
-}
-.messages {
-    display: flex;
-    flex-direction: column;
     flex-grow: 1;
-    overflow-y: scroll;
-}
-.sendField {
+    flex-direction: column;
+    margin: 0;
     width: 100%;
+    height: 100%;
+    padding: 12px 12px 48px;
+}
+
+.outerPanel {
+    display: flex;
+    margin: 0;
+    box-shadow: var(---box-shadow, rgb(0 0 0) 0 16px 20px);
+    border-radius: 18px;
+    background-color: var(---grey-4, #393939);
+    padding: 12px;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+}
+
+.title {
+    padding-bottom: 12px;
     flex-grow: 0;
 }
-.outerPanel {
+
+.innerPanel {
+    position: relative;
+    display: flex;
     flex-grow: 1;
+    flex-direction: column;
+    margin: 0;
 }
+
+.messages {
+    position: relative;
+    display: flex;
+    flex-grow: 1;
+    width: 100%;
+    margin: 0;
+    flex-direction: column;
+    background-color: var(---grey-2, #1F1F1F);
+    border-radius: 18px 18px 0 0;
+    overflow: hidden auto;
+}
+
+.messageWrapper {
+    display: flex;
+    flex-direction: column;
+    border-radius: 18px;
+    padding: 1rem;
+    margin: 2rem 1rem;
+    align-self: flex-start;
+
+    text-align: left;
+    color: var(---text-contrast, #1F1F1F);
+    background-color: var(---tertiary, #F4F4F4);
+}
+.messageWrapper.self {
+    align-self: flex-end;
+    text-align: right;
+    background-color: var(---primary, #5779D9);
+}
+.messageName {
+}
+.message {
+}
+.messageTime {
+    font-size: 0.8rem;
+}
+
+.notification {
+    flex-grow: 0
+}
+
+.messageForm {
+    display: flex;
+    flex-grow: 0;
+    width: 100%;
+    padding-top: 8px;
+}
+
+.input {
+    box-sizing: border-box;
+    margin: 0;
+    display: block;
+    width: 100%;
+    padding: 4px;
+    appearance: none;
+    font-size: inherit;
+    line-height: inherit;
+    border: 1px solid;
+    border-radius: 4px;
+    color: inherit;
+    flex-grow: 1;
+    background-color: var(---grey-1,#121212);
+}
+
+.button {
+    display: none;
+    margin-left: 12px;
+}
+.mobileButton {
+    display: inline-block;
+    margin-left: 4px;
+}
+@media only screen and (min-width: 600px) and (min-height: 600px) {
+    .button {
+        display: inline-block;
+    }
+    .mobileButton {
+        display: none;
+
+    }
+}
+

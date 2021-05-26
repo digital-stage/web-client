@@ -13,6 +13,7 @@ interface StageElementProps {
     onClick: () => void
     selected: boolean
     color: string
+    opacity: number
 }
 
 const StageElement = ({
@@ -27,6 +28,7 @@ const StageElement = ({
     onClick,
     selected,
     color,
+    opacity,
 }: StageElementProps) => {
     const ref = useRef<any>()
     const transformerRef = useRef<any>()
@@ -80,6 +82,7 @@ const StageElement = ({
                 onDragEnd={handleChangeEnd}
                 onTransform={handleChange}
                 onTransformEnd={handleChangeEnd}
+                opacity={opacity}
             />
             {selected ? (
                 <Transformer ref={transformerRef} resizeEnabled={false} rotateEnabled />
