@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef } from 'react'
 import { Image, Text, Transformer } from 'react-konva'
 
 interface StageElementProps {
@@ -6,79 +6,85 @@ interface StageElementProps {
     x: number
     y: number
     rZ: number
-    offsetX: number
-    offsetY: number
-    offsetRz: number
+    onChanged: (position: { x: number; y: number; rZ: number }) => void
+    onChangeFinished: (position: { x: number; y: number; rZ: number }) => void
     image: CanvasImageSource
     size: number
-    onChanged: (x: number, y: number, rZ: number) => void
     onClick: () => void
     selected: boolean
+    color: string
 }
 
 const StageElement = ({
+    label,
     x,
     y,
     rZ,
-    offsetX,
-    offsetRz,
-    offsetY,
-    label,
     image,
     onChanged,
+    onChangeFinished,
     size,
     onClick,
     selected,
+    color,
 }: StageElementProps) => {
-    const [position, setPosition] = useState<{ x: number; y: number; rZ: number }>({
-        x: offsetX + x,
-        y: offsetY + y,
-        rZ: offsetRz + rZ,
-    })
+    const ref = useRef<any>()
+    const transformerRef = useRef<any>()
+    const handleChange = useCallback(
+        (e) => {
+            onChanged({
+                x: e.target.attrs.x,
+                y: e.target.attrs.y,
+                rZ: e.target.attrs.rotation,
+            })
+        },
+        [onChanged]
+    )
+    const handleChangeEnd = useCallback(
+        (e) => {
+            onChanged({
+                x: e.target.attrs.x,
+                y: e.target.attrs.y,
+                rZ: e.target.attrs.rotation,
+            })
+            onChangeFinished({
+                x: e.target.attrs.x,
+                y: e.target.attrs.y,
+                rZ: e.target.attrs.rotation,
+            })
+        },
+        [onChanged, onChangeFinished]
+    )
     useEffect(() => {
-        setPosition({
-            x: offsetX + x,
-            y: offsetY + y,
-            rZ: offsetRz + rZ,
-        })
-    }, [x, y, rZ, offsetX, offsetY, offsetRz])
-
+        if (transformerRef.current && ref.current && selected) {
+            // we need to attach transformer manually
+            transformerRef.current.nodes([ref.current])
+            transformerRef.current.getLayer().batchDraw()
+        }
+    }, [selected, transformerRef, ref])
     return (
         <>
             <Image
-                x={position.x}
-                y={position.y}
-                rotation={position.rZ}
+                ref={ref}
+                x={x}
+                y={y}
+                rotation={rZ}
                 width={size}
                 height={size}
                 offsetX={size / 2}
                 offsetY={size / 2}
                 image={image}
                 draggable
-                onDragMove={(e) => {
-                    setPosition({
-                        x: e.target.attrs.x,
-                        y: e.target.attrs.y,
-                        rZ: e.target.attrs.rotation,
-                    })
-                }}
+                onDragMove={handleChange}
                 onClick={onClick}
-                onDragEnd={() => {
-                    onChanged(position.x, position.y, position.rZ)
-                }}
-                onTransform={(e) => {
-                    setPosition((prev) => ({
-                        x: prev.x,
-                        y: prev.y,
-                        rZ: e.target.attrs.rotation,
-                    }))
-                }}
-                onTransformEnd={() => {
-                    onChanged(position.x, position.y, position.rZ)
-                }}
+                onDragEnd={handleChangeEnd}
+                onTransform={handleChange}
+                onTransformEnd={handleChangeEnd}
             />
-            {selected ? <Transformer resizeEnabled={false} rotateEnabled /> : undefined}
-            <Text fill="#fff" x={position.x - size / 4} y={position.y + size / 2} text={label} />
+            {selected ? (
+                <Transformer ref={transformerRef} resizeEnabled={false} rotateEnabled />
+            ) : undefined}
+            <Text fill={color} x={x - size / 4} y={y + size / 2} text={label} />
         </>
     )
 }

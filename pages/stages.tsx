@@ -100,7 +100,7 @@ const StageRow = ({
     const localUserId = useStageSelector<string | undefined>(
         (state) => state.globals.localUser?._id
     )
-    const isStageAdmin = localUserId && stage.admins.some((admin) => admin === localUserId)
+    const isStageAdmin = localUserId && stage && stage.admins.some((admin) => admin === localUserId)
     const groupIds = useStageSelector<string[]>((state) => state.groups.byStage[id])
     return (
         <Collapse

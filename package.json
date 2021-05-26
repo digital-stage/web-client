@@ -17,13 +17,13 @@
     "@digitalstage/api-types": "^0.1.0",
     "body-scroll-lock": "^3.1.5",
     "formik": "^2.2.8",
-    "konva": "^7.2.5",
+    "konva": "7.2.5",
     "next": "^10.2.3",
     "react": "^17.0.2",
     "react-color": "^2.19.3",
     "react-dom": "^17.0.2",
     "react-icons": "^4.2.0",
-    "react-konva": "^17.0.2-3",
+    "react-konva": "^17.0.2-4",
     "react-portal": "^4.2.1",
     "react-range": "^1.8.8",
     "react-redux": "^7.2.4",
@@ -31,6 +31,7 @@
     "redux": "^4.1.0",
     "sass": "^1.34.0",
     "standardized-audio-context": "^25.2.3",
+    "teckos-client": "^0.1.5",
     "yup": "^0.32.9"
   },
   "devDependencies": {

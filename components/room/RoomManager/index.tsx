@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import {
     useConnection,
     Stage,
@@ -13,13 +13,13 @@ import {
     CustomStageDevicePositions,
     CustomStageDevicePosition,
 } from '@digitalstage/api-client-react'
-import { Stage as KonvaStage, Layer as KonvaLayer, Image as KonvaImage, Text } from 'react-konva'
+import { Stage as KonvaStage, Layer as KonvaLayer } from 'react-konva/lib/ReactKonvaCore'
 import {
     ClientDeviceEvents,
     ClientDevicePayloads,
     CustomStageMemberPosition,
 } from '@digitalstage/api-types'
-import { RoomElement } from '../RoomEditor'
+import { ITeckosClient } from 'teckos-client'
 import useImage from '../../../hooks/useImage'
 import styles from './RoomManager.module.css'
 import HeadlineButton from '../../ui/HeadlineButton'
@@ -28,183 +28,300 @@ import Paragraph from '../../ui/Paragraph'
 import Block from '../../ui/Block'
 import useSelectedDevice from '../../../hooks/useSelectedDevice'
 import StageElement from './StageElement'
+import useColors from '../../../hooks/useColors'
+import Button from '../../ui/Button'
 
 const FACTOR = 100.0
 
 const StageDeviceNode = ({
     globalMode,
+    deviceId,
     offsetX,
     offsetY,
     offsetRz,
     stageDevice,
     customStageDevice,
     onChange,
+    onSelected,
+    selected,
+    user,
+    color,
+    stageDeviceImage,
+    customStageDeviceImage,
+    localStageDeviceImage,
+    localCustomStageDeviceImage,
 }: {
     globalMode: boolean
+    deviceId: string
     offsetX: number
     offsetY: number
     offsetRz: number
     stageDevice: StageDevice
     customStageDevice?: CustomStageDevicePosition
-    onChange: (x: number, y: number, rZ: number) => void
+    onChange: (position: { x: number; y: number; rZ: number }) => void
+    onSelected: (_id: string) => void
+    selected: boolean
+    user?: User
+    color: string
+    stageDeviceImage: CanvasImageSource
+    customStageDeviceImage: CanvasImageSource
+    localStageDeviceImage: CanvasImageSource
+    localCustomStageDeviceImage: CanvasImageSource
 }) => {
-    const stageDeviceImage = useImage('/static/icons/room-member.svg', 96, 96)
-    const customStageDeviceImage = useImage('/static/icons/room-member-custom.svg', 96, 96)
     const [position, setPosition] = useState<{ x: number; y: number; rZ: number }>({
-        x: stageDevice.x,
-        y: stageDevice.y,
-        rZ: stageDevice.rZ,
+        x: offsetX + stageDevice.x,
+        y: offsetY + stageDevice.y,
+        rZ: offsetRz + stageDevice.rZ,
     })
+    let image = stageDeviceImage
+    if (stageDevice.deviceId === deviceId) {
+        if (globalMode || !customStageDevice) {
+            image = localStageDeviceImage
+        } else {
+            image = localCustomStageDeviceImage
+        }
+    } else if (!globalMode && customStageDevice) {
+        image = customStageDeviceImage
+    }
     useEffect(() => {
         if (!globalMode && customStageDevice) {
             setPosition({
-                x: customStageDevice.x,
-                y: customStageDevice.y,
-                rZ: customStageDevice.rZ,
+                x: offsetX + customStageDevice.x,
+                y: offsetY + customStageDevice.y,
+                rZ: offsetRz + customStageDevice.rZ,
             })
         } else {
-            setPosition({ x: stageDevice.x, y: stageDevice.y, rZ: stageDevice.rZ })
+            setPosition({
+                x: offsetX + stageDevice.x,
+                y: offsetY + stageDevice.y,
+                rZ: offsetRz + stageDevice.rZ,
+            })
         }
-    }, [globalMode, stageDevice, customStageDevice])
+    }, [globalMode, stageDevice, customStageDevice, offsetX, offsetY, offsetRz])
     return (
-        <>
-            <KonvaImage
-                x={offsetX + position.x}
-                y={offsetY + position.y}
-                rotation={offsetRz + position.rZ}
-                width={96}
-                height={96}
-                offsetX={96}
-                offsetY={96}
-                image={!globalMode && customStageDevice ? customStageDeviceImage : stageDeviceImage}
-                onDragMove={(e) => {
-                    setPosition({
-                        x: e.target.attrs.x,
-                        y: e.target.attrs.y,
-                        rZ: e.target.attrs.rotation,
-                    })
-                }}
-                onDragEnd={(e) => {
-                    console.log(e.target.attrs)
-                    onChange(e.target.attrs.x, e.target.attrs.y, e.target.attrs.rotation)
-                }}
-                draggable
-            />
-            <Text
-                fill="#fff"
-                x={offsetX + position.x - 32}
-                y={offsetY + position.y + 64}
-                text={stageDevice?.name || stageDevice._id}
-            />
-        </>
+        <StageElement
+            x={position.x}
+            y={position.y}
+            rZ={position.rZ}
+            size={96}
+            image={image}
+            onChanged={(currPos) => {
+                setPosition(currPos)
+            }}
+            onChangeFinished={({ x, y, rZ }) => {
+                setPosition({ x, y, rZ })
+                onChange({
+                    x: x - offsetX,
+                    y: y - offsetY,
+                    rZ: rZ - offsetRz,
+                })
+            }}
+            selected={selected}
+            onClick={() => {
+                if (globalMode) {
+                    onSelected(stageDevice._id)
+                } else if (customStageDevice) {
+                    onSelected(customStageDevice._id)
+                }
+            }}
+            label={`${user?.name}: ${stageDevice?.name || stageDevice._id}`}
+            color={color}
+        />
     )
 }
 StageDeviceNode.defaultProps = {
     customStageDevice: undefined,
+    user: undefined,
 }
 
-const StageMemberNode2 = ({
+const StageMemberNode = ({
     deviceId,
     globalMode,
+    localStageMemberId,
     stageMember,
     user,
     stageDevices,
     customStageMember,
     customStageDevices,
-    onChanged,
-    onStageDeviceChanged,
+    connection,
+    selected,
+    onSelected,
+    color,
+    stageMemberImage,
+    customStageMemberImage,
+    stageDeviceImage,
+    customStageDeviceImage,
+    localStageMemberImage,
+    localCustomStageMemberImage,
+    localStageDeviceImage,
+    localCustomStageDeviceImage,
 }: {
+    connection: ITeckosClient
     deviceId: string
     globalMode: boolean
+    localStageMemberId: string
     stageMember: StageMember
-    stageDevices: StageDevice[]
-    customStageMember: CustomStageMemberPosition
+    stageDevices: StageDevices
+    customStageMember?: CustomStageMemberPosition
     customStageDevices: CustomStageDevicePositions
     user?: User
-    onChanged: (x: number, y: number, rZ: number) => void
-    onStageDeviceChanged: (stageDeviceId: string, x: number, y: number, rZ: number) => void
+    onSelected: (_id: string, type: 'stageMember' | 'stageDevice') => void
+    selected: string
+    color: string
+    stageMemberImage: CanvasImageSource
+    customStageMemberImage: CanvasImageSource
+    localStageMemberImage: CanvasImageSource
+    localCustomStageMemberImage: CanvasImageSource
+    stageDeviceImage: CanvasImageSource
+    customStageDeviceImage: CanvasImageSource
+    localStageDeviceImage: CanvasImageSource
+    localCustomStageDeviceImage: CanvasImageSource
 }) => {
     // We cannot use useContext here, so we outsourced all useStageSelector calls into the parent object
-    const stageMemberImage = useImage('/static/icons/room-group.svg', 128, 128)
     const [position, setPosition] = useState<{ x: number; y: number; rZ: number }>({
         x: stageMember.x,
         y: stageMember.y,
         rZ: stageMember.rZ,
     })
-
     useEffect(() => {
-        if (globalMode || !customStageMember) {
-            setPosition({ x: stageMember.x, y: stageMember.y, rZ: stageMember.rZ })
-        } else {
+        if (!globalMode && customStageMember) {
             setPosition({
                 x: customStageMember.x,
                 y: customStageMember.y,
                 rZ: customStageMember.rZ,
             })
+        } else {
+            setPosition({ x: stageMember.x, y: stageMember.y, rZ: stageMember.rZ })
         }
-    }, [stageMember.x, stageMember.y, globalMode, deviceId, customStageMember])
-
+    }, [globalMode, stageMember.x, stageMember.y, stageMember.rZ, customStageMember])
+    let image = stageMemberImage
+    if (stageMember._id === localStageMemberId) {
+        if (globalMode || !customStageMember) {
+            image = localStageMemberImage
+        } else {
+            image = localCustomStageMemberImage
+        }
+    } else if (!globalMode && customStageMember) {
+        image = customStageMemberImage
+    }
     return (
         <>
-            <KonvaImage
+            <StageElement
                 x={position.x}
                 y={position.y}
-                width={128}
-                height={128}
-                offsetX={64}
-                offsetY={64}
-                image={stageMemberImage}
-                draggable
-                onDragMove={(e) => {
-                    setPosition({
-                        x: e.target.attrs.x,
-                        y: e.target.attrs.y,
-                        rZ: e.target.attrs.rotation,
-                    })
+                rZ={position.rZ}
+                size={128}
+                image={image}
+                onChanged={(currPosition) => {
+                    setPosition(currPosition)
                 }}
-                onDragEnd={() => {
-                    onChanged(position.x, position.y, position.rZ)
-                }}
-            />
-            {stageDevices.map((stageDevice) => (
-                <StageDeviceNode
-                    globalMode={globalMode}
-                    offsetX={position.x}
-                    offsetY={position.y}
-                    offsetRz={position.rZ}
-                    stageDevice={stageDevice}
-                    customStageDevice={
-                        customStageDevices.byDeviceAndStageDevice[deviceId] &&
-                        customStageDevices.byDeviceAndStageDevice[deviceId][stageDevice._id] &&
-                        customStageDevices.byId[
-                            customStageDevices.byDeviceAndStageDevice[deviceId][stageDevice._id]
-                        ]
+                onChangeFinished={({ x, y, rZ }) => {
+                    if (globalMode) {
+                        connection.emit(ClientDeviceEvents.ChangeStageMember, {
+                            _id: stageMember._id,
+                            x,
+                            y,
+                            rZ,
+                        } as ClientDevicePayloads.ChangeStageMember)
+                    } else {
+                        connection.emit(ClientDeviceEvents.SetCustomStageMemberPosition, {
+                            stageMemberId: stageMember._id,
+                            deviceId,
+                            x,
+                            y,
+                            rZ,
+                        } as ClientDevicePayloads.SetCustomStageMemberPosition)
                     }
-                    onChange={(x, y, rZ) => onStageDeviceChanged(stageDevice._id, x, y, rZ)}
-                />
-            ))}
-            <Text
-                fill="#fff"
-                x={position.x - 32}
-                y={position.y + 64}
-                text={user?.name || stageMember._id}
+                }}
+                selected={stageMember._id === selected}
+                onClick={() => {
+                    if (globalMode) {
+                        onSelected(stageMember._id, 'stageMember')
+                    } else if (customStageMember) {
+                        onSelected(customStageMember._id, 'stageMember')
+                    }
+                }}
+                label={user?.name || stageMember._id}
+                color={color || '#fff'}
             />
+            {stageDevices.byStageMember[stageMember._id] &&
+                stageDevices.byStageMember[stageMember._id]
+                    .map((id) => stageDevices.byId[id])
+                    .map((stageDevice) => {
+                        const customStageDevice =
+                            customStageDevices.byDeviceAndStageDevice[deviceId] &&
+                            customStageDevices.byDeviceAndStageDevice[deviceId][stageDevice._id] &&
+                            customStageDevices.byId[
+                                customStageDevices.byDeviceAndStageDevice[deviceId][stageDevice._id]
+                            ]
+                        return (
+                            <StageDeviceNode
+                                key={stageDevice._id}
+                                globalMode={globalMode}
+                                offsetX={position.x}
+                                offsetY={position.y}
+                                offsetRz={position.rZ}
+                                stageDevice={stageDevice}
+                                customStageDevice={customStageDevice}
+                                deviceId={deviceId}
+                                onChange={({ x, y, rZ }) => {
+                                    if (globalMode) {
+                                        connection.emit(ClientDeviceEvents.ChangeStageDevice, {
+                                            _id: stageDevice._id,
+                                            x,
+                                            y,
+                                            rZ,
+                                        } as ClientDevicePayloads.ChangeStageDevice)
+                                    } else {
+                                        connection.emit(
+                                            ClientDeviceEvents.SetCustomStageDevicePosition,
+                                            {
+                                                stageDeviceId: stageDevice._id,
+                                                deviceId,
+                                                x,
+                                                y,
+                                                rZ,
+                                            } as ClientDevicePayloads.SetCustomStageDevicePosition
+                                        )
+                                    }
+                                }}
+                                onSelected={() => onSelected(stageDevice._id, 'stageDevice')}
+                                selected={stageDevice._id === selected}
+                                user={user}
+                                color={color || '#fff'}
+                                stageDeviceImage={stageDeviceImage}
+                                customStageDeviceImage={customStageDeviceImage}
+                                localStageDeviceImage={localStageDeviceImage}
+                                localCustomStageDeviceImage={localCustomStageDeviceImage}
+                            />
+                        )
+                    })}
         </>
     )
+}
+StageMemberNode.defaultProps = {
+    user: undefined,
+    customStageMember: undefined,
 }
 
 const StageView = ({ stage, globalMode }: { stage: Stage; globalMode: boolean }): JSX.Element => {
     const { device: deviceId } = useSelectedDevice()
     const width = stage.width * FACTOR
     const height = stage.height * FACTOR
-    const centerX = width / 2
-    const centerY = width / 2
-    const [selected, setSelected] = useState<RoomElement>(undefined)
+    const [selected, setSelected] =
+        useState<{
+            _id: string
+            type: 'stageMember' | 'stageDevice'
+        }>(undefined)
     const wrapperRef = useRef<HTMLDivElement>()
-    const stageMembers = useStageSelector((state) =>
-        stage ? state.stageMembers.byStage[stage._id].map((id) => state.stageMembers.byId[id]) : []
-    )
+
     const connection = useConnection()
+    const localStageMemberId = useStageSelector<string>(
+        (state) => state.globals.localUser.stageMemberId
+    )
+    const stageMembers = useStageSelector<StageMember[]>((state) =>
+        state.stageMembers.byStage[stage._id].map((id) => state.stageMembers.byId[id])
+    )
     const users = useStageSelector<RemoteUsers>((state) => state.remoteUsers)
     const stageDevices = useStageSelector<StageDevices>((state) => state.stageDevices)
     const customStageMemberPositions = useStageSelector<CustomStageMemberPositions>(
@@ -213,93 +330,127 @@ const StageView = ({ stage, globalMode }: { stage: Stage; globalMode: boolean })
     const customStageDevicePositions = useStageSelector<CustomStageDevicePositions>(
         (state) => state.customStageDevicePositions
     )
-
-    const centerImage = useImage('/static/icons/room-center.svg', 96, 96)
+    const getColor = useColors()
+    const localStageMemberImage = useImage('/static/icons/room-group-local.svg', 128, 128)
+    const localCustomStageMemberImage = useImage(
+        '/static/icons/room-group-custom-local.svg',
+        128,
+        128
+    )
+    const localStageDeviceImage = useImage('/static/icons/room-member-local.svg', 94, 94)
+    const localCustomStageDeviceImage = useImage(
+        '/static/icons/room-member-custom-local.svg',
+        94,
+        94
+    )
     const stageMemberImage = useImage('/static/icons/room-group.svg', 128, 128)
     const customStageMemberImage = useImage('/static/icons/room-group-custom.svg', 128, 128)
+    const stageDeviceImage = useImage('/static/icons/room-member.svg', 94, 94)
+    const customStageDeviceImage = useImage('/static/icons/room-member-custom.svg', 94, 94)
+
+    const deselect = useCallback((e) => {
+        const clickedOnEmpty = e.target === e.target.getStage()
+        if (clickedOnEmpty) {
+            setSelected(undefined)
+        }
+    }, [])
+
     return (
-        <div className={styles.stageWrapper} ref={wrapperRef}>
-            <KonvaStage width={width} height={height} className={styles.stage}>
-                <KonvaLayer>
-                    <KonvaImage
-                        x={centerX}
-                        y={centerY}
-                        width={128}
-                        height={128}
-                        offsetX={64}
-                        offsetY={64}
-                        image={centerImage}
-                    />
-                    {stageMembers.map((stageMember) => {
-                        const customStageMember =
-                            customStageMemberPositions.byDeviceAndStageMember[deviceId] &&
-                            customStageMemberPositions.byDeviceAndStageMember[deviceId][
-                                stageMember._id
-                            ] &&
-                            customStageMemberPositions.byId[
+        <div className={styles.wrapper} ref={wrapperRef}>
+            <div className={styles.inner}>
+                {/* @ts-ignore */}
+                <KonvaStage
+                    width={width}
+                    height={height}
+                    className={styles.stage}
+                    onMouseDown={deselect}
+                    onTouchStart={deselect}
+                >
+                    <KonvaLayer>
+                        {stageMembers.map((stageMember) => {
+                            const color = getColor(stageMember._id)?.toProperty()
+                            const customStageMember =
+                                customStageMemberPositions.byDeviceAndStageMember[deviceId] &&
                                 customStageMemberPositions.byDeviceAndStageMember[deviceId][
                                     stageMember._id
+                                ] &&
+                                customStageMemberPositions.byId[
+                                    customStageMemberPositions.byDeviceAndStageMember[deviceId][
+                                        stageMember._id
+                                    ]
                                 ]
-                            ]
-                        const user = users.byId[stageMember.userId]
-                        return (
-                            <StageElement
-                                x={
-                                    !globalMode && customStageMember
-                                        ? customStageMember.x
-                                        : stageMember.x
-                                }
-                                y={
-                                    !globalMode && customStageMember
-                                        ? customStageMember.y
-                                        : stageMember.y
-                                }
-                                rZ={
-                                    !globalMode && customStageMember
-                                        ? customStageMember.rZ
-                                        : stageMember.rZ
-                                }
-                                size={128}
-                                offsetX={0}
-                                offsetY={0}
-                                offsetRz={0}
-                                image={
-                                    !globalMode && customStageMember
-                                        ? customStageMemberImage
-                                        : stageMemberImage
-                                }
-                                onChanged={(x, y, rZ) => {
-                                    if (globalMode) {
-                                        connection.emit(ClientDeviceEvents.ChangeStageMember, {
-                                            _id: stageMember._id,
-                                            x,
-                                            y,
-                                            rZ,
-                                        } as ClientDevicePayloads.ChangeStageMember)
-                                    } else {
-                                        connection.emit(
-                                            ClientDeviceEvents.SetCustomStageMemberPosition,
-                                            {
-                                                stageMemberId: stageMember._id,
-                                                deviceId,
-                                                x,
-                                                y,
-                                                rZ,
-                                            } as ClientDevicePayloads.SetCustomStageMemberPosition
-                                        )
-                                    }
-                                }}
-                                label={user?.name || stageMember._id}
-                            />
-                        )
-                    })}
-                </KonvaLayer>
-            </KonvaStage>
+                            const user = users.byId[stageMember.userId]
+                            return (
+                                <StageMemberNode
+                                    key={stageMember._id}
+                                    connection={connection}
+                                    deviceId={deviceId}
+                                    globalMode={globalMode}
+                                    stageMember={stageMember}
+                                    customStageMember={customStageMember}
+                                    stageDevices={stageDevices}
+                                    customStageDevices={customStageDevicePositions}
+                                    user={user}
+                                    onSelected={(_id, type) => setSelected({ _id, type })}
+                                    selected={selected?._id}
+                                    color={color}
+                                    stageMemberImage={stageMemberImage}
+                                    customStageMemberImage={customStageMemberImage}
+                                    stageDeviceImage={stageDeviceImage}
+                                    customStageDeviceImage={customStageDeviceImage}
+                                    localStageDeviceImage={localStageDeviceImage}
+                                    localCustomStageDeviceImage={localCustomStageDeviceImage}
+                                    localStageMemberImage={localStageMemberImage}
+                                    localCustomStageMemberImage={localCustomStageMemberImage}
+                                    localStageMemberId={localStageMemberId}
+                                />
+                            )
+                        })}
+                    </KonvaLayer>
+                </KonvaStage>
+            </div>
+            <Button kind="primary" className={styles.buttonResetAll}>
+                Alle zurücksetzen
+            </Button>
+            {selected && (
+                <Button
+                    kind="primary"
+                    className={styles.buttonResetSingle}
+                    onClick={() => {
+                        if (selected.type === 'stageDevice') {
+                            if (globalMode) {
+                                connection.emit(
+                                    ClientDeviceEvents.RemoveStageDevice,
+                                    selected._id as ClientDevicePayloads.RemoveStageDevice
+                                )
+                            } else {
+                                connection.emit(
+                                    ClientDeviceEvents.RemoveCustomStageDevicePosition,
+                                    selected._id as ClientDevicePayloads.RemoveCustomStageDevicePosition
+                                )
+                            }
+                        } else if (globalMode) {
+                            connection.emit(
+                                ClientDeviceEvents.RemoveStageMember,
+                                selected._id as ClientDevicePayloads.RemoveStageMember
+                            )
+                        } else {
+                            connection.emit(
+                                ClientDeviceEvents.RemoveCustomStageMemberPosition,
+                                selected._id as ClientDevicePayloads.RemoveCustomStageMemberPosition
+                            )
+                        }
+                    }}
+                >
+                    Ausgewähltes zurücksetzen
+                </Button>
+            )}
         </div>
     )
 }
 
 const RoomManager = (): JSX.Element => {
+    const ready = useStageSelector<boolean>((state) => state.globals.ready)
     const stage = useStageSelector<Stage | undefined>(
         (state) => state.globals.stageId && state.stages.byId[state.globals.stageId]
     )
@@ -314,7 +465,7 @@ const RoomManager = (): JSX.Element => {
     const [globalMode, setGlobalMode] = useState<boolean>(false)
     const { device } = useSelectedDevice()
 
-    if (stage) {
+    if (ready && stage) {
         return (
             <Block vertical height="full">
                 {isSoundEditor && (

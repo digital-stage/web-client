@@ -1,9 +1,3 @@
-.wrapper {
-    flex-direction: column;
-    width: 100%;
-    height: 100%;
-    align-items: flex-start;
-}
 
 .editorWrapper {
     position: relative;;
@@ -52,18 +46,24 @@
 /**
 NEW
  */
-.stageWrapper {
+.wrapper {
+    position: relative;
     border: 1px solid red;
+    width: 100%;
+    height: 100%;
+}
+.inner {
     position: relative;
     width: 100%;
     height: 100%;
+    border: 1px solid yellow;
     overflow: scroll;
 }
 .stage {
     position: absolute;
-    border: 1px solid blue;
     top: 0;
     left: 0;
+    border: 1px solid blue;
     background-image: url('/static/images/room-bg.svg');
     background-position: center center;
 }

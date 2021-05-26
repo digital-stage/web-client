@@ -1995,7 +1995,7 @@ json5@^1.0.1:
     array-includes "^3.1.2"
     object.assign "^4.1.2"
 
-konva@^7.2.5:
+konva@7.2.5:
   version "7.2.5"
   resolved "https://registry.yarnpkg.com/konva/-/konva-7.2.5.tgz#9b4ac3a353e6be66e3e69123bf2a0cbc61efeb26"
   integrity sha512-yk/li8rUF+09QNlOdkwbEId+QvfATMe/aMGVouWW1oFoUVTYWHsQuIAE6lWy11DK8mLJEJijkNAXC5K+NVlMew==
@@ -2779,10 +2779,10 @@ react-is@16.13.1, react-is@^16.13.1, react-is@^16.7.0, react-is@^16.8.1:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
 
-react-konva@^17.0.2-3:
-  version "17.0.2-3"
-  resolved "https://registry.yarnpkg.com/react-konva/-/react-konva-17.0.2-3.tgz#c5d789de3761981bf1d721e95df8393e5ba47e40"
-  integrity sha512-6HSRBzJ8omiZaalpOr2LtUrmXfmhsCa3qkr6Wjg4+a0cK3n67cA9QqEcDT9pZU6aNnrieutQrGddNxvXKiG+OA==
+react-konva@^17.0.2-4:
+  version "17.0.2-4"
+  resolved "https://registry.yarnpkg.com/react-konva/-/react-konva-17.0.2-4.tgz#afd0968e1295b624bf2a7a154ba294e0d5be55cd"
+  integrity sha512-YvRVPT81y8sMQV1SY1/tIDetGxBK+7Rk86u4LmiyDBLLE17vD78F01b8EC3AuP3nI3hUaTblfBugUF35cm6Etg==
   dependencies:
     react-reconciler "~0.26.2"
     scheduler "^0.20.2"
