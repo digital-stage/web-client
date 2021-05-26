@@ -40,7 +40,7 @@ const ResendActivationForm = (): JSX.Element => {
                 setMessage(undefined)
                 return resendActivationLink(values.email)
                     .then(() => resetForm(null))
-                    .catch((err: AuthError) => setMessage(translateError(err.code)))
+                    .catch((err: AuthError) => setMessage(translateError(err)))
             }}
         >
             {({ errors, touched, handleReset, handleSubmit }) => (

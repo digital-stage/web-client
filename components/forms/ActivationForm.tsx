@@ -39,7 +39,7 @@ const ActivationForm = (props: { initialCode?: string }): JSX.Element => {
                 .catch((error: AuthError) => {
                     setMessage({
                         type: 'danger',
-                        content: translateError(error.code),
+                        content: translateError(error),
                     })
                 })
         },

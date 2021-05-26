@@ -50,7 +50,7 @@ const ForgetPasswordForm = (): JSX.Element => {
                         setMsg({
                             state: true,
                             type: 'danger',
-                            kids: translateError(err.code),
+                            kids: translateError(err),
                         })
                     })
             }

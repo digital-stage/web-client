@@ -31,7 +31,7 @@ const LoginForm = (): JSX.Element => {
             if (signInWithEmailAndPassword) {
                 signInWithEmailAndPassword(values.email, values.password)
                     .then(() => push('/'))
-                    .catch((err: AuthError) => setError(translateError(err.code)))
+                    .catch((err: AuthError) => setError(translateError(err)))
             }
         },
         [signInWithEmailAndPassword]

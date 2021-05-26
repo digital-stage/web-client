@@ -29,13 +29,10 @@ const SignUpForm = () => {
 
     const handleSubmit = useCallback(
         (values) => {
-            console.log('SUBMIT')
             if (createUserWithEmailAndPassword) {
                 createUserWithEmailAndPassword(values.email, values.password, values.name)
                     .then(() => push('/'))
-                    .catch((err: AuthError) => {
-                        setError(translateError(err.code))
-                    })
+                    .catch((err: AuthError) => setError(translateError(err)))
             }
         },
         [createUserWithEmailAndPassword, push]
@@ -115,7 +112,6 @@ const SignUpForm = () => {
                         </Block>
                     )}
                     <Block width={12} align="center">
-                        <div>{Object.keys(props.errors).length}</div>
                         <Button
                             type="submit"
                             disabled={!props.dirty || Object.keys(props.errors).length > 0}

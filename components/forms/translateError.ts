@@ -3,7 +3,7 @@ import { AuthError, ErrorCodes } from '@digitalstage/api-client-react'
 const translateError = (error: Error): string => {
     if ((error as AuthError).code !== undefined) {
         const authError = error as AuthError
-        switch (authError.code()) {
+        switch (authError.code) {
             case ErrorCodes.Unauthorized: {
                 return 'Unbekannte E-Mail-Adresse oder falsches Passwort'
             }
