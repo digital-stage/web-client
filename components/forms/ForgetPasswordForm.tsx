@@ -55,7 +55,7 @@ const ForgetPasswordForm = (): JSX.Element => {
                     })
             }
         >
-            {({ errors, touched, handleReset, handleSubmit }) => (
+            {({ errors, touched, handleReset, handleSubmit, dirty }) => (
                 <Form onReset={handleReset} onSubmit={handleSubmit}>
                     {msg.state && (
                         <Block paddingBottom={4}>
@@ -83,7 +83,9 @@ const ForgetPasswordForm = (): JSX.Element => {
                         value={user && user.email}
                     />
                     <Block align="center">
-                        <Button type="submit">Passwort zurücksetzen</Button>
+                        <Button type="submit" disabled={!dirty || Object.keys(errors).length > 0}>
+                            Passwort zurücksetzen
+                        </Button>
                     </Block>
                 </Form>
             )}

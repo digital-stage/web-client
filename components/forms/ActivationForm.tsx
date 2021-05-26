@@ -74,7 +74,7 @@ const ActivationForm = (props: { initialCode?: string }): JSX.Element => {
                     return handleActivation(values.code).then(() => resetForm(null))
                 }}
             >
-                {({ errors, touched, handleSubmit, handleReset }) => (
+                {({ errors, touched, handleSubmit, handleReset, dirty }) => (
                     <Form onReset={handleReset} onSubmit={handleSubmit} autoComplete="off">
                         <Field
                             as={Input}
@@ -86,7 +86,12 @@ const ActivationForm = (props: { initialCode?: string }): JSX.Element => {
                             error={touched.code && errors.code}
                         />
                         <Block align="center">
-                            <Button type="submit">Konto aktivieren</Button>
+                            <Button
+                                type="submit"
+                                disabled={!dirty || Object.keys(errors).length > 0}
+                            >
+                                Konto aktivieren
+                            </Button>
                         </Block>
                     </Form>
                 )}

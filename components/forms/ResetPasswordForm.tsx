@@ -62,7 +62,7 @@ function ResetPasswordForm({ resetToken }: Props): JSX.Element {
                     )
             }
         >
-            {({ errors, touched, handleReset, handleSubmit }) => (
+            {({ errors, touched, handleReset, handleSubmit, dirty }) => (
                 <Form onReset={handleReset} onSubmit={handleSubmit} autoComplete="off">
                     {msg.state && (
                         <Block paddingBottom={4}>
@@ -88,7 +88,9 @@ function ResetPasswordForm({ resetToken }: Props): JSX.Element {
                         name="repeatPassword"
                         error={touched.repeatPassword && errors.repeatPassword}
                     />
-                    <Button type="submit">Passwort setzen</Button>
+                    <Button type="submit" disabled={!dirty || Object.keys(errors).length > 0}>
+                        Passwort setzen
+                    </Button>
                 </Form>
             )}
         </Formik>

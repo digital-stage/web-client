@@ -43,7 +43,7 @@ const ResendActivationForm = (): JSX.Element => {
                     .catch((err: AuthError) => setMessage(translateError(err)))
             }}
         >
-            {({ errors, touched, handleReset, handleSubmit }) => (
+            {({ errors, touched, handleReset, handleSubmit, dirty }) => (
                 <Form onReset={handleReset} onSubmit={handleSubmit}>
                     <Field
                         as={Input}
@@ -61,7 +61,9 @@ const ResendActivationForm = (): JSX.Element => {
                         </Block>
                     )}
                     <Block align="center">
-                        <Button type="submit">Erneut senden</Button>
+                        <Button type="submit" disabled={!dirty || Object.keys(errors).length > 0}>
+                            Erneut senden
+                        </Button>
                     </Block>
                 </Form>
             )}

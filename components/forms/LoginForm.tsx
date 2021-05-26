@@ -29,9 +29,12 @@ const LoginForm = (): JSX.Element => {
     const handleSubmit = useCallback(
         (values) => {
             if (signInWithEmailAndPassword) {
+                console.log('hihi')
                 signInWithEmailAndPassword(values.email, values.password)
                     .then(() => push('/'))
-                    .catch((err: AuthError) => setError(translateError(err)))
+                    .catch((err: AuthError) => {
+                        setError(translateError(err))
+                    })
             }
         },
         [signInWithEmailAndPassword]
@@ -83,7 +86,12 @@ const LoginForm = (): JSX.Element => {
                             </Block>
                         )}
                         <Block width={12} align="center">
-                            <Button type="submit">Anmelden</Button>
+                            <Button
+                                disabled={!props.dirty || Object.keys(props.errors).length > 0}
+                                type="submit"
+                            >
+                                Anmelden
+                            </Button>
                         </Block>
                     </Form>
                 )}
