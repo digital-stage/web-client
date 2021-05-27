@@ -41,23 +41,6 @@ const ColorProvider = (props: { children: React.ReactNode }): JSX.Element => {
     )
 }
 
-const useColors2 = (): {
-    getColor: (id: string) => HSLColor
-} => {
-    const { generatedColors, generateColor } = useContext<ColorContext>(Context)
-
-    const getColor = useCallback(
-        (id: string) => {
-            if (generatedColors[id]) {
-                return generatedColors[id]
-            }
-            return generateColor(id)
-        },
-        [generatedColors, generateColor]
-    )
-    return { getColor }
-}
-
 const useColors = (uuid: string): HSLColor => {
     const [color, setColor] = useState<HSLColor>()
     const { generatedColors, generateColor } = useContext<ColorContext>(Context)
