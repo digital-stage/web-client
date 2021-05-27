@@ -23,7 +23,7 @@ const DeviceView = ({ id }: { id: string }) => {
                     } as ClientDevicePayloads.ChangeDevice)
                 }
                 label="Name"
-                value={device.name}
+                value={device.name || ''}
             />
             {device.type === 'mediasoup' && (
                 <MediasoupSettings device={device as MediasoupDevice} />
@@ -132,7 +132,7 @@ const Devices = () => {
                 <Block width={12} paddingBottom={5}>
                     <Row padding={4}>
                         {deviceIds.map((id) => (
-                            <Block width={[12, 6]} padding={4}>
+                            <Block key={id} width={[12, 6]} padding={4}>
                                 <Panel>
                                     <Block padding={4} vertical>
                                         <DeviceView id={id} />

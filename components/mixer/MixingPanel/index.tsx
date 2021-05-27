@@ -241,8 +241,7 @@ const StageMemberPanel = (props: { id: string; globalMode: boolean }) => {
             ]
     )
     const [expanded, setExpanded] = useState<boolean>(false)
-    const getColor = useColors()
-    const color = getColor(id)
+    const color = useColors(id)
     const connection = useConnection()
 
     useEffect(() => {
@@ -304,7 +303,7 @@ const StageMemberPanel = (props: { id: string; globalMode: boolean }) => {
                         <div
                             className={styles.stripExpanderButton}
                             style={{
-                                backgroundColor: color.toProperty(),
+                                backgroundColor: color?.toProperty(),
                             }}
                         >
                             {expanded ? (
@@ -326,7 +325,7 @@ const StageMemberPanel = (props: { id: string; globalMode: boolean }) => {
                     }
                     onReset={handleReset}
                     onChange={handleChange}
-                    color={color.toProperty()}
+                    color={color?.toProperty()}
                 />
             </div>
             {expanded && (

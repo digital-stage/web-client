@@ -8,14 +8,14 @@ const LiveInput = (
         'value' | 'onChange'
     > & {
         onChange: (value: string) => void
-        value?: string
+        value: string
         label: string
         error?: string
     }
 ) => {
     const { value, onChange, ...other } = props
     const [changed, setChanged] = useState<boolean>(false)
-    const [actualValue, setActualValue] = useState<string>(value || '')
+    const [actualValue, setActualValue] = useState<string>(value)
 
     useEffect(() => {
         setActualValue(value)
@@ -39,7 +39,6 @@ const LiveInput = (
     )
 }
 LiveInput.defaultProps = {
-    value: undefined,
     error: undefined,
 }
 export default LiveInput

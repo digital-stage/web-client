@@ -54,7 +54,6 @@ const StageView = ({ stage, globalMode }: { stage: Stage; globalMode: boolean })
     const customStageDevicePositions = useStageSelector<CustomStageDevicePositions>(
         (state) => state.customStageDevicePositions
     )
-    const getColor = useColors()
     const stageMemberImage = useImage('/static/icons/room-group.svg', 96, 96)
     const localStageMemberImage = useImage('/static/icons/room-group-custom.svg', 96, 96)
     const stageDeviceImage = useImage('/static/icons/room-member.svg', 64, 64)
@@ -176,7 +175,7 @@ const StageView = ({ stage, globalMode }: { stage: Stage; globalMode: boolean })
                 >
                     <KonvaLayer>
                         {stageMembers.map((stageMember) => {
-                            const color = getColor(stageMember._id)?.toProperty()
+                            const color = useColors(stageMember._id)
                             const customStageMember =
                                 customStageMemberPositions.byDeviceAndStageMember[deviceId] &&
                                 customStageMemberPositions.byDeviceAndStageMember[deviceId][
@@ -201,7 +200,7 @@ const StageView = ({ stage, globalMode }: { stage: Stage; globalMode: boolean })
                                     user={user}
                                     onSelected={setSelected}
                                     selected={selected}
-                                    color={color}
+                                    color={color?.toProperty()}
                                     stageMemberImage={
                                         localStageMemberId === stageMember._id
                                             ? localStageMemberImage

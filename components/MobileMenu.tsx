@@ -14,21 +14,23 @@ const MobileItem = (props: {
     children: React.ReactNode
     onClick?: MouseEventHandler<HTMLButtonElement>
     open: boolean
-    ref?: React.Ref<HTMLButtonElement>
 }) => {
     const { href, children, onClick, open } = props
     const { pathname } = useRouter()
 
     return (
         <Link href={href} passHref>
-            <Button
-                kind={pathname === href ? 'primary' : 'tertiary'}
-                onClick={onClick}
-                round
-                className={`${styles.menuItem} ${open ? styles.active : styles.inactive}`}
-            >
-                {children}
-            </Button>
+            {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+            <a>
+                <Button
+                    kind={pathname === href ? 'primary' : 'tertiary'}
+                    onClick={onClick}
+                    round
+                    className={`${styles.menuItem} ${open ? styles.active : styles.inactive}`}
+                >
+                    {children}
+                </Button>
+            </a>
         </Link>
     )
 }

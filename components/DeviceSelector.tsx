@@ -24,7 +24,9 @@ const DeviceSelector = () => {
                 }}
             >
                 {devices.map((d) => (
-                    <option value={d._id}>{d.name || d._id}</option>
+                    <option key={d._id} value={d._id}>
+                        {d.name || d._id}
+                    </option>
                 ))}
             </Select>
         )
