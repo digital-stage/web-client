@@ -1,13 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { Field, Form, Formik, FormikProps } from 'formik'
-import { useAuth } from '@digitalstage/api-client-react'
+import { AuthError, useAuth } from '@digitalstage/api-client-react'
 import { useRouter } from 'next/router'
 import * as Yup from 'yup'
 import Notification from '../ui/Notification'
 import Input from '../ui/Input'
 import Button from '../ui/Button'
 import Block from '../ui/Block'
-import { AuthError } from '../../../monorepo/packages/api-client-react/src'
 import translateError from './translateError'
 
 const SignUpForm = () => {
