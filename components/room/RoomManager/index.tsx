@@ -9,6 +9,8 @@ import {
     RemoteUsers,
     CustomStageMemberPositions,
     CustomStageDevicePositions,
+    AudioTracks,
+    CustomAudioTrackPositions,
 } from '@digitalstage/api-client-react'
 import { Stage as KonvaStage, Layer as KonvaLayer } from 'react-konva/lib/ReactKonvaCore'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
@@ -54,11 +56,17 @@ const StageView = ({ stage, globalMode }: { stage: Stage; globalMode: boolean })
     const customStageDevicePositions = useStageSelector<CustomStageDevicePositions>(
         (state) => state.customStageDevicePositions
     )
+    const audioTracks = useStageSelector<AudioTracks>((state) => state.audioTracks)
+    const customAudioTracks = useStageSelector<CustomAudioTrackPositions>(
+        (state) => state.customAudioTrackPositions
+    )
     const stageMemberImage = useImage('/static/icons/room-group.svg', 96, 96)
     const localStageMemberImage = useImage('/static/icons/room-group-custom.svg', 96, 96)
     const stageDeviceImage = useImage('/static/icons/room-member.svg', 64, 64)
     const localStageDeviceImage = useImage('/static/icons/room-member-custom.svg', 64, 64)
     const currentStageDeviceImage = useImage('/static/icons/room-member-custom-local.svg', 64, 64)
+    const audioTrackImage = useImage('/static/icons/room-track.svg', 32, 32)
+    const currentAudioTrackImage = useImage('/static/icons/room-track-custom.svg', 32, 32)
 
     const deselect = useCallback((e) => {
         const clickedOnEmpty = e.target === e.target.getStage()
@@ -197,6 +205,8 @@ const StageView = ({ stage, globalMode }: { stage: Stage; globalMode: boolean })
                                     customStageMember={customStageMember}
                                     stageDevices={stageDevices}
                                     customStageDevices={customStageDevicePositions}
+                                    audioTracks={audioTracks}
+                                    customAudioTracks={customAudioTracks}
                                     user={user}
                                     onSelected={setSelected}
                                     selected={selected}
@@ -212,6 +222,8 @@ const StageView = ({ stage, globalMode }: { stage: Stage; globalMode: boolean })
                                             : stageDeviceImage
                                     }
                                     currentStageDeviceImage={currentStageDeviceImage}
+                                    audioTrackImage={audioTrackImage}
+                                    currentAudioTrackImage={currentAudioTrackImage}
                                 />
                             )
                         })}

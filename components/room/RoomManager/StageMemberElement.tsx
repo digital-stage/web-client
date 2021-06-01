@@ -1,5 +1,7 @@
 import { ITeckosClient } from 'teckos-client'
 import {
+    AudioTracks,
+    CustomAudioTrackPositions,
     CustomStageDevicePositions,
     StageDevices,
     StageMember,
@@ -23,6 +25,8 @@ const StageMemberElement = ({
     stageDevices,
     customStageMember,
     customStageDevices,
+    audioTracks,
+    customAudioTracks,
     connection,
     selected,
     onSelected,
@@ -30,6 +34,8 @@ const StageMemberElement = ({
     stageMemberImage,
     stageDeviceImage,
     currentStageDeviceImage,
+    audioTrackImage,
+    currentAudioTrackImage,
 }: {
     connection: ITeckosClient
     deviceId: string
@@ -38,6 +44,8 @@ const StageMemberElement = ({
     stageDevices: StageDevices
     customStageMember?: CustomStageMemberPosition
     customStageDevices: CustomStageDevicePositions
+    audioTracks: AudioTracks
+    customAudioTracks: CustomAudioTrackPositions
     user?: User
     onSelected: (selection: ElementSelection) => void
     selected?: ElementSelection
@@ -45,6 +53,8 @@ const StageMemberElement = ({
     stageMemberImage: CanvasImageSource
     stageDeviceImage: CanvasImageSource
     currentStageDeviceImage: CanvasImageSource
+    audioTrackImage: CanvasImageSource
+    currentAudioTrackImage: CanvasImageSource
 }) => {
     // We cannot use useContext here, so we outsourced all useStageSelector calls into the parent object
     const [position, setPosition] = useState<{ x: number; y: number; rZ: number }>({
@@ -65,53 +75,22 @@ const StageMemberElement = ({
         }
     }, [globalMode, stageMember.x, stageMember.y, stageMember.rZ, customStageMember])
 
-    const handleStageMemberChange = useCallback(
-        (x: number, y: number, rZ: number) => {
-            if (connection) {
-                if (globalMode) {
-                    connection.emit(ClientDeviceEvents.ChangeStageMember, {
-                        _id: stageMember._id,
-                        x,
-                        y,
-                        rZ,
-                    } as ClientDevicePayloads.ChangeStageMember)
-                } else {
-                    connection.emit(ClientDeviceEvents.SetCustomStageMemberPosition, {
-                        stageMemberId: stageMember._id,
-                        deviceId,
-                        x,
-                        y,
-                        rZ,
-                    } as ClientDevicePayloads.SetCustomStageMemberPosition)
-                }
+    const commitChanges = useCallback(() => {
+        if (connection) {
+            if (globalMode) {
+                connection.emit(ClientDeviceEvents.ChangeStageMember, {
+                    _id: stageMember._id,
+                    ...position,
+                } as ClientDevicePayloads.ChangeStageMember)
+            } else {
+                connection.emit(ClientDeviceEvents.SetCustomStageMemberPosition, {
+                    stageMemberId: stageMember._id,
+                    deviceId,
+                    ...position,
+                } as ClientDevicePayloads.SetCustomStageMemberPosition)
             }
-        },
-        [connection, globalMode, stageMember._id, deviceId]
-    )
-
-    const handleStageDeviceChange = useCallback(
-        (id: string, x: number, y: number, rZ: number) => {
-            if (connection) {
-                if (globalMode) {
-                    connection.emit(ClientDeviceEvents.ChangeStageDevice, {
-                        _id: id,
-                        x,
-                        y,
-                        rZ,
-                    } as ClientDevicePayloads.ChangeStageDevice)
-                } else {
-                    connection.emit(ClientDeviceEvents.SetCustomStageDevicePosition, {
-                        stageDeviceId: id,
-                        deviceId,
-                        x,
-                        y,
-                        rZ,
-                    } as ClientDevicePayloads.SetCustomStageDevicePosition)
-                }
-            }
-        },
-        [connection, globalMode, deviceId]
-    )
+        }
+    }, [connection, globalMode, stageMember._id, deviceId, position])
 
     useEffect(() => {
         if (selected) {
@@ -139,7 +118,10 @@ const StageMemberElement = ({
                 onChanged={(currPosition) => {
                     setPosition(currPosition)
                 }}
-                onChangeFinished={({ x, y, rZ }) => handleStageMemberChange(x, y, rZ)}
+                onChangeFinished={(currPosition) => {
+                    setPosition(currPosition)
+                    commitChanges()
+                }}
                 selected={
                     selected &&
                     (selected.type === 'sm' || selected.type === 'csm') &&
@@ -157,6 +139,7 @@ const StageMemberElement = ({
                 opacity={globalMode || customStageMember ? 1 : 0.6}
             />
             {stageDevices.byStageMember[stageMember._id] &&
+                stageDevices.byStageMember[stageMember._id].length > 1 &&
                 stageDevices.byStageMember[stageMember._id]
                     .map((id) => stageDevices.byId[id])
                     .map((stageDevice) => {
@@ -169,15 +152,16 @@ const StageMemberElement = ({
                         return (
                             <StageDeviceElement
                                 key={stageDevice._id}
+                                connection={connection}
+                                deviceId={deviceId}
                                 globalMode={globalMode}
                                 offsetX={position.x}
                                 offsetY={position.y}
                                 offsetRz={position.rZ}
                                 stageDevice={stageDevice}
                                 customStageDevice={customStageDevice}
-                                onChange={({ x, y, rZ }) =>
-                                    handleStageDeviceChange(stageDevice._id, x, y, rZ)
-                                }
+                                audioTracks={audioTracks}
+                                customAudioTracks={customAudioTracks}
                                 selected={selected}
                                 onSelected={onSelected}
                                 user={user}
@@ -187,6 +171,8 @@ const StageMemberElement = ({
                                         ? currentStageDeviceImage
                                         : stageDeviceImage
                                 }
+                                audioTrackImage={audioTrackImage}
+                                currentAudioTrackImage={currentAudioTrackImage}
                             />
                         )
                     })}

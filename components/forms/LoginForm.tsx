@@ -65,8 +65,7 @@ const LoginForm = (): JSX.Element => {
                             type="email"
                             name="email"
                             autoComplete="email"
-                            valid={!!props.errors.email}
-                            notification={props.errors.email}
+                            notification={props.touched.email && props.errors.email}
                             maxLength={100}
                         />
                         <Field
@@ -76,8 +75,7 @@ const LoginForm = (): JSX.Element => {
                             type="password"
                             name="password"
                             autoComplete="password"
-                            valid={!!props.errors.password}
-                            notification={props.errors.password}
+                            notification={props.touched.password && props.errors.password}
                             maxLength={20}
                         />
                         {error && (

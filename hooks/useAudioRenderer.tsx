@@ -21,6 +21,7 @@ import {
 import React, { useEffect, useRef, useState } from 'react'
 import {
     IAudioContext,
+    IGainNode,
     IMediaElementAudioSourceNode,
     IPannerNode,
 } from 'standardized-audio-context'
@@ -169,8 +170,8 @@ const reduceStageDevicePosition = (
     useEffect(() => {
         if (ready) {
             let calculatedVolume = customGroupVolume?.volume || group.volume
-            calculatedVolume += customStageMemberVolume?.volume || stageMember.volume
-            calculatedVolume += customStageDeviceVolume?.volume || stageDevice.volume
+            calculatedVolume *= customStageMemberVolume?.volume || stageMember.volume
+            calculatedVolume *= customStageDeviceVolume?.volume || stageDevice.volume
 
             const muted =
                 (customStageDeviceVolume ? customStageDeviceVolume.muted : stageDevice.muted) ||
@@ -258,7 +259,7 @@ const reduceAudioTrackPosition = (
         if (ready)
             setVolume({
                 volume:
-                    (customAudioTrackVolume?.volume || audioTrack.volume) +
+                    (customAudioTrackVolume?.volume || audioTrack.volume) *
                     stageDeviceVolume.volume,
                 muted:
                     (customAudioTrackVolume ? customAudioTrackVolume.muted : audioTrack.muted) ||
@@ -275,22 +276,64 @@ const ConsumerRenderer = ({
     consumer: Consumer
     audioTrackId: string
 }) => {
-    const ref = useRef()
-    const { audioContext } = useAudioContext()
+    const audioRef = useRef<HTMLAudioElement>()
+    const { audioContext, destination } = useAudioContext()
     const { position, volume } = reduceAudioTrackPosition(audioTrackId)
     const { track } = consumer
     const [sourceNode, setSourceNode] = useState<IMediaElementAudioSourceNode<IAudioContext>>()
-    const [pannerNode, setPannerNode] = useState<IPannerNode<IAudioContext>>()
+    const [, setGainNode] = useState<IGainNode<IAudioContext>>()
+    const [, setPannerNode] = useState<IPannerNode<IAudioContext>>()
+
+    const [element, setElement] = useState<HTMLAudioElement>()
 
     useEffect(() => {
-        if (ref.current && audioContext && track) {
-            console.log('CREATING NODES')
-            setSourceNode(audioContext.createMediaElementSource(ref.current))
-            setPannerNode(audioContext.createPanner())
+        if (audioContext && track) {
+            const audioElement = new Audio()
+            audioElement.id = audioTrackId
+            audioElement.srcObject = new MediaStream([track])
+            audioElement.autoplay = true
+            audioElement.muted = true
+            setElement(audioElement)
+            const source = audioContext.createMediaElementSource(audioRef.current)
+            setSourceNode(source)
         }
-    }, [track, ref, audioContext])
+    }, [track, audioContext])
+    /*
+    useEffect(() => {
+        if (audioRef.current && audioContext && track) {
+            audioRef.current.srcObject = new MediaStream([track])
+            audioRef.current.autoplay = true
+            audioRef.current.muted = true
+            audioRef.current.play()
+            const source = audioContext.createMediaElementSource(audioRef.current)
+            setSourceNode(source)
+        }
+    }, [audioRef, track, audioContext]) */
 
     useEffect(() => {
+        if (sourceNode && audioContext && track) {
+            console.log('CONNECTING NODES')
+            const gain = audioContext.createGain()
+            gain.gain.value = 1
+            const panner = audioContext.createPanner()
+            // sourceNode.connect(panner).connect(gain).connect(destination)
+            sourceNode.connect(destination)
+            setGainNode(gain)
+            setPannerNode(panner)
+            return () => {
+                console.log('DISCONNECTING NODES')
+                // sourceNode.disconnect(panner)
+                // panner.disconnect(gain)
+                // gain.disconnect(destination)
+                sourceNode.disconnect(destination)
+            }
+        }
+        return undefined
+    }, [sourceNode, audioContext, destination])
+
+    useEffect(() => {
+        console.log('UPDATE PANNER')
+        console.log(position)
         setPannerNode((prev) => {
             if (prev) {
                 prev.positionX.value = position.x
@@ -299,40 +342,32 @@ const ConsumerRenderer = ({
             }
             return prev
         })
-    }, [position, volume])
+    }, [position])
 
     useEffect(() => {
-        if (audioContext && sourceNode) {
-            console.log('Connecting source node')
-            sourceNode.connect(pannerNode)
-            return () => {
-                console.log('Disconnecting source node')
-                sourceNode.disconnect(pannerNode)
+        setGainNode((prev) => {
+            if (prev) {
+                console.log('UPDATE GAIN')
+                console.log(volume)
+                if (volume.muted) {
+                    console.log('muted')
+                    prev.gain.setValueAtTime(0, audioContext.currentTime)
+                } else {
+                    prev.gain.setValueAtTime(volume.volume, audioContext.currentTime)
+                }
             }
-        }
-        return undefined
-    }, [sourceNode, pannerNode])
-
-    useEffect(() => {
-        if (audioContext && pannerNode) {
-            console.log('Connecting panner node')
-            pannerNode.connect(audioContext.destination)
-            return () => {
-                console.log('Disconnecting panner node')
-                pannerNode.disconnect(audioContext.destination)
-            }
-        }
-        return undefined
-    }, [audioContext, pannerNode])
+            return prev
+        })
+    }, [audioContext, volume])
 
     return (
-        <audio ref={ref}>
+        <audio ref={audioRef}>
             <track kind="captions" />
         </audio>
     )
 }
 
-const useListener = () => {
+const Listener = (): JSX.Element => {
     const ready = useStageSelector<boolean>((state) => state.globals.ready)
     const localDeviceId = useStageSelector<string | undefined>(
         (state) => ready && state.globals.localDeviceId
@@ -344,7 +379,6 @@ const useListener = () => {
                 (id) => state.stageDevices.byId[id].deviceId === localDeviceId
             )
     )
-    console.log('stageDeviceId', stageDeviceId)
     const { position } = reduceStageDevicePosition(stageDeviceId)
     const { audioContext } = useAudioContext()
 
@@ -359,19 +393,23 @@ const useListener = () => {
         }
     }, [audioContext, position.x, position.y, position.rZ])
 
-    return audioContext
+    return null
 }
 
 const AudioRendererProvider = ({ children }: { children: React.ReactNode }): JSX.Element => {
-    const ready = useStageSelector<boolean>((state) => state.globals.ready)
     const { audioConsumers } = useMediasoup()
-    useListener()
+    const ready = useStageSelector<boolean>((state) => state.globals.ready)
 
     return (
         <>
+            {ready && <Listener />}
             {ready &&
                 Object.entries(audioConsumers).map(([audioTrackId, consumer]) => (
-                    <ConsumerRenderer audioTrackId={audioTrackId} consumer={consumer} />
+                    <ConsumerRenderer
+                        key={audioTrackId}
+                        audioTrackId={audioTrackId}
+                        consumer={consumer}
+                    />
                 ))}
             {children}
         </>
