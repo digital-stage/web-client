@@ -20,11 +20,13 @@ import {
 } from '@digitalstage/api-types'
 import React, { useEffect, useRef, useState } from 'react'
 import {
+    IAnalyserNode,
     IAudioContext,
     IGainNode,
-    IMediaElementAudioSourceNode,
+    IMediaStreamAudioSourceNode,
     IPannerNode,
 } from 'standardized-audio-context'
+import { createAudioDestinationNodeConstructor } from 'standardized-audio-context/build/es2019/factories/audio-destination-node-constructor'
 import useAudioContext from './useAudioContext'
 
 interface Position {
@@ -35,6 +37,10 @@ interface Position {
 interface Volume {
     volume: number
     muted: boolean
+}
+
+interface AnalyzerContext {
+    [id: string]: IAnalyserNode<IAudioContext>
 }
 
 const reduceStageDevicePosition = (
@@ -116,7 +122,9 @@ const reduceStageDevicePosition = (
                 ]
             ]
     )
-    const group = useStageSelector<Group>((state) => state.groups.byId[stageMember.groupId])
+    const group = useStageSelector<Group | undefined>(
+        (state) => stageMember && state.groups.byId[stageMember.groupId]
+    )
     const customGroupPosition = useStageSelector<CustomGroupPosition | undefined>(
         (state) =>
             localDeviceId &&
@@ -277,38 +285,24 @@ const ConsumerRenderer = ({
     audioTrackId: string
 }) => {
     const audioRef = useRef<HTMLAudioElement>()
-    const { audioContext, destination } = useAudioContext()
+    const { audioContext, destination, started } = useAudioContext()
     const { position, volume } = reduceAudioTrackPosition(audioTrackId)
     const { track } = consumer
-    const [sourceNode, setSourceNode] = useState<IMediaElementAudioSourceNode<IAudioContext>>()
+    const [sourceNode, setSourceNode] = useState<IMediaStreamAudioSourceNode<IAudioContext>>()
     const [, setGainNode] = useState<IGainNode<IAudioContext>>()
     const [, setPannerNode] = useState<IPannerNode<IAudioContext>>()
 
-    const [element, setElement] = useState<HTMLAudioElement>()
-
     useEffect(() => {
-        if (audioContext && track) {
-            const audioElement = new Audio()
-            audioElement.id = audioTrackId
-            audioElement.srcObject = new MediaStream([track])
-            audioElement.autoplay = true
-            audioElement.muted = true
-            setElement(audioElement)
-            const source = audioContext.createMediaElementSource(audioRef.current)
-            setSourceNode(source)
-        }
-    }, [track, audioContext])
-    /*
-    useEffect(() => {
-        if (audioRef.current && audioContext && track) {
-            audioRef.current.srcObject = new MediaStream([track])
+        if (audioRef.current && audioContext && track && started) {
+            const stream = new MediaStream([track])
+            audioRef.current.srcObject = stream
             audioRef.current.autoplay = true
             audioRef.current.muted = true
-            audioRef.current.play()
-            const source = audioContext.createMediaElementSource(audioRef.current)
+            audioRef.current.play().catch((err) => console.error(err))
+            const source = audioContext.createMediaStreamSource(stream)
             setSourceNode(source)
         }
-    }, [audioRef, track, audioContext]) */
+    }, [audioRef, track, audioContext, started])
 
     useEffect(() => {
         if (sourceNode && audioContext && track) {
@@ -316,16 +310,16 @@ const ConsumerRenderer = ({
             const gain = audioContext.createGain()
             gain.gain.value = 1
             const panner = audioContext.createPanner()
-            // sourceNode.connect(panner).connect(gain).connect(destination)
-            sourceNode.connect(destination)
+            sourceNode.connect(panner).connect(gain).connect(destination)
+            // sourceNode.connect(destination)
             setGainNode(gain)
             setPannerNode(panner)
             return () => {
                 console.log('DISCONNECTING NODES')
-                // sourceNode.disconnect(panner)
-                // panner.disconnect(gain)
-                // gain.disconnect(destination)
-                sourceNode.disconnect(destination)
+                sourceNode.disconnect(panner)
+                panner.disconnect(gain)
+                gain.disconnect(destination)
+                // sourceNode.disconnect(destination)
             }
         }
         return undefined
@@ -358,6 +352,161 @@ const ConsumerRenderer = ({
             }
             return prev
         })
+    }, [audioContext, volume])
+
+    return (
+        <audio ref={audioRef}>
+            <track kind="captions" />
+        </audio>
+    )
+}
+
+// TODO: Group nodes like on canvas renderer
+const ConsumerRenderer2 = ({
+    consumer,
+    audioTrackId,
+    relativePosition,
+    relativeVolume,
+    destinationL,
+    destinationR,
+}: {
+    consumer: Consumer
+    audioTrackId: string
+    relativePosition: Position
+    relativeVolume: Volume
+    destinationL: IGainNode<IAudioContext>
+    destinationR: IGainNode<IAudioContext>
+}) => {
+    const audioRef = useRef<HTMLAudioElement>()
+    const { audioContext, started } = useAudioContext()
+    const [position, setPosition] = useState<Position>({
+        x: 0,
+        y: 0,
+        rZ: 0,
+    })
+    const [volume, setVolume] = useState<Volume>({
+        volume: 1,
+        muted: true,
+    })
+    // Fetch necessary model
+    const ready = useStageSelector<boolean>((state) => state.globals.ready)
+    const localDeviceId = useStageSelector<string | undefined>(
+        (state) => state.globals.localDeviceId
+    )
+    const audioTrack = useStageSelector<AudioTrack | undefined>(
+        (state) => audioTrackId && state.audioTracks.byId[audioTrackId]
+    )
+    const customAudioTrackPosition = useStageSelector<CustomAudioTrackPosition | undefined>(
+        (state) =>
+            localDeviceId &&
+            audioTrack &&
+            state.customAudioTrackPositions.byDeviceAndAudioTrack[localDeviceId] &&
+            state.customAudioTrackPositions.byDeviceAndAudioTrack[localDeviceId][audioTrack._id] &&
+            state.customAudioTrackPositions.byId[
+                state.customAudioTrackPositions.byDeviceAndAudioTrack[localDeviceId][audioTrack._id]
+            ]
+    )
+    const customAudioTrackVolume = useStageSelector<CustomAudioTrackVolume | undefined>(
+        (state) =>
+            localDeviceId &&
+            audioTrack &&
+            state.customAudioTrackVolumes.byDeviceAndAudioTrack[localDeviceId] &&
+            state.customAudioTrackVolumes.byDeviceAndAudioTrack[localDeviceId][audioTrack._id] &&
+            state.customAudioTrackVolumes.byId[
+                state.customAudioTrackVolumes.byDeviceAndAudioTrack[localDeviceId][audioTrack._id]
+            ]
+    )
+
+    // Calculate position
+    useEffect(() => {
+        if (ready)
+            setPosition({
+                x: relativePosition.x + (customAudioTrackPosition?.x || audioTrack.x),
+                y: relativePosition.y + (customAudioTrackPosition?.y || audioTrack.y),
+                rZ: relativePosition.rZ + (customAudioTrackPosition?.rZ || audioTrack.rZ),
+            })
+    }, [ready, relativePosition, audioTrack, customAudioTrackPosition])
+
+    // Calculate volume
+    useEffect(() => {
+        if (ready)
+            setVolume({
+                volume:
+                    (customAudioTrackVolume?.volume || audioTrack.volume) * relativeVolume.volume,
+                muted:
+                    (customAudioTrackVolume ? customAudioTrackVolume.muted : audioTrack.muted) ||
+                    relativeVolume.muted,
+            })
+    }, [ready, relativeVolume, audioTrack, customAudioTrackVolume])
+    const { track } = consumer
+    const [sourceNode, setSourceNode] = useState<IMediaStreamAudioSourceNode<IAudioContext>>()
+    const [, setGainNode] = useState<IGainNode<IAudioContext>>()
+    const [, setPannerNode] = useState<IPannerNode<IAudioContext>>()
+
+    useEffect(() => {
+        if (audioRef.current && audioContext && track && started) {
+            const stream = new MediaStream([track])
+            audioRef.current.srcObject = stream
+            audioRef.current.autoplay = true
+            audioRef.current.muted = true
+            audioRef.current.play().catch((err) => console.error(err))
+            const source = audioContext.createMediaStreamSource(stream)
+            setSourceNode(source)
+        }
+    }, [audioRef, track, audioContext, started])
+
+    useEffect(() => {
+        if (sourceNode && audioContext && track && destinationL && destinationR) {
+            console.log('CONNECTING NODES')
+            const gain = audioContext.createGain()
+            gain.gain.value = 1
+            const panner = audioContext.createPanner()
+            sourceNode.connect(gain)
+            gain.connect(panner)
+            panner.connect(destinationL, 0)
+            panner.connect(destinationR, 1)
+            // sourceNode.connect(destination)
+            setGainNode(gain)
+            setPannerNode(panner)
+            return () => {
+                console.log('DISCONNECTING NODES')
+                sourceNode.disconnect(gain)
+                gain.disconnect(panner)
+                panner.disconnect(destinationL, 0)
+                panner.disconnect(destinationR, 1)
+                // sourceNode.disconnect(destination)
+            }
+        }
+        return undefined
+    }, [sourceNode, audioContext, destinationL, destinationR])
+
+    useEffect(() => {
+        if (audioContext)
+            setPannerNode((prev) => {
+                if (prev) {
+                    console.log('UPDATE PANNER')
+                    prev.positionX.setValueAtTime(position.x, audioContext.currentTime)
+                    prev.positionY.setValueAtTime(position.y, audioContext.currentTime)
+                    prev.orientationZ.setValueAtTime(position.rZ, audioContext.currentTime)
+                }
+                return prev
+            })
+    }, [audioContext, position])
+
+    useEffect(() => {
+        if (audioContext)
+            setGainNode((prev) => {
+                if (prev) {
+                    console.log('UPDATE GAIN')
+                    if (volume.muted || relativeVolume.muted) {
+                        console.log('muted')
+                        prev.gain.setValueAtTime(0, audioContext.currentTime)
+                    } else {
+                        prev.gain.setValueAtTime(volume.volume, audioContext.currentTime)
+                    }
+                }
+                return prev
+            })
     }, [audioContext, volume])
 
     return (
@@ -415,4 +564,6 @@ const AudioRendererProvider = ({ children }: { children: React.ReactNode }): JSX
         </>
     )
 }
+
+export type { Volume, Position, AnalyzerContext }
 export default AudioRendererProvider

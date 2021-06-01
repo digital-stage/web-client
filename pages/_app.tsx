@@ -12,6 +12,7 @@ import StageJoiner from '../components/StageJoiner'
 import { AudioContextProvider } from '../hooks/useAudioContext'
 import AudioRendererProvider from '../hooks/useAudioRenderer'
 import useAudioOutput from '../hooks/useAudioOutput'
+import PlaybackOverlay from '../components/PlaybackOverlay'
 
 const AudioOutputSwitcher = () => {
     useAudioOutput()
@@ -44,6 +45,7 @@ function MyApp({ Component, pageProps }) {
                                     </Layout>
                                     <StageJoiner />
                                     <AudioOutputSwitcher />
+                                    <PlaybackOverlay />
                                 </StageJoinerProvider>
                             </AudioRendererProvider>
                         </AudioContextProvider>
