@@ -6,7 +6,7 @@ import Container from '../components/ui/Container'
 import Panel from '../components/ui/Panel'
 import LiveInput from '../components/ui/LiveInput'
 import SoundCardSelect from '../components/SoundCardSelect'
-import Button from '../components/ui/Button'
+import Button from '../ui/Button'
 import MediasoupSettings from '../components/MediasoupSettings'
 import Block, { Row } from '../components/ui/Block'
 

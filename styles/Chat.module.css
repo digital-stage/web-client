@@ -1,41 +1,6 @@
-.wrapper {
-    display: flex;
-    flex-grow: 1;
-    flex-direction: column;
-    margin: 0;
-    width: 100%;
-    height: 100%;
-    padding: 12px 12px 96px;
-}
-@media only screen and (min-width: 600px) and (min-height: 600px) {
-    .wrapper {
-        padding-bottom: 48px;
-    }
-}
-
-.outerPanel {
-    display: flex;
-    margin: 0;
-    box-shadow: var(---box-shadow, rgb(0 0 0) 0 16px 20px);
-    border-radius: 18px;
-    background-color: var(---grey-4, #393939);
-    padding: 12px;
-    width: 100%;
-    height: 100%;
-    flex-direction: column;
-}
-
 .title {
     padding-bottom: 12px;
     flex-grow: 0;
-}
-
-.innerPanel {
-    position: relative;
-    display: flex;
-    flex-grow: 1;
-    flex-direction: column;
-    margin: 0;
 }
 
 .messages {
@@ -54,8 +19,8 @@
     display: flex;
     flex-direction: column;
     border-radius: 18px;
-    padding: 1rem;
-    margin: 2rem 1rem;
+    padding: 8px;
+    margin: 4px;
     align-self: flex-start;
 
     text-align: left;
@@ -67,16 +32,14 @@
     text-align: right;
     background-color: var(---primary, #5779D9);
 }
-.messageName {
-}
-.message {
-}
 .messageTime {
     font-size: 0.8rem;
 }
 
 .notification {
-    flex-grow: 0
+    flex-grow: 0;
+    border-bottom-left-radius: 18px;
+    border-bottom-right-radius: 18px;
 }
 
 .messageForm {

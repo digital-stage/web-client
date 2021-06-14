@@ -1,0 +1,14 @@
+.panel {
+    position: relative;
+    width: 100%;
+    height: calc(100vh - 64px - 24px);
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    color: var(---text, #F4F4F4);
+    border-radius: 18px;
+    background-color: var(---level-4, #393939);
+    box-shadow: 0 16px 20px #00000040;
+    overflow: scroll;
+}

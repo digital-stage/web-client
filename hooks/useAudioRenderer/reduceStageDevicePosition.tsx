@@ -17,7 +17,8 @@ import Position from './Position'
 import Volume from './Volume'
 
 const reduceStageDevicePosition = (
-    stageDeviceId?: string
+    stageDeviceId: string,
+    localDeviceId: string
 ): {
     position: Position
     volume: Volume
@@ -33,16 +34,11 @@ const reduceStageDevicePosition = (
     })
 
     // Fetch necessary model
-    const ready = useStageSelector<boolean>((state) => state.globals.ready)
-    const localDeviceId = useStageSelector<string | undefined>(
-        (state) => state.globals.localDeviceId
-    )
     const stageDevice = useStageSelector<StageDevice | undefined>(
         (state) => stageDeviceId && state.stageDevices.byId[stageDeviceId]
     )
     const customStageDevicePosition = useStageSelector<CustomStageDevicePosition | undefined>(
         (state) =>
-            localDeviceId &&
             stageDevice &&
             state.customStageDevicePositions.byDeviceAndStageDevice[localDeviceId] &&
             state.customStageDevicePositions.byDeviceAndStageDevice[localDeviceId][
@@ -56,7 +52,6 @@ const reduceStageDevicePosition = (
     )
     const customStageDeviceVolume = useStageSelector<CustomStageDeviceVolume | undefined>(
         (state) =>
-            localDeviceId &&
             stageDevice &&
             state.customStageDeviceVolumes.byDeviceAndStageDevice[localDeviceId] &&
             state.customStageDeviceVolumes.byDeviceAndStageDevice[localDeviceId][stageDevice._id] &&
@@ -71,7 +66,6 @@ const reduceStageDevicePosition = (
     )
     const customStageMemberPosition = useStageSelector<CustomStageMemberPosition | undefined>(
         (state) =>
-            localDeviceId &&
             stageMember &&
             state.customStageMemberPositions.byDeviceAndStageMember[localDeviceId] &&
             state.customStageMemberPositions.byDeviceAndStageMember[localDeviceId][
@@ -85,7 +79,6 @@ const reduceStageDevicePosition = (
     )
     const customStageMemberVolume = useStageSelector<CustomStageMemberVolume | undefined>(
         (state) =>
-            localDeviceId &&
             stageMember &&
             state.customStageMemberVolumes.byDeviceAndStageMember[localDeviceId] &&
             state.customStageMemberVolumes.byDeviceAndStageMember[localDeviceId][stageMember._id] &&
@@ -100,7 +93,6 @@ const reduceStageDevicePosition = (
     )
     const customGroupPosition = useStageSelector<CustomGroupPosition | undefined>(
         (state) =>
-            localDeviceId &&
             group &&
             state.customGroupPositions.byDeviceAndGroup[localDeviceId] &&
             state.customGroupPositions.byDeviceAndGroup[localDeviceId][group._id] &&
@@ -110,7 +102,6 @@ const reduceStageDevicePosition = (
     )
     const customGroupVolume = useStageSelector<CustomGroupVolume | undefined>(
         (state) =>
-            localDeviceId &&
             group &&
             state.customGroupVolumes.byDeviceAndGroup[localDeviceId] &&
             state.customGroupVolumes.byDeviceAndGroup[localDeviceId][group._id] &&
@@ -121,7 +112,8 @@ const reduceStageDevicePosition = (
 
     // Calculate position
     useEffect(() => {
-        if (ready) {
+        // Only calculate if ready and the default entities are available
+        if (group && stageMember && stageDevice) {
             let x = customGroupPosition?.x || group.x
             let y = customGroupPosition?.y || group.y
             let rZ = customGroupPosition?.rZ || group.rZ
@@ -138,7 +130,6 @@ const reduceStageDevicePosition = (
             })
         }
     }, [
-        ready,
         group,
         customGroupPosition,
         stageMember,
@@ -149,7 +140,8 @@ const reduceStageDevicePosition = (
 
     // Calculate volume
     useEffect(() => {
-        if (ready) {
+        // Only calculate if ready and the default entities are available
+        if (group && stageMember && stageDevice) {
             let calculatedVolume = customGroupVolume?.volume || group.volume
             calculatedVolume *= customStageMemberVolume?.volume || stageMember.volume
             calculatedVolume *= customStageDeviceVolume?.volume || stageDevice.volume
@@ -164,7 +156,6 @@ const reduceStageDevicePosition = (
             })
         }
     }, [
-        ready,
         group,
         customGroupVolume,
         stageMember,

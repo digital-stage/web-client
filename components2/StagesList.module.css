@@ -1,0 +1,30 @@
+.panel {
+    padding: 0 0 24px;
+}
+
+.nav {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 16px;
+}
+.navItem {
+    width: 100%;
+    text-align: center;
+}
+@media only screen and (min-width: 600px) and (min-height: 600px) {
+    .navItem {
+        width: 50%;
+    }
+}
+
+.circle {
+    box-sizing: border-box;
+    margin: 0 8px 0 0;
+    min-width: 30px;
+    min-height: 30px;
+    border-radius: 50%;
+    background-color: var(---tab-border-secondary,#F20544);
+}
+.editStageButton {
+    margin-right: 4px;
+}

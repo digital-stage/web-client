@@ -7,7 +7,7 @@ import { BiChat, BiCube } from 'react-icons/bi'
 import { useRouter } from 'next/router'
 import { FaTools } from 'react-icons/fa'
 import styles from './MobileMenu.module.css'
-import Button from './ui/Button'
+import Button from '../ui/Button'
 
 const MobileItem = (props: {
     href: string

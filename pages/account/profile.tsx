@@ -6,7 +6,7 @@ import Container from '../../components/ui/Container'
 import Block from '../../components/ui/Block'
 import LiveInput from '../../components/ui/LiveInput'
 import LoadingOverlay from '../../components/LoadingOverlay'
-import Button from '../../components/ui/Button'
+import Button from '../../ui/Button'
 import Notification from '../../components/ui/Notification'
 
 const Profile = () => {

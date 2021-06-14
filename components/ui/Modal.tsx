@@ -5,7 +5,7 @@ import { disableBodyScroll, enableBodyScroll } from 'body-scroll-lock'
 import styles from './Modal.module.css'
 import Panel, { LEVEL } from './Panel'
 import Block from './Block'
-import Button, { ButtonProps } from './Button'
+import Button, { ButtonProps } from '../../ui/Button'
 
 interface SIZE {
     Default: 'default'

@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 import { useAuth, useStageSelector } from '@digitalstage/api-client-react'
 import Link from 'next/link'
 import styles from './ProfileMenu.module.css'
-import { DangerButton, SecondaryButton } from './ui/Button'
+import { DangerButton, SecondaryButton } from '../ui/Button'
 import Paragraph from './ui/Paragraph'
 import Block from './ui/Block'
 

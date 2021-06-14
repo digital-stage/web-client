@@ -61,10 +61,10 @@
     lodash "^4.17.13"
     to-fast-properties "^2.0.0"
 
-"@digitalstage/api-client-react@^0.1.3":
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/@digitalstage/api-client-react/-/api-client-react-0.1.3.tgz#ec84a11d65db2b01dd342d8b4f3f48e6fb1d8b1e"
-  integrity sha512-SXHGJbmiAlSeZRqU2KJy9vaAryCE04sTp2T0ry8HMPwgvVES+mB131OesDVSQfsHMbMQQlMCr3bA530CLAGusg==
+"@digitalstage/api-client-react@^0.1.5":
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/@digitalstage/api-client-react/-/api-client-react-0.1.5.tgz#1d626bb89bab37ceb6a7f5f006a52972799128df"
+  integrity sha512-W2rRe2mNddKtJEMB7cFhhZBZMaVWP2zprIk6NsPqL4hjPXA1PDzjUmQUswiL+T+tIvI1W6N+SH8Hpc9YkJsgFg==
   dependencies:
     debug "^4.3.1"
     isomorphic-unfetch "^3.1.0"

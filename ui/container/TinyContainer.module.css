@@ -1,0 +1,23 @@
+.container {
+    margin: 0 auto;
+    width: 100%;
+    padding-left: 24px;
+    padding-right: 24px;
+    padding-bottom: 64px;
+    max-width: 380px;
+}
+.container p {
+    padding-bottom: 16px;
+}
+.container h1 {
+    padding-bottom: 24px;
+}
+.container h2 {
+    padding-bottom: 16px;
+}
+.container h3 {
+ padding-bottom: 8px;
+}
+.container h4 {
+    padding-bottom: 4px;
+}

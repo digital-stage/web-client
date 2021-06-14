@@ -2,7 +2,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { IoIosArrowBack, IoIosArrowDown } from 'react-icons/io'
 import styles from './Collapse.module.css'
-import Button from './Button'
+import Button from '../../ui/Button'
 
 const Collapse = ({
     initialCollapsed,

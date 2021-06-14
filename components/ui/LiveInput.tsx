@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useEffect, useState } from 'react'
-import Input from './Input'
+import Input from '../../ui/Input'
 
 const LiveInput = (
     props: Omit<

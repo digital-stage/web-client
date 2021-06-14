@@ -22,7 +22,7 @@ import Paragraph from '../../ui/Paragraph'
 import Block from '../../ui/Block'
 import useSelectedDevice from '../../../hooks/useSelectedDevice'
 import useColors from '../../../hooks/useColors'
-import Button from '../../ui/Button'
+import Button from '../../../ui/Button'
 import StageMemberElement from './StageMemberElement'
 import ElementSelection from './ElementSelection'
 

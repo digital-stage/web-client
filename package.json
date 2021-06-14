@@ -13,7 +13,7 @@
     "start": "next start"
   },
   "dependencies": {
-    "@digitalstage/api-client-react": "^0.1.3",
+    "@digitalstage/api-client-react": "^0.1.5",
     "@digitalstage/api-types": "^0.1.0",
     "body-scroll-lock": "^3.1.5",
     "debug": "^4.3.1",

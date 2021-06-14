@@ -2,16 +2,13 @@ import React, { useState } from 'react'
 
 import Image from 'next/image'
 import { FaTrash } from 'react-icons/fa'
-import Background from '../components/ui/Background'
+import Background from '../ui/Background'
 import Container from '../components/ui/Container'
 import Panel from '../components/ui/Panel'
-import Button, { TertiaryButton } from '../components/ui/Button'
-import HeadlineLink, {
-    PrimaryHeadlineLink,
-    SecondaryHeadlineLink,
-} from '../components/ui/HeadlineLink'
+import Button, { TertiaryButton } from '../ui/Button'
+import HeadlineLink, { PrimaryHeadlineLink, SecondaryHeadlineLink } from '../ui/HeadlineLink'
 import Modal, { ModalButton, ModalFooter, ModalHeader } from '../components/ui/Modal'
-import Input from '../components/ui/Input'
+import Input from '../ui/Input'
 import Block from '../components/ui/Block'
 import Collapse from '../components/ui/Collapse'
 import Paragraph from '../components/ui/Paragraph'

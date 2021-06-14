@@ -2,9 +2,9 @@ import React, { useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { useAuth } from '@digitalstage/api-client-react'
 import Link from 'next/link'
-import AuthContainer from '../../components/AuthContainer'
-import Block from '../../components/ui/Block'
 import ActivationForm from '../../components/forms/ActivationForm'
+import AuthLayout from '../../ui/AuthLayout'
+import TextLink from '../../ui/TextLink'
 
 const Activate = () => {
     const { loading, user } = useAuth()
@@ -18,23 +18,16 @@ const Activate = () => {
 
     const initialCode = Array.isArray(query.code) ? query.code[0] : query.code
     return (
-        <AuthContainer>
-            <Block paddingBottom={2}>
-                <h3>Konto aktivieren</h3>
-            </Block>
-            <Block paddingBottom={4}>
-                <p className="micro">
-                    Bitte gebe den Aktivierungscode ein, welchen Du per E-Mail von uns erhalten
-                    hast:
-                </p>
-            </Block>
+        <AuthLayout>
+            <h3>Konto aktivieren</h3>
+            <p className="micro">
+                Bitte gebe den Aktivierungscode ein, welchen Du per E-Mail von uns erhalten hast:
+            </p>
             <ActivationForm initialCode={initialCode} />
-            <Block width={12} align="center" paddingTop={4}>
-                <Link href="/account/login" passHref>
-                    <a>Zurück</a>
-                </Link>
-            </Block>
-        </AuthContainer>
+            <Link href="/account/login" passHref>
+                <TextLink>Zurück</TextLink>
+            </Link>
+        </AuthLayout>
     )
 }
 export default Activate

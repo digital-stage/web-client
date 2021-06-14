@@ -4,7 +4,7 @@ import { useConnection, useStageSelector } from '@digitalstage/api-client-react'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
 import useStageJoiner from '../hooks/useStageJoiner'
 import Modal, { ModalButton, ModalFooter } from './ui/Modal'
-import Input from './ui/Input'
+import Input from '../ui/Input'
 
 /**
  * The StageJoiner is a usually hidden component,

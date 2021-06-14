@@ -3,9 +3,9 @@ import { Field, Form, Formik, FormikHelpers } from 'formik'
 import * as Yup from 'yup'
 import { useRouter } from 'next/router'
 import { AuthError, useAuth } from '@digitalstage/api-client-react'
-import Input from '../ui/Input'
+import Input from '../../ui/Input'
 import Notification from '../ui/Notification'
-import Button from '../ui/Button'
+import Button from '../../ui/Button'
 import Block from '../ui/Block'
 import translateError from './translateError'
 
@@ -16,11 +16,10 @@ export interface Values {
 const ActivationForm = (props: { initialCode?: string }): JSX.Element => {
     const { initialCode } = props
     const { push } = useRouter()
-    const [message, setMessage] =
-        useState<{
-            type: 'danger' | 'warning' | 'info' | 'success'
-            content: string
-        }>()
+    const [message, setMessage] = useState<{
+        type: 'danger' | 'warning' | 'info' | 'success'
+        content: string
+    }>()
     const { loading, user, activate } = useAuth()
 
     const handleActivation = useCallback(

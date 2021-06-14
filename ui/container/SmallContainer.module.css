@@ -1,0 +1,6 @@
+.container {
+    display: block;
+    padding: 0 24px 64px;
+    margin: 0 auto;
+    max-width: 800px;
+}

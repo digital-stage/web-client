@@ -10,7 +10,8 @@ import Position from './Position'
 import Volume from './Volume'
 
 const reduceAudioTrackPosition = (
-    audioTrackId?: string
+    audioTrackId: string,
+    localDeviceId: string
 ): {
     position: Position
     volume: Volume
@@ -25,15 +26,10 @@ const reduceAudioTrackPosition = (
         muted: true,
     })
     // Fetch necessary model
-    const ready = useStageSelector<boolean>((state) => state.globals.ready)
-    const localDeviceId = useStageSelector<string | undefined>(
-        (state) => state.globals.localDeviceId
-    )
-    const audioTrack = useStageSelector<AudioTrack | undefined>(
-        (state) => audioTrackId && state.audioTracks.byId[audioTrackId]
-    )
+    const audioTrack = useStageSelector<AudioTrack>((state) => state.audioTracks.byId[audioTrackId])
     const { position: stageDevicePosition, volume: stageDeviceVolume } = reduceStageDevicePosition(
-        audioTrack && audioTrack.stageDeviceId
+        audioTrack.stageDeviceId,
+        localDeviceId
     )
     const customAudioTrackPosition = useStageSelector<CustomAudioTrackPosition | undefined>(
         (state) =>
@@ -58,26 +54,23 @@ const reduceAudioTrackPosition = (
 
     // Calculate position
     useEffect(() => {
-        if (ready)
-            setPosition({
-                x: stageDevicePosition.x + (customAudioTrackPosition?.x || audioTrack.x),
-                y: stageDevicePosition.y + (customAudioTrackPosition?.y || audioTrack.y),
-                rZ: stageDevicePosition.rZ + (customAudioTrackPosition?.rZ || audioTrack.rZ),
-            })
-    }, [ready, stageDevicePosition, audioTrack, customAudioTrackPosition])
+        setPosition({
+            x: stageDevicePosition.x + (customAudioTrackPosition?.x || audioTrack.x),
+            y: stageDevicePosition.y + (customAudioTrackPosition?.y || audioTrack.y),
+            rZ: stageDevicePosition.rZ + (customAudioTrackPosition?.rZ || audioTrack.rZ),
+        })
+    }, [stageDevicePosition, audioTrack, customAudioTrackPosition])
 
     // Calculate volume
     useEffect(() => {
-        if (ready)
-            setVolume({
-                volume:
-                    (customAudioTrackVolume?.volume || audioTrack.volume) *
-                    stageDeviceVolume.volume,
-                muted:
-                    (customAudioTrackVolume ? customAudioTrackVolume.muted : audioTrack.muted) ||
-                    stageDeviceVolume.muted,
-            })
-    }, [ready, stageDeviceVolume, audioTrack, customAudioTrackVolume])
+        setVolume({
+            volume:
+                (customAudioTrackVolume?.volume || audioTrack.volume) * stageDeviceVolume.volume,
+            muted:
+                (customAudioTrackVolume ? customAudioTrackVolume.muted : audioTrack.muted) ||
+                stageDeviceVolume.muted,
+        })
+    }, [stageDeviceVolume, audioTrack, customAudioTrackVolume])
     return { volume, position }
 }
 export default reduceAudioTrackPosition
