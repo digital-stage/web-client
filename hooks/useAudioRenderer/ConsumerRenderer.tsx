@@ -6,6 +6,7 @@ import {
     IMediaStreamAudioSourceNode,
     IPannerNode,
 } from 'standardized-audio-context'
+import { useStageSelector } from '@digitalstage/api-client-react'
 import useAudioContext from '../useAudioContext'
 import reduceAudioTrackPosition from './reduceAudioTrackPosition'
 
@@ -18,7 +19,8 @@ const ConsumerRenderer = ({
 }) => {
     const audioRef = useRef<HTMLAudioElement>()
     const { audioContext, destination, started } = useAudioContext()
-    const { position, volume } = reduceAudioTrackPosition(audioTrackId)
+    const localDeviceId = useStageSelector((state) => state.globals.localDeviceId)
+    const { position, volume } = reduceAudioTrackPosition(audioTrackId, localDeviceId)
     const { track } = consumer
     const [sourceNode, setSourceNode] = useState<IMediaStreamAudioSourceNode<IAudioContext>>()
     const [, setGainNode] = useState<IGainNode<IAudioContext>>()
