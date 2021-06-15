@@ -3,10 +3,10 @@ import { Field, Form, Formik, FormikProps } from 'formik'
 import { AuthError, useAuth } from '@digitalstage/api-client-react'
 import { useRouter } from 'next/router'
 import * as Yup from 'yup'
-import Notification from '../ui/Notification'
+import Notification from '../../ui/Notification'
 import Input from '../../ui/Input'
 import Button from '../../ui/Button'
-import Block from '../ui/Block'
+import Block from '../../components/ui/Block'
 import translateError from './translateError'
 
 const SignUpForm = () => {

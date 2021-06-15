@@ -5,8 +5,8 @@ import { useRouter } from 'next/router'
 import * as Yup from 'yup'
 import Input from '../../ui/Input'
 import Button from '../../ui/Button'
-import Notification from '../ui/Notification'
-import Block from '../ui/Block'
+import Notification from '../../ui/Notification'
+import Block from '../../components/ui/Block'
 import translateError from './translateError'
 
 const LoginForm = (): JSX.Element => {

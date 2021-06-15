@@ -3,9 +3,8 @@ import React, { ReactNode, useEffect, useRef, useState } from 'react'
 import { Portal } from 'react-portal'
 import { disableBodyScroll, enableBodyScroll } from 'body-scroll-lock'
 import styles from './Modal.module.css'
-import Panel, { LEVEL } from './Panel'
-import Block from './Block'
-import Button, { ButtonProps } from '../../ui/Button'
+import Button, { ButtonProps } from './Button'
+import WhitePanel from './panels/WhitePanel'
 
 interface SIZE {
     Default: 'default'
@@ -15,7 +14,7 @@ interface SIZE {
 }
 
 const ModalHeader = ({ children }: { children: React.ReactNode }) => {
-    return <Block paddingBottom={4}>{children}</Block>
+    return <div className={styles.modalHeader}>{children}</div>
 }
 
 const ModalButton = (props: ButtonProps) => {
@@ -28,17 +27,12 @@ const ModalButton = (props: ButtonProps) => {
 }
 
 const ModalFooter = ({ children }: { children: React.ReactNode }) => {
-    return (
-        <Block width="full" paddingTop={4} justify="end">
-            {children}
-        </Block>
-    )
+    return <div className={styles.modalFooter}>{children}</div>
 }
 
 const Modal = (
     props: React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> & {
         children: ReactNode
-        level?: LEVEL[keyof LEVEL]
         size?: SIZE[keyof SIZE]
         open: boolean
         onClose: () => void
@@ -140,10 +134,8 @@ const Modal = (
                         }}
                         role="dialog"
                     >
-                        <Panel level="level5" aria-modal="true">
-                            {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-                            <Block padding={4} {...other} />
-                        </Panel>
+                        {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+                        <WhitePanel aria-modal="true" {...other} />
                     </div>
                 </div>
             </Portal>
@@ -151,9 +143,8 @@ const Modal = (
     )
 }
 Modal.defaultProps = {
-    level: undefined,
     size: undefined,
 }
-export type { SIZE, LEVEL }
+export type { SIZE }
 export { ModalHeader, ModalFooter, ModalButton }
 export default Modal

@@ -1,7 +1,7 @@
 import { useConnection, useStageSelector } from '@digitalstage/api-client-react'
 import { ClientDeviceEvents, ClientDevicePayloads, Group } from '@digitalstage/api-types'
 import { useCallback } from 'react'
-import Modal, { ModalButton, ModalFooter, ModalHeader } from '../ui/Modal'
+import Modal, { ModalButton, ModalFooter, ModalHeader } from '../../ui/Modal'
 import Paragraph from '../ui/Paragraph'
 
 const RemoveGroupModal = ({

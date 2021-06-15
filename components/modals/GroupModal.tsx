@@ -3,10 +3,10 @@ import { ClientDeviceEvents, ClientDevicePayloads, Group } from '@digitalstage/a
 import React, { useCallback, useState } from 'react'
 import { Field, Form, Formik } from 'formik'
 import * as Yup from 'yup'
-import Modal, { ModalButton, ModalFooter, ModalHeader } from '../ui/Modal'
+import Modal, { ModalButton, ModalFooter, ModalHeader } from '../../ui/Modal'
 import Input from '../../ui/Input'
-import Notification from '../ui/Notification'
-import ColorPicker from '../ui/ColorPicker'
+import Notification from '../../ui/Notification'
+import ColorPicker from '../../ui/ColorPicker'
 import Block from '../ui/Block'
 
 const GroupModal = ({

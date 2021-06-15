@@ -44,6 +44,17 @@
     transition-timing-function: cubic-bezier(0, 0, 1, 1);
 }
 
+.modalHeader {
+    padding-bottom: 24px;
+}
+
+.modalFooter {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 24px;
+}
+
 .modal.opening {
     opacity: 0;
     transform: translateY(30px);

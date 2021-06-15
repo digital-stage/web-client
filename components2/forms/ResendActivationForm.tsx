@@ -5,8 +5,8 @@ import { useRouter } from 'next/router'
 import { AuthError, useAuth } from '@digitalstage/api-client-react'
 import Button from '../../ui/Button'
 import Input from '../../ui/Input'
-import Block from '../ui/Block'
-import Notification from '../ui/Notification'
+import Block from '../../components/ui/Block'
+import Notification from '../../ui/Notification'
 import translateError from './translateError'
 
 export interface Values {

@@ -4,10 +4,10 @@ import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-type
 import Panel from '../../components/ui/Panel'
 import Container from '../../components/ui/Container'
 import Block from '../../components/ui/Block'
-import LiveInput from '../../components/ui/LiveInput'
+import LiveInput from '../../ui/LiveInput'
 import LoadingOverlay from '../../components/LoadingOverlay'
 import Button from '../../ui/Button'
-import Notification from '../../components/ui/Notification'
+import Notification from '../../ui/Notification'
 
 const Profile = () => {
     const { requestPasswordReset, loading, user: authUser } = useAuth()

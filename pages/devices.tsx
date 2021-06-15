@@ -4,7 +4,7 @@ import { ClientDeviceEvents, ClientDevicePayloads, MediasoupDevice } from '@digi
 import { useRouter } from 'next/router'
 import Container from '../components/ui/Container'
 import Panel from '../components/ui/Panel'
-import LiveInput from '../components/ui/LiveInput'
+import LiveInput from '../ui/LiveInput'
 import SoundCardSelect from '../components/SoundCardSelect'
 import Button from '../ui/Button'
 import MediasoupSettings from '../components/MediasoupSettings'

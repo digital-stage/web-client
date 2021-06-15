@@ -11,9 +11,9 @@ import RemoveStageModal from '../components/modals/RemoveStageModal'
 import RemoveGroupModal from '../components/modals/RemoveGroupModal'
 import InviteModal from '../components/modals/InviteModal'
 import useStageJoiner from '../hooks/useStageJoiner'
-import List, { ListItem } from '../components/ui/List'
+import List, { ListItem } from '../ui/List'
 import styles from './StagesList.module.css'
-import Collapse from '../components/ui/Collapse'
+import Collapse from '../ui/Collapse'
 
 const GroupRow = ({
     id,

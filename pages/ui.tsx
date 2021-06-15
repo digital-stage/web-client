@@ -7,10 +7,10 @@ import Container from '../components/ui/Container'
 import Panel from '../components/ui/Panel'
 import Button, { TertiaryButton } from '../ui/Button'
 import HeadlineLink, { PrimaryHeadlineLink, SecondaryHeadlineLink } from '../ui/HeadlineLink'
-import Modal, { ModalButton, ModalFooter, ModalHeader } from '../components/ui/Modal'
+import Modal, { ModalButton, ModalFooter, ModalHeader } from '../ui/Modal'
 import Input from '../ui/Input'
 import Block from '../components/ui/Block'
-import Collapse from '../components/ui/Collapse'
+import Collapse from '../ui/Collapse'
 import Paragraph from '../components/ui/Paragraph'
 
 const UI = () => {

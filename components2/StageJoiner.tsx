@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import { useConnection, useStageSelector } from '@digitalstage/api-client-react'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
 import useStageJoiner from '../hooks/useStageJoiner'
-import Modal, { ModalButton, ModalFooter } from './ui/Modal'
+import Modal, { ModalButton, ModalFooter } from '../ui/Modal'
 import Input from '../ui/Input'
 
 /**

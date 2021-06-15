@@ -1,29 +1,34 @@
 import { Device, useStageSelector } from '@digitalstage/api-client-react'
 import React, { useEffect } from 'react'
 import useSelectedDevice from '../hooks/useSelectedDevice'
-import Select from './ui/Select'
+import Select from '../components/ui/Select'
 
 const DeviceSelector = () => {
-    const devices = useStageSelector<Device[]>((state) =>
+    const availableDevices = useStageSelector<Device[]>((state) =>
         state.devices.allIds.map((id) => state.devices.byId[id])
     )
-    const { device, setDevice } = useSelectedDevice()
+    const { devices, selectDevices } = useSelectedDevice()
 
     useEffect(() => {
-        if (devices.length === 1) {
-            setDevice(devices[0]._id)
+        if (availableDevices.length === 1) {
+            selectDevices([availableDevices[0]._id])
         }
-    }, [devices.length])
+    }, [availableDevices.length])
 
     if (devices.length > 1) {
         return (
             <Select
-                value={device}
+                value={devices}
+                multiple
                 onChange={(event) => {
-                    setDevice(event.currentTarget.value)
+                    if (Array.isArray(event.currentTarget.value)) {
+                        selectDevices(event.currentTarget.value)
+                    } else {
+                        selectDevices([event.currentTarget.value])
+                    }
                 }}
             >
-                {devices.map((d) => (
+                {availableDevices.map((d) => (
                     <option key={d._id} value={d._id}>
                         {d.name || d._id}
                     </option>
