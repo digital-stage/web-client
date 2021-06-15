@@ -1,12 +1,12 @@
 /* eslint-disable no-param-reassign */
-import { useStageSelector } from '@digitalstage/api-client-react'
+import { useMediasoup, useStageSelector } from '@digitalstage/api-client-react'
 import React, { useEffect, useState } from 'react'
 import { IAudioContext, IAudioNode } from 'standardized-audio-context'
 import useAudioContext from '../useAudioContext'
 import Position from './Position'
 import Volume from './Volume'
 import reduceStageDevicePosition from './reduceStageDevicePosition'
-import GroupRenderer from './GroupRenderer'
+import ConsumerRenderer from './ConsumerRenderer'
 
 const ListenerRenderer = ({
     localDeviceId,
@@ -20,6 +20,7 @@ const ListenerRenderer = ({
 
     useEffect(() => {
         if (audioContext) {
+            console.log('[AudioRenderer] Changed position of listener')
             audioContext.listener.positionX.setValueAtTime(position.x, audioContext.currentTime)
             audioContext.listener.positionY.setValueAtTime(position.y, audioContext.currentTime)
             audioContext.listener.positionZ.setValueAtTime(1, audioContext.currentTime)
@@ -40,6 +41,7 @@ const StageRenderer = ({ stageId, localDeviceId }: { stageId: string; localDevic
             state.stageDevices.byStageAndDevice[stageId] &&
             state.stageDevices.byStageAndDevice[stageId][localDeviceId]
     )
+    const { audioConsumers } = useMediasoup()
 
     useEffect(() => {
         if (audioContext && destination) {
@@ -59,7 +61,10 @@ const StageRenderer = ({ stageId, localDeviceId }: { stageId: string; localDevic
                 {stageDeviceId && (
                     <ListenerRenderer stageDeviceId={stageDeviceId} localDeviceId={localDeviceId} />
                 )}
-                {groupIds.map((id) => (
+                {Object.keys(audioConsumers).map((id) => (
+                    <ConsumerRenderer consumer={audioConsumers[id]} audioTrackId={id} />
+                ))}
+                {/* groupIds.map((id) => (
                     <GroupRenderer
                         key={id}
                         id={id}
@@ -67,7 +72,7 @@ const StageRenderer = ({ stageId, localDeviceId }: { stageId: string; localDevic
                         destination={channelMerger}
                         audioContext={audioContext}
                     />
-                ))}
+                )) */}
             </>
         )
     }

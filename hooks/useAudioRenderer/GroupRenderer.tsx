@@ -51,7 +51,6 @@ const GroupRenderer = ({
 
     useEffect(() => {
         if (gainNode && destination) {
-            console.log('connecting gain and destination')
             gainNode.connect(destination)
         }
     }, [destination, gainNode])

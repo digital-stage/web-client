@@ -28,7 +28,7 @@ const reduceAudioTrackPosition = (
     // Fetch necessary model
     const audioTrack = useStageSelector<AudioTrack>((state) => state.audioTracks.byId[audioTrackId])
     const { position: stageDevicePosition, volume: stageDeviceVolume } = reduceStageDevicePosition(
-        audioTrack.stageDeviceId,
+        audioTrack?.stageDeviceId,
         localDeviceId
     )
     const customAudioTrackPosition = useStageSelector<CustomAudioTrackPosition | undefined>(
