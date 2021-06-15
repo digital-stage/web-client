@@ -59,7 +59,7 @@
     font-size: inherit;
     line-height: inherit;
     border: 1px solid;
-    border-radius: 4px;
+    border-radius: 8px;
     color: inherit;
     flex-grow: 1;
     background-color: var(---grey-1,#121212);

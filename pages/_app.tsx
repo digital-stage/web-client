@@ -6,13 +6,15 @@ import React from 'react'
 import Head from 'next/head'
 import { SelectedDeviceProvider } from '../hooks/useSelectedDevice'
 import { ColorProvider } from '../hooks/useColors'
-import Layout from '../components/Layout'
+import Layout from '../components2/Layout'
 import { StageJoinerProvider } from '../hooks/useStageJoiner'
 import StageJoiner from '../components2/StageJoiner'
 import { AudioContextProvider } from '../hooks/useAudioContext'
 import AudioRendererProvider from '../hooks/useAudioRenderer'
 import useAudioOutput from '../hooks/useAudioOutput'
-import PlaybackOverlay from '../components/PlaybackOverlay'
+import PlaybackOverlay from '../components2/PlaybackOverlay'
+import StreamController from '../components2/StreamController'
+import { NotificationProvider } from '../components2/NotificationCenter'
 
 const AudioOutputSwitcher = () => {
     useAudioOutput()
@@ -30,28 +32,31 @@ function MyApp({ Component, pageProps }) {
                     content="initial-scale=1.0, width=device-width, shrink-to-fit=no"
                 />
             </Head>
-            <ColorProvider>
-                <DigitalStageProvider
-                    apiUrl={process.env.NEXT_PUBLIC_API_URL}
-                    authUrl={process.env.NEXT_PUBLIC_AUTH_URL}
-                >
-                    <SelectedDeviceProvider>
-                        <AudioContextProvider>
-                            <AudioRendererProvider>
-                                <StageJoinerProvider>
-                                    <Layout>
-                                        {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-                                        <Component {...pageProps} />
-                                    </Layout>
-                                    <StageJoiner />
-                                    <AudioOutputSwitcher />
-                                    <PlaybackOverlay />
-                                </StageJoinerProvider>
-                            </AudioRendererProvider>
-                        </AudioContextProvider>
-                    </SelectedDeviceProvider>
-                </DigitalStageProvider>
-            </ColorProvider>
+            <NotificationProvider>
+                <ColorProvider>
+                    <DigitalStageProvider
+                        apiUrl={process.env.NEXT_PUBLIC_API_URL}
+                        authUrl={process.env.NEXT_PUBLIC_AUTH_URL}
+                    >
+                        <SelectedDeviceProvider>
+                            <AudioContextProvider>
+                                <AudioRendererProvider>
+                                    <StageJoinerProvider>
+                                        <Layout>
+                                            {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+                                            <Component {...pageProps} />
+                                        </Layout>
+                                        <StreamController />
+                                        <StageJoiner />
+                                        <AudioOutputSwitcher />
+                                        <PlaybackOverlay />
+                                    </StageJoinerProvider>
+                                </AudioRendererProvider>
+                            </AudioContextProvider>
+                        </SelectedDeviceProvider>
+                    </DigitalStageProvider>
+                </ColorProvider>
+            </NotificationProvider>
         </>
     )
 }

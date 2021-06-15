@@ -2,12 +2,11 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { useConnection } from '@digitalstage/api-client-react'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
 import { BiReset } from 'react-icons/bi'
-import Modal, { ModalButton, ModalFooter, ModalHeader } from '../../ui/Modal'
-import Notification from '../../ui/Notification'
-import Button from '../../ui/Button'
-import Block from '../ui/Block'
-import Input from '../../ui/Input'
-import Paragraph from '../ui/Paragraph'
+import Modal, { ModalButton, ModalFooter, ModalHeader } from '../../../ui/Modal'
+import Notification from '../../../ui/Notification'
+import Button from '../../../ui/Button'
+import Block from '../../../components/ui/Block'
+import Input from '../../../ui/Input'
 
 const InviteModal = ({
     open,
@@ -120,8 +119,8 @@ const InviteModal = ({
                     Link kopieren
                 </Button>
             </Block>
-            {info && <Notification type="success">{info}</Notification>}
-            {error && <Notification type="error">{error}</Notification>}
+            {info && <Notification kind="success">{info}</Notification>}
+            {error && <Notification kind="error">{error}</Notification>}
             <ModalFooter>
                 <ModalButton onClick={onClose}>Schließen</ModalButton>
             </ModalFooter>
@@ -145,8 +144,5 @@ const InviteModal = ({
             </Modal>
         </Modal>
     )
-}
-InviteModal.defaultProps = {
-    scope: undefined,
 }
 export default InviteModal

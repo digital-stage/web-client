@@ -1,7 +1,16 @@
 .notification {
+  display: flex;
+  flex-direction: row;
   padding: .5rem;
   border-width: 1px;
   flex-grow: 1;
+  align-items: center;
+}
+.message {
+}
+.close {
+  margin-left: 24px;
+  flex-grow: 0;
 }
 
 .success {

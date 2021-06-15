@@ -15,6 +15,7 @@ import styles from '../styles/Chat.module.css'
 import useForceUpdate from '../hooks/useForceUpdate'
 import DefaultContainer from '../ui/container/DefaultContainer'
 import FixedPanel from '../ui/panels/FixedPanel'
+import { useNotification } from '../components2/NotificationCenter'
 
 const convertTime = (time: number): string => {
     const min = (Date.now() - time) / 60000
@@ -43,6 +44,7 @@ const Chat = () => {
     const messageRef = useRef<HTMLInputElement>()
     const messagesEndRef = useRef<HTMLDivElement>()
     const forceUpdate = useForceUpdate()
+    const { addNotification } = useNotification()
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -66,6 +68,18 @@ const Chat = () => {
             }
         }
     }, [messageRef, connection])
+
+    useEffect(() => {
+        if (messages.length > 0) {
+            addNotification(
+                'info',
+                <div>
+                    {users.byId[messages[messages.length - 1].userId].name}:&nbsp;
+                    {messages[messages.length - 1].message}
+                </div>
+            )
+        }
+    }, [messages])
 
     useEffect(() => {
         if (messagesEndRef.current) {
@@ -100,7 +114,7 @@ const Chat = () => {
                     <div ref={messagesEndRef} />
                 </div>
                 {error && (
-                    <Notification className={styles.notification} type="error">
+                    <Notification className={styles.notification} kind="error">
                         {error}
                     </Notification>
                 )}

@@ -35,7 +35,7 @@ const DEFAULT_POSITION = {
 }
 
 const StageView = ({ stage, globalMode }: { stage: Stage; globalMode: boolean }): JSX.Element => {
-    const { device: deviceId } = useSelectedDevice()
+    const { selectedDeviceId } = useSelectedDevice()
     const width = stage.width * FACTOR
     const height = stage.height * FACTOR
     const [selected, setSelected] = useState<ElementSelection>(undefined)
@@ -135,8 +135,8 @@ const StageView = ({ stage, globalMode }: { stage: Stage; globalMode: boolean })
                         )
                 }
             } else {
-                if (customStageMemberPositions.byDevice[deviceId]) {
-                    customStageMemberPositions.byDevice[deviceId]
+                if (customStageMemberPositions.byDevice[selectedDeviceId]) {
+                    customStageMemberPositions.byDevice[selectedDeviceId]
                         .map((id) => customStageMemberPositions.byId[id])
                         .forEach((customStageMember) =>
                             connection.emit(
@@ -145,8 +145,8 @@ const StageView = ({ stage, globalMode }: { stage: Stage; globalMode: boolean })
                             )
                         )
                 }
-                if (customStageDevicePositions.byDevice[deviceId]) {
-                    customStageDevicePositions.byDevice[deviceId]
+                if (customStageDevicePositions.byDevice[selectedDeviceId]) {
+                    customStageDevicePositions.byDevice[selectedDeviceId]
                         .map((id) => customStageDevicePositions.byId[id])
                         .forEach((customStageDevice) =>
                             connection.emit(
@@ -185,21 +185,23 @@ const StageView = ({ stage, globalMode }: { stage: Stage; globalMode: boolean })
                         {stageMembers.map((stageMember) => {
                             const color = useColors(stageMember._id)
                             const customStageMember =
-                                customStageMemberPositions.byDeviceAndStageMember[deviceId] &&
-                                customStageMemberPositions.byDeviceAndStageMember[deviceId][
+                                customStageMemberPositions.byDeviceAndStageMember[
+                                    selectedDeviceId
+                                ] &&
+                                customStageMemberPositions.byDeviceAndStageMember[selectedDeviceId][
                                     stageMember._id
                                 ] &&
                                 customStageMemberPositions.byId[
-                                    customStageMemberPositions.byDeviceAndStageMember[deviceId][
-                                        stageMember._id
-                                    ]
+                                    customStageMemberPositions.byDeviceAndStageMember[
+                                        selectedDeviceId
+                                    ][stageMember._id]
                                 ]
                             const user = users.byId[stageMember.userId]
                             return (
                                 <StageMemberElement
                                     key={stageMember._id}
                                     connection={connection}
-                                    deviceId={deviceId}
+                                    deviceId={selectedDeviceId}
                                     globalMode={globalMode}
                                     stageMember={stageMember}
                                     customStageMember={customStageMember}
@@ -263,7 +265,7 @@ const RoomManager = (): JSX.Element => {
             )
     )
     const [globalMode, setGlobalMode] = useState<boolean>(false)
-    const { device } = useSelectedDevice()
+    const { selectedDeviceId } = useSelectedDevice()
 
     if (ready && stage) {
         return (
@@ -299,7 +301,7 @@ const RoomManager = (): JSX.Element => {
                     </Block>
                 )}
                 <Block flexGrow={1}>
-                    {globalMode || device ? (
+                    {globalMode || selectedDeviceId ? (
                         <StageView stage={stage} globalMode={globalMode} />
                     ) : (
                         <h2>Bitte wähle erste einer Gerät</h2>

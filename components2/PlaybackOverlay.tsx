@@ -11,6 +11,7 @@ const PlaybackOverlay = (): JSX.Element => {
 
     if (user && !started) {
         return (
+            // eslint-disable-next-line jsx-a11y/click-events-have-key-events
             <div onClick={start} className={styles.overlay}>
                 <FaPlay size="128px" name="Start" />
             </div>

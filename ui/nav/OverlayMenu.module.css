@@ -1,9 +1,4 @@
 .wrapper {
-    position: fixed;
-    top: 1rem;
-    right: 1rem;
-}
-.button {
 }
 .backdrop {
     position: fixed;
@@ -17,7 +12,7 @@
     height: 100%;
     z-index: -1;
 }
-.menuPanel {
+.menu {
     position: absolute;
     top: 100%;
     right: 0;
@@ -29,18 +24,4 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-}
-.menu {
-    display: block;
-}
-.menuItem {
-    display: block;
-    width: 100%;
-    text-align: left;
-}
-.profileMenu {
-    width: 100%;
-}
-.profileButton {
-    width: 100%;
 }

@@ -3,10 +3,10 @@ import { Field, Form, Formik, FormikHelpers } from 'formik'
 import * as Yup from 'yup'
 import { useRouter } from 'next/router'
 import { AuthError, useAuth } from '@digitalstage/api-client-react'
-import Button from '../../ui/Button'
-import Input from '../../ui/Input'
-import Block from '../../components/ui/Block'
-import Notification from '../../ui/Notification'
+import Button from '../../../ui/Button'
+import Input from '../../../ui/Input'
+import Block from '../../../components/ui/Block'
+import Notification from '../../../ui/Notification'
 import translateError from './translateError'
 
 export interface Values {
@@ -57,7 +57,7 @@ const ResendActivationForm = (): JSX.Element => {
                     />
                     {message && (
                         <Block paddingBottom={4}>
-                            <Notification type="error">{message}</Notification>
+                            <Notification kind="error">{message}</Notification>
                         </Block>
                     )}
                     <Block align="center">

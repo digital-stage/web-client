@@ -3,11 +3,11 @@ import { ClientDeviceEvents, ClientDevicePayloads, Group } from '@digitalstage/a
 import React, { useCallback, useState } from 'react'
 import { Field, Form, Formik } from 'formik'
 import * as Yup from 'yup'
-import Modal, { ModalButton, ModalFooter, ModalHeader } from '../../ui/Modal'
-import Input from '../../ui/Input'
-import Notification from '../../ui/Notification'
-import ColorPicker from '../../ui/ColorPicker'
-import Block from '../ui/Block'
+import Modal, { ModalButton, ModalFooter, ModalHeader } from '../../../ui/Modal'
+import Input from '../../../ui/Input'
+import Notification from '../../../ui/Notification'
+import ColorPicker from '../../../ui/ColorPicker'
+import Block from '../../../components/ui/Block'
 
 const GroupModal = ({
     open,
@@ -119,7 +119,7 @@ const GroupModal = ({
                                 />
                             </Block>
                         )}
-                        {error && <Notification type="error">{error}</Notification>}
+                        {error && <Notification kind="error">{error}</Notification>}
                         <ModalFooter>
                             <ModalButton kind="tertiary" onClick={onClose}>
                                 Abbrechen

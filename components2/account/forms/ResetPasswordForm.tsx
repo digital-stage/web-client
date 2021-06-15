@@ -3,10 +3,10 @@ import { useRouter } from 'next/router'
 import { Formik, Field, FormikHelpers, Form } from 'formik'
 import * as Yup from 'yup'
 import { AuthError, useAuth } from '@digitalstage/api-client-react'
-import Block from '../../components/ui/Block'
-import Notification from '../../ui/Notification'
-import Button from '../../ui/Button'
-import Input from '../../ui/Input'
+import Block from '../../../components/ui/Block'
+import Notification from '../../../ui/Notification'
+import Button from '../../../ui/Button'
+import Input from '../../../ui/Input'
 import translateError from './translateError'
 
 interface Values {
@@ -66,7 +66,7 @@ function ResetPasswordForm({ resetToken }: Props): JSX.Element {
                 <Form onReset={handleReset} onSubmit={handleSubmit} autoComplete="off">
                     {msg.state && (
                         <Block paddingBottom={4}>
-                            <Notification type={msg.type}>{msg.kids}</Notification>
+                            <Notification kind={msg.type}>{msg.kids}</Notification>
                         </Block>
                     )}
 

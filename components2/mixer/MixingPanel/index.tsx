@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/click-events-have-key-events,react/require-default-props,jsx-a11y/no-static-element-interactions,jsx-a11y/label-has-associated-control */
 import {
     CustomAudioTrackVolume,
     CustomStageDeviceVolume,
@@ -31,14 +30,14 @@ import Paragraph from '../../../components/ui/Paragraph'
 
 const AudioTrackPanel = (props: { id: string; color: HSLColor; globalMode: boolean }) => {
     const { id, color, globalMode } = props
-    const { devices: deviceIds } = useSelectedDevice()
+    const { selectedDeviceId } = useSelectedDevice()
     const audioTrack = useStageSelector<AudioTrack>((state) => state.audioTracks.byId[id])
     const customized = useStageSelector<CustomAudioTrackVolume | undefined>(
         (state) =>
-            state.customAudioTrackVolumes.byDeviceAndAudioTrack[deviceId] &&
-            state.customAudioTrackVolumes.byDeviceAndAudioTrack[deviceId][id] &&
+            state.customAudioTrackVolumes.byDeviceAndAudioTrack[selectedDeviceId] &&
+            state.customAudioTrackVolumes.byDeviceAndAudioTrack[selectedDeviceId][id] &&
             state.customAudioTrackVolumes.byId[
-                state.customAudioTrackVolumes.byDeviceAndAudioTrack[deviceId][id]
+                state.customAudioTrackVolumes.byDeviceAndAudioTrack[selectedDeviceId][id]
             ]
     )
     const connection = useConnection()
@@ -53,18 +52,17 @@ const AudioTrackPanel = (props: { id: string; color: HSLColor; globalMode: boole
                         muted,
                     } as ClientDevicePayloads.ChangeAudioTrack)
                 }
-                return deviceIds.map((deviceId) =>
-                    connection.emit(ClientDeviceEvents.SetCustomAudioTrackVolume, {
-                        deviceId,
+                if (selectedDeviceId)
+                    return connection.emit(ClientDeviceEvents.SetCustomAudioTrackVolume, {
+                        deviceId: selectedDeviceId,
                         audioTrackId: id,
                         volume,
                         muted,
                     } as ClientDevicePayloads.SetCustomAudioTrackVolume)
-                )
             }
             return null
         },
-        [deviceIds, connection, globalMode]
+        [selectedDeviceId, connection, globalMode]
     )
 
     const handleReset = useCallback(() => {
@@ -107,14 +105,14 @@ const AudioTrackPanel = (props: { id: string; color: HSLColor; globalMode: boole
 }
 const StageDevicePanel = (props: { id: string; color: HSLColor; globalMode: boolean }) => {
     const { id, color, globalMode } = props
-    const { devices } = useSelectedDevice()
+    const { selectedDeviceId } = useSelectedDevice()
     const stageDevice = useStageSelector<StageDevice>((state) => state.stageDevices.byId[id])
     const customized = useStageSelector<CustomStageDeviceVolume | undefined>(
         (state) =>
-            state.customStageDeviceVolumes.byDeviceAndStageDevice[deviceId] &&
-            state.customStageDeviceVolumes.byDeviceAndStageDevice[deviceId][id] &&
+            state.customStageDeviceVolumes.byDeviceAndStageDevice[selectedDeviceId] &&
+            state.customStageDeviceVolumes.byDeviceAndStageDevice[selectedDeviceId][id] &&
             state.customStageDeviceVolumes.byId[
-                state.customStageDeviceVolumes.byDeviceAndStageDevice[deviceId][id]
+                state.customStageDeviceVolumes.byDeviceAndStageDevice[selectedDeviceId][id]
             ]
     )
     const audioTrackIds = useStageSelector<string[]>(
@@ -131,7 +129,7 @@ const StageDevicePanel = (props: { id: string; color: HSLColor; globalMode: bool
 
     const handleChange = useCallback(
         (volume: number, muted: boolean) => {
-            if (deviceIds && connection) {
+            if (connection) {
                 if (globalMode) {
                     return connection.emit(ClientDeviceEvents.ChangeStageDevice, {
                         _id: id,
@@ -139,18 +137,17 @@ const StageDevicePanel = (props: { id: string; color: HSLColor; globalMode: bool
                         muted,
                     } as ClientDevicePayloads.ChangeStageDevice)
                 }
-                return deviceIds.map((deviceId) => {
-                    connection.emit(ClientDeviceEvents.SetCustomStageDeviceVolume, {
-                        deviceId,
+                if (selectedDeviceId)
+                    return connection.emit(ClientDeviceEvents.SetCustomStageDeviceVolume, {
+                        deviceId: selectedDeviceId,
                         stageDeviceId: id,
                         volume,
                         muted,
                     } as ClientDevicePayloads.SetCustomStageDeviceVolume)
-                })
             }
             return null
         },
-        [deviceIds, connection, globalMode]
+        [selectedDeviceId, connection, globalMode]
     )
 
     const handleReset = useCallback(() => {
@@ -170,7 +167,7 @@ const StageDevicePanel = (props: { id: string; color: HSLColor; globalMode: bool
             }
         }
         return null
-    }, [deviceIds, connection, globalMode, customized])
+    }, [connection, globalMode, customized])
 
     return (
         <div className={styles.panel}>
@@ -179,6 +176,7 @@ const StageDevicePanel = (props: { id: string; color: HSLColor; globalMode: bool
                     <div
                         className={styles.stripExpander}
                         onClick={() => setExpanded((prev) => !prev)}
+                        aria-hidden="true"
                     >
                         <h5 className={styles.stripHeadline}>{stageDevice.name}</h5>
                         <div
@@ -226,7 +224,7 @@ const StageDevicePanel = (props: { id: string; color: HSLColor; globalMode: bool
 }
 const StageMemberPanel = (props: { id: string; globalMode: boolean }) => {
     const { id, globalMode } = props
-    const { devices: deviceIds } = useSelectedDevice()
+    const { selectedDeviceId } = useSelectedDevice()
     const stageMember = useStageSelector<StageMember | undefined>(
         (state) => state.stageMembers.byId[id]
     )
@@ -238,10 +236,10 @@ const StageMemberPanel = (props: { id: string; globalMode: boolean }) => {
     )
     const customized = useStageSelector<CustomStageMemberVolume | undefined>(
         (state) =>
-            state.customStageMemberVolumes.byDeviceAndStageMember[deviceId] &&
-            state.customStageMemberVolumes.byDeviceAndStageMember[deviceId][id] &&
+            state.customStageMemberVolumes.byDeviceAndStageMember[selectedDeviceId] &&
+            state.customStageMemberVolumes.byDeviceAndStageMember[selectedDeviceId][id] &&
             state.customStageMemberVolumes.byId[
-                state.customStageMemberVolumes.byDeviceAndStageMember[deviceId][id]
+                state.customStageMemberVolumes.byDeviceAndStageMember[selectedDeviceId][id]
             ]
     )
     const [expanded, setExpanded] = useState<boolean>(false)
@@ -256,7 +254,7 @@ const StageMemberPanel = (props: { id: string; globalMode: boolean }) => {
 
     const handleChange = useCallback(
         (volume: number, muted: boolean) => {
-            if (deviceId && connection) {
+            if (connection) {
                 if (globalMode) {
                     return connection.emit(ClientDeviceEvents.ChangeStageMember, {
                         _id: id,
@@ -264,20 +262,21 @@ const StageMemberPanel = (props: { id: string; globalMode: boolean }) => {
                         muted,
                     } as ClientDevicePayloads.ChangeStageMember)
                 }
-                return connection.emit(ClientDeviceEvents.SetCustomStageMemberVolume, {
-                    deviceId,
-                    stageMemberId: id,
-                    volume,
-                    muted,
-                } as ClientDevicePayloads.SetCustomStageMemberVolume)
+                if (selectedDeviceId)
+                    return connection.emit(ClientDeviceEvents.SetCustomStageMemberVolume, {
+                        deviceId: selectedDeviceId,
+                        stageMemberId: id,
+                        volume,
+                        muted,
+                    } as ClientDevicePayloads.SetCustomStageMemberVolume)
             }
             return null
         },
-        [deviceId, connection, globalMode]
+        [selectedDeviceId, connection, globalMode]
     )
 
     const handleReset = useCallback(() => {
-        if (deviceId && connection) {
+        if (connection) {
             if (globalMode) {
                 return connection.emit(ClientDeviceEvents.ChangeStageMember, {
                     _id: id,
@@ -293,7 +292,7 @@ const StageMemberPanel = (props: { id: string; globalMode: boolean }) => {
             }
         }
         return null
-    }, [deviceId, connection, globalMode, customized])
+    }, [selectedDeviceId, connection, globalMode, customized])
 
     return (
         <div className={styles.panel}>
@@ -302,6 +301,7 @@ const StageMemberPanel = (props: { id: string; globalMode: boolean }) => {
                     <div
                         className={styles.stripExpander}
                         onClick={() => setExpanded((prev) => !prev)}
+                        aria-hidden="true"
                     >
                         <h5 className={styles.stripHeadline}>{user?.name || stageMember._id}</h5>
                         <div
@@ -347,16 +347,18 @@ const StageMemberPanel = (props: { id: string; globalMode: boolean }) => {
         </div>
     )
 }
-const GroupPanel = (props: { id: string; globalMode?: boolean }) => {
+const GroupPanel = (props: { id: string; globalMode: boolean }) => {
     const { id, globalMode } = props
-    const { device: deviceId } = useSelectedDevice()
+    const { selectedDeviceId } = useSelectedDevice()
     const group = useStageSelector<Group>((state) => state.groups.byId[id])
     const customized = useStageSelector<CustomGroupVolume | undefined>(
         (state) =>
-            deviceId &&
-            state.customGroupVolumes.byDeviceAndGroup[deviceId] &&
-            state.customGroupVolumes.byDeviceAndGroup[deviceId][id] &&
-            state.customGroupVolumes.byId[state.customGroupVolumes.byDeviceAndGroup[deviceId][id]]
+            selectedDeviceId &&
+            state.customGroupVolumes.byDeviceAndGroup[selectedDeviceId] &&
+            state.customGroupVolumes.byDeviceAndGroup[selectedDeviceId][id] &&
+            state.customGroupVolumes.byId[
+                state.customGroupVolumes.byDeviceAndGroup[selectedDeviceId][id]
+            ]
     )
     const stageMemberIds = useStageSelector<string[]>(
         (state) => state.stageMembers.byGroup[id] || []
@@ -366,7 +368,7 @@ const GroupPanel = (props: { id: string; globalMode?: boolean }) => {
 
     const handleChange = useCallback(
         (volume: number, muted: boolean) => {
-            if (deviceId && connection) {
+            if (connection) {
                 if (globalMode) {
                     return connection.emit(ClientDeviceEvents.ChangeGroup, {
                         _id: id,
@@ -374,20 +376,21 @@ const GroupPanel = (props: { id: string; globalMode?: boolean }) => {
                         muted,
                     } as ClientDevicePayloads.ChangeGroup)
                 }
-                return connection.emit(ClientDeviceEvents.SetCustomGroupVolume, {
-                    groupId: id,
-                    deviceId,
-                    volume,
-                    muted,
-                } as ClientDevicePayloads.SetCustomGroupVolume)
+                if (selectedDeviceId)
+                    return connection.emit(ClientDeviceEvents.SetCustomGroupVolume, {
+                        groupId: id,
+                        deviceId: selectedDeviceId,
+                        volume,
+                        muted,
+                    } as ClientDevicePayloads.SetCustomGroupVolume)
             }
             return null
         },
-        [deviceId, connection, globalMode]
+        [selectedDeviceId, connection, globalMode]
     )
 
     const handleReset = useCallback(() => {
-        if (deviceId && connection) {
+        if (connection) {
             if (globalMode) {
                 return connection.emit(ClientDeviceEvents.ChangeGroup, {
                     _id: id,
@@ -403,7 +406,7 @@ const GroupPanel = (props: { id: string; globalMode?: boolean }) => {
             }
         }
         return null
-    }, [deviceId, connection, globalMode, customized])
+    }, [connection, globalMode, customized])
 
     useEffect(() => {
         if (stageMemberIds.length === 0) {
@@ -421,6 +424,7 @@ const GroupPanel = (props: { id: string; globalMode?: boolean }) => {
             <div className={`${styles.strip} ${styles.groupStrip}`}>
                 {stageMemberIds.length > 0 ? (
                     <div
+                        aria-hidden="true"
                         className={styles.stripExpander}
                         onClick={() => setExpanded((prev) => !prev)}
                     >
@@ -509,6 +513,7 @@ const MixingPanel = () => {
                 )}
                 {!globalMode && (
                     <Block padding={2}>
+                        {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
                         <label className="micro">
                             Betreffendes Gerät:&nbsp;&nbsp;
                             <DeviceSelector />

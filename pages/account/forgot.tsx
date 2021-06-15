@@ -1,6 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
-import ForgetPasswordForm from '../../components2/forms/ForgetPasswordForm'
+import ForgetPasswordForm from '../../components2/account/forms/ForgetPasswordForm'
 import AuthLayout from '../../ui/AuthLayout'
 import TextLink from '../../ui/TextLink'
 

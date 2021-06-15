@@ -3,9 +3,9 @@ import { Field, Form, Formik, FormikHelpers } from 'formik'
 import * as Yup from 'yup'
 import { useRouter } from 'next/router'
 import { AuthError, useAuth } from '@digitalstage/api-client-react'
-import Input from '../../ui/Input'
-import Notification from '../../ui/Notification'
-import Button from '../../ui/Button'
+import Input from '../../../ui/Input'
+import Notification from '../../../ui/Notification'
+import Button from '../../../ui/Button'
 import translateError from './translateError'
 
 export interface Values {

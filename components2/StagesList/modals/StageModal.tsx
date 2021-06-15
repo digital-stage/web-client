@@ -5,13 +5,13 @@ import React, { useCallback, useState } from 'react'
 import { Field, Form, Formik } from 'formik'
 import * as Yup from 'yup'
 import Image from 'next/image'
-import Modal, { ModalButton, ModalFooter, ModalHeader } from '../../ui/Modal'
-import Input from '../../ui/Input'
-import Notification from '../../ui/Notification'
-import Block from '../ui/Block'
-import Paragraph from '../ui/Paragraph'
-import Collapse from '../../ui/Collapse'
-import Radio, { RadioPanel } from '../ui/Radio'
+import Modal, { ModalButton, ModalFooter, ModalHeader } from '../../../ui/Modal'
+import Input from '../../../ui/Input'
+import Notification from '../../../ui/Notification'
+import Block from '../../../components/ui/Block'
+import Paragraph from '../../../components/ui/Paragraph'
+import Collapse from '../../../ui/Collapse'
+import Radio, { RadioPanel } from '../../../components/ui/Radio'
 
 const StageModal = ({
     open,
@@ -180,7 +180,7 @@ const StageModal = ({
                                 </RadioPanel>
                             </Block>
                             {errors.audioType && touched.audioType && (
-                                <Notification type="error">{errors.audioType}</Notification>
+                                <Notification kind="error">{errors.audioType}</Notification>
                             )}
                             {values.audioType && (
                                 <Block paddingBottom={4}>
@@ -268,7 +268,7 @@ const StageModal = ({
                                 light
                             />
                         </Collapse>
-                        {error && <Notification type="error">{error}</Notification>}
+                        {error && <Notification kind="error">{error}</Notification>}
                         <ModalFooter>
                             <ModalButton kind="tertiary" onClick={onClose}>
                                 Abbrechen

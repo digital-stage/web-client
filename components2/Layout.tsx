@@ -1,10 +1,11 @@
 import { useAuth, useStageSelector } from '@digitalstage/api-client-react'
 import React from 'react'
 import styles from './Layout.module.scss'
-import Sidebar from './Sidebar'
+import Sidebar from '../components/Sidebar'
 import Background from '../ui/Background'
-import ProfileMenu from './ProfileMenu'
-import MobileMenu from './MobileMenu'
+import MobileMenu from '../components/MobileMenu'
+import { NotificationPanel } from './NotificationCenter'
+import ProfileMenu from './global/ProfileMenu'
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
     const { user, loading } = useAuth()
@@ -19,7 +20,10 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                     </div>
                 </div>
             )}
-            <div className={styles.content}>{children}</div>
+            <div className={styles.content}>
+                {children}
+                <NotificationPanel />
+            </div>
             {!loading && user && <ProfileMenu />}
             {insideStage && <MobileMenu />}
         </div>

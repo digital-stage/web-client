@@ -1,8 +1,8 @@
 import { Stage, useConnection, useStageSelector } from '@digitalstage/api-client-react'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
 import { useCallback } from 'react'
-import Modal, { ModalButton, ModalFooter, ModalHeader } from '../../ui/Modal'
-import Paragraph from '../ui/Paragraph'
+import Modal, { ModalButton, ModalFooter, ModalHeader } from '../../../ui/Modal'
+import Paragraph from '../../../components/ui/Paragraph'
 
 const RemoveStageModal = ({
     stageId,

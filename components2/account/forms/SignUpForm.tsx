@@ -3,10 +3,10 @@ import { Field, Form, Formik, FormikProps } from 'formik'
 import { AuthError, useAuth } from '@digitalstage/api-client-react'
 import { useRouter } from 'next/router'
 import * as Yup from 'yup'
-import Notification from '../../ui/Notification'
-import Input from '../../ui/Input'
-import Button from '../../ui/Button'
-import Block from '../../components/ui/Block'
+import Notification from '../../../ui/Notification'
+import Input from '../../../ui/Input'
+import Button from '../../../ui/Button'
+import Block from '../../../components/ui/Block'
 import translateError from './translateError'
 
 const SignUpForm = () => {
@@ -107,7 +107,7 @@ const SignUpForm = () => {
                     />
                     {error && (
                         <Block paddingBottom={4}>
-                            <Notification type="error">{error}</Notification>
+                            <Notification kind="error">{error}</Notification>
                         </Block>
                     )}
                     <Block width={12} align="center">
