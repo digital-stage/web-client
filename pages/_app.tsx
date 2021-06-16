@@ -10,11 +10,11 @@ import Layout from '../components2/Layout'
 import { StageJoinerProvider } from '../hooks/useStageJoiner'
 import StageJoiner from '../components2/StageJoiner'
 import { AudioContextProvider } from '../hooks/useAudioContext'
-import AudioRendererProvider from '../hooks/useAudioRenderer'
 import useAudioOutput from '../hooks/useAudioOutput'
 import PlaybackOverlay from '../components2/PlaybackOverlay'
 import StreamController from '../components2/StreamController'
 import { NotificationProvider } from '../components2/NotificationCenter'
+import {AudioRenderProvider} from "../components2/useAudioRenderer";
 
 const AudioOutputSwitcher = () => {
     useAudioOutput()
@@ -40,7 +40,7 @@ function MyApp({ Component, pageProps }) {
                     >
                         <SelectedDeviceProvider>
                             <AudioContextProvider>
-                                <AudioRendererProvider>
+                                <AudioRenderProvider>
                                     <StageJoinerProvider>
                                         <Layout>
                                             {/* eslint-disable-next-line react/jsx-props-no-spreading */}
@@ -51,7 +51,7 @@ function MyApp({ Component, pageProps }) {
                                         <AudioOutputSwitcher />
                                         <PlaybackOverlay />
                                     </StageJoinerProvider>
-                                </AudioRendererProvider>
+                                </AudioRenderProvider>
                             </AudioContextProvider>
                         </SelectedDeviceProvider>
                     </DigitalStageProvider>
