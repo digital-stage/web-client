@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react'
 import { useAuth } from '@digitalstage/api-client-react'
 import { useRouter } from 'next/router'
-import Container from '../../components/ui/Container'
-import Block from '../../components/ui/Block'
-import LoadingOverlay from '../../components/LoadingOverlay'
-import ProfileEditor from '../../components2/account/ProfileEditor'
+import Container from '../../componentsOld/ui/Container'
+import Block from '../../componentsOld/ui/Block'
+import LoadingOverlay from '../../componentsOld/LoadingOverlay'
+import ProfileEditor from '../../components/account/ProfileEditor'
 import DefaultPanel from '../../ui/panels/DefaultPanel'
 
 const Profile = () => {

@@ -2,7 +2,10 @@ import * as React from 'react'
 import { useRouter } from 'next/router'
 import { useAuth } from '@digitalstage/api-client-react'
 import { useEffect } from 'react'
-import LoadingOverlay from '../../components/LoadingOverlay'
+import debug from 'debug'
+import LoadingOverlay from '../../componentsOld/LoadingOverlay'
+
+const reportError = debug('logout').extend('error')
 
 const Logout = (): JSX.Element => {
     const router = useRouter()
@@ -14,11 +17,11 @@ const Logout = (): JSX.Element => {
                 logout()
                     .then(() => router.push('/account/login'))
                     .catch((err) => {
-                        console.error(err)
+                        reportError(err)
                     })
             } else {
                 router.push('/account/login').catch((err) => {
-                    console.error(err)
+                    reportError(err)
                 })
             }
         }

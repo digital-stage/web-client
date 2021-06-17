@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { useAuth } from '@digitalstage/api-client-react'
 import { useRouter } from 'next/router'
 import SmallContainer from '../ui/container/SmallContainer'
-import StagesList from '../components2/StagesList'
+import StagesList from '../components/StagesList'
 
 const Stages = () => {
     const { loading, user } = useAuth()

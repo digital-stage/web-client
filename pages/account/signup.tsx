@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useAuth } from '@digitalstage/api-client-react'
 import { useRouter } from 'next/router'
-import SignUpForm from '../../components2/account/forms/SignUpForm'
+import SignUpForm from '../../components/account/forms/SignUpForm'
 import AuthLayout from '../../ui/AuthLayout'
 
 const SignUp = () => {

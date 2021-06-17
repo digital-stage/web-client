@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { useAuth } from '@digitalstage/api-client-react'
 import Link from 'next/link'
-import ActivationForm from '../../components2/account/forms/ActivationForm'
+import ActivationForm from '../../components/account/forms/ActivationForm'
 import AuthLayout from '../../ui/AuthLayout'
 import TextLink from '../../ui/TextLink'
 

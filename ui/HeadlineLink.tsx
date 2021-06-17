@@ -3,7 +3,7 @@ import React from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { LinkProps } from 'next/dist/client/link'
-import styles from '../components/ui/HeadlineButton.module.css'
+import styles from '../componentsOld/ui/HeadlineButton.module.css'
 
 const PrimaryHeadlineLink = (
     props: React.DetailedHTMLProps<

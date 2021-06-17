@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useAuth, useStageSelector } from '@digitalstage/api-client-react'
-import LoadingOverlay from '../components/LoadingOverlay'
+import LoadingOverlay from '../componentsOld/LoadingOverlay'
 
 export default function Home() {
     const { loading, user } = useAuth()

@@ -2,13 +2,13 @@ import { Device, useAuth, useConnection, useStageSelector } from '@digitalstage/
 import React, { useEffect } from 'react'
 import { ClientDeviceEvents, ClientDevicePayloads, MediasoupDevice } from '@digitalstage/api-types'
 import { useRouter } from 'next/router'
-import Container from '../components/ui/Container'
-import Panel from '../components/ui/Panel'
+import Container from '../componentsOld/ui/Container'
+import Panel from '../componentsOld/ui/Panel'
 import LiveInput from '../ui/LiveInput'
-import SoundCardSelect from '../components/SoundCardSelect'
+import SoundCardSelect from '../componentsOld/SoundCardSelect'
 import Button from '../ui/Button'
-import MediasoupSettings from '../components/MediasoupSettings'
-import Block, { Row } from '../components/ui/Block'
+import MediasoupSettings from '../componentsOld/MediasoupSettings'
+import Block, { Row } from '../componentsOld/ui/Block'
 
 const DeviceView = ({ id }: { id: string }) => {
     const connection = useConnection()

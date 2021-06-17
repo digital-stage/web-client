@@ -16,7 +16,11 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "baseUrl": ".",
+    "paths": {
+      "@digitalstage/api-client-react": ["api-client-react/src"]
+    }
   },
   "include": [
     "next-env.d.ts",
@@ -24,6 +28,7 @@
     "**/*.tsx"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "api-client-react/node_modules"
   ]
 }

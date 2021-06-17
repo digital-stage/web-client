@@ -1,8 +1,8 @@
 import { useAuth } from '@digitalstage/api-client-react'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
-import MixingPanel from '../components2/mixer/MixingPanel'
-import Block from '../components/ui/Block'
+import MixingPanel from '../components/mixer/MixingPanel'
+import Block from '../componentsOld/ui/Block'
 
 const Mixer = () => {
     const { loading, user } = useAuth()

@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react'
 import { useAuth, useMediasoup } from '@digitalstage/api-client-react'
 import { useRouter } from 'next/router'
 import { Consumer } from 'mediasoup-client/lib/Consumer'
-import Container from '../components/ui/Container'
+import Container from '../componentsOld/ui/Container'
 
 const SingleVideoTrackPlayer = ({ consumer }: { consumer: Consumer }) => {
     const videoRef = useRef<HTMLVideoElement>()

@@ -12,10 +12,10 @@ import { useRouter } from 'next/router'
 import Button from '../ui/Button'
 import Notification from '../ui/Notification'
 import styles from '../styles/Chat.module.css'
-import useForceUpdate from '../hooks/useForceUpdate'
+import useForceUpdate from '../lib/useForceUpdate'
 import DefaultContainer from '../ui/container/DefaultContainer'
 import FixedPanel from '../ui/panels/FixedPanel'
-import { useNotification } from '../components2/NotificationCenter'
+import { useNotification } from '../components/NotificationCenter'
 
 const convertTime = (time: number): string => {
     const min = (Date.now() - time) / 60000

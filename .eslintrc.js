@@ -11,6 +11,8 @@ module.exports = {
         "plugin:prettier/recommended"
     ],
     rules: {
+        "jsx-a11y/label-has-associated-control": "off",
+        "jsx-a11y/anchor-is-valid": "off",
         "react/react-in-jsx-scope": "off",
         "no-underscore-dangle": 0,
         "@typescript-eslint/naming-convention": [

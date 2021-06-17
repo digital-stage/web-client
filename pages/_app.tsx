@@ -1,27 +1,24 @@
 import '../styles/reset.css'
 import '../styles/root.css'
 import '../styles/globals.css'
-import { DigitalStageProvider } from '@digitalstage/api-client-react'
+import {
+    DigitalStageProvider,
+    AudioContextProvider,
+    AudioRenderProvider,
+} from '@digitalstage/api-client-react'
 import React from 'react'
 import Head from 'next/head'
-import { SelectedDeviceProvider } from '../hooks/useSelectedDevice'
-import { ColorProvider } from '../hooks/useColors'
-import Layout from '../components2/Layout'
-import { StageJoinerProvider } from '../hooks/useStageJoiner'
-import StageJoiner from '../components2/StageJoiner'
-import { AudioContextProvider } from '../hooks/useAudioContext'
-import useAudioOutput from '../hooks/useAudioOutput'
-import PlaybackOverlay from '../components2/PlaybackOverlay'
-import StreamController from '../components2/StreamController'
-import { NotificationProvider } from '../components2/NotificationCenter'
-import {AudioRenderProvider} from "../components2/useAudioRenderer";
+import { AppProps } from 'next/dist/pages/_app'
+import { SelectedDeviceProvider } from '../lib/useSelectedDevice'
+import { ColorProvider } from '../lib/useColors'
+import Layout from '../components/Layout'
+import { StageJoinerProvider } from '../lib/useStageJoiner'
+import StageJoiner from '../components/StageJoiner'
+import PlaybackOverlay from '../components/PlaybackOverlay'
+import StreamController from '../components/StreamController'
+import { NotificationProvider } from '../components/NotificationCenter'
 
-const AudioOutputSwitcher = () => {
-    useAudioOutput()
-    return null
-}
-
-function MyApp({ Component, pageProps }) {
+function MyApp({ Component, pageProps }: AppProps) {
     return (
         <>
             <Head>
@@ -48,7 +45,6 @@ function MyApp({ Component, pageProps }) {
                                         </Layout>
                                         <StreamController />
                                         <StageJoiner />
-                                        <AudioOutputSwitcher />
                                         <PlaybackOverlay />
                                     </StageJoinerProvider>
                                 </AudioRenderProvider>
