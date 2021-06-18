@@ -6,7 +6,7 @@ import {
     useStageSelector,
     StageMember,
     StageDevices,
-    RemoteUsers,
+    Users,
     CustomStageMemberPositions,
     CustomStageDevicePositions,
     AudioTracks,
@@ -42,13 +42,11 @@ const StageView = ({ stage, globalMode }: { stage: Stage; globalMode: boolean })
     const wrapperRef = useRef<HTMLDivElement>()
 
     const connection = useConnection()
-    const localStageMemberId = useStageSelector<string>(
-        (state) => state.globals.localUser.stageMemberId
-    )
+    const localStageMemberId = useStageSelector<string>((state) => state.globals.stageMemberId)
     const stageMembers = useStageSelector<StageMember[]>((state) =>
         state.stageMembers.byStage[stage._id].map((id) => state.stageMembers.byId[id])
     )
-    const users = useStageSelector<RemoteUsers>((state) => state.remoteUsers)
+    const users = useStageSelector<Users>((state) => state.users)
     const stageDevices = useStageSelector<StageDevices>((state) => state.stageDevices)
     const customStageMemberPositions = useStageSelector<CustomStageMemberPositions>(
         (state) => state.customStageMemberPositions
@@ -66,7 +64,7 @@ const StageView = ({ stage, globalMode }: { stage: Stage; globalMode: boolean })
     const localStageDeviceImage = useImage('/static/icons/room-member-custom.svg', 64, 64)
     const currentStageDeviceImage = useImage('/static/icons/room-member-custom-local.svg', 64, 64)
     const audioTrackImage = useImage('/static/icons/room-track.svg', 32, 32)
-    const currentAudioTrackImage = useImage('/static/icons/room-track-custom-local.svg', 32, 32)
+    const localAudioTrackImage = useImage('/static/icons/room-track-custom-local.svg', 32, 32)
 
     const deselect = useCallback((e) => {
         const clickedOnEmpty = e.target === e.target.getStage()
@@ -223,9 +221,9 @@ const StageView = ({ stage, globalMode }: { stage: Stage; globalMode: boolean })
                                             ? localStageDeviceImage
                                             : stageDeviceImage
                                     }
-                                    currentStageDeviceImage={currentStageDeviceImage}
+                                    localStageDeviceImage={currentStageDeviceImage}
                                     audioTrackImage={audioTrackImage}
-                                    currentAudioTrackImage={currentAudioTrackImage}
+                                    localAudioTrackImage={localAudioTrackImage}
                                 />
                             )
                         })}
@@ -258,10 +256,10 @@ const RoomManager = (): JSX.Element => {
     )
     const isSoundEditor = useStageSelector<boolean>(
         (state) =>
-            state.globals.localUser &&
+            state.globals.localUserId &&
             state.globals.stageId &&
             state.stages.byId[state.globals.stageId].soundEditors.some(
-                (admin) => admin === state.globals.localUser._id
+                (admin) => admin === state.globals.localUserId
             )
     )
     const [globalMode, setGlobalMode] = useState<boolean>(false)

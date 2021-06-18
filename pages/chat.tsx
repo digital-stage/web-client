@@ -1,10 +1,4 @@
-import {
-    RemoteUsers,
-    useAuth,
-    useConnection,
-    User,
-    useStageSelector,
-} from '@digitalstage/api-client-react'
+import { Users, useAuth, useConnection, useStageSelector } from '@digitalstage/api-client-react'
 import { ChatMessage, ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { AiOutlineSend } from 'react-icons/ai'
@@ -39,8 +33,8 @@ const Chat = () => {
     const [error, setError] = useState<string>('Bla')
     const connection = useConnection()
     const messages = useStageSelector<ChatMessage[]>((state) => state.chatMessages)
-    const users = useStageSelector<RemoteUsers>((state) => state.remoteUsers)
-    const currentUser = useStageSelector<User | undefined>((state) => state.globals.localUser)
+    const users = useStageSelector<Users>((state) => state.users)
+    const localUserId = useStageSelector<string | undefined>((state) => state.globals.localUserId)
     const messageRef = useRef<HTMLInputElement>()
     const messagesEndRef = useRef<HTMLDivElement>()
     const forceUpdate = useForceUpdate()
@@ -98,10 +92,10 @@ const Chat = () => {
                                 /* eslint-disable-next-line react/no-array-index-key */
                                 key={`${msg.time}${index}`}
                                 className={`${styles.messageWrapper} ${
-                                    currentUser?._id === msg.userId && styles.self
+                                    localUserId === msg.userId && styles.self
                                 }`}
                             >
-                                {msg.userId !== currentUser?._id && (
+                                {msg.userId !== localUserId && (
                                     <h5 className={styles.messageName}>
                                         {users.byId[msg.userId]?.name}
                                     </h5>

@@ -2,6 +2,7 @@ import Link from 'next/link'
 import React, { useState } from 'react'
 import { useAuth, useStageSelector } from '@digitalstage/api-client-react'
 import { FaUser } from 'react-icons/fa'
+import { User } from '@digitalstage/api-types'
 import styles from './ProfileMenu.module.css'
 import OverlayMenu from '../../ui/nav/OverlayMenu'
 import Paragraph from '../../componentsOld/ui/Paragraph'
@@ -11,7 +12,9 @@ import { DangerButton, SecondaryButton } from '../../ui/Button'
 const ProfileMenu = () => {
     const [open, setOpen] = useState<boolean>(false)
     const { user: authUser } = useAuth()
-    const user = useStageSelector((state) => state.globals.localUser)
+    const user = useStageSelector<User | undefined>((state) =>
+        state.globals.localUserId ? state.users.byId[state.globals.localUserId] : undefined
+    )
 
     if (authUser) {
         return (

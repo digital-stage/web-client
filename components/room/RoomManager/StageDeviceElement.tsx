@@ -29,7 +29,7 @@ const StageDeviceElement = ({
     color,
     stageDeviceImage,
     audioTrackImage,
-    currentAudioTrackImage,
+    localAudioTrackImage,
 }: {
     connection: ITeckosClient
     deviceId: string
@@ -47,7 +47,7 @@ const StageDeviceElement = ({
     color: string
     stageDeviceImage: CanvasImageSource
     audioTrackImage: CanvasImageSource
-    currentAudioTrackImage: CanvasImageSource
+    localAudioTrackImage: CanvasImageSource
 }) => {
     const [position, setPosition] = useState<{ x: number; y: number; rZ: number }>({
         x: offsetX + stageDevice.x,
@@ -176,7 +176,7 @@ const StageDeviceElement = ({
                                 color={color || '#fff'}
                                 audioTrackImage={
                                     stageDevice.deviceId === deviceId
-                                        ? currentAudioTrackImage
+                                        ? localAudioTrackImage
                                         : audioTrackImage
                                 }
                             />

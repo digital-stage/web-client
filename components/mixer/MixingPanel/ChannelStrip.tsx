@@ -1,6 +1,5 @@
 /* eslint-disable react/require-default-props */
 import React, { useCallback, useState, useEffect } from 'react'
-import { IAnalyserNode, IAudioContext } from 'standardized-audio-context'
 import { IoIosVolumeOff } from 'react-icons/io'
 import { VolumeProperties } from '@digitalstage/api-types'
 import { BiReset } from 'react-icons/bi'
@@ -13,12 +12,11 @@ const ChannelStrip = (props: {
     onChange: (volume: number, muted: boolean) => void
     resettable?: boolean
     onReset?: () => void
-    analyserL?: IAnalyserNode<IAudioContext>
-    analyserR?: IAnalyserNode<IAudioContext>
+    levelBuffer?: ArrayBuffer
     color: string
     className?: string
 }) => {
-    const { channel, onChange, resettable, onReset, analyserL, analyserR, className, color } = props
+    const { channel, onChange, resettable, onReset, levelBuffer, className, color } = props
     const [muted, setMuted] = useState<boolean>()
     const [value, setValue] = useState<number>()
 
@@ -54,8 +52,7 @@ const ChannelStrip = (props: {
                 value={value}
                 onChange={handleChange}
                 onFinalChange={handleFinalChange}
-                analyserL={analyserL}
-                analyserR={analyserR}
+                levelBuffer={levelBuffer}
                 color={color}
                 className={styles.slider}
                 style={{

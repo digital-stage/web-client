@@ -27,6 +27,7 @@ import HeadlineButton from '../../../componentsOld/ui/HeadlineButton'
 import DeviceSelector from '../../DeviceSelector'
 import Block from '../../../componentsOld/ui/Block'
 import Paragraph from '../../../componentsOld/ui/Paragraph'
+import useLevel from '../../../api-client-react/src/hooks/useLevel'
 
 const AudioTrackPanel = (props: { id: string; color: HSLColor; globalMode: boolean }) => {
     const { id, color, globalMode } = props
@@ -41,6 +42,7 @@ const AudioTrackPanel = (props: { id: string; color: HSLColor; globalMode: boole
             ]
     )
     const connection = useConnection()
+    const { levels } = useLevel()
 
     const handleChange = useCallback(
         (volume: number, muted: boolean) => {
@@ -98,6 +100,7 @@ const AudioTrackPanel = (props: { id: string; color: HSLColor; globalMode: boole
                     onReset={handleReset}
                     onChange={handleChange}
                     color={color.toString()}
+                    levelBuffer={levels[id]}
                 />
             </div>
         </div>
@@ -120,6 +123,7 @@ const StageDevicePanel = (props: { id: string; color: HSLColor; globalMode: bool
     )
     const [expanded, setExpanded] = useState<boolean>(false)
     const connection = useConnection()
+    const { levels } = useLevel()
 
     useEffect(() => {
         if (audioTrackIds.length === 0) {
@@ -205,6 +209,7 @@ const StageDevicePanel = (props: { id: string; color: HSLColor; globalMode: bool
                     onReset={handleReset}
                     onChange={handleChange}
                     color={color.toString()}
+                    levelBuffer={levels[id]}
                 />
             </div>
             {expanded && (
@@ -229,7 +234,7 @@ const StageMemberPanel = (props: { id: string; globalMode: boolean }) => {
         (state) => state.stageMembers.byId[id]
     )
     const user = useStageSelector<User | undefined>(
-        (state) => stageMember && state.remoteUsers.byId[stageMember.userId]
+        (state) => stageMember && state.users.byId[stageMember.userId]
     )
     const stageDeviceIds = useStageSelector<string[]>(
         (state) => state.stageDevices.byStageMember[id] || []
@@ -245,6 +250,7 @@ const StageMemberPanel = (props: { id: string; globalMode: boolean }) => {
     const [expanded, setExpanded] = useState<boolean>(false)
     const color = useColors(id)
     const connection = useConnection()
+    const { levels } = useLevel()
 
     useEffect(() => {
         if (stageDeviceIds.length === 0) {
@@ -330,6 +336,7 @@ const StageMemberPanel = (props: { id: string; globalMode: boolean }) => {
                     onReset={handleReset}
                     onChange={handleChange}
                     color={color?.toString()}
+                    levelBuffer={levels[id]}
                 />
             </div>
             {expanded && (
@@ -365,6 +372,7 @@ const GroupPanel = (props: { id: string; globalMode: boolean }) => {
     )
     const [expanded, setExpanded] = useState<boolean>(false)
     const connection = useConnection()
+    const { levels } = useLevel()
 
     const handleChange = useCallback(
         (volume: number, muted: boolean) => {
@@ -452,6 +460,7 @@ const GroupPanel = (props: { id: string; globalMode: boolean }) => {
                     onReset={handleReset}
                     onChange={handleChange}
                     color={group.color}
+                    levelBuffer={levels[id]}
                 />
             </div>
             {expanded && (
@@ -475,10 +484,10 @@ const MixingPanel = () => {
     const groupIds = useStageSelector<string[]>((state) => state.groups.allIds)
     const isSoundEditor = useStageSelector<boolean>(
         (state) =>
-            state.globals.localUser &&
+            state.globals.localUserId &&
             state.globals.stageId &&
             state.stages.byId[state.globals.stageId].soundEditors.some(
-                (admin) => admin === state.globals.localUser._id
+                (admin) => admin === state.globals.localUserId
             )
     )
     const [globalMode, setGlobalMode] = useState<boolean>(false)

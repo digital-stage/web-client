@@ -95,9 +95,7 @@ const StageRow = ({
     onInviteModalRequested: () => void
 }) => {
     const stage = useStageSelector<Stage>((state) => state.stages.byId[id])
-    const localUserId = useStageSelector<string | undefined>(
-        (state) => state.globals.localUser?._id
-    )
+    const localUserId = useStageSelector<string | undefined>((state) => state.globals.localUserId)
     const isStageAdmin = localUserId && stage && stage.admins.some((admin) => admin === localUserId)
     const groupIds = useStageSelector<string[]>((state) => state.groups.byStage[id])
     return (

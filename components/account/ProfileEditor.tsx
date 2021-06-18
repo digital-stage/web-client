@@ -9,7 +9,9 @@ import styles from './ProfileEditor.module.css'
 
 const ProfileEditor = () => {
     const { requestPasswordReset, user: authUser } = useAuth()
-    const localUser = useStageSelector<User>((state) => state.globals.localUser)
+    const localUser = useStageSelector<User | undefined>((state) =>
+        state.globals.localUserId ? state.users.byId[state.globals.localUserId] : undefined
+    )
     const connection = useConnection()
     const [message, setMessage] = useState<string>()
     const [error, setError] = useState<string>()

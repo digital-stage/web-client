@@ -33,9 +33,9 @@ const StageMemberElement = ({
     color,
     stageMemberImage,
     stageDeviceImage,
-    currentStageDeviceImage,
+    localStageDeviceImage,
     audioTrackImage,
-    currentAudioTrackImage,
+    localAudioTrackImage,
 }: {
     connection: ITeckosClient
     deviceId: string
@@ -52,9 +52,9 @@ const StageMemberElement = ({
     color: string
     stageMemberImage: CanvasImageSource
     stageDeviceImage: CanvasImageSource
-    currentStageDeviceImage: CanvasImageSource
+    localStageDeviceImage: CanvasImageSource
     audioTrackImage: CanvasImageSource
-    currentAudioTrackImage: CanvasImageSource
+    localAudioTrackImage: CanvasImageSource
 }) => {
     // We cannot use useContext here, so we outsourced all useStageSelector calls into the parent object
     const [position, setPosition] = useState<{ x: number; y: number; rZ: number }>({
@@ -168,11 +168,11 @@ const StageMemberElement = ({
                                 color={color || '#fff'}
                                 stageDeviceImage={
                                     deviceId === stageDevice.deviceId
-                                        ? currentStageDeviceImage
+                                        ? localStageDeviceImage
                                         : stageDeviceImage
                                 }
                                 audioTrackImage={audioTrackImage}
-                                currentAudioTrackImage={currentAudioTrackImage}
+                                localAudioTrackImage={localAudioTrackImage}
                             />
                         )
                     })}

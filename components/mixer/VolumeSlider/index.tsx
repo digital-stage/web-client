@@ -1,7 +1,6 @@
 /* eslint-disable no-nested-ternary,no-restricted-properties,react/require-default-props,react/jsx-props-no-spreading */
 import { Direction, Range } from 'react-range'
 import React, { useCallback, useEffect, useState } from 'react'
-import { IAnalyserNode, IAudioContext } from 'standardized-audio-context'
 import { convertRangeToDbMeasure, formatDbMeasure, getBaseLog } from './utils'
 import LevelMeter from './LevelMeter'
 import styles from './VolumeSlider.module.css'
@@ -29,8 +28,7 @@ const VolumeSlider = (
         middle: number
         max: number
         value: number
-        analyserL?: IAnalyserNode<IAudioContext>
-        analyserR?: IAnalyserNode<IAudioContext>
+        levelBuffer?: ArrayBuffer
         onChange: (value: number) => any
         onFinalChange?: (value: number) => any
         alignLabel?: 'left' | 'right'
@@ -45,8 +43,7 @@ const VolumeSlider = (
         max,
         value,
         alignLabel,
-        analyserL,
-        analyserR,
+        levelBuffer,
         color,
         className,
         style,
@@ -182,15 +179,8 @@ const VolumeSlider = (
                                 backgroundColor: color,
                             }}
                         >
-                            {analyserL ? (
-                                analyserR ? (
-                                    <>
-                                        <LevelMeter className={styles.half} analyser={analyserL} />
-                                        <LevelMeter className={styles.half} analyser={analyserR} />
-                                    </>
-                                ) : (
-                                    <LevelMeter className={styles.full} analyser={analyserL} />
-                                )
+                            {levelBuffer ? (
+                                <LevelMeter className={styles.full} buffer={levelBuffer} />
                             ) : undefined}
                         </div>
                         {children}

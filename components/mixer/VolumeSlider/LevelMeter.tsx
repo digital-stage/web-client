@@ -1,6 +1,5 @@
 import React, { CanvasHTMLAttributes, useRef } from 'react'
-import { IAnalyserNode, IAudioContext } from 'standardized-audio-context'
-import useAnimationFrame from '../../../lib/useAnimationFrame'
+import useAnimationFrame from '../../../api-client-react/src/hooks/useAnimationFrame'
 
 function getAverageVolume(array: Uint8Array): number {
     let values = 0
@@ -14,16 +13,15 @@ function getAverageVolume(array: Uint8Array): number {
 
 const LevelMeter = (
     props: CanvasHTMLAttributes<HTMLCanvasElement> & {
-        analyser: IAnalyserNode<IAudioContext>
+        buffer: ArrayBuffer
     }
 ): JSX.Element => {
-    const { analyser, ...other } = props
+    const { buffer, ...other } = props
     const canvasRef = useRef<HTMLCanvasElement>()
 
     useAnimationFrame(() => {
-        if (analyser && canvasRef.current) {
-            const array = new Uint8Array(analyser.frequencyBinCount)
-            analyser.getByteFrequencyData(array)
+        if (buffer && canvasRef.current) {
+            const array = new Uint8Array(buffer)
             const average = getAverageVolume(array)
             const { width } = canvasRef.current
             const { height } = canvasRef.current
