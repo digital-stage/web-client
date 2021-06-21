@@ -17,9 +17,6 @@ import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-type
 import useImage from '../../../lib/useImage'
 import styles from './RoomManager.module.css'
 import HeadlineButton from '../../../componentsOld/ui/HeadlineButton'
-import DeviceSelector from '../../DeviceSelector'
-import Paragraph from '../../../componentsOld/ui/Paragraph'
-import Block from '../../../componentsOld/ui/Block'
 import useSelectedDevice from '../../../lib/useSelectedDevice'
 import useColors from '../../../lib/useColors'
 import Button from '../../../ui/Button'
@@ -34,14 +31,22 @@ const DEFAULT_POSITION = {
     rZ: 0,
 }
 
-const StageView = ({ stage, globalMode }: { stage: Stage; globalMode: boolean }): JSX.Element => {
-    const { selectedDeviceId } = useSelectedDevice()
-    const width = stage.width * FACTOR
-    const height = stage.height * FACTOR
+const StageView = ({ stageId, deviceId }: { stageId: string; deviceId: string }): JSX.Element => {
+    const [globalMode, setGlobalMode] = useState<boolean>(false)
     const [selected, setSelected] = useState<ElementSelection>(undefined)
     const wrapperRef = useRef<HTMLDivElement>()
 
     const connection = useConnection()
+    const stage = useStageSelector<Stage | undefined>((state) => state.stages.byId[stageId])
+    const isSoundEditor = useStageSelector<boolean>(
+        (state) =>
+            state.globals.localUserId &&
+            state.stages.byId[state.globals.stageId].soundEditors.some(
+                (admin) => admin === state.globals.localUserId
+            )
+    )
+    const width = stage.width * FACTOR
+    const height = stage.height * FACTOR
     const localStageMemberId = useStageSelector<string>((state) => state.globals.stageMemberId)
     const stageMembers = useStageSelector<StageMember[]>((state) =>
         state.stageMembers.byStage[stage._id].map((id) => state.stageMembers.byId[id])
@@ -133,8 +138,8 @@ const StageView = ({ stage, globalMode }: { stage: Stage; globalMode: boolean })
                         )
                 }
             } else {
-                if (customStageMemberPositions.byDevice[selectedDeviceId]) {
-                    customStageMemberPositions.byDevice[selectedDeviceId]
+                if (customStageMemberPositions.byDevice[deviceId]) {
+                    customStageMemberPositions.byDevice[deviceId]
                         .map((id) => customStageMemberPositions.byId[id])
                         .forEach((customStageMember) =>
                             connection.emit(
@@ -143,8 +148,8 @@ const StageView = ({ stage, globalMode }: { stage: Stage; globalMode: boolean })
                             )
                         )
                 }
-                if (customStageDevicePositions.byDevice[selectedDeviceId]) {
-                    customStageDevicePositions.byDevice[selectedDeviceId]
+                if (customStageDevicePositions.byDevice[deviceId]) {
+                    customStageDevicePositions.byDevice[deviceId]
                         .map((id) => customStageDevicePositions.byId[id])
                         .forEach((customStageDevice) =>
                             connection.emit(
@@ -168,7 +173,7 @@ const StageView = ({ stage, globalMode }: { stage: Stage; globalMode: boolean })
 
     return (
         <div className={styles.wrapper}>
-            <div className={styles.inner} ref={wrapperRef}>
+            <div className={styles.canvasWrapper} ref={wrapperRef}>
                 <KonvaStage
                     /* @ts-ignore */
                     width={width}
@@ -183,23 +188,21 @@ const StageView = ({ stage, globalMode }: { stage: Stage; globalMode: boolean })
                         {stageMembers.map((stageMember) => {
                             const color = useColors(stageMember._id)
                             const customStageMember =
-                                customStageMemberPositions.byDeviceAndStageMember[
-                                    selectedDeviceId
-                                ] &&
-                                customStageMemberPositions.byDeviceAndStageMember[selectedDeviceId][
+                                customStageMemberPositions.byDeviceAndStageMember[deviceId] &&
+                                customStageMemberPositions.byDeviceAndStageMember[deviceId][
                                     stageMember._id
                                 ] &&
                                 customStageMemberPositions.byId[
-                                    customStageMemberPositions.byDeviceAndStageMember[
-                                        selectedDeviceId
-                                    ][stageMember._id]
+                                    customStageMemberPositions.byDeviceAndStageMember[deviceId][
+                                        stageMember._id
+                                    ]
                                 ]
                             const user = users.byId[stageMember.userId]
                             return (
                                 <StageMemberElement
                                     key={stageMember._id}
                                     connection={connection}
-                                    deviceId={selectedDeviceId}
+                                    deviceId={deviceId}
                                     globalMode={globalMode}
                                     stageMember={stageMember}
                                     customStageMember={customStageMember}
@@ -230,6 +233,7 @@ const StageView = ({ stage, globalMode }: { stage: Stage; globalMode: boolean })
                     </KonvaLayer>
                 </KonvaStage>
             </div>
+
             <Button kind="primary" className={styles.buttonResetAll} onClick={handleResetAll}>
                 Alle zurücksetzen
             </Button>
@@ -245,68 +249,27 @@ const StageView = ({ stage, globalMode }: { stage: Stage; globalMode: boolean })
                         Ausgewähltes zurücksetzen
                     </Button>
                 )}
+            {isSoundEditor && (
+                <div className={styles.globalSwitcher}>
+                    <HeadlineButton toggled={!globalMode} onClick={() => setGlobalMode(false)}>
+                        Persönliche Einstellungen
+                    </HeadlineButton>
+                    <HeadlineButton toggled={globalMode} onClick={() => setGlobalMode(true)}>
+                        Voreinstellungen
+                    </HeadlineButton>
+                </div>
+            )}
         </div>
     )
 }
 
 const RoomManager = (): JSX.Element => {
     const ready = useStageSelector<boolean>((state) => state.globals.ready)
-    const stage = useStageSelector<Stage | undefined>(
-        (state) => state.globals.stageId && state.stages.byId[state.globals.stageId]
-    )
-    const isSoundEditor = useStageSelector<boolean>(
-        (state) =>
-            state.globals.localUserId &&
-            state.globals.stageId &&
-            state.stages.byId[state.globals.stageId].soundEditors.some(
-                (admin) => admin === state.globals.localUserId
-            )
-    )
-    const [globalMode, setGlobalMode] = useState<boolean>(false)
+    const stageId = useStageSelector((state) => state.globals.stageId)
     const { selectedDeviceId } = useSelectedDevice()
 
-    if (ready && stage) {
-        return (
-            <Block vertical height="full">
-                {isSoundEditor && (
-                    <Block vertical flexGrow={0}>
-                        <div>
-                            <HeadlineButton
-                                toggled={!globalMode}
-                                onClick={() => setGlobalMode(false)}
-                            >
-                                Persönliche Einstellungen
-                            </HeadlineButton>
-                            <HeadlineButton
-                                toggled={globalMode}
-                                onClick={() => setGlobalMode(true)}
-                            >
-                                Voreinstellungen
-                            </HeadlineButton>
-                        </div>
-                        <Block padding={2}>
-                            <Paragraph kind="micro">
-                                {globalMode
-                                    ? 'Diese Einstellungen gelten als Voreinstellung für alle'
-                                    : 'Diese Einstellungen gelten nur für Dich'}
-                            </Paragraph>
-                        </Block>
-                        {!globalMode && (
-                            <Block padding={2}>
-                                <DeviceSelector />
-                            </Block>
-                        )}
-                    </Block>
-                )}
-                <Block flexGrow={1}>
-                    {globalMode || selectedDeviceId ? (
-                        <StageView stage={stage} globalMode={globalMode} />
-                    ) : (
-                        <h2>Bitte wähle erste einer Gerät</h2>
-                    )}
-                </Block>
-            </Block>
-        )
+    if (ready && stageId) {
+        return <StageView stageId={stageId} deviceId={selectedDeviceId} />
     }
 
     return null

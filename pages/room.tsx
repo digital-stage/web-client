@@ -1,8 +1,9 @@
 import React from 'react'
 import { useRouter } from 'next/router'
 import { useAuth, useStageSelector } from '@digitalstage/api-client-react'
-import RoomManager from '../components/room/RoomManager'
-import Block from '../componentsOld/ui/Block'
+import dynamic from 'next/dynamic'
+
+const DynamicRoomManager = dynamic(() => import('../components/room/RoomManager'), { ssr: false })
 
 const Room = (): JSX.Element => {
     const router = useRouter()
@@ -18,10 +19,6 @@ const Room = (): JSX.Element => {
         router.replace('/stages')
     }
 
-    return (
-        <Block padding={2} vertical height="full">
-            <RoomManager />
-        </Block>
-    )
+    return <DynamicRoomManager />
 }
 export default Room

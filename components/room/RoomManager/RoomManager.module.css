@@ -1,16 +1,13 @@
-
 .wrapper {
     position: relative;
-    border: 1px solid red;
     width: 100%;
     height: 100%;
 }
 
-.inner {
+.canvasWrapper {
     position: relative;
     width: 100%;
     height: 100%;
-    border: 1px solid yellow;
     overflow: scroll;
 }
 
@@ -21,6 +18,14 @@
     border: 1px solid blue;
     background-image: url('/static/images/room-bg.svg');
     background-position: center center;
+}
+
+.globalSwitcher {
+    position: absolute;
+    top: 18px;
+    left: 18px;
+    border-radius: 18px;
+
 }
 
 .buttonResetAll {

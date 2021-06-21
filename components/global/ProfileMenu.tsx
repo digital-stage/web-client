@@ -48,6 +48,7 @@ const ProfileMenu = () => {
                     onClick={() => {
                         setOpen((prev) => !prev)
                     }}
+                    size="small"
                 >
                     <FaUser />
                 </SecondaryButton>

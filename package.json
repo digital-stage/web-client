@@ -17,7 +17,6 @@
     "@types/fabric": "^4.5.0",
     "body-scroll-lock": "^3.1.5",
     "debug": "^4.3.1",
-    "fabric": "^4.5.1",
     "formik": "^2.2.9",
     "isomorphic-unfetch": "^3.1.0",
     "js-cookie": "^2.2.1",
