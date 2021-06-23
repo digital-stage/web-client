@@ -4,8 +4,8 @@ import {
     useConnection,
     useStageSelector,
 } from '@digitalstage/api-client-react'
-import React from 'react'
 import { Device } from '@digitalstage/api-types'
+import React from 'react'
 
 const ChannelSelector = (props: { id: string }) => {
     const { id } = props
@@ -68,7 +68,7 @@ const ChannelSelector = (props: { id: string }) => {
     )
 }
 
-const SoundCardSelect = (props: { deviceId: string }) => {
+const SoundCardSettings = (props: { deviceId: string }) => {
     const { deviceId } = props
     const device = useStageSelector<Device>((state) => state.devices.byId[deviceId])
     const soundCards = useStageSelector<SoundCard[]>((state) =>
@@ -104,4 +104,4 @@ const SoundCardSelect = (props: { deviceId: string }) => {
         </>
     )
 }
-export default SoundCardSelect
+export default SoundCardSettings

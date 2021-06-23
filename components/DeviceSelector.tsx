@@ -12,7 +12,7 @@ const DeviceSelector = () => {
         (state) => state.globals.localDeviceId
     )
 
-    if (availableDevices.length > 0) {
+    if (availableDevices.length > 1) {
         return (
             <Select
                 value={selectedDeviceId}

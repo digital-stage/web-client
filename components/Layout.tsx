@@ -1,7 +1,7 @@
 import { useAuth, useStageSelector } from '@digitalstage/api-client-react'
 import React from 'react'
 import styles from './Layout.module.scss'
-import Sidebar from '../componentsOld/Sidebar'
+import Sidebar from './global/Sidebar'
 import Background from '../ui/Background'
 import MobileMenu from '../componentsOld/MobileMenu'
 import { NotificationPanel } from './NotificationCenter'

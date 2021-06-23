@@ -3,7 +3,7 @@ import { useStageSelector } from '@digitalstage/api-client-react'
 import React from 'react'
 import Link from 'next/link'
 import { GoBroadcast, GoListUnordered, GoSettings } from 'react-icons/go'
-import { BiChat, BiCube } from 'react-icons/bi'
+import { BiChat, BiCube, BiDevices } from 'react-icons/bi'
 import { FaBug, FaTools } from 'react-icons/fa'
 import { useRouter } from 'next/router'
 import styles from './Sidebar.module.scss'
@@ -18,6 +18,7 @@ const SidebarItem = ({ href, children }: { href: string; children: React.ReactNo
 }
 
 const Sidebar = () => {
+    const deviceCount = useStageSelector((state) => state.devices.allIds.length)
     const insideStage = useStageSelector<boolean>((state) => !!state.globals.stageId)
     return (
         <div className={styles.sidebar}>
@@ -48,8 +49,14 @@ const Sidebar = () => {
                         </SidebarItem>
                     </>
                 )}
-                <SidebarItem href="/devices">
-                    <FaTools size={18} name="Devices" />
+                {deviceCount > 1 ? (
+                    <SidebarItem href="/devices">
+                        <BiDevices size={18} name="Meine Geräte" />
+                        Meine Geräte
+                    </SidebarItem>
+                ) : undefined}
+                <SidebarItem href="/settings/device">
+                    <FaTools size={18} name="Einstellungen" />
                     Einstellungen
                 </SidebarItem>
                 <SidebarItem href="/stages">

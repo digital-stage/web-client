@@ -18,6 +18,11 @@ import PlaybackOverlay from '../components/PlaybackOverlay'
 import StreamController from '../components/StreamController'
 import { NotificationProvider } from '../components/NotificationCenter'
 
+const Checker = ({ children }: { children: React.ReactNode }) => {
+    console.log('RERENDERING FULL DOM TREE')
+    return <>{children}</>
+}
+
 function MyApp({ Component, pageProps }: AppProps) {
     return (
         <>
@@ -29,30 +34,32 @@ function MyApp({ Component, pageProps }: AppProps) {
                     content="initial-scale=1.0, width=device-width, shrink-to-fit=no"
                 />
             </Head>
-            <NotificationProvider>
-                <ColorProvider>
-                    <DigitalStageProvider
-                        apiUrl={process.env.NEXT_PUBLIC_API_URL}
-                        authUrl={process.env.NEXT_PUBLIC_AUTH_URL}
-                    >
-                        <SelectedDeviceProvider>
-                            <AudioContextProvider>
-                                <AudioRenderProvider>
-                                    <StageJoinerProvider>
-                                        <Layout>
-                                            {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-                                            <Component {...pageProps} />
-                                        </Layout>
-                                        <StreamController />
-                                        <StageJoiner />
-                                        <PlaybackOverlay />
-                                    </StageJoinerProvider>
-                                </AudioRenderProvider>
-                            </AudioContextProvider>
-                        </SelectedDeviceProvider>
-                    </DigitalStageProvider>
-                </ColorProvider>
-            </NotificationProvider>
+            <Checker>
+                <NotificationProvider>
+                    <ColorProvider>
+                        <DigitalStageProvider
+                            apiUrl={process.env.NEXT_PUBLIC_API_URL}
+                            authUrl={process.env.NEXT_PUBLIC_AUTH_URL}
+                        >
+                            <SelectedDeviceProvider>
+                                <AudioContextProvider>
+                                    <AudioRenderProvider>
+                                        <StageJoinerProvider>
+                                            <Layout>
+                                                {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+                                                <Component {...pageProps} />
+                                            </Layout>
+                                            <StreamController />
+                                            <StageJoiner />
+                                            <PlaybackOverlay />
+                                        </StageJoinerProvider>
+                                    </AudioRenderProvider>
+                                </AudioContextProvider>
+                            </SelectedDeviceProvider>
+                        </DigitalStageProvider>
+                    </ColorProvider>
+                </NotificationProvider>
+            </Checker>
         </>
     )
 }

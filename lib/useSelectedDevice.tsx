@@ -19,10 +19,13 @@ export const SelectedDeviceProvider = (props: { children: React.ReactNode }) => 
         (state) => state.globals.localDeviceId
     )
     const [selectedDeviceId, selectDeviceId] = useState<string>()
+    const devices = useStageSelector((state) =>
+        state.devices.allIds.map((id) => state.devices.byId[id])
+    )
     const selectedDevice = useStageSelector<Device | undefined>(
         (state) => state.devices.byId[selectedDeviceId]
     )
-
+    /*
     useEffect(() => {
         if (localDeviceId) {
             selectDeviceId((prev) => {
@@ -30,7 +33,14 @@ export const SelectedDeviceProvider = (props: { children: React.ReactNode }) => 
                 return prev
             })
         }
-    }, [localDeviceId])
+    }, [localDeviceId]) */
+
+    useEffect(() => {
+        if (!selectedDevice && devices.length > 0) {
+            console.log('SELECTING LOCAL DEVICE')
+            selectDeviceId(localDeviceId)
+        }
+    }, [selectedDevice, devices, localDeviceId])
 
     return (
         <SelectedDeviceContext.Provider

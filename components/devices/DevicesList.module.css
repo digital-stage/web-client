@@ -1,0 +1,45 @@
+.table {
+
+}
+.row {
+    display: inline-flex;
+    flex-wrap: wrap;
+    cursor: pointer;
+    width: 100%;
+    border-bottom: 1px solid var(---grey-3);
+}
+.row:hover {
+    background-color: var(---grey-3)
+}
+.row:last-child {
+    border-bottom: none
+}
+.row.selected {
+    font-weight: bold;
+}
+.row.inactive {
+    font-style: italic;
+}
+.columnType {
+    text-align: center;
+}
+.columnName {
+    text-align: left;
+    flex-grow: 1
+}
+.columnCreatedAt {
+    text-align: center;
+}
+.columnLastLoginAt {
+    text-align: center;
+}
+.columnAction {
+}
+@media only screen and (min-width: 600px) and (min-height: 600px) {
+    .row {
+        display: table-row;
+    }
+    .column {
+
+    }
+}

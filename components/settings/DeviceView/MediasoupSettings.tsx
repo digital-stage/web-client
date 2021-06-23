@@ -1,5 +1,5 @@
-import { useConnection } from '@digitalstage/api-client-react'
 import { ClientDeviceEvents, MediasoupDevice } from '@digitalstage/api-types'
+import { useConnection } from '@digitalstage/api-client-react'
 
 const MediasoupSettings = (props: { device: MediasoupDevice }) => {
     const { device } = props
