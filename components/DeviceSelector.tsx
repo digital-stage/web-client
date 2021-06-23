@@ -20,11 +20,14 @@ const DeviceSelector = () => {
                     selectDeviceId(event.currentTarget.value)
                 }}
             >
-                {availableDevices.map((d) => (
-                    <option key={d._id} value={d._id}>
-                        {d.name || d._id} {d._id === localDeviceId && '(Dieses Gerät)'}
-                    </option>
-                ))}
+                {availableDevices.map((d) => {
+                    const name = d.name || d.type === 'mediasoup' ? `${d.os}: ${d.browser}` : d._id
+                    return (
+                        <option key={d._id} value={d._id}>
+                            {name} {d._id === localDeviceId && '(Dieses Gerät)'}
+                        </option>
+                    )
+                })}
             </Select>
         )
     }
