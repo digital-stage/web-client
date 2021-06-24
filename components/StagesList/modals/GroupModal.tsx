@@ -3,11 +3,10 @@ import { ClientDeviceEvents, ClientDevicePayloads, Group } from '@digitalstage/a
 import React, { useCallback, useState } from 'react'
 import { Field, Form, Formik } from 'formik'
 import * as Yup from 'yup'
-import Modal, { ModalButton, ModalFooter, ModalHeader } from '../../../ui/Modal'
-import Input from '../../../ui/Input'
-import Notification from '../../../ui/Notification'
-import ColorPicker from '../../../ui/ColorPicker'
-import Block from '../../../componentsOld/ui/Block'
+import Modal, { ModalButton, ModalFooter, ModalHeader } from '../../../fastui/components/Modal'
+import Input from '../../../fastui/components/interaction/Input'
+import Notification from '../../../fastui/components/Notification'
+import ColorPicker from '../../../fastui/components/interaction/ColorPicker'
 
 const GroupModal = ({
     open,
@@ -111,13 +110,13 @@ const GroupModal = ({
                             light
                         />
                         {values.color && (
-                            <Block vertical>
+                            <div className="vertical">
                                 <h5>Farbe</h5>
                                 <ColorPicker
                                     color={values.color}
                                     onChange={(color) => setFieldValue('color', color)}
                                 />
-                            </Block>
+                            </div>
                         )}
                         {error && <Notification kind="error">{error}</Notification>}
                         <ModalFooter>

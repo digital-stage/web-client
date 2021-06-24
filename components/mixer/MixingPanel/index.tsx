@@ -23,10 +23,8 @@ import HSLColor from '../../../lib/useColors/HSLColor'
 
 import ChannelStrip from './ChannelStrip'
 import useSelectedDevice from '../../../lib/useSelectedDevice'
-import HeadlineButton from '../../../componentsOld/ui/HeadlineButton'
+import HeadlineButton from '../../../fastui/components/interaction/HeadlineButton'
 import DeviceSelector from '../../DeviceSelector'
-import Block from '../../../componentsOld/ui/Block'
-import Paragraph from '../../../componentsOld/ui/Paragraph'
 import useLevel from '../../../api-client-react/src/hooks/useLevel'
 
 const AudioTrackPanel = (props: { id: string; color: HSLColor; globalMode: boolean }) => {
@@ -496,7 +494,7 @@ const MixingPanel = () => {
         return (
             <div className={styles.wrapper}>
                 {isSoundEditor && (
-                    <Block vertical>
+                    <div className="vertical">
                         <div>
                             <HeadlineButton
                                 toggled={!globalMode}
@@ -511,23 +509,23 @@ const MixingPanel = () => {
                                 Voreinstellungen
                             </HeadlineButton>
                         </div>
-                        <Block padding={2}>
-                            <Paragraph kind="micro">
+                        <div>
+                            <p className="micro">
                                 {globalMode
                                     ? 'Diese Einstellungen gelten als Voreinstellung für alle'
                                     : 'Diese Einstellungen gelten nur für Dich'}
-                            </Paragraph>
-                        </Block>
-                    </Block>
+                            </p>
+                        </div>
+                    </div>
                 )}
                 {!globalMode && (
-                    <Block padding={2}>
+                    <div>
                         {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
                         <label className="micro">
                             Betreffendes Gerät:&nbsp;&nbsp;
                             <DeviceSelector />
                         </label>
-                    </Block>
+                    </div>
                 )}
                 <div className={styles.inner}>
                     {groupIds.map((groupId) => (

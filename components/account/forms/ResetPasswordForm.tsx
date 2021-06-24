@@ -3,10 +3,9 @@ import { useRouter } from 'next/router'
 import { Formik, Field, FormikHelpers, Form } from 'formik'
 import * as Yup from 'yup'
 import { AuthError, useAuth } from '@digitalstage/api-client-react'
-import Block from '../../../componentsOld/ui/Block'
-import Notification from '../../../ui/Notification'
-import Button from '../../../ui/Button'
-import Input from '../../../ui/Input'
+import Notification from '../../../fastui/components/Notification'
+import Button from '../../../fastui/components/interaction/Button'
+import Input from '../../../fastui/components/interaction/Input'
 import translateError from './translateError'
 
 interface Values {
@@ -64,11 +63,7 @@ function ResetPasswordForm({ resetToken }: Props): JSX.Element {
         >
             {({ errors, touched, handleReset, handleSubmit, dirty }) => (
                 <Form onReset={handleReset} onSubmit={handleSubmit} autoComplete="off">
-                    {msg.state && (
-                        <Block paddingBottom={4}>
-                            <Notification kind={msg.type}>{msg.kids}</Notification>
-                        </Block>
-                    )}
+                    {msg.state && <Notification kind={msg.type}>{msg.kids}</Notification>}
 
                     <Field
                         as={Input}
@@ -88,9 +83,11 @@ function ResetPasswordForm({ resetToken }: Props): JSX.Element {
                         name="repeatPassword"
                         error={touched.repeatPassword && errors.repeatPassword}
                     />
-                    <Button type="submit" disabled={!dirty || Object.keys(errors).length > 0}>
-                        Passwort setzen
-                    </Button>
+                    <div className="center">
+                        <Button type="submit" disabled={!dirty || Object.keys(errors).length > 0}>
+                            Passwort setzen
+                        </Button>
+                    </div>
                 </Form>
             )}
         </Formik>

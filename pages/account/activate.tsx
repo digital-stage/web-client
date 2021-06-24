@@ -3,8 +3,8 @@ import { useRouter } from 'next/router'
 import { useAuth } from '@digitalstage/api-client-react'
 import Link from 'next/link'
 import ActivationForm from '../../components/account/forms/ActivationForm'
-import AuthLayout from '../../ui/AuthLayout'
-import TextLink from '../../ui/TextLink'
+import AuthLayout from '../../fastui/components/AuthLayout'
+import TextLink from '../../fastui/components/interaction/TextLink'
 
 const Activate = () => {
     const { loading, user } = useAuth()

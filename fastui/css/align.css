@@ -1,0 +1,10 @@
+.center {
+    text-align: center;
+}
+.left {
+    text-align: left;
+}
+.vertical {
+    display: inline-flex;
+    flex-direction: row;
+}

@@ -15,7 +15,6 @@
   },
   "dependencies": {
     "@digitalstage/api-types": "^0.2.7",
-    "@types/fabric": "^4.5.0",
     "body-scroll-lock": "^3.1.5",
     "debug": "^4.3.1",
     "detect-browser": "^5.2.0",
@@ -54,7 +53,6 @@
     "eslint-plugin-react": "^7.24.0",
     "eslint-plugin-react-hooks": "^4.2.0",
     "prettier": "^2.3.1",
-    "sass": "^1.35.1",
     "typescript": "^4.3.4"
   }
 }

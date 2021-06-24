@@ -2,7 +2,6 @@ import { useAuth } from '@digitalstage/api-client-react'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 import MixingPanel from '../components/mixer/MixingPanel'
-import Block from '../componentsOld/ui/Block'
 
 const Mixer = () => {
     const { loading, user } = useAuth()
@@ -13,10 +12,6 @@ const Mixer = () => {
         }
     }, [loading, user, replace])
 
-    return (
-        <Block padding={2}>
-            <MixingPanel />
-        </Block>
-    )
+    return <MixingPanel />
 }
 export default Mixer

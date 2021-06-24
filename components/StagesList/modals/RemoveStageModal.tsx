@@ -1,8 +1,7 @@
 import { Stage, useConnection, useStageSelector } from '@digitalstage/api-client-react'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
 import { useCallback } from 'react'
-import Modal, { ModalButton, ModalFooter, ModalHeader } from '../../../ui/Modal'
-import Paragraph from '../../../componentsOld/ui/Paragraph'
+import Modal, { ModalButton, ModalFooter, ModalHeader } from '../../../fastui/components/Modal'
 
 const RemoveStageModal = ({
     stageId,
@@ -32,10 +31,10 @@ const RemoveStageModal = ({
                 <ModalHeader>
                     <h4>Bühne {stage.name || stage._id} wirklich löschen?</h4>
                 </ModalHeader>
-                <Paragraph kind="micro">
+                <p className="micro">
                     Die Bühne und alle Gruppen sowie Teilnehmer werden unwiderruflich gelöscht und
                     sind nicht mehr verfügbar!
-                </Paragraph>
+                </p>
                 <ModalFooter>
                     <ModalButton kind="tertiary" onClick={onClose}>
                         Nein

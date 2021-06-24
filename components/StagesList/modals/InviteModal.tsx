@@ -2,11 +2,10 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { useConnection } from '@digitalstage/api-client-react'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
 import { BiReset } from 'react-icons/bi'
-import Modal, { ModalButton, ModalFooter, ModalHeader } from '../../../ui/Modal'
-import Notification from '../../../ui/Notification'
-import Button from '../../../ui/Button'
-import Block from '../../../componentsOld/ui/Block'
-import Input from '../../../ui/Input'
+import Modal, { ModalButton, ModalFooter, ModalHeader } from '../../../fastui/components/Modal'
+import Notification from '../../../fastui/components/Notification'
+import Button from '../../../fastui/components/interaction/Button'
+import Input from '../../../fastui/components/interaction/Input'
 
 const InviteModal = ({
     open,
@@ -74,7 +73,7 @@ const InviteModal = ({
             <ModalHeader>
                 <h3>Einladen</h3>
             </ModalHeader>
-            <Block width="full" align="center" justify="center">
+            <div className="flex align-center justify-center">
                 {code ? (
                     <Input type="text" readOnly value={code} label="Einladungscode" light />
                 ) : (
@@ -83,9 +82,9 @@ const InviteModal = ({
                 <Button round onClick={() => setResetOpen(true)}>
                     <BiReset />
                 </Button>
-            </Block>
-            <Block width="full" align="center" justify="center" paddingBottom={2}>
-                <Block paddingRight={2}>
+            </div>
+            <div className="flex align-center justify-center pb-2">
+                <div className="pr-2">
                     <Button
                         onClick={() => {
                             navigator.clipboard
@@ -100,7 +99,7 @@ const InviteModal = ({
                     >
                         Code kopieren
                     </Button>
-                </Block>
+                </div>
                 <Button
                     onClick={() => {
                         const port: string = window.location.port ? `:${window.location.port}` : ''
@@ -117,7 +116,7 @@ const InviteModal = ({
                 >
                     Link kopieren
                 </Button>
-            </Block>
+            </div>
             {info && <Notification kind="success">{info}</Notification>}
             {error && <Notification kind="error">{error}</Notification>}
             <ModalFooter>

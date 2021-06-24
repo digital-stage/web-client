@@ -6,7 +6,7 @@ import { useConnection, useStageSelector } from '@digitalstage/api-client-react'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
 import useSelectedDevice from '../../lib/useSelectedDevice'
 import styles from './DevicesList.module.css'
-import Button from '../../ui/Button'
+import Button from '../../fastui/components/interaction/Button'
 
 const TypeNames = {
     jammer: 'Jammer-Client',

@@ -3,10 +3,9 @@ import { Field, Form, Formik, FormikProps } from 'formik'
 import { AuthError, useAuth } from '@digitalstage/api-client-react'
 import { useRouter } from 'next/router'
 import * as Yup from 'yup'
-import Input from '../../../ui/Input'
-import Button from '../../../ui/Button'
-import Notification from '../../../ui/Notification'
-import Block from '../../../componentsOld/ui/Block'
+import Input from '../../../fastui/components/interaction/Input'
+import Button from '../../../fastui/components/interaction/Button'
+import Notification from '../../../fastui/components/Notification'
 import translateError from './translateError'
 
 const LoginForm = (): JSX.Element => {
@@ -77,19 +76,15 @@ const LoginForm = (): JSX.Element => {
                             notification={props.touched.password && props.errors.password}
                             maxLength={20}
                         />
-                        {error && (
-                            <Block paddingBottom={4}>
-                                <Notification kind="error">{error}</Notification>
-                            </Block>
-                        )}
-                        <Block width={12} align="center">
+                        {error && <Notification kind="error">{error}</Notification>}
+                        <div className="center">
                             <Button
                                 disabled={!props.dirty || Object.keys(props.errors).length > 0}
                                 type="submit"
                             >
                                 Anmelden
                             </Button>
-                        </Block>
+                        </div>
                     </Form>
                 )}
             </Formik>

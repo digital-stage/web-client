@@ -1,6 +1,4 @@
-import '../styles/reset.css'
-import '../styles/root.css'
-import '../styles/globals.css'
+import '../fastui/styles.css'
 import {
     DigitalStageProvider,
     AudioContextProvider,
@@ -15,7 +13,7 @@ import Layout from '../components/Layout'
 import { StageJoinerProvider } from '../lib/useStageJoiner'
 import StageJoiner from '../components/StageJoiner'
 import PlaybackOverlay from '../components/PlaybackOverlay'
-import StreamController from '../components/StreamController'
+import StreamController from '../components/global/StreamController'
 import { NotificationProvider } from '../components/NotificationCenter'
 
 function MyApp({ Component, pageProps }: AppProps) {

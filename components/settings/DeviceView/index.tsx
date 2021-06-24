@@ -1,8 +1,8 @@
 import { Device, useConnection, useStageSelector } from '@digitalstage/api-client-react'
 import { ClientDeviceEvents, ClientDevicePayloads, MediasoupDevice } from '@digitalstage/api-types'
 import React from 'react'
-import LiveInput from '../../../ui/LiveInput'
-import Button from '../../../ui/Button'
+import LiveInput from '../../../fastui/components/interaction/LiveInput'
+import Button from '../../../fastui/components/interaction/Button'
 import MediasoupSettings from './MediasoupSettings'
 import SoundCardSettings from './SoundCardSettings'
 

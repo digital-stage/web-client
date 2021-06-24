@@ -1,8 +1,8 @@
 import React from 'react'
 import Link from 'next/link'
 import ForgetPasswordForm from '../../components/account/forms/ForgetPasswordForm'
-import AuthLayout from '../../ui/AuthLayout'
-import TextLink from '../../ui/TextLink'
+import AuthLayout from '../../fastui/components/AuthLayout'
+import TextLink from '../../fastui/components/interaction/TextLink'
 
 const Forgot = () => {
     return (

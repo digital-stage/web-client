@@ -1,0 +1,35 @@
+.backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: scroll;
+    display: flex;
+    justify-content: center;
+    padding: 72px 12px;
+    min-height: 100%;
+    transition-duration: 200ms;
+    transition-property: background-color, backdrop-filter;
+    transition-timing-function: cubic-bezier(0, 0, 1, 1);
+
+    /* Closed state */
+    background-color: transparent;
+    backdrop-filter: blur(10px) opacity(0);
+}
+.backdrop.open {
+    background-color: var(---overlay, rgba(0, 0, 0, 0.4));
+    backdrop-filter: blur(10px) opacity(1);
+
+}
+.backdrop.opening {
+    background-color: transparent;
+    backdrop-filter: blur(10px) opacity(0);
+
+}
+.backdrop.closing {
+    background-color: transparent;
+    backdrop-filter: blur(10px) opacity(0);
+}

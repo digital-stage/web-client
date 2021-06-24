@@ -191,15 +191,6 @@ const AudioTrackRenderer = ({
                 pannerNode.coneOuterAngle = 140
                 pannerNode.coneOuterGain = 0.3
             }
-            console.log(
-                'Switched node to ',
-                position.x,
-                position.y,
-                position.z,
-                position.rX,
-                position.rY,
-                position.rZ
-            )
         }
     }, [audioContext, pannerNode, position])
 
@@ -243,7 +234,6 @@ const StageDeviceRenderer = ({
 
     useEffect(() => {
         if (audioContext) {
-            console.log('Creating oscillator')
             const node = audioContext.createOscillator()
             node.type = 'square'
             node.frequency.setValueAtTime(
@@ -347,15 +337,6 @@ const StageDeviceRenderer = ({
                 pannerNode.coneOuterAngle = 140
                 pannerNode.coneOuterGain = 0.3
             }
-            console.log(
-                'Switched node to ',
-                position.x,
-                position.y,
-                position.z,
-                position.rX,
-                position.rY,
-                position.rZ
-            )
         }
     }, [audioContext, pannerNode, position])
 
@@ -539,7 +520,6 @@ const ListenerRenderer = ({
 
     useEffect(() => {
         if (audioContext) {
-            console.log('[AudioRenderer] Changed position of listener')
             audioContext.listener.positionX.setValueAtTime(position.x, audioContext.currentTime)
             audioContext.listener.positionY.setValueAtTime(position.y, audioContext.currentTime)
             audioContext.listener.positionZ.setValueAtTime(position.z, audioContext.currentTime)

@@ -5,7 +5,7 @@ import { VolumeProperties } from '@digitalstage/api-types'
 import { BiReset } from 'react-icons/bi'
 import styles from './ChannelStrip.module.css'
 import VolumeSlider from '../VolumeSlider'
-import { DangerButton, SecondaryButton } from '../../../ui/Button'
+import { DangerButton, SecondaryButton } from '../../../fastui/components/interaction/Button'
 
 const ChannelStrip = (props: {
     channel: VolumeProperties

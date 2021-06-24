@@ -1,11 +1,10 @@
 import React, { useEffect } from 'react'
 import { useAuth } from '@digitalstage/api-client-react'
 import { useRouter } from 'next/router'
-import Container from '../../componentsOld/ui/Container'
-import Block from '../../componentsOld/ui/Block'
-import LoadingOverlay from '../../componentsOld/LoadingOverlay'
+import DefaultContainer from 'fastui/components/container/DefaultContainer'
+import LoadingOverlay from '../../components/LoadingOverlay'
 import ProfileEditor from '../../components/account/ProfileEditor'
-import DefaultPanel from '../../ui/panels/DefaultPanel'
+import DefaultPanel from '../../fastui/components/panels/DefaultPanel'
 
 const Profile = () => {
     const { user, loading } = useAuth()
@@ -20,14 +19,12 @@ const Profile = () => {
     if (loading) return <LoadingOverlay>Lade Nutzerdaten...</LoadingOverlay>
 
     return (
-        <Container>
-            <Block paddingTop={4} paddingBottom={4}>
-                <h2>Mein Benutzerprofil</h2>
-                <DefaultPanel>
-                    <ProfileEditor />
-                </DefaultPanel>
-            </Block>
-        </Container>
+        <DefaultContainer>
+            <h2>Mein Benutzerprofil</h2>
+            <DefaultPanel>
+                <ProfileEditor />
+            </DefaultPanel>
+        </DefaultContainer>
     )
 }
 export default Profile

@@ -5,12 +5,14 @@ interface ISelectedDeviceContext {
     selectedDeviceId?: string
     selectedDevice?: Device
     selectDeviceId: (deviceId: string) => any
+    devices: Device[]
 }
 
 const SelectedDeviceContext = createContext<ISelectedDeviceContext>({
     selectDeviceId: () => {
         throw new Error('Missing provider')
     },
+    devices: [],
 })
 
 export const SelectedDeviceProvider = (props: { children: React.ReactNode }) => {
@@ -25,19 +27,9 @@ export const SelectedDeviceProvider = (props: { children: React.ReactNode }) => 
     const selectedDevice = useStageSelector<Device | undefined>(
         (state) => state.devices.byId[selectedDeviceId]
     )
-    /*
-    useEffect(() => {
-        if (localDeviceId) {
-            selectDeviceId((prev) => {
-                if (!prev) return localDeviceId
-                return prev
-            })
-        }
-    }, [localDeviceId]) */
 
     useEffect(() => {
         if (!selectedDevice && devices.length > 0) {
-            console.log('SELECTING LOCAL DEVICE')
             selectDeviceId(localDeviceId)
         }
     }, [selectedDevice, devices, localDeviceId])
@@ -48,6 +40,7 @@ export const SelectedDeviceProvider = (props: { children: React.ReactNode }) => 
                 selectedDeviceId,
                 selectedDevice,
                 selectDeviceId,
+                devices,
             }}
         >
             {children}

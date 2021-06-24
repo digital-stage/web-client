@@ -3,10 +3,9 @@ import { Field, Form, Formik, FormikHelpers } from 'formik'
 import * as Yup from 'yup'
 import { useRouter } from 'next/router'
 import { AuthError, useAuth } from '@digitalstage/api-client-react'
-import Button from '../../../ui/Button'
-import Input from '../../../ui/Input'
-import Block from '../../../componentsOld/ui/Block'
-import Notification from '../../../ui/Notification'
+import Button from '../../../fastui/components/interaction/Button'
+import Input from '../../../fastui/components/interaction/Input'
+import Notification from '../../../fastui/components/Notification'
 import translateError from './translateError'
 
 export interface Values {
@@ -55,16 +54,12 @@ const ResendActivationForm = (): JSX.Element => {
                         autocomplete="email"
                         error={touched.email && errors.email}
                     />
-                    {message && (
-                        <Block paddingBottom={4}>
-                            <Notification kind="error">{message}</Notification>
-                        </Block>
-                    )}
-                    <Block align="center">
+                    {message && <Notification kind="error">{message}</Notification>}
+                    <div className="center">
                         <Button type="submit" disabled={!dirty || Object.keys(errors).length > 0}>
                             Erneut senden
                         </Button>
-                    </Block>
+                    </div>
                 </Form>
             )}
         </Formik>

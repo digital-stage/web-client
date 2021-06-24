@@ -3,12 +3,12 @@ import { ChatMessage, ClientDeviceEvents, ClientDevicePayloads } from '@digitals
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { AiOutlineSend } from 'react-icons/ai'
 import { useRouter } from 'next/router'
-import Button from '../ui/Button'
-import Notification from '../ui/Notification'
+import Button from '../fastui/components/interaction/Button'
+import Notification from '../fastui/components/Notification'
 import styles from '../styles/Chat.module.css'
 import useForceUpdate from '../lib/useForceUpdate'
-import DefaultContainer from '../ui/container/DefaultContainer'
-import FixedPanel from '../ui/panels/FixedPanel'
+import DefaultContainer from '../fastui/components/container/DefaultContainer'
+import FixedPanel from '../fastui/components/panels/FixedPanel'
 import { useNotification } from '../components/NotificationCenter'
 
 const convertTime = (time: number): string => {

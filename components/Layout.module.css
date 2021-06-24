@@ -1,0 +1,35 @@
+.layout {
+  position: relative;
+  display: flex;
+  min-height: 0;
+  width: 100%;
+  flex-direction: row;
+  flex-wrap: nowrap;
+}
+.sidebar {
+  position: relative;
+  flex-shrink: 0;
+  flex-grow: 0;
+  width: 0;
+  transition-duration: 200ms;
+  transition-property: width;
+  transition-timing-function: cubic-bezier(0, 0, 1, 1);
+
+}
+@media only screen and (min-width: 600px) and (min-height: 600px) {
+  .sidebar {
+    width: 72px;
+  }
+}
+.fixedSidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+}
+.content {
+  position: relative;
+  flex-grow: 1;
+  display: block;
+  min-height: 100vh;
+}

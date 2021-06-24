@@ -5,13 +5,11 @@ import React, { useCallback, useState } from 'react'
 import { Field, Form, Formik } from 'formik'
 import * as Yup from 'yup'
 import Image from 'next/image'
-import Modal, { ModalButton, ModalFooter, ModalHeader } from '../../../ui/Modal'
-import Input from '../../../ui/Input'
-import Notification from '../../../ui/Notification'
-import Block from '../../../componentsOld/ui/Block'
-import Paragraph from '../../../componentsOld/ui/Paragraph'
-import Collapse from '../../../ui/Collapse'
-import Radio, { RadioPanel } from '../../../componentsOld/ui/Radio'
+import Modal, { ModalButton, ModalFooter, ModalHeader } from '../../../fastui/components/Modal'
+import Input from '../../../fastui/components/interaction/Input'
+import Notification from '../../../fastui/components/Notification'
+import Collapse from '../../../fastui/components/interaction/Collapse'
+import Radio, { RadioPanel } from '../../../fastui/components/interaction/Radio'
 
 const StageModal = ({
     open,
@@ -115,82 +113,74 @@ const StageModal = ({
                             error={touched.name && errors.name}
                             light
                         />
-                        <Block vertical>
-                            <h5 className="muted">Audioübertragung</h5>
-                        </Block>
-                        <Block vertical align="center">
-                            <Block padding={4}>
-                                <RadioPanel light>
-                                    <Field
-                                        as={Radio}
-                                        type="radio"
-                                        name="audioType"
-                                        value="mediasoup"
-                                        label={
-                                            <>
-                                                <Image
-                                                    width={48}
-                                                    height={48}
-                                                    src="/static/mediasoup.png"
-                                                />
-                                                <Paragraph kind="micro">Mediasoup</Paragraph>
-                                                <h6 style={{ textAlign: 'center' }}>BROWSER</h6>
-                                            </>
-                                        }
-                                        light
-                                    />
-                                    <Field
-                                        as={Radio}
-                                        type="radio"
-                                        name="audioType"
-                                        value="jammer"
-                                        label={
-                                            <>
-                                                <Paragraph kind="micro">Jammernetz</Paragraph>
-                                                <h6 style={{ textAlign: 'center' }}>
-                                                    Windows, macOS &amp; Linux
-                                                </h6>
-                                            </>
-                                        }
-                                        light
-                                    />
-                                    <Field
-                                        as={Radio}
-                                        type="radio"
-                                        name="audioType"
-                                        value="ov"
-                                        label={
-                                            <>
-                                                <Image
-                                                    width={48}
-                                                    height={48}
-                                                    src="/static/ov.png"
-                                                />
-                                                <Paragraph kind="micro">Orlandoviols</Paragraph>
-                                                <h5 style={{ textAlign: 'center' }}>
-                                                    macOS, Linux &amp; BOX
-                                                </h5>
-                                            </>
-                                        }
-                                        light
-                                    />
-                                </RadioPanel>
-                            </Block>
+                        <h5 className="muted">Audioübertragung</h5>
+                        <div className="vertical align-center">
+                            <RadioPanel light>
+                                <Field
+                                    as={Radio}
+                                    type="radio"
+                                    name="audioType"
+                                    value="mediasoup"
+                                    label={
+                                        <>
+                                            <Image
+                                                width={48}
+                                                height={48}
+                                                src="/static/mediasoup.png"
+                                            />
+                                            <p className="micro">Mediasoup</p>
+                                            <h6 style={{ textAlign: 'center' }}>BROWSER</h6>
+                                        </>
+                                    }
+                                    light
+                                />
+                                <Field
+                                    as={Radio}
+                                    type="radio"
+                                    name="audioType"
+                                    value="jammer"
+                                    label={
+                                        <>
+                                            <p className="micro">Jammernetz</p>
+                                            <h6 style={{ textAlign: 'center' }}>
+                                                Windows, macOS &amp; Linux
+                                            </h6>
+                                        </>
+                                    }
+                                    light
+                                />
+                                <Field
+                                    as={Radio}
+                                    type="radio"
+                                    name="audioType"
+                                    value="ov"
+                                    label={
+                                        <>
+                                            <Image width={48} height={48} src="/static/ov.png" />
+                                            <p className="micro">Orlandoviols</p>
+                                            <h5 style={{ textAlign: 'center' }}>
+                                                macOS, Linux &amp; BOX
+                                            </h5>
+                                        </>
+                                    }
+                                    light
+                                />
+                            </RadioPanel>
                             {errors.audioType && touched.audioType && (
                                 <Notification kind="error">{errors.audioType}</Notification>
                             )}
                             {values.audioType && (
-                                <Block paddingBottom={4}>
-                                    <Paragraph>
+                                <div className="pb-4">
+                                    <p>
                                         {values.audioType === 'mediasoup' && 'Web only'}
                                         {values.audioType === 'jammer' &&
                                             'Gut für Chöre, alle Betriebssysteme unterstützt'}
                                         {values.audioType === 'ov' &&
                                             'Gut für Musiker, läuft nur unter MacOS oder unter Verwendung der ovbox'}
-                                    </Paragraph>
-                                </Block>
+                                    </p>
+                                </div>
                             )}
-                        </Block>
+                        </div>
                         <Field
                             as={Input}
                             id="password"

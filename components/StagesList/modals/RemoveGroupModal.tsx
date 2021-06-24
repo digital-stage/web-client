@@ -1,8 +1,7 @@
 import { useConnection, useStageSelector } from '@digitalstage/api-client-react'
 import { ClientDeviceEvents, ClientDevicePayloads, Group } from '@digitalstage/api-types'
 import { useCallback } from 'react'
-import Modal, { ModalButton, ModalFooter, ModalHeader } from '../../../ui/Modal'
-import Paragraph from '../../../componentsOld/ui/Paragraph'
+import Modal, { ModalButton, ModalFooter, ModalHeader } from '../../../fastui/components/Modal'
 
 const RemoveGroupModal = ({
     groupId,
@@ -32,10 +31,10 @@ const RemoveGroupModal = ({
                 <ModalHeader>
                     <h4>Gruppe {group.name || group._id} wirklich löschen?</h4>
                 </ModalHeader>
-                <Paragraph kind="micro">
+                <p className="micro">
                     Die Gruppen und deren Teilnehmer werden unwiderruflich gelöscht und sind nicht
                     mehr verfügbar!
-                </Paragraph>
+                </p>
                 <ModalFooter>
                     <ModalButton kind="tertiary" onClick={onClose}>
                         Nein

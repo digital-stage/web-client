@@ -3,8 +3,8 @@ import { useRouter } from 'next/router'
 import { useConnection, useStageSelector } from '@digitalstage/api-client-react'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
 import useStageJoiner from '../lib/useStageJoiner'
-import Modal, { ModalButton, ModalFooter } from '../ui/Modal'
-import Input from '../ui/Input'
+import Modal, { ModalButton, ModalFooter } from '../fastui/components/Modal'
+import Input from '../fastui/components/interaction/Input'
 
 /**
  * The StageJoiner is a usually hidden component,

@@ -1,10 +1,9 @@
 import React, { useState } from 'react'
 import { useAuth, useConnection, User, useStageSelector } from '@digitalstage/api-client-react'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
-import Block from '../../componentsOld/ui/Block'
-import LiveInput from '../../ui/LiveInput'
-import Button from '../../ui/Button'
-import Notification from '../../ui/Notification'
+import LiveInput from '../../fastui/components/interaction/LiveInput'
+import Button from '../../fastui/components/interaction/Button'
+import Notification from '../../fastui/components/Notification'
 import styles from './ProfileEditor.module.css'
 
 const ProfileEditor = () => {
@@ -27,8 +26,8 @@ const ProfileEditor = () => {
                     } as ClientDevicePayloads.ChangeUser)
                 }
             />
-            <Block>Email: {authUser?.email}</Block>
-            <Block vertical padding={4}>
+            <div>Email: {authUser?.email}</div>
+            <div>
                 <Button
                     onClick={() =>
                         requestPasswordReset(authUser?.email)
@@ -42,7 +41,7 @@ const ProfileEditor = () => {
                 >
                     Passwort ändern
                 </Button>
-            </Block>
+            </div>
             {message && <Notification kind="success">{message}</Notification>}
             {error && <Notification kind="error">{error}</Notification>}
         </div>

@@ -1,9 +1,8 @@
 import { useAuth, useStageSelector } from '@digitalstage/api-client-react'
 import React from 'react'
-import styles from './Layout.module.scss'
+import styles from './Layout.module.css'
 import Sidebar from './global/Sidebar'
-import Background from '../ui/Background'
-import MobileMenu from '../componentsOld/MobileMenu'
+import Background from '../fastui/components/Background'
 import { NotificationPanel } from './NotificationCenter'
 import ProfileMenu from './global/ProfileMenu'
 
@@ -25,7 +24,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 <NotificationPanel />
             </div>
             {!loading && user && <ProfileMenu />}
-            {insideStage && <MobileMenu />}
         </div>
     )
 }

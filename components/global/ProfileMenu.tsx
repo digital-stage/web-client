@@ -4,10 +4,9 @@ import { useAuth, useStageSelector } from '@digitalstage/api-client-react'
 import { FaUser } from 'react-icons/fa'
 import { User } from '@digitalstage/api-types'
 import styles from './ProfileMenu.module.css'
-import OverlayMenu from '../../ui/nav/OverlayMenu'
-import Paragraph from '../../componentsOld/ui/Paragraph'
-import Block from '../../componentsOld/ui/Block'
-import { DangerButton, SecondaryButton } from '../../ui/Button'
+import OverlayMenu from '../../fastui/components/nav/OverlayMenu'
+import { DangerButton, SecondaryButton } from '../../fastui/components/interaction/Button'
+import TextLink from '../../fastui/components/interaction/TextLink'
 
 const ProfileMenu = () => {
     const [open, setOpen] = useState<boolean>(false)
@@ -24,18 +23,19 @@ const ProfileMenu = () => {
                 className={styles.icon}
                 menu={
                     <>
-                        <Paragraph kind="micro">Angemeldet als</Paragraph>
+                        <p className="micro">Angemeldet als</p>
                         <h5>{user?.name}</h5>
-                        <Paragraph kind="micro">{authUser?.email}</Paragraph>
+                        <p className="micro">{authUser?.email}</p>
                         <hr />
-                        <Block vertical paddingTop={2} paddingBottom={4}>
-                            <Link href="/account/profile">
-                                {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions,jsx-a11y/click-events-have-key-events */}
-                                <a className={styles.profileButton} onClick={() => setOpen(false)}>
-                                    Profil bearbeiten
-                                </a>
-                            </Link>
-                        </Block>
+                        <Link href="/account/profile">
+                            {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions,jsx-a11y/click-events-have-key-events */}
+                            <TextLink
+                                className={styles.profileButton}
+                                onClick={() => setOpen(false)}
+                            >
+                                Profil bearbeiten
+                            </TextLink>
+                        </Link>
                         <Link href="/account/logout">
                             <DangerButton>Logout</DangerButton>
                         </Link>

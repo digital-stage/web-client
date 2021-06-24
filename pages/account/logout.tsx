@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import { useAuth } from '@digitalstage/api-client-react'
 import { useEffect } from 'react'
 import debug from 'debug'
-import LoadingOverlay from '../../componentsOld/LoadingOverlay'
+import LoadingOverlay from '../../components/LoadingOverlay'
 
 const reportError = debug('logout').extend('error')
 

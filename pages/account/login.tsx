@@ -3,8 +3,8 @@ import Link from 'next/link'
 import { useAuth } from '@digitalstage/api-client-react'
 import { useRouter } from 'next/router'
 import LoginForm from '../../components/account/forms/LoginForm'
-import AuthLayout from '../../ui/AuthLayout'
-import TextLink from '../../ui/TextLink'
+import AuthLayout from '../../fastui/components/AuthLayout'
+import TextLink from '../../fastui/components/interaction/TextLink'
 
 const Login = () => {
     const { loading, user } = useAuth()

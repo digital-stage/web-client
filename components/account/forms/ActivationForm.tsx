@@ -3,9 +3,9 @@ import { Field, Form, Formik, FormikHelpers } from 'formik'
 import * as Yup from 'yup'
 import { useRouter } from 'next/router'
 import { AuthError, useAuth } from '@digitalstage/api-client-react'
-import Input from '../../../ui/Input'
-import Notification from '../../../ui/Notification'
-import Button from '../../../ui/Button'
+import Input from '../../../fastui/components/interaction/Input'
+import Notification from '../../../fastui/components/Notification'
+import Button from '../../../fastui/components/interaction/Button'
 import translateError from './translateError'
 
 export interface Values {
@@ -83,9 +83,14 @@ const ActivationForm = (props: { initialCode?: string }): JSX.Element => {
                             name="code"
                             error={touched.code && errors.code}
                         />
-                        <Button type="submit" disabled={!dirty || Object.keys(errors).length > 0}>
-                            Konto aktivieren
-                        </Button>
+                        <div className="center">
+                            <Button
+                                type="submit"
+                                disabled={!dirty || Object.keys(errors).length > 0}
+                            >
+                                Konto aktivieren
+                            </Button>
+                        </div>
                     </Form>
                 )}
             </Formik>

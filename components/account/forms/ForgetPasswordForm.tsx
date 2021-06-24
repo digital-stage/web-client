@@ -2,10 +2,9 @@ import * as React from 'react'
 import { Formik, Field, FormikHelpers, Form } from 'formik'
 import * as Yup from 'yup'
 import { AuthError, useAuth } from '@digitalstage/api-client-react'
-import Notification from '../../../ui/Notification'
-import Input from '../../../ui/Input'
-import Button from '../../../ui/Button'
-import Block from '../../../componentsOld/ui/Block'
+import Notification from '../../../fastui/components/Notification'
+import Input from '../../../fastui/components/interaction/Input'
+import Button from '../../../fastui/components/interaction/Button'
 import translateError from './translateError'
 
 interface Values {
@@ -57,11 +56,7 @@ const ForgetPasswordForm = (): JSX.Element => {
         >
             {({ errors, touched, handleReset, handleSubmit, dirty }) => (
                 <Form onReset={handleReset} onSubmit={handleSubmit}>
-                    {msg.state && (
-                        <Block paddingBottom={4}>
-                            <Notification type={msg.type}>{msg.kids}</Notification>
-                        </Block>
-                    )}
+                    {msg.state && <Notification type={msg.type}>{msg.kids}</Notification>}
                     <Field
                         as={Input}
                         id="email"
@@ -82,11 +77,11 @@ const ForgetPasswordForm = (): JSX.Element => {
                         error={touched.repeatEmail && errors.repeatEmail}
                         value={user && user.email}
                     />
-                    <Block align="center">
+                    <div className="center">
                         <Button type="submit" disabled={!dirty || Object.keys(errors).length > 0}>
                             Passwort zurücksetzen
                         </Button>
-                    </Block>
+                    </div>
                 </Form>
             )}
         </Formik>

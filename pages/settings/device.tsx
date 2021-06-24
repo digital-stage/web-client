@@ -3,8 +3,8 @@ import { useRouter } from 'next/router'
 import React, { useEffect } from 'react'
 import useSelectedDevice from '../../lib/useSelectedDevice'
 import DeviceView from '../../components/settings/DeviceView'
-import DefaultContainer from '../../ui/container/DefaultContainer'
-import DefaultPanel from '../../ui/panels/DefaultPanel'
+import DefaultContainer from '../../fastui/components/container/DefaultContainer'
+import DefaultPanel from '../../fastui/components/panels/DefaultPanel'
 
 const DeviceSettings = () => {
     const { loading, user } = useAuth()

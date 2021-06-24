@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react'
 import { useAuth, useMediasoup } from '@digitalstage/api-client-react'
 import { useRouter } from 'next/router'
 import { Consumer } from 'mediasoup-client/lib/Consumer'
-import Container from '../componentsOld/ui/Container'
+import DefaultContainer from 'fastui/components/container/DefaultContainer'
 
 const SingleVideoTrackPlayer = ({ consumer }: { consumer: Consumer }) => {
     const videoRef = useRef<HTMLVideoElement>()
@@ -28,11 +28,11 @@ const Stage = () => {
     const { videoConsumers } = useMediasoup()
 
     return (
-        <Container>
+        <DefaultContainer>
             {Object.keys(videoConsumers).map((id) => (
                 <SingleVideoTrackPlayer consumer={videoConsumers[id]} />
             ))}
-        </Container>
+        </DefaultContainer>
     )
 }
 export default Stage

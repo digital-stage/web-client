@@ -16,10 +16,10 @@ import { Stage as KonvaStage, Layer as KonvaLayer } from 'react-konva/lib/ReactK
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
 import useImage from '../../../lib/useImage'
 import styles from './RoomManager.module.css'
-import HeadlineButton from '../../../componentsOld/ui/HeadlineButton'
+import HeadlineButton from '../../../fastui/components/interaction/HeadlineButton'
 import useSelectedDevice from '../../../lib/useSelectedDevice'
 import useColors from '../../../lib/useColors'
-import Button from '../../../ui/Button'
+import Button from '../../../fastui/components/interaction/Button'
 import StageMemberElement from './StageMemberElement'
 import ElementSelection from './ElementSelection'
 

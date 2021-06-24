@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useState } from 'react'
-import Notification, { KIND } from '../ui/Notification'
+import Notification, { KIND } from '../fastui/components/Notification'
 import styles from './NotificationCenter.module.css'
 
 interface Note {
