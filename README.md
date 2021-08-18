@@ -1,34 +1,68 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Digital Stage Web Client
+React and next.js based webclient for the Digital Stage platform.
 
-## Getting Started
+## Setup development environment
 
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
+To setup the whole server architecture including the web frontend, you have to install or use a working MongoDB and SMTP instance first.
+Then checkout the necessary services:
+```
+git clone https://github.com/digital-stage/auth-server.git
+git clone https://github.com/digital-stage/api-server.git
+git clone https://github.com/digital-stage/router.git
+git clone https://github.com/digital-stage/web-client.git
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+For each repository you have to install the dependencies and build using your favorite package manager (npm, yarn, etc.):
+```
+yarn install --cwd auth-server && yarn build --cwd auth-server
+yarn install --cwd api-server && yarn build --cwd api-server
+yarn install --cwd router && yarn build --cwd router
+yarn install --cwd web-client && yarn build --cwd web-client
+```
+Feel free to specify the environment variables inside the single projects - or just use our preconfigured environment settings.
+For these your *Mongo DB server* has to respond on port *27017*.
+The default .env provides:
+* Authentication server (auth-server) on *localhost:5000*
+* API server (api-server) on *localhost:4000*
+* Router (router) on *localhost:4100*
+* Web-frontend (web-client) on *localhost:3000*
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+The authentication service requires a working SMTP server.
+Configure it inside *auth-server/.env*:
+```
+# SMTP settings for sending mails
+SMTP_HOST=mail.yourdomain.com
+SMTP_FROM=noreply@yourdomain.com
+SMTP_SSL=false
+SMTP_PORT=587
+SMTP_USER=yourusername
+SMTP_PASSWORD=password
+```
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+Then just start all the services and enjoy the current development state:
+```
+cd auth-server && yarn start
+```
+```
+cd api-server && yarn start
+```
+```
+cd router && yarn start
+```
+```
+cd web-client && yarn start
+```
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+When you are currently working inside one of the given repositories you can also use live-update instead of just starting the built services:
+```
+cd auth-server && yarn dev
+```
+```
+cd api-server && yarn dev
+```
+```
+cd router && yarn dev
+```
+```
+cd web-client && yarn dev
+```
