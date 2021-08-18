@@ -1,6 +1,8 @@
 {
   "name": "@digitalstage/webclient",
+  "author": "Tobias Hegemann <tobias.hegemann@googlemail.com>",
   "description": "Webclient for Digital Stage supporting WebRTC audio and video transmission and control of all connected Digital Stage devices",
+  "license": "MIT",
   "keywords": [
     "webclient",
     "react",
@@ -10,6 +12,12 @@
     "audio",
     "video"
   ],
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
   "dependencies": {
     "@digitalstage/api-types": "^0.4.0",
     "@react-hook/debounce": "^4.0.0",
@@ -37,12 +45,6 @@
     "uuid": "^8.3.2",
     "webrtc-adapter": "^8.1.0",
     "yup": "^0.32.9"
-  },
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
   },
   "devDependencies": {
     "@types/node": "^16.6.1",
