@@ -1,20 +1,20 @@
 import React from 'react'
 import Link from 'next/link'
-import ForgetPasswordForm from '../../components/account/forms/ForgetPasswordForm'
-import AuthLayout from '../../fastui/components/AuthLayout'
-import TextLink from '../../fastui/components/interaction/TextLink'
+import AuthLayout from 'components/global/AuthLayout'
+import ForgetPasswordForm from 'components/account/ForgetPasswordForm'
+import Paragraph from '../../ui/Paragraph'
 
 const Forgot = () => {
     return (
         <AuthLayout>
             <h3>Passwort vergessen?</h3>
-            <p className="micro">
+            <Paragraph kind="micro">
                 Bitte gebe Deine E-Mail Adresse unten ein und wir senden Dir einen Link zur Vergabe
                 eines neuen Passwortes zu!
-            </p>
+            </Paragraph>
             <ForgetPasswordForm />
             <Link href="/account/login" passHref>
-                <TextLink>Zurück</TextLink>
+                <a className="text">Zurück</a>
             </Link>
         </AuthLayout>
     )

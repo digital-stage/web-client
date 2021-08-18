@@ -1,0 +1,78 @@
+
+:root {
+  font-size: 16px;
+}
+
+html {
+  font-size: 100%;
+}
+
+body {
+  font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+  Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+}
+
+h1 {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 2.5rem;
+}
+
+h2 {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 2rem;
+}
+
+h3 {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 1.5rem;
+}
+
+h4 {
+  font-family: 'Poppins', serif;
+  font-weight: 600;
+  font-size: 1.125rem;
+}
+
+h5 {
+  font-family: 'Poppins', serif;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+h6 {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+p {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+p.micro {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+p {
+  width: 100%;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.micro {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+.muted {
+  color: var(---muted, #808080);
+}

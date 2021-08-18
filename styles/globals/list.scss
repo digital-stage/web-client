@@ -1,0 +1,111 @@
+ul.list {
+  margin: 0;
+  padding: 0;
+
+  li.entry {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+    background-color: var(---grey-1);
+    border-radius: 18px;
+    padding: 8px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    align-items: center;
+    justify-content: flex-end;
+
+    &.selected {
+      background-color: var(---grey-4);
+    }
+
+    button {
+      margin-left: 4px;
+
+      svg {
+        font-size: 18px;
+      }
+    }
+  }
+
+  &.primary {
+    &.selected {
+      background-color: var(---primary)
+    }
+  }
+}
+
+
+@keyframes color {
+  0% {
+    background-color: var(---primary-active, #6F92F8);
+  }
+  50% {
+    background-color: #5779D9;
+  }
+  100% {
+    background-color: var(---primary-active, #6F92F8);
+  }
+}
+
+ul.altList {
+  display: block;
+  width: 100%;
+  border: 2px solid var(---muted);
+  border-radius: 18px;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+
+  li {
+    position: relative;
+    display: block;
+    width: 100%;
+
+    a {
+      position: relative;
+      display: block;
+      width: 100%;
+      padding: 16px;
+      margin: 0;
+      color: var(---text, #f4f4f4);
+      background-color: var(---grey-3, #292929);
+      user-select: none;
+      text-align: left;
+
+      &.selectable {
+        padding: 16px 48px 16px 16px;
+
+        &:hover {
+          background-color: var(---grey-4, #393939);
+          cursor: pointer;
+        }
+
+        &:active {
+          background-color: var(---primary, #5779D9);
+        }
+
+        &.selected {
+          background-color: var(---primary, #5779D9);
+          animation-name: color;
+          animation-duration: 2s;
+          animation-iteration-count: infinite;
+
+          &:hover {
+            background-color: var(---primary-hover, #415CA7);
+          }
+        }
+      }
+
+      .icon {
+        position: absolute;
+        top: 0;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        right: 16px;
+      }
+    }
+  }
+}

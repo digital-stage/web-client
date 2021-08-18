@@ -1,0 +1,268 @@
+@use "sass:math";
+
+$width: 14;
+$height: 9;
+$landscapeAspectRatio: math.div($height, $width);
+$portraitAspectRatio: math.div($width, $height);
+
+/* Common */
+.avatar {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: var(---text);
+}
+
+.control {
+  position: fixed;
+  top: 48px;
+  right: 8px;
+}
+
+.videoView {
+  position: absolute;
+  width: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: auto;
+  overflow: hidden;
+
+  video, img {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &.portrait {
+    img {
+      object-fit: contain;
+    }
+  }
+
+  &.landscape {
+    img {
+      object-fit: contain;
+    }
+  }
+
+  &.mirrored {
+    video, img {
+      transform: scaleX(-1)
+    }
+  }
+
+  .mirrorToggle {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+  }
+}
+
+.wrapper {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 64px;
+
+  @media only screen and (min-width: 600px) and (min-height: 600px) {
+    padding-bottom: 80px;
+  }
+}
+
+.conductorView {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+
+
+  .panel {
+
+  }
+}
+
+/* MEMBERS GRID */
+.membersGrid {
+  position: relative;
+  display: flex;
+  width: 100%;
+  flex-grow: 1;
+  flex-direction: row;
+  flex-wrap: wrap;
+
+  /* MEMBER VIEW */
+  .memberView {
+    flex-grow: 0;
+    position: relative;
+    border-style: solid;
+    border-width: 4px;
+    width: 50%;
+
+    @media only screen and (min-width: 1024px) and (min-height: 768px) {
+      width: 25%;
+    }
+
+    &:before {
+      position: relative;
+      width: 100%;
+      display: block;
+      content: '';
+      padding-top: $landscapeAspectRatio * 100%;
+    }
+
+    .info {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      background-color: #12121299;
+      padding-left: 4px;
+      padding-right: 4px;
+      padding-top: 2px;
+      border-top-right-radius: 18px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+
+      &.centered {
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: transparent;
+        bottom: unset;
+        right: unset;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        .status {
+          margin-top: 8px;
+        }
+
+        .names {
+          align-items: center;
+
+          .groupName {
+            margin-top: 8px;
+          }
+
+          .memberName {
+            margin-top: 4px;
+          }
+        }
+      }
+
+      .status {
+        width: 0.75rem;
+        height: 0.75rem;
+        border-radius: 50%;
+        background-color: var(---danger);
+        transition-property: background-color;
+        transition-duration: 200ms;
+        transition-timing-function: cubic-bezier(0.2, 0.8, 0.4, 1);
+
+        &.online {
+          background-color: var(---success);
+        }
+      }
+
+      .names {
+        display: flex;
+        flex-direction: column;
+
+        .groupName {
+          padding: 0;
+          margin: 0;
+          font-size: xx-small;
+          font-weight: lighter;
+          text-shadow: 0 0 10px var(---text);
+        }
+
+        .memberName {
+          padding: 0;
+          margin: 0;
+          font-weight: bold;
+          color: white;
+        }
+      }
+    }
+
+
+    .conductorToggle {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+    }
+  }
+
+  /* 1 members */
+  .memberView:first-of-type:last-of-type {
+    flex-grow: 1;
+    width: 100%;
+    max-height: calc(100vh - 64px);
+    overflow: hidden;
+
+    img {
+      object-fit: contain;
+    }
+
+    @media only screen and (min-width: 600px) and (min-height: 600px) {
+      max-height: calc(100vh - 80px);
+    }
+  }
+
+  /* 2 members */
+  .memberView:first-of-type:nth-last-of-type(2),
+  .memberView:nth-of-type(2):nth-last-of-type(1) {
+    flex-grow: 1;
+    width: 100%;
+    max-height: calc(100vh - 64px);
+    overflow: hidden;
+
+    @media (orientation: landscape) {
+      width: 50%;
+    }
+    @media only screen and (min-width: 600px) and (min-height: 600px) {
+      max-height: calc(100vh - 80px);
+    }
+  }
+
+  &.lanes {
+    .memberView:first-of-type:nth-last-of-type(2),
+    .memberView:nth-of-type(2):nth-last-of-type(1) {
+      width: 50%;
+    }
+  }
+
+  &.lanes {
+    .memberView {
+      width: 33.333333333%;
+
+      @media only screen and (min-width: 1024px) and (min-height: 768px) {
+        width: 16.6666666667%;
+      }
+
+      &:before {
+        padding-top: $portraitAspectRatio * 100%;
+      }
+
+      .videoView {
+        video, img {
+          object-fit: cover;
+        }
+      }
+    }
+  }
+}

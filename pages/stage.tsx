@@ -1,38 +1,29 @@
-import React, { useEffect, useRef } from 'react'
-import { useAuth, useMediasoup } from '@digitalstage/api-client-react'
+import { useStageSelector } from '@digitalstage/api-client-react'
+import React, { useEffect } from 'react'
+import StageView from 'components/stage/StageView'
 import { useRouter } from 'next/router'
-import { Consumer } from 'mediasoup-client/lib/Consumer'
-import DefaultContainer from 'fastui/components/container/DefaultContainer'
-
-const SingleVideoTrackPlayer = ({ consumer }: { consumer: Consumer }) => {
-    const videoRef = useRef<HTMLVideoElement>()
-
-    useEffect(() => {
-        if (consumer && videoRef.current) {
-            const { track } = consumer
-            videoRef.current.srcObject = new MediaStream([track])
-        }
-    }, [consumer, videoRef])
-
-    return <video autoPlay muted playsInline controls={false} ref={videoRef} />
-}
+import Head from 'next/head'
 
 const Stage = () => {
-    const { loading, user } = useAuth()
     const { replace } = useRouter()
+    const ready = useStageSelector((state) => state.globals.ready)
+    const stageId = useStageSelector((state) => state.globals.stageId)
     useEffect(() => {
-        if (!loading && !user && replace) {
-            replace('/account/login')
+        if (ready && !stageId) {
+            replace('/stages')
         }
-    }, [loading, user, replace])
-    const { videoConsumers } = useMediasoup()
+    }, [replace, ready, stageId])
 
-    return (
-        <DefaultContainer>
-            {Object.keys(videoConsumers).map((id) => (
-                <SingleVideoTrackPlayer consumer={videoConsumers[id]} />
-            ))}
-        </DefaultContainer>
-    )
+    if (stageId) {
+        return (
+            <>
+                <Head>
+                    <title>Meine Bühnen</title>
+                </Head>
+                <StageView stageId={stageId} />
+            </>
+        )
+    }
+    return null
 }
 export default Stage

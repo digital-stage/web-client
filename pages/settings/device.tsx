@@ -1,31 +1,14 @@
-import { useAuth } from '@digitalstage/api-client-react'
-import { useRouter } from 'next/router'
-import React, { useEffect } from 'react'
-import useSelectedDevice from '../../lib/useSelectedDevice'
-import DeviceView from '../../components/settings/DeviceView'
-import DefaultContainer from '../../fastui/components/container/DefaultContainer'
-import DefaultPanel from '../../fastui/components/panels/DefaultPanel'
+import DeviceSettings from '../../components/devices/DeviceSettings'
+import { useStageSelector } from '@digitalstage/api-client-react'
+import React from 'react'
+import SettingsLayout from 'components/settings/SettingsLayout'
 
-const DeviceSettings = () => {
-    const { loading, user } = useAuth()
-    const { replace } = useRouter()
-    useEffect(() => {
-        if (!loading && !user && replace) {
-            replace('/account/login')
-        }
-    }, [loading, user, replace])
-
-    const { selectedDeviceId } = useSelectedDevice()
+const DeviceSettingsPage = () => {
+    const selectedDeviceId = useStageSelector<string>((state) => state.globals.selectedDeviceId)
     return (
-        <DefaultContainer>
-            <DefaultPanel>
-                {selectedDeviceId ? (
-                    <DeviceView id={selectedDeviceId} />
-                ) : (
-                    <p>Bitte wähle ein Gerät aus</p>
-                )}
-            </DefaultPanel>
-        </DefaultContainer>
+        <SettingsLayout>
+            <DeviceSettings deviceId={selectedDeviceId} />
+        </SettingsLayout>
     )
 }
-export default DeviceSettings
+export default DeviceSettingsPage

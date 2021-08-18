@@ -1,32 +1,31 @@
-import React, { useEffect } from 'react'
+import LoginForm from 'components/account/LoginForm'
 import Link from 'next/link'
-import { useAuth } from '@digitalstage/api-client-react'
 import { useRouter } from 'next/router'
-import LoginForm from '../../components/account/forms/LoginForm'
-import AuthLayout from '../../fastui/components/AuthLayout'
-import TextLink from '../../fastui/components/interaction/TextLink'
+import React, { useEffect } from 'react'
+import AuthLayout from 'components/global/AuthLayout'
+import { useStageSelector } from '@digitalstage/api-client-react'
 
 const Login = () => {
-    const { loading, user } = useAuth()
+    const signedIn = useStageSelector((state) => state.auth.initialized && !!state.auth.token)
     const { push } = useRouter()
 
     useEffect(() => {
-        if (push && !loading && user) {
+        if (signedIn) {
             push('/')
         }
-    }, [user, loading, push])
+    }, [push, signedIn])
 
     return (
         <AuthLayout showMenu>
             <LoginForm />
             <Link href="/account/forgot" passHref>
-                <TextLink>Passwort vergessen?</TextLink>
+                <a className="text">Passwort vergessen?</a>
             </Link>
             <Link href="/account/activate" passHref>
-                <TextLink>Konto aktivieren</TextLink>
+                <a className="text">Konto aktivieren</a>
             </Link>
             <Link href="/account/reactivate" passHref>
-                <TextLink>Kein Aktivierungscode erhalten?</TextLink>
+                <a className="text">Kein Aktivierungscode erhalten?</a>
             </Link>
         </AuthLayout>
     )

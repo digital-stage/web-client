@@ -1,0 +1,222 @@
+.volumeSlider {
+  /***
+  LAYOUT
+   */
+  position: relative;
+  display: inline-flex;
+  width: 100%;
+  height: 32px;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 16px;
+  margin: 0;
+  overflow: hidden;
+  transition-duration: 200ms;
+  transition-property: color, border-color;
+  transition-timing-function: cubic-bezier(0, 0, 1, 1);
+  padding: 0 32px 0 0;
+
+  button {
+    flex-grow: 0;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 32px;
+    height: 32px;
+    border-radius: 0;
+    border: none;
+  }
+
+  .slider {
+    position: relative;
+    width: 100%;
+    height: 32px;
+    display: inline-flex;
+
+    .levelMeter {
+      position: absolute;
+      width: 100%;
+      height: 32px;
+    }
+
+    label {
+      display: block;
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      height: 24px;
+      overflow: hidden;
+      padding-right: 24px;
+    }
+
+    input {
+      flex-grow: 1;
+      position: relative;
+      top: 0;
+      left: 0;
+      -webkit-appearance: none;
+      height: 100%;
+      outline: none;
+      -webkit-transition: .2s;
+      transition: opacity .2s;
+      border: none;
+
+      &::-webkit-slider-thumb {
+         -webkit-appearance: none;
+         appearance: none;
+         width: 32px;
+         height: 32px;
+         margin-top: -2px;
+         cursor: pointer;
+       }
+
+      &::-moz-range-thumb {
+        width: 32px;
+        cursor: pointer;
+      }
+    }
+
+    .value {
+      position: absolute;
+      top: 8px;
+      right: -20px;
+      display: inline-block;
+      transition-property: right;
+      transition-duration: 100ms;
+      transition-timing-function: cubic-bezier(0, 0, 1, 1);
+    }
+  }
+
+  &.modified {
+    padding-right: 0;
+
+    .slider {
+
+      .value {
+        right: 8px;
+      }
+    }
+
+  }
+
+  /**
+  RESPONSIVE TYPOGRAPHY
+   */
+  font-weight: bold;
+  font-size: 10px;
+
+  button {
+    font-size: 18px;
+  }
+
+  @media only screen and (min-width: 600px) and (min-height: 600px) {
+    font-size: 12px;
+  }
+
+  /***
+  COLORS
+   */
+  color: currentColor;
+  border-color: currentColor;
+
+  button {
+    color: currentColor;
+    background-color: transparent;
+
+    &:not(:disabled):hover {
+      color: var(---text);
+      background-color: transparent;
+    }
+
+    &.muteButton {
+      &:hover {
+        color: var(---text);
+      }
+
+      &.active {
+        color: var(---text);
+        background-color: var(---danger-active);
+
+        &:hover {
+          background-color: var(---danger-hover);
+        }
+      }
+    }
+  }
+
+  .slider {
+    input {
+      background: none;
+
+      &::-webkit-slider-thumb {
+        background-color: #80808044;
+      }
+
+      &::-moz-range-thumb {
+        background-color: #f4f4f499;
+      }
+    }
+
+    &:hover {
+      color: var(---text);
+
+      input {
+        &::-webkit-slider-thumb {
+          background-color: #f4f4f488;
+        }
+
+        &::-moz-range-thumb {
+          background-color: #f4f4f488;
+        }
+      }
+    }
+  }
+
+  &.modified {
+    color: var(---muted);
+    border-color: var(---text);
+
+    button {
+      &.muteButton {
+        &.active {
+          background-color: var(---danger);
+
+          &:hover {
+            background-color: var(---danger-hover);
+          }
+        }
+      }
+    }
+
+    .slider {
+      color: var(---text);
+      border-color: var(---text);
+
+      input {
+        &::-webkit-slider-thumb {
+          background-color: #f4f4f477;
+        }
+
+        &::-moz-range-thumb {
+          background-color: #f4f4f477;
+        }
+      }
+
+      &:hover {
+        color: var(---text);
+
+        input {
+          &::-webkit-slider-thumb {
+            background-color: #f4f4f488;
+          }
+
+          &::-moz-range-thumb {
+            background-color: #f4f4f488;
+          }
+        }
+      }
+    }
+  }
+}

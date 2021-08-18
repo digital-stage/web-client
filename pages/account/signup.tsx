@@ -1,18 +1,19 @@
 import React, { useEffect } from 'react'
-import { useAuth } from '@digitalstage/api-client-react'
+import { useStageSelector } from '@digitalstage/api-client-react'
 import { useRouter } from 'next/router'
-import SignUpForm from '../../components/account/forms/SignUpForm'
-import AuthLayout from '../../fastui/components/AuthLayout'
+import SignUpForm from 'components/account/SignUpForm'
+import AuthLayout from 'components/global/AuthLayout'
 
 const SignUp = () => {
-    const { loading, user } = useAuth()
+    const signedIn = useStageSelector((state) => state.auth.initialized && !!state.auth.token)
     const { push } = useRouter()
 
     useEffect(() => {
-        if (push && !loading && user) {
+        if (push && signedIn) {
+            console.log('SIGNED IN')
             push('/')
         }
-    }, [user, loading, push])
+    }, [push, signedIn])
 
     return (
         <AuthLayout showMenu>

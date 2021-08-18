@@ -1,0 +1,73 @@
+.select {
+  position: relative;
+  display: inline-flex;
+
+  & > span {
+    position: absolute;
+    color: var(---muted, #808080);
+    font-size: smaller;
+    padding-top: 8px;
+    padding-left: 16px;
+  }
+
+  & > span + select {
+    padding-top: 24px;
+    height: 64px;
+  }
+
+  .arrow {
+    color: #fff;
+    position: absolute;
+    right: 8px;
+    top: 10px;
+    font-size: 20px;
+    pointer-events: none;
+  }
+  select {
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
+    outline: none;
+    cursor: pointer;
+
+    height: 40px;
+
+    -moz-padding-start: calc(16px - 3px);
+    padding-left: 16px;
+    padding-right: 32px;
+
+    color: #fff;
+    background-color: #292929;
+    font-size: 16px;
+    border-width: 4px;
+    border-style: solid;
+    border-color: transparent;
+    box-shadow: 2px 2px 5px 1px rgba(0, 0, 0, 0.3);
+
+    &::after {
+      content: "B";
+      font-size: 20px;
+      position: absolute;
+      right: 15px;
+      top: 10px;
+      color: #fff;
+      pointer-events: none;
+    }
+
+    &::-ms-expand {
+      display: none;
+    }
+
+    &:hover {
+      background-color: #1f1f1f;
+    }
+
+    &:focus {
+      border-color: #253CEB;
+    }
+
+    option {
+      padding-right: 18px;
+    }
+  }
+}

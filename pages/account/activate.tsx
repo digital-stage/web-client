@@ -1,31 +1,31 @@
 import React, { useEffect } from 'react'
 import { useRouter } from 'next/router'
-import { useAuth } from '@digitalstage/api-client-react'
 import Link from 'next/link'
-import ActivationForm from '../../components/account/forms/ActivationForm'
-import AuthLayout from '../../fastui/components/AuthLayout'
-import TextLink from '../../fastui/components/interaction/TextLink'
+import ActivationForm from 'components/account/ActivationForm'
+import { useStageSelector } from '@digitalstage/api-client-react'
+import AuthLayout from 'components/global/AuthLayout'
+import Paragraph from '../../ui/Paragraph'
 
 const Activate = () => {
-    const { loading, user } = useAuth()
+    const signedIn = useStageSelector((state) => state.auth.initialized && !!state.auth.token)
     const { push, query } = useRouter()
 
     useEffect(() => {
-        if (push && !loading && user) {
+        if (signedIn) {
             push('/')
         }
-    }, [user, loading, push])
+    }, [push, signedIn])
 
     const initialCode = Array.isArray(query.code) ? query.code[0] : query.code
     return (
         <AuthLayout>
             <h3>Konto aktivieren</h3>
-            <p className="micro">
+            <Paragraph kind="micro">
                 Bitte gebe den Aktivierungscode ein, welchen Du per E-Mail von uns erhalten hast:
-            </p>
+            </Paragraph>
             <ActivationForm initialCode={initialCode} />
             <Link href="/account/login" passHref>
-                <TextLink>Zurück</TextLink>
+                <a className="text">Zurück</a>
             </Link>
         </AuthLayout>
     )

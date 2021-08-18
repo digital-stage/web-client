@@ -1,30 +1,26 @@
 import React, { useEffect } from 'react'
-import { useAuth } from '@digitalstage/api-client-react'
 import { useRouter } from 'next/router'
-import DefaultContainer from 'fastui/components/container/DefaultContainer'
-import LoadingOverlay from '../../components/LoadingOverlay'
-import ProfileEditor from '../../components/account/ProfileEditor'
-import DefaultPanel from '../../fastui/components/panels/DefaultPanel'
+import ProfileEditor from 'components/account/ProfileEditor'
+import { useStageSelector } from '@digitalstage/api-client-react'
+import Container from 'ui/Container'
+import Panel from '../../ui/Panel'
 
 const Profile = () => {
-    const { user, loading } = useAuth()
-
+    const signedOut = useStageSelector((state) => state.auth.initialized && state.auth.token)
     const { replace } = useRouter()
     useEffect(() => {
-        if (!loading && !user && replace) {
+        if (signedOut) {
             replace('/account/login')
         }
-    }, [loading, user, replace])
-
-    if (loading) return <LoadingOverlay>Lade Nutzerdaten...</LoadingOverlay>
+    }, [replace, signedOut])
 
     return (
-        <DefaultContainer>
+        <Container>
             <h2>Mein Benutzerprofil</h2>
-            <DefaultPanel>
+            <Panel>
                 <ProfileEditor />
-            </DefaultPanel>
-        </DefaultContainer>
+            </Panel>
+        </Container>
     )
 }
 export default Profile

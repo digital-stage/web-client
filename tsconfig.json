@@ -19,7 +19,9 @@
     "jsx": "preserve",
     "baseUrl": ".",
     "paths": {
-      "@digitalstage/api-client-react": ["api-client-react/src"]
+      "@digitalstage/api-client-react": [
+        "api"
+      ]
     }
   },
   "include": [
@@ -28,7 +30,6 @@
     "**/*.tsx"
   ],
   "exclude": [
-    "node_modules",
-    "api-client-react/node_modules"
+    "node_modules"
   ]
 }

@@ -1,0 +1,89 @@
+.title {
+    flex-grow: 0;
+    padding: 0;
+    margin: 0;
+}
+
+.messages {
+    position: relative;
+    display: flex;
+    flex-grow: 1;
+    width: 100%;
+    margin: 0;
+    flex-direction: column;
+    background-color: var(---grey-2, #1F1F1F);
+    border-radius: 18px;
+    overflow: hidden auto;
+}
+.withErrors {
+    border-radius: 18px 18px 0 0;
+}
+
+.messageWrapper {
+    display: flex;
+    flex-direction: column;
+    border-radius: 18px;
+    padding: 8px;
+    margin: 4px;
+    align-self: flex-start;
+
+    text-align: left;
+    color: var(---text-contrast, #1F1F1F);
+    background-color: var(---tertiary, #F4F4F4);
+}
+.messageWrapper.self {
+    align-self: flex-end;
+    text-align: right;
+    background-color: var(---primary, #5779D9);
+}
+.messageTime {
+    font-size: 0.8rem;
+}
+
+.notification {
+    flex-grow: 0;
+    border-bottom-left-radius: 18px;
+    border-bottom-right-radius: 18px;
+}
+
+.messageForm {
+    display: flex;
+    flex-grow: 0;
+    width: 100%;
+    padding-top: 8px;
+}
+
+.input {
+    box-sizing: border-box;
+    margin: 0;
+    display: block;
+    width: 100%;
+    padding: 4px;
+    appearance: none;
+    font-size: inherit;
+    line-height: inherit;
+    border: 1px solid;
+    border-radius: 8px;
+    color: inherit;
+    flex-grow: 1;
+    background-color: var(---grey-1,#121212);
+}
+
+.button {
+    display: none;
+    margin-left: 12px;
+}
+.mobileButton {
+    display: inline-block;
+    margin-left: 4px;
+}
+@media only screen and (min-width: 600px) and (min-height: 600px) {
+    .button {
+        display: inline-block;
+    }
+    .mobileButton {
+        display: none;
+
+    }
+}
+

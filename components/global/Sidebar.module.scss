@@ -1,0 +1,163 @@
+/** SIDEBAR **/
+.sidebar {
+  position: fixed;
+  background-color: #121212;
+  display: flex;
+  flex-grow: 0;
+  flex-shrink: 0;
+  flex-direction: column;
+  align-content: space-between;
+  transition-duration: 200ms;
+  transition-property: transform;
+  transition-timing-function: cubic-bezier(0, 0, 1, 1);
+  width: auto;
+  height: 100%;
+  max-width: 60vw;
+  transform: translateX(-100%);
+  overflow-y: scroll;
+
+  @media only screen and (min-width: 600px) and (min-height: 600px) {
+    position: relative;
+    width: 88px;
+    height: auto;
+    padding-top: 0;
+    transform: none;
+    font-size: .7rem;
+
+    &.hidden {
+      transform: translateX(-100%);
+    }
+  }
+}
+
+.sidebarOpen {
+  transform: none;
+}
+
+.sidebarContent {
+  display: flex;
+  flex-direction: column;
+
+  @media only screen and (min-width: 600px) and (min-height: 600px) {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 88px;
+    height: 100vh;
+    overflow-y: scroll;
+  }
+}
+
+.sidebarHeader,
+.sidebarBody,
+.sidebarFooter {
+  flex-grow: 0;
+  padding-top: 16px;
+}
+
+.sidebarHeader {
+  padding: 16px;
+  text-align: center;
+}
+
+.sidebarSpacer {
+  display: none;
+  flex-grow: 1;
+}
+
+.sidebarBody {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+@media only screen and (min-width: 600px) and (min-height: 600px) {
+  .sidebarHeader {
+    display: block;
+  }
+  .sidebarSpacer {
+    display: block;
+  }
+  .sidebarBackdrop {
+    display: none;
+  }
+  .sidebarLogo {
+    display: block;
+  }
+}
+
+.sidebarItem {
+  width: 100%;
+  padding: 8px 16px;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  cursor: pointer;
+  transition-property: background;
+  transition-duration: .2s;
+  transition-timing-function: cubic-bezier(.2, .8, .4, 1);
+  color: #f4f4f4;
+  background-color: #121212;
+  border-width: 4px;
+  border-style: solid;
+  border-color: transparent;
+  outline: none;
+  white-space: nowrap;
+
+  @media only screen and (min-width: 600px) and (min-height: 600px) {
+    text-align: center;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 64px;
+  }
+
+  span {
+    @media only screen and (min-width: 600px) and (min-height: 600px) {
+      transition: all 100ms;
+      transform: scaleX(0);
+      flex-grow: 1;
+    }
+  }
+
+  svg {
+    margin-right: 16px;
+    @media only screen and (min-width: 600px) and (min-height: 600px) {
+      margin-right: 0;
+      width: 24px;
+      height: 24px;
+      transition: all 200ms;
+    }
+  }
+
+  &:focus {
+    border-color: #253CEB !important;
+  }
+
+  &:hover {
+    &:focus {
+      background-color: rgba(255, 255, 255, 0.1)
+    }
+
+    @media only screen and (min-width: 600px) and (min-height: 600px) {
+      span {
+        transform: none;
+      }
+      svg {
+        width: 18px;
+        height: 18px;
+      }
+    }
+  }
+
+}
+
+
+.sidebarBurgerButton {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  @media only screen and (min-width: 600px) and (min-height: 600px) {
+    display: none;
+  }
+}

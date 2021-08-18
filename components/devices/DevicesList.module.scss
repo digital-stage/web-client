@@ -1,0 +1,14 @@
+.type {
+  flex-grow: 0;
+  padding: 4px;
+}
+.caption {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+  padding: 4px;
+
+  .icon {
+    padding: 4px 8px 4px 4px;
+  }
+}

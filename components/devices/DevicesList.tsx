@@ -1,91 +1,138 @@
-/* eslint-disable no-nested-ternary */
-import { FaRaspberryPi, FaTrash } from 'react-icons/fa'
-import { GoBrowser, GoDeviceDesktop } from 'react-icons/go'
-import React from 'react'
-import { useConnection, useStageSelector } from '@digitalstage/api-client-react'
+import { selectDevice, useConnection, useStageSelector } from '@digitalstage/api-client-react'
+import styles from './DevicesList.module.scss'
+import { shallowEqual, useDispatch } from 'react-redux'
+import React, { useMemo, useState } from 'react'
+import {
+    FaRaspberryPi,
+    FaTrash,
+    GoBrowser,
+    GoDeviceDesktop,
+    MdEdit,
+    MdMic,
+    MdMicOff,
+    MdVideocam,
+    MdVideocamOff,
+} from 'ui/Icons'
+import Link from 'next/link'
+import DeleteModal from './DeleteModal'
+import { useRouter } from 'next/router'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
-import useSelectedDevice from '../../lib/useSelectedDevice'
-import styles from './DevicesList.module.css'
-import Button from '../../fastui/components/interaction/Button'
+import List, { ListItem } from '../../ui/List'
 
 const TypeNames = {
     jammer: 'Jammer-Client',
     ov: 'ORLANDOviols-Client',
-    mediasoup: 'Webbrowser',
+    browser: 'Webbrowser',
 }
 const TypeIcons = {
     jammer: <GoDeviceDesktop />,
     ov: <FaRaspberryPi />,
-    mediasoup: <GoBrowser />,
+    browser: <GoBrowser />,
+}
+
+const DeviceEntry = ({
+    deviceId,
+    localDeviceId,
+    onSelect,
+    onDeleteClicked,
+}: {
+    deviceId: string
+    localDeviceId: string
+    onSelect: () => void
+    onDeleteClicked: () => void
+}) => {
+    const selectedDeviceId = useStageSelector((state) => state.globals.selectedDeviceId)
+    const device = useStageSelector((state) => state.devices.byId[deviceId], shallowEqual)
+    const selected = useMemo(() => {
+        return selectedDeviceId === deviceId
+    }, [deviceId, selectedDeviceId])
+    const { emit } = useConnection()
+
+    return (
+        <ListItem onSelect={onSelect} selected={selected}>
+            <div className={styles.caption}>
+                <div className={styles.icon}>{TypeIcons[device.type]}</div>
+                {device.name ||
+                    (device.type === 'browser'
+                        ? `${device.os}: ${device.browser}`
+                        : device._id)}{' '}
+                {localDeviceId === device._id ? '(Dieser Webbrowser)' : ''}
+            </div>
+            {device?.canVideo ? (
+                <button
+                    className="round secondary small"
+                    onClick={(e) => {
+                        e.stopPropagation()
+                        emit(ClientDeviceEvents.ChangeDevice, {
+                            _id: deviceId,
+                            sendVideo: !device.sendVideo,
+                        })
+                    }}
+                >
+                    {device.sendVideo ? <MdVideocam /> : <MdVideocamOff />}
+                </button>
+            ) : null}
+            {device?.canAudio ? (
+                <button
+                    onClick={(e) => {
+                        e.stopPropagation()
+                        emit(ClientDeviceEvents.ChangeDevice, {
+                            _id: deviceId,
+                            sendAudio: !device.sendAudio,
+                        } as ClientDevicePayloads.ChangeDevice)
+                    }}
+                    className="round small secondary"
+                >
+                    {device.sendAudio ? <MdMic /> : <MdMicOff />}
+                </button>
+            ) : null}
+            <Link href={`/devices/${deviceId}`} passHref>
+                <button className="round small">
+                    <MdEdit />
+                </button>
+            </Link>
+            {!device.online ? (
+                <button
+                    className="round small danger"
+                    onClick={(e) => {
+                        e.stopPropagation()
+                        onDeleteClicked()
+                    }}
+                >
+                    <FaTrash />
+                </button>
+            ) : undefined}
+        </ListItem>
+    )
 }
 
 const DevicesList = () => {
-    const apiConnection = useConnection()
+    const deviceIds = useStageSelector((state) => state.devices.allIds)
     const localDeviceId = useStageSelector((state) => state.globals.localDeviceId)
-    const { selectedDeviceId, selectDeviceId } = useSelectedDevice()
-    const devices = useStageSelector((state) =>
-        state.devices.allIds
-            .map((id) => state.devices.byId[id])
-            .sort((a, b) => {
-                if (a._id === localDeviceId) {
-                    return -1
-                }
-                if (a.lastLoginAt.valueOf() > b.lastLoginAt.valueOf()) return -1
-                return 1
-            })
-    )
+    const dispatch = useDispatch()
+    const selectedDeviceId = useStageSelector((state) => state.globals.selectedDeviceId)
+    const [deleteRequest, requestDelete] = useState<string>()
+    const { push } = useRouter()
 
     return (
-        <table className={styles.table}>
-            <tbody>
-                {devices.map((device, index) => (
-                    <tr
-                        key={device._id}
-                        className={`${styles.row} ${
-                            selectedDeviceId === device._id ? styles.selected : ''
-                        } ${!device.online ? styles.inactive : ''}`}
-                        role="menuitem"
-                        onClick={() => selectDeviceId(device._id)}
-                        tabIndex={index}
-                    >
-                        <td className={styles.columnType}>
-                            {TypeIcons[device.type]} {TypeNames[device.type]}
-                        </td>
-                        <td className={styles.columnName}>
-                            {device.name ||
-                                (device.type === 'mediasoup'
-                                    ? `${device.os}: ${device.browser}`
-                                    : device._id)}{' '}
-                            {localDeviceId === device._id ? '(Dieser Webbrowser)' : ''}
-                        </td>
-                        <td className={styles.columnCreatedAt}>
-                            {device.createdAt.toLocaleString()}
-                        </td>
-                        <td className={styles.columnLastLoginAt}>
-                            {device.lastLoginAt.toLocaleString()}
-                        </td>
-                        <td className={styles.columnAction}>
-                            {!device.online ? (
-                                <Button
-                                    size="small"
-                                    onClick={() =>
-                                        apiConnection.emit(
-                                            ClientDeviceEvents.RemoveDevice,
-                                            device._id as ClientDevicePayloads.RemoveDevice,
-                                            (err) => {
-                                                if (err) console.log(err)
-                                            }
-                                        )
-                                    }
-                                >
-                                    <FaTrash />
-                                </Button>
-                            ) : undefined}
-                        </td>
-                    </tr>
-                ))}
-            </tbody>
-        </table>
+        <List>
+            {deviceIds.map((deviceId) => (
+                <DeviceEntry
+                    key={deviceId}
+                    deviceId={deviceId}
+                    localDeviceId={localDeviceId}
+                    onSelect={() => {
+                        if (selectedDeviceId === deviceId) {
+                            push(`/devices/${deviceId}`)
+                        } else {
+                            dispatch(selectDevice(deviceId))
+                        }
+                    }}
+                    onDeleteClicked={() => requestDelete(deviceId)}
+                />
+            ))}
+            <DeleteModal deviceId={deleteRequest} onClose={() => requestDelete(undefined)} />
+        </List>
     )
 }
 export default DevicesList

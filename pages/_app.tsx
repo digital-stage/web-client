@@ -1,56 +1,74 @@
-import '../fastui/styles.css'
-import {
-    DigitalStageProvider,
-    AudioContextProvider,
-    AudioRenderProvider,
-} from '@digitalstage/api-client-react'
-import React from 'react'
+import React, { useEffect } from 'react'
+import './../styles/root.css'
+import './../styles/index.scss'
 import Head from 'next/head'
-import { AppProps } from 'next/dist/pages/_app'
-import { SelectedDeviceProvider } from '../lib/useSelectedDevice'
-import { ColorProvider } from '../lib/useColors'
-import Layout from '../components/Layout'
-import { StageJoinerProvider } from '../lib/useStageJoiner'
-import StageJoiner from '../components/StageJoiner'
-import PlaybackOverlay from '../components/PlaybackOverlay'
-import StreamController from '../components/global/StreamController'
-import { NotificationProvider } from '../components/NotificationCenter'
+import { AppProps } from 'next/app'
+import { DigitalStageProvider, useStageSelector } from '@digitalstage/api-client-react'
+import DeviceSelector from '../components/global/DeviceSelector'
+import Background from 'components/global/Background'
+import Sidebar from 'components/global/Sidebar'
+import ConnectionOverlay from '../components/global/ConnectionOverlay'
+import ProfileMenu from '../components/global/ProfileMenu'
+import PlaybackOverlay from '../components/global/PlaybackOverlay'
+import StageJoiner from '../components/global/StageJoiner'
+import { useRouter } from 'next/router'
+
+const CheckAuthWrapper = () => {
+    const { push, pathname } = useRouter()
+    const signedOut = useStageSelector<boolean>(
+        (state) => state.auth.initialized && !state.auth.token
+    )
+
+    useEffect(() => {
+        if (push && signedOut && !pathname.startsWith('/account')) {
+            push('/account/login')
+        }
+    }, [pathname, push, signedOut])
+    return null
+}
 
 function MyApp({ Component, pageProps }: AppProps) {
     return (
         <>
             <Head>
-                <title>Digital Stage</title>
-                <link href="/static/fonts/fonts.css" rel="stylesheet" />
                 <meta
                     name="viewport"
-                    content="initial-scale=1.0, width=device-width, shrink-to-fit=no"
+                    content="width=device-width, initial-scale=1.0, shrink-to-fit=no, user-scalable=no"
                 />
+                <meta name="Apple-mobile-web-app-capable" content="yes" />
+                <meta name="Apple-mobile-web-app-status-bar-style" content="black" />
             </Head>
-            <NotificationProvider>
-                <ColorProvider>
-                    <DigitalStageProvider
-                        apiUrl={process.env.NEXT_PUBLIC_API_URL}
-                        authUrl={process.env.NEXT_PUBLIC_AUTH_URL}
-                    >
-                        <SelectedDeviceProvider>
-                            <AudioContextProvider>
-                                <AudioRenderProvider>
-                                    <StageJoinerProvider>
-                                        <Layout>
-                                            {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-                                            <Component {...pageProps} />
-                                        </Layout>
-                                        <StreamController />
-                                        <StageJoiner />
-                                        <PlaybackOverlay />
-                                    </StageJoinerProvider>
-                                </AudioRenderProvider>
-                            </AudioContextProvider>
-                        </SelectedDeviceProvider>
-                    </DigitalStageProvider>
-                </ColorProvider>
-            </NotificationProvider>
+            <DigitalStageProvider>
+                <div className="app">
+                    <Background />
+                    <div className="inner">
+                        <Component {...pageProps} />
+                    </div>
+                    <DeviceSelector />
+                    <Sidebar />
+                </div>
+                <StageJoiner />
+                <ProfileMenu />
+                <PlaybackOverlay />
+                <ConnectionOverlay />
+                <CheckAuthWrapper />
+            </DigitalStageProvider>
+            <style jsx>{`
+                .app {
+                    position: relative;
+                    display: flex;
+                    min-height: 100vh;
+                }
+                .inner {
+                    position: relative;
+                    display: flex;
+                    flex-direction: column;
+                    order: 2;
+                    flex-grow: 1;
+                    overflow: scroll;
+                    -webkit-overflow-scrolling: touch;
+                }
+            `}</style>
         </>
     )
 }

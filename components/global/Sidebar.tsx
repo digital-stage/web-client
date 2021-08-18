@@ -1,98 +1,142 @@
-import Image from 'next/image'
-import { useStageSelector } from '@digitalstage/api-client-react'
-import React, { useState } from 'react'
-import Link from 'next/link'
-import { GoBroadcast, GoListUnordered, GoSettings } from 'react-icons/go'
-import { BiChat, BiCube, BiDevices } from 'react-icons/bi'
-import { FaBug, FaTools } from 'react-icons/fa'
 import { useRouter } from 'next/router'
-import Button from 'fastui/components/interaction/Button'
-import Backdrop from 'fastui/components/Backdrop'
-import styles from './Sidebar.module.css'
-import useOpenState from '../../fastui/hooks/useOpenState'
-
-const SidebarItem = ({ href, children }: { href: string; children: React.ReactNode }) => {
-    const { pathname } = useRouter()
-    return (
-        <Link href={href}>
-            <a className={`${styles.sidebarItem} ${pathname === href ? styles.active : ''}`}>
-                {children}
-            </a>
-        </Link>
-    )
-}
+import React, { useEffect, useState } from 'react'
+import useOpenState from '../../ui/useOpenState'
+import Backdrop from '../../ui/Backdrop'
+import styles from './Sidebar.module.scss'
+import Image from 'next/image'
+import logo from '../../public/logo.svg'
+import Link from 'next/link'
+import { useStageSelector } from '@digitalstage/api-client-react'
+import {
+    BiChat,
+    BiCube,
+    GoBroadcast,
+    GoSettings,
+    BiDevices,
+    GoListUnordered,
+    FaBug,
+    FaTools,
+    MdMoreHoriz,
+    IoNotification,
+} from '../../ui/Icons'
 
 const Sidebar = () => {
+    const { events } = useRouter()
+    const [open, setOpen] = useState<boolean>(false)
+    const openState = useOpenState(open)
+    const signedIn = useStageSelector((state) => !!state.auth.token)
+    const insideStage = useStageSelector((state) => !!state.globals.stageId)
     const deviceCount = useStageSelector((state) => state.devices.allIds.length)
-    const insideStage = useStageSelector<boolean>((state) => !!state.globals.stageId)
-    const [collapsed, setCollapsed] = useState<boolean>(false)
-    const openState = useOpenState(collapsed)
+    const numNotifications = useStageSelector((state) => state.notifications.allIds.length)
+
+    useEffect(() => {
+        if (events) {
+            const handler = () => setOpen(false)
+            events.on('routeChangeStart', handler)
+            return () => {
+                events.off('routeChangeStart', handler)
+            }
+        }
+    }, [events])
+
     return (
         <>
-            {openState !== 'closed' && (
-                <Backdrop open={openState} onClick={() => setCollapsed(false)} />
-            )}
-            <div className={`${styles.sidebar} ${collapsed ? styles.collapsed : ''}`}>
-                <div className={styles.sidebarTop}>
-                    <div className={styles.sidebarLogo}>
-                        <Image width={40} height={40} src="/static/logo.svg" />
+            {openState !== 'closed' ? (
+                <Backdrop
+                    className={styles.sidebarBackdrop}
+                    open={openState}
+                    onClick={() => setOpen(false)}
+                />
+            ) : null}
+            {signedIn ? (
+                <button
+                    onClick={() => setOpen((prev) => !prev)}
+                    className={`secondary round ${styles.sidebarBurgerButton}`}
+                >
+                    <MdMoreHoriz />
+                </button>
+            ) : null}
+            <div
+                className={`${styles.sidebar} ${!signedIn ? styles.hidden : ''} ${
+                    open ? styles.sidebarOpen : ''
+                }`}
+            >
+                <div className={styles.sidebarContent}>
+                    <div className={styles.sidebarHeader}>
+                        <Image width="38" height="38" src={logo} alt="Digital Stage" />
+                    </div>
+                    <div className={styles.sidebarSpacer} />
+                    <div className={styles.sidebarBody}>
+                        {insideStage ? (
+                            <>
+                                <Link href="/stage">
+                                    <a className={styles.sidebarItem}>
+                                        <GoBroadcast />
+                                        <span>Stage</span>
+                                    </a>
+                                </Link>
+                                <Link href="/mixer">
+                                    <a className={styles.sidebarItem}>
+                                        <GoSettings />
+                                        <span>Mischpult</span>
+                                    </a>
+                                </Link>
+                                <Link href="/room">
+                                    <a className={styles.sidebarItem}>
+                                        <BiCube />
+                                        <span>3D Audio</span>
+                                    </a>
+                                </Link>
+                                <Link href="/chat">
+                                    <a className={styles.sidebarItem}>
+                                        <BiChat />
+                                        <span>Chat</span>
+                                    </a>
+                                </Link>
+                            </>
+                        ) : null}
+                        {deviceCount > 1 ? (
+                            <Link href="/devices">
+                                <a className={styles.sidebarItem}>
+                                    <BiDevices />
+                                    <span>Geräte</span>
+                                </a>
+                            </Link>
+                        ) : undefined}
+                        <Link href="/settings/device">
+                            <a className={styles.sidebarItem}>
+                                <FaTools />
+                                <span>Einstellungen</span>
+                            </a>
+                        </Link>
+                        <Link href="/stages">
+                            <a className={styles.sidebarItem}>
+                                <GoListUnordered />
+                                <span>Bühnen</span>
+                            </a>
+                        </Link>
+                    </div>
+                    <div className={styles.sidebarSpacer} />
+                    <div className={styles.sidebarFooter}>
+                        {numNotifications > 0 ? (
+                            <Link href="/notifications">
+                                <a className={styles.sidebarItem}>
+                                    <IoNotification />
+                                    <span>Ereignisse</span>
+                                </a>
+                            </Link>
+                        ) : null}
+                        <Link href="https://forum.digital-stage.org/c/deutsch/ds-web/30">
+                            <a target="_blank" className={styles.sidebarItem}>
+                                <FaBug />
+                                <span>Feedback</span>
+                            </a>
+                        </Link>
                     </div>
                 </div>
-                <div className={styles.sidebarSpacer} />
-                <div className={styles.sidebarCenter}>
-                    {insideStage && (
-                        <>
-                            <SidebarItem href="/stage">
-                                <GoBroadcast name="Stage" />
-                                Stage
-                            </SidebarItem>
-                            <SidebarItem href="/mixer">
-                                <GoSettings name="Mixer" />
-                                Mixer
-                            </SidebarItem>
-                            <SidebarItem href="/room">
-                                <BiCube name="Room" />
-                                3D Audio
-                            </SidebarItem>
-                            <SidebarItem href="/chat">
-                                <BiChat name="Chat" />
-                                Chat
-                            </SidebarItem>
-                        </>
-                    )}
-                    {deviceCount > 1 ? (
-                        <SidebarItem href="/devices">
-                            <BiDevices size={18} name="Meine Geräte" />
-                            Meine Geräte
-                        </SidebarItem>
-                    ) : undefined}
-                    <SidebarItem href="/settings/device">
-                        <FaTools size={18} name="Einstellungen" />
-                        Einstellungen
-                    </SidebarItem>
-                    <SidebarItem href="/stages">
-                        <GoListUnordered size={18} name="Stages" />
-                        Bühnen
-                    </SidebarItem>
-                </div>
-                <div className={styles.sidebarSpacer} />
-                <div className={styles.sidebarBottom}>
-                    <SidebarItem href="/debug">
-                        <FaBug name="Feedback" />
-                        DEBUG
-                    </SidebarItem>
-                    <Link href="https://forum.digital-stage.org/c/deutsch/ds-web/30">
-                        <a target="_blank">
-                            <FaBug name="Feedback" />
-                            Feedback
-                        </a>
-                    </Link>
-                </div>
-            </div>
-            <div className={styles.burgerButton}>
-                <Button onClick={() => setCollapsed((prev) => !prev)}>B</Button>
             </div>
         </>
     )
 }
+
 export default Sidebar

@@ -1,36 +1,37 @@
 import * as React from 'react'
-import { useRouter } from 'next/router'
-import { useAuth } from '@digitalstage/api-client-react'
 import { useEffect } from 'react'
-import debug from 'debug'
-import LoadingOverlay from '../../components/LoadingOverlay'
-
-const reportError = debug('logout').extend('error')
+import { useRouter } from 'next/router'
+import { logout, useStageSelector } from '@digitalstage/api-client-react'
+import { useDispatch } from 'react-redux'
+import InternalActionTypes from '../../api/redux/actions/InternalActionTypes'
 
 const Logout = (): JSX.Element => {
-    const router = useRouter()
-    const { loading, user, logout } = useAuth()
+    const { replace } = useRouter()
+    const dispatch = useDispatch()
+    const initialized = useStageSelector((state) => state.auth.initialized)
+    const token = useStageSelector((state) => state.auth.token)
+    const signedOut = initialized && !token
 
     useEffect(() => {
-        if (!loading) {
-            if (user) {
-                logout()
-                    .then(() => router.push('/account/login'))
-                    .catch((err) => {
-                        reportError(err)
-                    })
-            } else {
-                router.push('/account/login').catch((err) => {
-                    reportError(err)
+        if (initialized && token) {
+            logout(token).then(() =>
+                dispatch({
+                    type: InternalActionTypes.LOGOUT,
                 })
-            }
+            )
         }
-    }, [loading, user, logout])
+    }, [dispatch, initialized, token])
+
+    useEffect(() => {
+        if (signedOut) {
+            replace('/account/login')
+        }
+    }, [signedOut, replace])
 
     return (
-        <LoadingOverlay>
+        <div>
             <h2>Abmelden ...</h2>
-        </LoadingOverlay>
+        </div>
     )
 }
 
