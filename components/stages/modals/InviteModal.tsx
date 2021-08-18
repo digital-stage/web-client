@@ -5,6 +5,7 @@ import Notification from '../../../ui/Notification'
 import Modal, { ModalButton, ModalFooter, ModalHeader } from 'ui/Modal'
 import TextInput from 'ui/TextInput'
 import { BiReset } from 'ui/Icons'
+import styles from './InviteModal.module.scss'
 
 const InviteModal = ({
     open,
@@ -73,7 +74,7 @@ const InviteModal = ({
             <ModalHeader>
                 <h3>Einladen</h3>
             </ModalHeader>
-            <div className="flex align-center justify-center">
+            <div className={styles.codeWrapper}>
                 {code ? (
                     <TextInput type="text" readOnly value={code} label="Einladungscode" light />
                 ) : (
@@ -83,9 +84,9 @@ const InviteModal = ({
                     <BiReset />
                 </button>
             </div>
-            <div className="flex align-center justify-center pb-2">
+            <div className={styles.actionWrapper}>
                 {code ? (
-                    <div className="pr-2">
+                    <div className={styles.copy}>
                         <button
                             onClick={() => {
                                 navigator.clipboard

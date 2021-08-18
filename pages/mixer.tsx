@@ -9,7 +9,7 @@ const Mixer = () => {
             <Head>
                 <title>Mischpult</title>
             </Head>
-            <Container>
+            <Container size="small">
                 <ReactiveMixingPanel />
             </Container>
         </>

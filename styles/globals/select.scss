@@ -16,7 +16,7 @@
   }
 
   .arrow {
-    color: #fff;
+    color: var(---text);
     position: absolute;
     right: 8px;
     top: 10px;
@@ -36,8 +36,8 @@
     padding-left: 16px;
     padding-right: 32px;
 
-    color: #fff;
-    background-color: #292929;
+    color: var(---text);
+    background-color: var(---grey-3);
     font-size: 16px;
     border-width: 4px;
     border-style: solid;
@@ -59,11 +59,11 @@
     }
 
     &:hover {
-      background-color: #1f1f1f;
+      background-color: var(---grey-2);
     }
 
     &:focus {
-      border-color: #253CEB;
+      border-color: var(---focus);
     }
 
     option {

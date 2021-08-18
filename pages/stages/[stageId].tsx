@@ -55,8 +55,8 @@ const StageView = () => {
     if (emit && stage) {
         return (
             <Container size="small">
-                <Link href="/stages" passHref>
-                    <button>Zurück zur Bühnenübersicht</button>
+                <Link href="/stages">
+                    <a>&lt; Zurück zur Bühnenübersicht</a>
                 </Link>
                 <h2 className={styles.title}>
                     {stage.name}

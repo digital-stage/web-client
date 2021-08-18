@@ -79,7 +79,7 @@ button.primary:not(:disabled).active {
 button.secondary {
     border-color: transparent;
     color: #F4F4F4;
-    background-color: #343434;
+    background-color: var(---grey-4);
     box-shadow: none;
 }
 

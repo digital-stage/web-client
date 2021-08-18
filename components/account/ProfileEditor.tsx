@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { ClientDeviceEvents, ClientDevicePayloads, User } from '@digitalstage/api-types'
-import styles from './ProfileEditor.module.scss'
 import Notification from '../../ui/Notification'
 import LiveInput from '../../ui/LiveInput'
 import {
@@ -8,6 +7,8 @@ import {
     useConnection,
     useStageSelector,
 } from '@digitalstage/api-client-react'
+import Paragraph from '../../ui/Paragraph'
+import OptionsList, { OptionsListItem } from '../../ui/OptionsList'
 
 const ProfileEditor = () => {
     const { emit } = useConnection()
@@ -29,9 +30,9 @@ const ProfileEditor = () => {
                     } as ClientDevicePayloads.ChangeUser)
                 }
             />
-            <div className={styles.settings}>
-                <div className={styles.setting}>Email: {authUser?.email}</div>
-                <div className={`${styles.setting} ${styles.centered}`}>
+            <OptionsList>
+                <OptionsListItem as={<Paragraph />}>Email: {authUser?.email}</OptionsListItem>
+                <OptionsListItem>
                     <button
                         onClick={() => {
                             if (authUser)
@@ -46,10 +47,10 @@ const ProfileEditor = () => {
                     >
                         Passwort ändern
                     </button>
-                </div>
+                </OptionsListItem>
                 {message && <Notification kind="success">{message}</Notification>}
                 {error && <Notification kind="error">{error}</Notification>}
-            </div>
+            </OptionsList>
         </>
     )
 }

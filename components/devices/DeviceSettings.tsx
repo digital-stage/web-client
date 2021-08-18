@@ -4,10 +4,10 @@ import React from 'react'
 import { shallowEqual } from 'react-redux'
 import LiveInput from 'ui/LiveInput'
 import Switch from '../../ui/Switch'
-import styles from './DeviceSettings.module.scss'
 import Select from '../../ui/Select'
 import SoundCardSettings from './SoundCardSettings'
 import Paragraph from '../../ui/Paragraph'
+import OptionsList, { OptionsListItem } from '../../ui/OptionsList'
 
 const DeviceSettings = ({ deviceId }: { deviceId: string }) => {
     const device = useStageSelector((state) => state.devices.byId[deviceId], shallowEqual)
@@ -27,11 +27,11 @@ const DeviceSettings = ({ deviceId }: { deviceId: string }) => {
                     (device?.type === 'browser' ? `${device.os}: ${device.browser}` : device?._id)
                 }
             />
-            <ul className={styles.settings}>
+            <OptionsList>
                 {device?.type === 'browser' ? (
                     <>
                         <h4>Verbindungseinstellungen</h4>
-                        <label className={styles.setting}>
+                        <OptionsListItem as={<label />}>
                             Direktverbindungen verwenden (schneller)
                             <Switch
                                 round={true}
@@ -52,14 +52,14 @@ const DeviceSettings = ({ deviceId }: { deviceId: string }) => {
                                 Problemen (kein Sound / Bild anderer Teilnehmer) bitte diese Option
                                 deaktivieren.
                             </Paragraph>
-                        </label>
+                        </OptionsListItem>
                     </>
                 ) : null}
 
                 {device?.canVideo ? (
                     <>
                         <h4>Videoeinstellungen</h4>
-                        <label className={styles.setting}>
+                        <OptionsListItem as={<label />}>
                             Video senden
                             <Switch
                                 round={true}
@@ -71,8 +71,8 @@ const DeviceSettings = ({ deviceId }: { deviceId: string }) => {
                                     } as ClientDevicePayloads.ChangeDevice)
                                 }
                             />
-                        </label>
-                        <label className={styles.setting}>
+                        </OptionsListItem>
+                        <OptionsListItem as={<label />}>
                             Video empfangen
                             <Switch
                                 round={true}
@@ -84,9 +84,9 @@ const DeviceSettings = ({ deviceId }: { deviceId: string }) => {
                                     } as ClientDevicePayloads.ChangeDevice)
                                 }
                             />
-                        </label>
+                        </OptionsListItem>
                         {device.type === 'browser' ? (
-                            <label className={styles.setting}>
+                            <OptionsListItem as={<label />}>
                                 Video-Eingabegerät
                                 <Select
                                     value={device.inputVideoDeviceId}
@@ -106,14 +106,14 @@ const DeviceSettings = ({ deviceId }: { deviceId: string }) => {
                                         </option>
                                     ))}
                                 </Select>
-                            </label>
+                            </OptionsListItem>
                         ) : null}
                     </>
                 ) : null}
                 {device?.canAudio ? (
                     <>
                         <h4>Audioeinstellungen</h4>
-                        <label className={styles.setting}>
+                        <OptionsListItem as={<label />}>
                             Audio senden
                             <Switch
                                 round={true}
@@ -125,8 +125,8 @@ const DeviceSettings = ({ deviceId }: { deviceId: string }) => {
                                     } as ClientDevicePayloads.ChangeDevice)
                                 }
                             />
-                        </label>
-                        <label className={styles.setting}>
+                        </OptionsListItem>
+                        <OptionsListItem as={<label />}>
                             Audio empfangen
                             <Switch
                                 round={true}
@@ -138,11 +138,11 @@ const DeviceSettings = ({ deviceId }: { deviceId: string }) => {
                                     } as ClientDevicePayloads.ChangeDevice)
                                 }
                             />
-                        </label>
+                        </OptionsListItem>
 
                         {device.type === 'browser' ? (
                             <>
-                                <label className={styles.setting}>
+                                <OptionsListItem as={<label />}>
                                     Audio-Eingabegerät
                                     <Select
                                         value={device.inputAudioDeviceId}
@@ -162,8 +162,8 @@ const DeviceSettings = ({ deviceId }: { deviceId: string }) => {
                                             </option>
                                         ))}
                                     </Select>
-                                </label>
-                                <label className={`${styles.setting} ${styles.sub}`}>
+                                </OptionsListItem>
+                                <OptionsListItem as={<label />} kind="sub">
                                     Automatisch pegeln
                                     <Switch
                                         round
@@ -175,8 +175,8 @@ const DeviceSettings = ({ deviceId }: { deviceId: string }) => {
                                             })
                                         }
                                     />
-                                </label>
-                                <label className={`${styles.setting} ${styles.sub}`}>
+                                </OptionsListItem>
+                                <OptionsListItem as={<label />} kind="sub">
                                     Feedback unterdrücken
                                     <Switch
                                         round
@@ -188,8 +188,8 @@ const DeviceSettings = ({ deviceId }: { deviceId: string }) => {
                                             })
                                         }
                                     />
-                                </label>
-                                <label className={`${styles.setting} ${styles.sub}`}>
+                                </OptionsListItem>
+                                <OptionsListItem as={<label />} kind="sub">
                                     Hintergrundgeräusche eliminieren
                                     <Switch
                                         round
@@ -201,8 +201,8 @@ const DeviceSettings = ({ deviceId }: { deviceId: string }) => {
                                             })
                                         }
                                     />
-                                </label>
-                                <label className={styles.setting}>
+                                </OptionsListItem>
+                                <OptionsListItem as={<label />} kind="sub">
                                     Audio-Ausgabegerät
                                     <Select
                                         value={device.outputAudioDeviceId}
@@ -222,14 +222,14 @@ const DeviceSettings = ({ deviceId }: { deviceId: string }) => {
                                             </option>
                                         ))}
                                     </Select>
-                                </label>
+                                </OptionsListItem>
                             </>
                         ) : (
                             <SoundCardSettings deviceId={deviceId} />
                         )}
                     </>
                 ) : null}
-            </ul>
+            </OptionsList>
         </>
     )
 }

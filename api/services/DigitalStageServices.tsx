@@ -4,12 +4,15 @@ import React from 'react'
 import AudioRenderService from './AudioRenderer'
 
 const DigitalStageServices = () => {
+  if(process.browser) {
     return (
-        <>
-            <AutoLoginService />
-            {process.browser ? <MediasoupService /> : null}
-            <AudioRenderService />
-        </>
+      <>
+        <AutoLoginService />
+        <MediasoupService />
+        <AudioRenderService />
+      </>
     )
+  }
+  return null
 }
 export default DigitalStageServices
