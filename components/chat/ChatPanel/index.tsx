@@ -112,8 +112,7 @@ const ChatPanel = () => {
     }, [report, messages, localUserId, users.byId])
 
     return (
-        <Panel fixed>
-            <h4 className={styles.title}>Chat</h4>
+        <Panel className={styles.panel}>
             <MessagePane
                 users={users}
                 hasErrors={!!error}

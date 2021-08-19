@@ -2,6 +2,7 @@ import React from 'react'
 import styles from './StageView.module.scss'
 import { useStageSelector } from '@digitalstage/api-client-react'
 import MemberView from './MemberView'
+import Panel from 'ui/Panel'
 
 const GroupView = ({ groupId, hasAdminRights }: { groupId: string; hasAdminRights: boolean }) => {
     const { name, color } = useStageSelector((state) => state.groups.byId[groupId])
@@ -24,6 +25,27 @@ const GroupView = ({ groupId, hasAdminRights }: { groupId: string; hasAdminRight
     )
 }
 
+const ConductorOverlay = ({ stageId }: { stageId: string }) => {
+    const conductorIds = useStageSelector<string[]>((state) =>
+        state.stageMembers.byStage[stageId].filter((id) => state.stageMembers.byId[id].isDirector)
+    )
+
+    if (conductorIds.length > 0) {
+        return (
+            <div className={styles.conductorView}>
+                <Panel kind="black">
+                    <div className={styles.membersGrid}>
+                        {conductorIds.map((conductorId) => (
+                            <MemberView key={conductorId} memberId={conductorId} />
+                        ))}
+                    </div>
+                </Panel>
+            </div>
+        )
+    }
+    return null
+}
+
 const MembersGrid = ({
     stageId,
     showLanes,
@@ -34,30 +56,15 @@ const MembersGrid = ({
     hasAdminRights: boolean
 }) => {
     const groupIds = useStageSelector<string[]>((state) => state.groups.byStage[stageId] || [])
-    const conductors = useStageSelector<string[]>((state) =>
-        !hasAdminRights
-            ? state.stageMembers.byStage[stageId].filter(
-                  (id) => state.stageMembers.byId[id].isDirector
-              )
-            : []
-    )
+
+    console.log('STAGEVIEW Have ' + groupIds.length + ' groups')
 
     return (
         <div className={`${styles.membersGrid} ${showLanes ? styles.lanes : ''}`}>
-            {conductors.length > 0
-                ? conductors.map((memberId) => (
-                      <MemberView
-                          key={memberId}
-                          memberId={memberId}
-                          groupColor="transparent"
-                          groupName="Conductor"
-                          hasAdminRights={false}
-                      />
-                  ))
-                : groupIds.map((groupId) => (
-                      <GroupView key={groupId} groupId={groupId} hasAdminRights={hasAdminRights} />
-                  ))}
-            {}
+            {groupIds.map((groupId) => (
+                <GroupView key={groupId} groupId={groupId} hasAdminRights={hasAdminRights} />
+            ))}
+            {!hasAdminRights ? <ConductorOverlay stageId={stageId} /> : null}
         </div>
     )
 }

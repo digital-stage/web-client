@@ -5,6 +5,7 @@ import Link from 'next/link'
 import styles from '../../styles/Devices.module.scss'
 import { useStageSelector } from '@digitalstage/api-client-react'
 import Container from '../../ui/Container'
+import { IoIosArrowDropleft } from '../../ui/Icons'
 
 const DevicePage = () => {
     const { query } = useRouter()
@@ -12,12 +13,20 @@ const DevicePage = () => {
     const localDeviceId = useStageSelector((state) => state.globals.localDeviceId)
 
     return (
-        <Container>
+        <Container size="small">
+            <Link href="/devices">
+                <a
+                    style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                    }}
+                >
+                    <IoIosArrowDropleft />
+                    &nbsp;Zurück zur Übersicht
+                </a>
+            </Link>
             <h3 className={styles.heading}>
                 Gerät bearbeiten {localDeviceId === deviceId ? ' (Dieser Webbrowser)' : ''}
-                <Link href="/devices" passHref>
-                    <button>Zurück zur Übersicht</button>
-                </Link>
             </h3>
             <DeviceSettings deviceId={deviceId} />
         </Container>

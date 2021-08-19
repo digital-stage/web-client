@@ -166,6 +166,7 @@ const DeviceSettings = ({ deviceId }: { deviceId: string }) => {
                                 <OptionsListItem as={<label />} kind="sub">
                                     Automatisch pegeln
                                     <Switch
+                                        size="small"
                                         round
                                         checked={device.autoGainControl || false}
                                         onChange={(event) =>
@@ -179,6 +180,7 @@ const DeviceSettings = ({ deviceId }: { deviceId: string }) => {
                                 <OptionsListItem as={<label />} kind="sub">
                                     Feedback unterdrücken
                                     <Switch
+                                        size="small"
                                         round
                                         checked={device.echoCancellation || false}
                                         onChange={(event) =>
@@ -192,6 +194,7 @@ const DeviceSettings = ({ deviceId }: { deviceId: string }) => {
                                 <OptionsListItem as={<label />} kind="sub">
                                     Hintergrundgeräusche eliminieren
                                     <Switch
+                                        size="small"
                                         round
                                         checked={device.noiseSuppression || false}
                                         onChange={(event) =>

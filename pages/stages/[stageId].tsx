@@ -11,7 +11,7 @@ import RemoveGroupModal from 'components/stages/modals/RemoveGroupModal'
 import GroupModal from 'components/stages/modals/GroupModal'
 import StageModal from 'components/stages/modals/StageModal'
 import InviteModal from '../../components/stages/modals/InviteModal'
-import { MdDeleteForever, MdEdit } from 'ui/Icons'
+import { IoIosArrowDropleft, MdDeleteForever, MdEdit } from 'ui/Icons'
 import Container from 'ui/Container'
 import LeaveStageForGoodModal from '../../components/stages/modals/LeaveStageForGoodModal'
 import { shallowEqual } from 'react-redux'
@@ -56,16 +56,24 @@ const StageView = () => {
         return (
             <Container size="small">
                 <Link href="/stages">
-                    <a>&lt; Zurück zur Bühnenübersicht</a>
+                    <a
+                        style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                        }}
+                    >
+                        <IoIosArrowDropleft />
+                        &nbsp;Zurück zur Übersicht
+                    </a>
                 </Link>
-                <h2 className={styles.title}>
+                <h3 className={styles.title}>
                     {stage.name}
                     {isStageAdmin ? (
                         <button className="" onClick={() => requestStageEdit(true)}>
                             Einstellungen
                         </button>
                     ) : null}
-                </h2>
+                </h3>
                 <div className={styles.row}>
                     <div className={styles.stageActions}>
                         <button onClick={() => requestGroupEdit(null)}>
@@ -149,21 +157,16 @@ const StageView = () => {
                 ) : null}
                 <div className={styles.row}>
                     <Link href="/stages">
-                        <a className="text">Zurück zur Bühnenübersicht</a>
+                        <a
+                            style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                            }}
+                        >
+                            <IoIosArrowDropleft />
+                            &nbsp;Zurück zur Übersicht
+                        </a>
                     </Link>
-                </div>
-                <div className={styles.dangerZone}>
-                    <h3>Gefahrenzone</h3>
-                    <Paragraph kind="micro">
-                        Wenn Du die Bühne nicht mehr brauchst, kannst Du sie gerne löschen. Hierbei
-                        werden alle Mitglieder und Gruppen entfernt. Die Bühne wird unwiederuflich
-                        gelöscht!
-                    </Paragraph>
-                    <div className={styles.row}>
-                        <button onClick={() => requestStageRemoval(true)} className="danger">
-                            Bühne entgültig entfernen
-                        </button>
-                    </div>
                 </div>
                 <StageModal
                     stageId={stageId}

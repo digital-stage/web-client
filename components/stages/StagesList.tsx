@@ -50,37 +50,41 @@ const StageItem = ({
                     <Tag kind="warn">{Type[stage.audioType]}</Tag>
                 </a>
             </Link>
-            {isStageAdmin ? (
-                <>
-                    <button className="round secondary small" onClick={onEditClicked}>
-                        <MdEdit />
-                    </button>
-                    <button className="round danger small" onClick={onDeleteClicked}>
+            <span>
+                {isStageAdmin ? (
+                    <>
+                        <button className="round secondary small" onClick={onEditClicked}>
+                            <MdEdit />
+                        </button>
+                        <button className="round danger small" onClick={onDeleteClicked}>
+                            <MdDeleteForever />
+                        </button>
+                    </>
+                ) : (
+                    <button className="round danger small" onClick={onLeaveForGoodClicked}>
                         <MdDeleteForever />
                     </button>
-                </>
-            ) : (
-                <button className="round danger small" onClick={onLeaveForGoodClicked}>
-                    <MdDeleteForever />
-                </button>
-            )}
-            {hasGroups ? (
-                !isActive ? (
-                    <button
-                        className="round primary small"
-                        onClick={() => requestJoin({ stageId: stageId, password: stage.password })}
-                    >
-                        <ImEnter />
-                    </button>
-                ) : (
-                    <button
-                        className="round danger small"
-                        onClick={() => emit(ClientDeviceEvents.LeaveStage)}
-                    >
-                        <ImExit />
-                    </button>
-                )
-            ) : null}
+                )}
+                {hasGroups ? (
+                    !isActive ? (
+                        <button
+                            className="round primary small"
+                            onClick={() =>
+                                requestJoin({ stageId: stageId, password: stage.password })
+                            }
+                        >
+                            <ImEnter />
+                        </button>
+                    ) : (
+                        <button
+                            className="round danger small"
+                            onClick={() => emit(ClientDeviceEvents.LeaveStage)}
+                        >
+                            <ImExit />
+                        </button>
+                    )
+                ) : null}
+            </span>
         </ListItem>
     )
 }

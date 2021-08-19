@@ -1,6 +1,13 @@
+.selected {
+  border: 1px solid var(---warn)
+}
 .type {
   flex-grow: 0;
   padding: 4px;
+}
+.actions {
+  display: inline-flex;
+  align-items: center;
 }
 .caption {
   display: flex;
@@ -9,6 +16,6 @@
   padding: 4px;
 
   .icon {
-    padding: 4px 8px 4px 4px;
+    padding: 4px;
   }
 }

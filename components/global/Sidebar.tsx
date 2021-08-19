@@ -21,7 +21,7 @@ import {
 } from '../../ui/Icons'
 
 const Sidebar = () => {
-    const { events } = useRouter()
+    const { events, pathname } = useRouter()
     const [open, setOpen] = useState<boolean>(false)
     const openState = useOpenState(open)
     const signedIn = useStageSelector((state) => !!state.auth.token)
@@ -70,25 +70,41 @@ const Sidebar = () => {
                         {insideStage ? (
                             <>
                                 <Link href="/stage">
-                                    <a className={styles.sidebarItem}>
+                                    <a
+                                        className={`${styles.sidebarItem} ${
+                                            pathname === '/stage' ? styles.selected : ''
+                                        }`}
+                                    >
                                         <GoBroadcast />
                                         <span>Stage</span>
                                     </a>
                                 </Link>
                                 <Link href="/mixer">
-                                    <a className={styles.sidebarItem}>
+                                    <a
+                                        className={`${styles.sidebarItem} ${
+                                            pathname === '/mixer' ? styles.selected : ''
+                                        }`}
+                                    >
                                         <GoSettings />
                                         <span>Mischpult</span>
                                     </a>
                                 </Link>
                                 <Link href="/room">
-                                    <a className={styles.sidebarItem}>
+                                    <a
+                                        className={`${styles.sidebarItem} ${
+                                            pathname === '/room' ? styles.selected : ''
+                                        }`}
+                                    >
                                         <BiCube />
                                         <span>3D Audio</span>
                                     </a>
                                 </Link>
                                 <Link href="/chat">
-                                    <a className={styles.sidebarItem}>
+                                    <a
+                                        className={`${styles.sidebarItem} ${
+                                            pathname === '/chat' ? styles.selected : ''
+                                        }`}
+                                    >
                                         <BiChat />
                                         <span>Chat</span>
                                     </a>
@@ -97,20 +113,32 @@ const Sidebar = () => {
                         ) : null}
                         {deviceCount > 1 ? (
                             <Link href="/devices">
-                                <a className={styles.sidebarItem}>
+                                <a
+                                    className={`${styles.sidebarItem} ${
+                                        pathname.startsWith('/devices') ? styles.selected : ''
+                                    }`}
+                                >
                                     <BiDevices />
                                     <span>Geräte</span>
                                 </a>
                             </Link>
                         ) : undefined}
                         <Link href="/settings/device">
-                            <a className={styles.sidebarItem}>
+                            <a
+                                className={`${styles.sidebarItem} ${
+                                    pathname.startsWith('/settings') ? styles.selected : ''
+                                }`}
+                            >
                                 <FaTools />
                                 <span>Einstellungen</span>
                             </a>
                         </Link>
                         <Link href="/stages">
-                            <a className={styles.sidebarItem}>
+                            <a
+                                className={`${styles.sidebarItem} ${
+                                    pathname.startsWith('/stages') ? styles.selected : ''
+                                }`}
+                            >
                                 <GoListUnordered />
                                 <span>Bühnen</span>
                             </a>
@@ -120,7 +148,11 @@ const Sidebar = () => {
                     <div className={styles.sidebarFooter}>
                         {numNotifications > 0 ? (
                             <Link href="/notifications">
-                                <a className={styles.sidebarItem}>
+                                <a
+                                    className={`${styles.sidebarItem} ${
+                                        pathname === '/notifications' ? styles.selected : ''
+                                    }`}
+                                >
                                     <IoNotification />
                                     <span>Ereignisse</span>
                                 </a>

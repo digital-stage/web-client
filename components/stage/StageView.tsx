@@ -17,10 +17,10 @@ const StageView = ({ stageId }: { stageId: string }) => {
         <div className={`${styles.wrapper} `}>
             <MembersGrid stageId={stageId} showLanes={showLanes} hasAdminRights={hasAdminRights} />
             <div className={styles.control}>
-                <button onClick={() => setShowLanes(false)}>
+                <button className="round" onClick={() => setShowLanes(false)}>
                     <Image src={landscapeIcon} alt="Auf Breitbilddarstellung umschalten" />
                 </button>
-                <button onClick={() => setShowLanes(true)}>
+                <button className="round" onClick={() => setShowLanes(true)}>
                     <Image src={portraitIcon} alt="Auf Hochkantdarstellung umschalten" />
                 </button>
             </div>

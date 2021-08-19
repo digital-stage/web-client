@@ -8,15 +8,16 @@ export enum SIZE {
 const Container = ({
     children,
     size,
+    flex,
     className,
     ...props
-}: { size?: keyof typeof SIZE; } & React.DetailedHTMLProps<
+}: { size?: keyof typeof SIZE; flex?: boolean } & React.DetailedHTMLProps<
     React.HTMLAttributes<HTMLDivElement>,
     HTMLDivElement
 >) => {
     return (
         <div
-            className={`container ${size ? size : ''} ${className || ''}`}
+            className={`container ${flex ? 'flex' : ''}  ${size ? size : ''} ${className || ''}`}
             {...props}
         >
             {children}

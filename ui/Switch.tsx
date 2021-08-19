@@ -1,20 +1,27 @@
-import React, {ReactEventHandler} from 'react'
+import React, { ReactEventHandler } from 'react'
+
+export interface SIZE {
+    default: undefined
+    small: 'small'
+}
 
 const Switch = ({
-                    round,
-                    checked,
-                    onChange,
-                    className,
-                }: {
+    size,
+    round,
+    checked,
+    onChange,
+    className,
+}: {
+    size?: SIZE[keyof SIZE]
     round?: boolean
     checked: boolean
     onChange: ReactEventHandler<HTMLInputElement>
     className?: string
 }) => {
     return (
-        <div className={`switch ${className || ''}`}>
-            <input type="checkbox" checked={!!checked} onChange={onChange}/>
-            <span className={`slider ${round ? 'round' : ''}`}/>
+        <div className={`switch ${size ? size : ''} ${className || ''}`}>
+            <input type="checkbox" checked={!!checked} onChange={onChange} />
+            <span className={`slider ${round ? 'round' : ''}`} />
         </div>
     )
 }

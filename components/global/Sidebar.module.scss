@@ -1,7 +1,6 @@
 /** SIDEBAR **/
 .sidebar {
   position: fixed;
-  background-color: #121212;
   display: flex;
   flex-grow: 0;
   flex-shrink: 0;
@@ -52,7 +51,10 @@
 .sidebarBody,
 .sidebarFooter {
   flex-grow: 0;
-  padding-top: 16px;
+}
+
+.sidebarHeader, .sidebarFooter, .sidebarSpacer {
+  background-color: #121212;
 }
 
 .sidebarHeader {
@@ -150,6 +152,9 @@
     }
   }
 
+  &.selected {
+    background-color: transparent;
+  }
 }
 
 

@@ -4,15 +4,21 @@
   padding: 48px 24px 62px 24px;
   margin: 0 auto;
   min-height: 100vh;
+  position: relative;
+
 
   @media only screen and (min-width: 600px) and (min-height: 600px) {
     padding: 24px 24px 96px;
   }
 
   &.small {
-    display: block;
     margin: 0 auto;
     max-width: 800px;
+  }
+
+  &.flex {
+    display: flex;
+    flex-direction: column;
   }
 
   &.tiny {

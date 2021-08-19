@@ -1,13 +1,11 @@
 import React, { useMemo } from 'react'
 import styles from './StageView.module.scss'
 import VideoView from './VideoView'
-import Image from 'next/image'
-import sizeUpIcon from '../../public/icons/sizeup.svg'
-import sizeDownIcon from '../../public/icons/sizedown.svg'
 import Avatar from './Avatar'
 import { useConnection, useStageSelector } from '@digitalstage/api-client-react'
 import { ClientDeviceEvents, VideoTrack } from '@digitalstage/api-types'
 import useWebRTCTracks from '../../api/hooks/useWebRTCTracks'
+import { AiFillStar, AiOutlineStar } from '../../ui/Icons'
 
 const MemberView = ({
     memberId,
@@ -17,8 +15,8 @@ const MemberView = ({
 }: {
     memberId: string
     groupColor?: string
-    groupName: string
-    hasAdminRights: boolean
+    groupName?: string
+    hasAdminRights?: boolean
 }) => {
     const member = useStageSelector((state) => state.stageMembers.byId[memberId])
     const user = useStageSelector((state) => (member ? state.users.byId[member.userId] : undefined))
@@ -68,13 +66,9 @@ const MemberView = ({
                         isDirector: !member.isDirector,
                     })
                 }}
-                className={`small round white ${styles.conductorToggle}`}
+                className={`round minimal ${styles.conductorToggle}`}
             >
-                {member.isDirector ? (
-                    <Image src={sizeUpIcon} alt="Allen präsentieren" />
-                ) : (
-                    <Image src={sizeDownIcon} alt="Nicht mehr präsentieren" />
-                )}
+                {member.isDirector ? <AiFillStar /> : <AiOutlineStar />}
             </button>
         ) : null
 

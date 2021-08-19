@@ -85,11 +85,7 @@ $portraitAspectRatio: math.div($width, $height);
   right: 0;
   width: 100%;
   height: 100%;
-
-
-  .panel {
-
-  }
+  padding: 16px;
 }
 
 /* MEMBERS GRID */
@@ -202,8 +198,9 @@ $portraitAspectRatio: math.div($width, $height);
 
     .conductorToggle {
       position: absolute;
-      bottom: 8px;
-      right: 8px;
+      top: 8px;
+      left: 8px;
+      font-size: 2rem;
     }
   }
 

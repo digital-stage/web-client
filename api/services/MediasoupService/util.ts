@@ -469,31 +469,31 @@ export const enumerateDevices = (): Promise<{
     })
 
 export const refreshMediaDevices = (
-    currentDevice: BrowserDevice,
-    socket: ITeckosClient
+    deviceId: string,
+    inputAudioDevices: WebMediaDevice[],
+    inputVideoDevices: WebMediaDevice[],
+    outputAudioDevices: WebMediaDevice[],
+    emit: (event: SocketEvent, ...args: any[]) => boolean
 ): Promise<boolean> => {
-    if (socket) {
-        return enumerateDevices().then((devices) => {
-            // Sync and update if necessary
-            let shouldUpdate: boolean = false
-            const update: ClientDevicePayloads.ChangeDevice = { _id: currentDevice._id }
-            if (currentDevice.inputAudioDevices !== devices.inputAudioDevices) {
-                shouldUpdate = true
-                update.inputAudioDevices = devices.inputAudioDevices
-            }
-            if (currentDevice.inputVideoDevices !== devices.inputVideoDevices) {
-                shouldUpdate = true
-                update.inputVideoDevices = devices.inputVideoDevices
-            }
-            if (currentDevice.outputAudioDevices !== devices.outputAudioDevices) {
-                shouldUpdate = true
-                update.outputAudioDevices = devices.outputAudioDevices
-            }
-            if (shouldUpdate) {
-                return socket.emit(ClientDeviceEvents.ChangeDevice, update)
-            }
-            return false
-        })
-    }
-    return Promise.resolve(false)
+    return enumerateDevices().then((devices) => {
+        // Sync and update if necessary
+        let shouldUpdate: boolean = false
+        const update: ClientDevicePayloads.ChangeDevice = { _id: deviceId }
+        if (inputAudioDevices !== devices.inputAudioDevices) {
+            shouldUpdate = true
+            update.inputAudioDevices = devices.inputAudioDevices
+        }
+        if (inputVideoDevices !== devices.inputVideoDevices) {
+            shouldUpdate = true
+            update.inputVideoDevices = devices.inputVideoDevices
+        }
+        if (outputAudioDevices !== devices.outputAudioDevices) {
+            shouldUpdate = true
+            update.outputAudioDevices = devices.outputAudioDevices
+        }
+        if (shouldUpdate) {
+            return emit(ClientDeviceEvents.ChangeDevice, update)
+        }
+        return false
+    })
 }

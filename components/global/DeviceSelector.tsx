@@ -57,21 +57,6 @@ const DeviceSelector = ({
                         </Select>
                     </div>
                 )}
-                {selectedDevice?.type === 'browser' ? (
-                    <label className={styles.label}>
-                        P2P
-                        <Switch
-                            round={true}
-                            checked={selectedDevice.useP2P}
-                            onChange={(e) =>
-                                emit(ClientDeviceEvents.ChangeDevice, {
-                                    _id: selectedDevice._id,
-                                    useP2P: e.currentTarget.checked,
-                                } as ClientDevicePayloads.ChangeDevice)
-                            }
-                        />
-                    </label>
-                ) : null}
                 {selectedDevice?.canVideo ? (
                     <>
                         <button

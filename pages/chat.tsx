@@ -9,7 +9,7 @@ const Chat = () => {
             <Head>
                 <title>Chat</title>
             </Head>
-            <Container>
+            <Container size="small" flex>
                 <ChatPanel />
             </Container>
         </>

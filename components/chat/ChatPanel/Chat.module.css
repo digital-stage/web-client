@@ -1,7 +1,6 @@
-.title {
-    flex-grow: 0;
-    padding: 0;
-    margin: 0;
+.panel {
+    flex-grow: 1;
+    padding: 12px;
 }
 
 .messages {
@@ -11,8 +10,8 @@
     width: 100%;
     margin: 0;
     flex-direction: column;
-    background-color: var(---grey-2, #1F1F1F);
-    border-radius: 18px;
+    background-color: var(---grey-2);
+    border-radius: 16px;
     overflow: hidden auto;
 }
 .withErrors {
@@ -22,19 +21,19 @@
 .messageWrapper {
     display: flex;
     flex-direction: column;
-    border-radius: 18px;
+    border-radius: 16px;
     padding: 8px;
     margin: 4px;
     align-self: flex-start;
 
     text-align: left;
-    color: var(---text-contrast, #1F1F1F);
-    background-color: var(---tertiary, #F4F4F4);
+    color: var(---text-contrast);
+    background-color: var(---tertiary);
 }
 .messageWrapper.self {
     align-self: flex-end;
     text-align: right;
-    background-color: var(---primary, #5779D9);
+    background-color: var(---primary-active);
 }
 .messageTime {
     font-size: 0.8rem;
@@ -63,10 +62,10 @@
     font-size: inherit;
     line-height: inherit;
     border: 1px solid;
-    border-radius: 8px;
+    border-radius: 16px;
     color: inherit;
     flex-grow: 1;
-    background-color: var(---grey-1,#121212);
+    background-color: var(---grey-1);
 }
 
 .button {

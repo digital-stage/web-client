@@ -1,31 +1,28 @@
 import React from 'react'
 
 export interface KIND {
-    default: '',
-    primary: 'primary',
+    default: ''
+    primary: 'primary'
 }
 
 const ListItem = ({
-                      children,
-                      selected,
-                      onSelect,
-                  }: {
-    children: React.ReactNode,
+    className,
+    selected,
+    onSelect,
+    ...props
+}: {
     selected?: boolean
     onSelect?: () => void
-}) => {
-    return (
-        <li className={`entry ${selected ? "selected" : ''}`} onClick={onSelect}>
-            {children}
-        </li>
-    )
-}
+} & React.DetailedHTMLProps<React.LiHTMLAttributes<HTMLLIElement>, HTMLLIElement>) => (
+    <li
+        className={`entry ${selected ? 'selected' : ''} ${className || ''}`}
+        onClick={onSelect}
+        {...props}
+    />
+)
 
-const List = ({children, kind}: {
-    children: React.ReactNode,
-    kind?: KIND[keyof KIND]
-}) => (
+const List = ({ children, kind }: { children: React.ReactNode; kind?: KIND[keyof KIND] }) => (
     <ul className={`list ${kind || ''}`}>{children}</ul>
 )
-export {ListItem}
+export { ListItem }
 export default List

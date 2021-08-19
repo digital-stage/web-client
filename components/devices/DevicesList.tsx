@@ -18,6 +18,7 @@ import DeleteModal from './DeleteModal'
 import { useRouter } from 'next/router'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
 import List, { ListItem } from '../../ui/List'
+import Switch from '../../ui/Switch'
 
 const TypeNames = {
     jammer: 'Jammer-Client',
@@ -49,59 +50,78 @@ const DeviceEntry = ({
     const { emit } = useConnection()
 
     return (
-        <ListItem onSelect={onSelect} selected={selected}>
+        <ListItem
+            onSelect={onSelect}
+            selected={selected}
+            className={deviceId === localDeviceId && styles.selected}
+        >
             <div className={styles.caption}>
-                <div className={styles.icon}>{TypeIcons[device.type]}</div>
+                <span className={styles.icon}>{TypeIcons[device.type]}</span>
                 {device.name ||
                     (device.type === 'browser'
                         ? `${device.os}: ${device.browser}`
                         : device._id)}{' '}
                 {localDeviceId === device._id ? '(Dieser Webbrowser)' : ''}
             </div>
-            {device?.canVideo ? (
-                <button
-                    className="round secondary small"
-                    onClick={(e) => {
-                        e.stopPropagation()
-                        emit(ClientDeviceEvents.ChangeDevice, {
-                            _id: deviceId,
-                            sendVideo: !device.sendVideo,
-                        })
-                    }}
-                >
-                    {device.sendVideo ? <MdVideocam /> : <MdVideocamOff />}
-                </button>
-            ) : null}
-            {device?.canAudio ? (
-                <button
-                    onClick={(e) => {
-                        e.stopPropagation()
-                        emit(ClientDeviceEvents.ChangeDevice, {
-                            _id: deviceId,
-                            sendAudio: !device.sendAudio,
-                        } as ClientDevicePayloads.ChangeDevice)
-                    }}
-                    className="round small secondary"
-                >
-                    {device.sendAudio ? <MdMic /> : <MdMicOff />}
-                </button>
-            ) : null}
-            <Link href={`/devices/${deviceId}`} passHref>
-                <button className="round small">
-                    <MdEdit />
-                </button>
-            </Link>
-            {!device.online ? (
-                <button
-                    className="round small danger"
-                    onClick={(e) => {
-                        e.stopPropagation()
-                        onDeleteClicked()
-                    }}
-                >
-                    <FaTrash />
-                </button>
-            ) : undefined}
+            <div
+                className={styles.actions}
+                onClick={(e) => {
+                    e.stopPropagation()
+                }}
+            >
+                {device?.type === 'browser' ? (
+                    <label className={styles.label}>
+                        P2P&nbsp;
+                        <Switch
+                            size="small"
+                            round={true}
+                            checked={device.useP2P}
+                            onChange={(e) =>
+                                emit(ClientDeviceEvents.ChangeDevice, {
+                                    _id: device._id,
+                                    useP2P: e.currentTarget.checked,
+                                } as ClientDevicePayloads.ChangeDevice)
+                            }
+                        />
+                    </label>
+                ) : null}
+                {device?.canVideo ? (
+                    <button
+                        className="round secondary small"
+                        onClick={() =>
+                            emit(ClientDeviceEvents.ChangeDevice, {
+                                _id: deviceId,
+                                sendVideo: !device.sendVideo,
+                            })
+                        }
+                    >
+                        {device.sendVideo ? <MdVideocam /> : <MdVideocamOff />}
+                    </button>
+                ) : null}
+                {device?.canAudio ? (
+                    <button
+                        onClick={() =>
+                            emit(ClientDeviceEvents.ChangeDevice, {
+                                _id: deviceId,
+                                sendAudio: !device.sendAudio,
+                            } as ClientDevicePayloads.ChangeDevice)
+                        }
+                        className="round small secondary"
+                    >
+                        {device.sendAudio ? <MdMic /> : <MdMicOff />}
+                    </button>
+                ) : null}
+                <Link href={`/devices/${deviceId}`} passHref>
+                    <button className="round small">
+                        <MdEdit />
+                    </button>
+                </Link>
+                {!device.online ? (
+                    <button className="round small danger" onClick={onDeleteClicked}>
+                        <FaTrash />
+                    </button>
+                ) : undefined}
+            </div>
         </ListItem>
     )
 }
