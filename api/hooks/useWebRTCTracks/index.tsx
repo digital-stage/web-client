@@ -129,6 +129,7 @@ const WebRTCProvider = ({ children }: { children: React.ReactNode }) => {
                         let peerConnection = prev[stageDeviceId]
                         if (!peerConnection) {
                             // Create peer connection
+                            log("Creating new connection to " + stageDeviceId)
                             const sendDescription: SendDescription = (description) => {
                                 if (description.type === 'offer') {
                                     log('Sending offer to ' + stageDeviceId)
@@ -197,9 +198,14 @@ const WebRTCProvider = ({ children }: { children: React.ReactNode }) => {
      */
     useEffect(() => {
         if (localDevice?.sendVideo && localDevice?.useP2P) {
+            log("Fetching video tracks")
             let abort = false
             let addedTrack
             getVideoTracks(localDevice?.inputVideoDeviceId)
+              .then(tracks => {
+                  log("Got " + tracks.length + " video tracks, using only first")
+                  return tracks
+              })
                 .then((tracks) => tracks.pop())
                 .then((track) => {
                     if (abort) {
@@ -261,6 +267,7 @@ const WebRTCProvider = ({ children }: { children: React.ReactNode }) => {
      * Attach video tracks to all existing peer connections
      */
     useEffect(() => {
+        log("Assigning video tracks to exising connections")
         setPeerConnections((prev) => {
             Object.values(prev).map((peerConnection) =>
                 peerConnection.setVideoTrack(localVideoTrack)
