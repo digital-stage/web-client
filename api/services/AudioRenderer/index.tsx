@@ -25,7 +25,7 @@ import useAudioTrackPosition from './useAudioTrackPosition'
 import useAnimationFrame from '../../hooks/useAnimationFrame'
 import { useDispatch } from 'react-redux'
 import { addLevel, removeLevel, useStageSelector } from '@digitalstage/api-client-react'
-import useAudioContext from './useAudioContext'
+import useAudioContext from '../../hooks/useAudioContext'
 import useWebRTCTracks from '../../hooks/useWebRTCTracks'
 
 const report = debug('useAudioRenderer')

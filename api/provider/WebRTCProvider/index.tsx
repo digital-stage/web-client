@@ -1,11 +1,6 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from 'react'
-import { useConnection, useStageSelector } from '@digitalstage/api-client-react'
 import debug from 'debug'
-import adapter from 'webrtc-adapter'
-import WebRTCConnection, {
-    SendDescription,
-    SendIceCandidate,
-} from '../../services/WebRTCService/WebRTCConnection'
+import React, { createContext, useEffect, useMemo, useState } from 'react'
+import { useConnection, useStageSelector } from '@digitalstage/api-client-react'
 import {
     ClientDeviceEvents,
     ClientDevicePayloads,
@@ -13,38 +8,31 @@ import {
     ServerDeviceEvents,
     ServerDevicePayloads,
 } from '@digitalstage/api-types'
-import getVideoTracks from '../../services/utils/getVideoTracks'
 import { shallowEqual } from 'react-redux'
-import getAudioTracks from '../../services/utils/getAudioTracks'
+import WebRTCConnection, { SendDescription, SendIceCandidate } from './WebRTCConnection'
+import getVideoTracks from '../../utils/getVideoTracks'
+import getAudioTracks from '../../utils/getAudioTracks'
 
-const log = debug('WebRTCService')
-const logWarning = log.extend('warn')
+const log = debug('WebRTCProvider')
 const logError = log.extend('error')
 
-log(
-    'Using ' +
-        adapter.browserDetails.browser +
-        ' with WebRTC version ' +
-        adapter.browserDetails.version
-)
 type TrackList = {
     [trackId: string]: MediaStreamTrack
 }
 
-interface WebRTCContext {
+interface WebRTCContextT {
     localVideoTracks: TrackList
     localAudioTracks: TrackList
     remoteVideoTracks: TrackList
     remoteAudioTracks: TrackList
 }
 
-const Context = createContext<WebRTCContext>({
+const WebRTCContext = createContext<WebRTCContextT>({
     localVideoTracks: {},
     localAudioTracks: {},
     remoteAudioTracks: {},
     remoteVideoTracks: {},
 })
-const useWebRTCTracks = () => useContext<WebRTCContext>(Context)
 
 const WebRTCProvider = ({ children }: { children: React.ReactNode }) => {
     const { connection, emit } = useConnection()
@@ -83,7 +71,7 @@ const WebRTCProvider = ({ children }: { children: React.ReactNode }) => {
                 setPeerConnections((prev) => {
                     log(prev)
                     if (prev[from]) {
-                        prev[from].addDescription(offer)
+                        prev[from].addDescription(offer).catch((err) => logError(err))
                     }
                     return prev
                 })
@@ -92,7 +80,7 @@ const WebRTCProvider = ({ children }: { children: React.ReactNode }) => {
                 log('Received answer from ' + from)
                 setPeerConnections((prev) => {
                     if (prev[from]) {
-                        prev[from].addDescription(answer)
+                        prev[from].addDescription(answer).catch((err) => logError(err))
                     }
                     return prev
                 })
@@ -103,7 +91,7 @@ const WebRTCProvider = ({ children }: { children: React.ReactNode }) => {
             }: ServerDevicePayloads.IceCandidateSent) =>
                 setPeerConnections((prev) => {
                     if (prev[from]) {
-                        prev[from].addIceCandidate(iceCandidate)
+                        prev[from].addIceCandidate(iceCandidate).catch((err) => logError(err))
                     }
                     return prev
                 })
@@ -129,7 +117,7 @@ const WebRTCProvider = ({ children }: { children: React.ReactNode }) => {
                         let peerConnection = prev[stageDeviceId]
                         if (!peerConnection) {
                             // Create peer connection
-                            log("Creating new connection to " + stageDeviceId)
+                            log('Creating new connection to ' + stageDeviceId)
                             const sendDescription: SendDescription = (description) => {
                                 if (description.type === 'offer') {
                                     log('Sending offer to ' + stageDeviceId)
@@ -159,11 +147,13 @@ const WebRTCProvider = ({ children }: { children: React.ReactNode }) => {
                             )
                             peerConnection.onTrack = (track) => {
                                 if (track.kind === 'video') {
+                                    log('Got new remote video from ' + stageId)
                                     setRemoteVideoTracks((prev) => ({
                                         ...prev,
                                         [stageDeviceId]: track,
                                     }))
                                 } else {
+                                    log('Got new remote audio from ' + stageId)
                                     setRemoteAudioTracks((prev) => ({
                                         ...prev,
                                         [stageDeviceId]: track,
@@ -172,6 +162,8 @@ const WebRTCProvider = ({ children }: { children: React.ReactNode }) => {
                             }
                             peerConnection.connect()
                         }
+                        if (localVideoTrack) peerConnection.setVideoTrack(localVideoTrack)
+                        if (localAudioTrack) peerConnection.setAudioTrack(localAudioTrack)
                         return {
                             ...prev,
                             [stageDeviceId]: peerConnection,
@@ -191,21 +183,21 @@ const WebRTCProvider = ({ children }: { children: React.ReactNode }) => {
                 )
             )
         }
-    }, [ready, emit, localStageDeviceId, stageDeviceIds])
+    }, [ready, emit, localStageDeviceId, stageDeviceIds, localVideoTrack, localAudioTrack, stageId])
 
     /**
      * Capture local video track
      */
     useEffect(() => {
         if (localDevice?.sendVideo && localDevice?.useP2P) {
-            log("Fetching video tracks")
+            log('Fetching video tracks')
             let abort = false
             let addedTrack
             getVideoTracks(localDevice?.inputVideoDeviceId)
-              .then(tracks => {
-                  log("Got " + tracks.length + " video tracks, using only first")
-                  return tracks
-              })
+                .then((tracks) => {
+                    log('Got ' + tracks.length + ' video tracks, using only first')
+                    return tracks
+                })
                 .then((tracks) => tracks.pop())
                 .then((track) => {
                     if (abort) {
@@ -262,19 +254,6 @@ const WebRTCProvider = ({ children }: { children: React.ReactNode }) => {
             }
         }
     }, [emit, localVideoTrack, localStageDeviceId, stageId])
-
-    /**
-     * Attach video tracks to all existing peer connections
-     */
-    useEffect(() => {
-        log("Assigning video tracks to exising connections")
-        setPeerConnections((prev) => {
-            Object.values(prev).map((peerConnection) =>
-                peerConnection.setVideoTrack(localVideoTrack)
-            )
-            return prev
-        })
-    }, [localVideoTrack])
 
     /**
      * Capture local audio track
@@ -356,18 +335,6 @@ const WebRTCProvider = ({ children }: { children: React.ReactNode }) => {
     }, [emit, localAudioTrack, localStageDeviceId, stageId])
 
     /**
-     * Attach audio tracks to all existing peer connections
-     */
-    useEffect(() => {
-        setPeerConnections((prev) => {
-            Object.values(prev).map((peerConnection) =>
-                peerConnection.setAudioTrack(localAudioTrack)
-            )
-            return prev
-        })
-    }, [localAudioTrack])
-
-    /**
      * Cache local states
      */
     const value = useMemo(
@@ -390,8 +357,8 @@ const WebRTCProvider = ({ children }: { children: React.ReactNode }) => {
         [localAudioTrack, localStageDeviceId, localVideoTrack, remoteAudioTracks, remoteVideoTracks]
     )
 
-    return <Context.Provider value={value}>{children}</Context.Provider>
+    return <WebRTCContext.Provider value={value}>{children}</WebRTCContext.Provider>
 }
-
-export { WebRTCProvider }
-export default useWebRTCTracks
+export type { WebRTCContextT }
+export { WebRTCContext }
+export default WebRTCProvider

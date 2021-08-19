@@ -4,11 +4,11 @@ import { addNotification } from '../redux/actions/clientActions'
 import { v4 as uuidv4 } from 'uuid'
 import { KIND } from '../redux/state/Notifications'
 
-interface ReportContext {
+interface ReportContextT {
     report: (kind: KIND[keyof KIND], message: React.ReactNode, permanent?: boolean) => void
 }
 
-const useReport = (): ReportContext => {
+const useReport = (): ReportContextT => {
     const dispatch = useDispatch()
     const report = useCallback(
         (kind: KIND[keyof KIND] = 'info', message: React.ReactNode, permanent?: boolean) => {

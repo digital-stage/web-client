@@ -2,14 +2,14 @@ import { useStageSelector } from '@digitalstage/api-client-react'
 import { AuthUser } from '../redux/state/Auth'
 import { shallowEqual } from 'react-redux'
 
-interface AuthContext {
+interface AuthContextT {
     signedIn: boolean
     signedOut: boolean
     user?: AuthUser
     token?: string
 }
 
-const useAuth = (): AuthContext => {
+const useAuth = (): AuthContextT => {
     const signedIn = useStageSelector<boolean>(
         (state) => state.auth.initialized && !!state.auth.token
     )

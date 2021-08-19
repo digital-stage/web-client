@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import './../styles/root.css'
 import './../styles/index.scss'
 import Head from 'next/head'
-import { AppProps } from 'next/app'
+import { AppProps, NextWebVitalsMetric } from 'next/app'
 import { DigitalStageProvider, useStageSelector } from '@digitalstage/api-client-react'
 import DeviceSelector from '../components/global/DeviceSelector'
 import Background from 'components/global/Background'
@@ -12,6 +12,7 @@ import ProfileMenu from '../components/global/ProfileMenu'
 import PlaybackOverlay from '../components/global/PlaybackOverlay'
 import StageJoiner from '../components/global/StageJoiner'
 import { useRouter } from 'next/router'
+import debug from 'debug'
 
 const CheckAuthWrapper = () => {
     const { push, pathname } = useRouter()
@@ -25,6 +26,10 @@ const CheckAuthWrapper = () => {
         }
     }, [pathname, push, signedOut])
     return null
+}
+
+export function reportWebVitals(metric: NextWebVitalsMetric) {
+    debug('Analytics')(metric)
 }
 
 function MyApp({ Component, pageProps }: AppProps) {
@@ -41,17 +46,18 @@ function MyApp({ Component, pageProps }: AppProps) {
             <DigitalStageProvider>
                 <div className="app">
                     <Background />
-                    <div className="inner">
-                        <Component {...pageProps} />
-                    </div>
-                    <DeviceSelector />
-                    <Sidebar />
+                    <ConnectionOverlay>
+                        <div className="inner">
+                            <Component {...pageProps} />
+                        </div>
+                        <DeviceSelector />
+                        <Sidebar />
+                        <StageJoiner />
+                        <ProfileMenu />
+                        <PlaybackOverlay />
+                        <CheckAuthWrapper />
+                    </ConnectionOverlay>
                 </div>
-                <StageJoiner />
-                <ProfileMenu />
-                <PlaybackOverlay />
-                <ConnectionOverlay />
-                <CheckAuthWrapper />
             </DigitalStageProvider>
             <style jsx>{`
                 .app {

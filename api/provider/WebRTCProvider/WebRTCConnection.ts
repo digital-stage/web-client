@@ -32,32 +32,36 @@ class WebRTCConnection {
         this.polite = polite
         this.connection = new RTCPeerConnection(config)
         this.connection.oniceconnectionstatechange = () => {
-            log('oniceconnectionstatechange: ' + this.connection.iceConnectionState)
             if (this.connection.connectionState == 'failed') this.connection.restartIce()
         }
-        this.connection.onconnectionstatechange = () => {
-            log('onconnectionstatechange: ' + this.connection.connectionState)
-        }
-        this.connection.onsignalingstatechange = () => {
-            log('onsignalingstatechange: ' + this.connection.signalingState)
-        }
-        this.connection.onnegotiationneeded = () => {
+        this.connection.onnegotiationneeded = async () => {
             log('onnegotiationneeded')
-            this.sendOffer()
+            try {
+                this.makingOffer = true
+                await this.connection.setLocalDescription()
+                this.sendDescription(this.connection.localDescription)
+            } catch (err) {
+                logError(err)
+            } finally {
+                this.makingOffer = false
+            }
         }
         this.connection.onicecandidateerror = (e) => {
             logError(e.errorCode + ': ' + e.errorText)
         }
         this.connection.ontrack = (ev) => {
-            this.onTrack(ev.track)
+            if (
+                ev.track.id !== this.videoSender.track?.id &&
+                ev.track.id !== this.audioSender.track?.id
+            )
+                this.onTrack(ev.track)
         }
         this.connection.onicecandidate = (ev) => {
-            log('New ICE candidate')
             sendIceCandidate(ev.candidate)
         }
     }
 
-    public connect(): Promise<void> {
+    public connect() {
         log('connect()')
         if (!this.videoSender) {
             this.videoSender = this.connection.addTransceiver('video').sender
@@ -65,20 +69,24 @@ class WebRTCConnection {
         if (!this.audioSender) {
             this.audioSender = this.connection.addTransceiver('audio').sender
         }
-        // Connect by sending offer
-        return this.sendOffer()
-    }
-
-    private async sendOffer(): Promise<void> {
-        log('sendOffer()')
-        this.makingOffer = true
-        await this.connection.setLocalDescription()
-        this.sendDescription(this.connection.localDescription)
     }
 
     public async addDescription(description: RTCSessionDescriptionInit): Promise<void> {
         log('addDescription')
 
+        const offerCollision =
+            description.type == 'offer' &&
+            (this.makingOffer || this.connection.signalingState != 'stable')
+        this.ignoreOffer = !this.polite && offerCollision
+        if (this.ignoreOffer) {
+            return
+        }
+        await this.connection.setRemoteDescription(description)
+        if (description.type == 'offer') {
+            await this.connection.setLocalDescription()
+            this.sendDescription(this.connection.localDescription)
+        }
+        /*
         if (description.type == 'offer') {
             if (!this.makingOffer || this.polite) {
                 if (!this.makingOffer) {
@@ -102,13 +110,13 @@ class WebRTCConnection {
             log('Accepting answer')
             await this.connection.setRemoteDescription(description)
             this.makingOffer = false
-        }
+        }*/
     }
 
     public addIceCandidate(iceCandidate: RTCIceCandidate): Promise<void> {
         log('addIceCandidate')
         return this.connection.addIceCandidate(iceCandidate).catch((err) => {
-            if (!this.makingOffer) {
+            if (!this.ignoreOffer) {
                 logError(err)
             } else {
                 logError('Ignoring error, since Im making an offer right now')

@@ -9,7 +9,7 @@ import RoomSelection from './RoomSelection'
 import GroupItem from './GroupItem'
 import TextSwitch from 'ui/TextSwitch'
 import ResetPanel from './ResetPanel'
-import { ConnectionContext } from 'api/hooks/useConnection'
+import { ConnectionContext } from 'api/provider/ConnectionProvider'
 
 const RoomEditor = ({ stageId }: { stageId: string }) => {
     const innerRef = useRef<HTMLDivElement>(null)

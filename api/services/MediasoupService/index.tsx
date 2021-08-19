@@ -32,8 +32,8 @@ import {
     Stage,
 } from '@digitalstage/api-types'
 import { Transport } from 'mediasoup-client/lib/Transport'
-import getAudioTracks from '../utils/getAudioTracks'
-import getVideoTracks from '../utils/getVideoTracks'
+import getAudioTracks from '../../utils/getAudioTracks'
+import getVideoTracks from '../../utils/getVideoTracks'
 
 const info = debug('mediasoup')
 const error = info.extend('error')

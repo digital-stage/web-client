@@ -1,4 +1,3 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
 import {
     AudioContext as StandardizedAudioContext,
     IAudioContext,
@@ -7,10 +6,12 @@ import {
 import debug from 'debug'
 import { setAudioStarted, useStageSelector } from '@digitalstage/api-client-react'
 import { useDispatch } from 'react-redux'
+import React, { createContext, useEffect, useState } from 'react'
+
 const report = debug('useAudioContext')
 const reportWarning = report.extend('warn')
 
-interface AudioContext {
+interface AudioContextContextT {
     audioContext?: IAudioContext
     destination?: IMediaStreamAudioDestinationNode<IAudioContext>
     setSampleRate: React.Dispatch<React.SetStateAction<number | undefined>>
@@ -57,7 +58,7 @@ const startAudioContext = async (
     return Promise.resolve()
 }
 
-const Context = createContext<AudioContext>({
+const AudioContextContext = createContext<AudioContextContextT>({
     setSampleRate: () => {
         throw new Error('Please wrap your DOM with the AudioContextProvider')
     },
@@ -165,7 +166,7 @@ const AudioContextProvider = ({ children }: { children: React.ReactNode }): JSX.
         return undefined
     }, [audioContext, audio])
 
-    const value = React.useMemo<AudioContext>(
+    const value = React.useMemo<AudioContextContextT>(
         () => ({
             audioContext,
             destination,
@@ -174,11 +175,9 @@ const AudioContextProvider = ({ children }: { children: React.ReactNode }): JSX.
         [audioContext, destination]
     )
 
-    return <Context.Provider value={value}>{children}</Context.Provider>
+    return <AudioContextContext.Provider value={value}>{children}</AudioContextContext.Provider>
 }
 
-const useAudioContext = (): AudioContext => useContext<AudioContext>(Context)
-
-export { AudioContextProvider }
-
-export default useAudioContext
+export type { AudioContextContextT }
+export { AudioContextContext }
+export default AudioContextProvider
