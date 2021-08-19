@@ -10,6 +10,7 @@ import {
     ThreeDimensionalProperties,
 } from '@digitalstage/api-types'
 import useStageSelector from 'api/redux/useStageSelector'
+import { shallowEqual } from 'react-redux'
 
 const useStageDevicePosition = ({
     stageDeviceId,
@@ -23,7 +24,8 @@ const useStageDevicePosition = ({
     )
     // Fetch necessary model
     const stageDevice = useStageSelector<StageDevice>(
-        (state) => state.stageDevices.byId[stageDeviceId]
+        (state) => state.stageDevices.byId[stageDeviceId],
+        shallowEqual
     )
     const customStageDevicePosition = useStageSelector<CustomStageDevicePosition | undefined>(
         (state) =>
@@ -34,10 +36,12 @@ const useStageDevicePosition = ({
                           stageDevice._id
                       ]
                   ]
-                : undefined
+                : undefined,
+        shallowEqual
     )
     const stageMember = useStageSelector<StageMember>(
-        (state) => stageDevice && state.stageMembers.byId[stageDevice.stageMemberId]
+        (state) => stageDevice && state.stageMembers.byId[stageDevice.stageMemberId],
+        shallowEqual
     )
     const customStageMemberPosition = useStageSelector<CustomStageMemberPosition | undefined>(
         (state) =>
@@ -49,19 +53,22 @@ const useStageDevicePosition = ({
                           stageMember._id
                       ]
                   ]
-                : undefined
+                : undefined,
+        shallowEqual
     )
     const group = useStageSelector<Group>(
         (state) => stageMember && state.groups.byId[stageMember.groupId]
     )
-    const customGroupPosition = useStageSelector<CustomGroupPosition | undefined>((state) =>
-        group &&
-        state.customGroupPositions.byDeviceAndGroup[deviceId] &&
-        state.customGroupPositions.byDeviceAndGroup[deviceId][group._id]
-            ? state.customGroupPositions.byId[
-                  state.customGroupPositions.byDeviceAndGroup[deviceId][group._id]
-              ]
-            : undefined
+    const customGroupPosition = useStageSelector<CustomGroupPosition | undefined>(
+        (state) =>
+            group &&
+            state.customGroupPositions.byDeviceAndGroup[deviceId] &&
+            state.customGroupPositions.byDeviceAndGroup[deviceId][group._id]
+                ? state.customGroupPositions.byId[
+                      state.customGroupPositions.byDeviceAndGroup[deviceId][group._id]
+                  ]
+                : undefined,
+        shallowEqual
     )
 
     // Calculate position

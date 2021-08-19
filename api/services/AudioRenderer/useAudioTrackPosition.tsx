@@ -7,6 +7,7 @@ import {
 } from '@digitalstage/api-types'
 import useStageDevicePosition from './useStageDevicePosition'
 import useStageSelector from 'api/redux/useStageSelector'
+import { shallowEqual } from 'react-redux'
 
 const useAudioTrackPosition = ({
     audioTrack,
@@ -32,7 +33,8 @@ const useAudioTrackPosition = ({
                           audioTrack._id
                       ]
                   ]
-                : undefined
+                : undefined,
+        shallowEqual
     )
 
     // Calculate position

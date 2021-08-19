@@ -1,10 +1,5 @@
-export const config = {
+export const config: RTCConfiguration = {
     iceServers: [
-        {
-            urls: 'turn:18.185.72.86:3478?transport=tcp',
-            credential: '2021',
-            username: 'digitalstage',
-        },
         {
             urls: [
                 'stun:stun.l.google.com:19302',
@@ -13,6 +8,11 @@ export const config = {
                 'stun:stun3.l.google.com:19302',
                 'stun:stun4.l.google.com:19302',
             ],
+        },
+        {
+            urls: 'turn:18.185.72.86:3478?transport=tcp',
+            credential: '2021',
+            username: 'digitalstage',
         },
     ],
 }

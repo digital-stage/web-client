@@ -1,45 +1,55 @@
 'use strict'
 import { config } from './config'
 import debug from 'debug'
+import { SocketEvent } from 'teckos-client/dist/types'
+import { ITeckosClient } from 'teckos-client'
+import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
 
-interface Events {
-    trackAdded: 'track-added'
-}
-
-const log = debug('WebRTCService').extend('Connection')
+const log = debug('WebRTCProvider').extend('Connection')
+const logWarning = log.extend('warn')
 const logError = log.extend('error')
 
-export type SendDescription = (description: RTCSessionDescriptionInit) => void
-export type SendIceCandidate = (iceCandidate: RTCIceCandidate) => void
+export type OnTrackCallback = (track: MediaStreamTrack) => void
 
 class WebRTCConnection {
     private readonly connection: RTCPeerConnection
     private readonly polite?: boolean
-    private readonly sendDescription: SendDescription
-    public onTrack?: (track: MediaStreamTrack) => void
+    private readonly localStageDeviceId: string
+    private readonly stageDeviceId: string
+    private readonly emit: ITeckosClient['emit']
+    private readonly onTrack: OnTrackCallback
     private videoSender: RTCRtpSender
     private audioSender: RTCRtpSender
     private makingOffer: boolean = false
     private ignoreOffer: boolean = false
 
     constructor(
-        sendDescription: SendDescription,
-        sendIceCandidate: SendIceCandidate,
-        polite?: boolean
+        localStageDeviceId: string,
+        stageDeviceId: string,
+        emit: ITeckosClient['emit'],
+        onTrack: OnTrackCallback
     ) {
-        log('Created new connection')
-        this.sendDescription = sendDescription
-        this.polite = polite
+        this.localStageDeviceId = localStageDeviceId
+        this.stageDeviceId = stageDeviceId
+        this.emit = emit
+        this.onTrack = onTrack
+        this.polite = localStageDeviceId.localeCompare(stageDeviceId) > 0
         this.connection = new RTCPeerConnection(config)
         this.connection.oniceconnectionstatechange = () => {
+            logWarning('iceConnectionState', this.connection.iceConnectionState)
             if (this.connection.connectionState == 'failed') this.connection.restartIce()
         }
         this.connection.onnegotiationneeded = async () => {
-            log('onnegotiationneeded')
             try {
+                log('Making offer', this.polite ? 'polite' : 'rude')
                 this.makingOffer = true
                 await this.connection.setLocalDescription()
-                this.sendDescription(this.connection.localDescription)
+                log('Sending offer to ' + stageDeviceId)
+                return emit(ClientDeviceEvents.SendP2POffer, {
+                    from: localStageDeviceId,
+                    to: stageDeviceId,
+                    offer: this.connection.localDescription,
+                } as ClientDevicePayloads.SendP2POffer)
             } catch (err) {
                 logError(err)
             } finally {
@@ -51,13 +61,23 @@ class WebRTCConnection {
         }
         this.connection.ontrack = (ev) => {
             if (
-                ev.track.id !== this.videoSender.track?.id &&
-                ev.track.id !== this.audioSender.track?.id
+                (!this.videoSender || ev.track.id !== this.videoSender.track?.id) &&
+                (!this.audioSender || ev.track.id !== this.audioSender.track?.id)
             )
                 this.onTrack(ev.track)
         }
-        this.connection.onicecandidate = (ev) => {
-            sendIceCandidate(ev.candidate)
+        this.connection.onicecandidate = (ev) =>
+            this.emit(ClientDeviceEvents.SendIceCandidate, {
+                from: this.localStageDeviceId,
+                to: this.stageDeviceId,
+                iceCandidate: ev.candidate,
+            } as ClientDevicePayloads.SendIceCandidate)
+
+        this.connection.onconnectionstatechange = () => {
+            logWarning('connectionState', this.connection.connectionState)
+        }
+        this.connection.onsignalingstatechange = () => {
+            logWarning('signalingState', this.connection.signalingState)
         }
     }
 
@@ -71,50 +91,56 @@ class WebRTCConnection {
         }
     }
 
-    public async addDescription(description: RTCSessionDescriptionInit): Promise<void> {
-        log('addDescription')
-
-        const offerCollision =
-            description.type == 'offer' &&
-            (this.makingOffer || this.connection.signalingState != 'stable')
-        this.ignoreOffer = !this.polite && offerCollision
-        if (this.ignoreOffer) {
-            return
-        }
-        await this.connection.setRemoteDescription(description)
-        if (description.type == 'offer') {
-            await this.connection.setLocalDescription()
-            this.sendDescription(this.connection.localDescription)
-        }
-        /*
-        if (description.type == 'offer') {
-            if (!this.makingOffer || this.polite) {
-                if (!this.makingOffer) {
-                    log('Accepting offer, since Im not making any offer right now')
-                } else {
-                    log('Just beeing polite')
-                }
-                log('Signaling state is ' + this.connection.signalingState)
-                // Accept offer
-                await this.connection.setRemoteDescription(description)
-                await this.connection.setLocalDescription()
-                // And send answer
-                log('Sending answer')
-                this.sendDescription(this.connection.localDescription)
-                this.makingOffer = false
-            } else {
-                log('Ignoring offer')
-            }
-        } else if (this.makingOffer) {
-            // Accept answer
-            log('Accepting answer')
-            await this.connection.setRemoteDescription(description)
-            this.makingOffer = false
-        }*/
+    public close() {
+        this.connection.close()
     }
 
-    public addIceCandidate(iceCandidate: RTCIceCandidate): Promise<void> {
-        log('addIceCandidate')
+    public async addDescription(description: RTCSessionDescriptionInit): Promise<void> {
+        if (description.type == 'offer') {
+            // Detect collision
+            this.ignoreOffer = !this.polite && this.makingOffer
+            if (this.ignoreOffer) {
+                log(
+                    'Ignoring offer',
+                    this.makingOffer,
+                    this.polite ? 'polite' : 'rude',
+                    this.connection.signalingState
+                )
+                return
+            }
+            log(
+                'Accepting offer',
+                this.makingOffer,
+                this.polite ? 'polite' : 'rude',
+                this.connection.signalingState
+            )
+            await this.connection.setRemoteDescription(description)
+            await this.connection.setLocalDescription()
+            log(
+                'Answering offer',
+                this.makingOffer,
+                this.polite ? 'polite' : 'rude',
+                this.connection.signalingState
+            )
+            this.emit(ClientDeviceEvents.SendP2PAnswer, {
+                from: this.localStageDeviceId,
+                to: this.stageDeviceId,
+                answer: this.connection.localDescription,
+            } as ClientDevicePayloads.SendP2PAnswer)
+        } else if (this.connection.signalingState === 'have-local-offer') {
+            log(
+                'Accepting answer',
+                this.makingOffer,
+                this.polite ? 'polite' : 'rude',
+                this.connection.signalingState
+            )
+            await this.connection.setRemoteDescription(description)
+        } else {
+            log('HÄH?')
+        }
+    }
+
+    public addIceCandidate(iceCandidate: RTCIceCandidate | null): Promise<void> {
         return this.connection.addIceCandidate(iceCandidate).catch((err) => {
             if (!this.ignoreOffer) {
                 logError(err)
@@ -124,36 +150,23 @@ class WebRTCConnection {
         })
     }
 
-    public async setVideoTrack(track?: MediaStreamTrack): Promise<void> {
-        log('setVideoTrack')
+    public async setVideoTrack(track: MediaStreamTrack): Promise<void> {
         if (this.videoSender) {
-            if (track) {
-                if (!this.videoSender.track || track.id !== this.videoSender.track.id) {
-                    await this.videoSender.replaceTrack(track)
-                }
-            } else {
-                this.connection.removeTrack(this.videoSender)
+            if (!this.videoSender.track || track.id !== this.videoSender.track.id) {
+                await this.videoSender.replaceTrack(track)
             }
         } else {
             this.videoSender = this.connection.addTrack(track)
         }
     }
 
-    public async setAudioTrack(track?: MediaStreamTrack): Promise<void> {
-        log('setAudioTrack')
+    public async setAudioTrack(track: MediaStreamTrack): Promise<void> {
         if (this.audioSender) {
-            if (track) {
-                if (!this.audioSender.track || track.id !== this.audioSender.track.id) {
-                    await this.audioSender.replaceTrack(track)
-                }
-            } else {
-                this.connection.removeTrack(this.audioSender)
+            if (!this.audioSender.track || track.id !== this.audioSender.track.id) {
+                await this.audioSender.replaceTrack(track)
             }
         } else {
             this.audioSender = this.connection.addTrack(track)
-        }
-        if (track && track.muted) {
-            logError('Track is muted')
         }
     }
 }

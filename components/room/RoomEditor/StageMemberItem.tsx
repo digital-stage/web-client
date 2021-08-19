@@ -10,6 +10,7 @@ import {
 import RoomElement from './RoomElement'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import StageDeviceItem from './StageDeviceItem'
+import { shallowEqual } from 'react-redux'
 
 const StageMemberItem = ({
     stageMemberId,
@@ -36,16 +37,24 @@ const StageMemberItem = ({
 }) => {
     const { emit } = useConnection()
     const stageMember = useStageSelector<StageMember | undefined>(
-        (state) => state.stageMembers.byId[stageMemberId]
+        (state) => state.stageMembers.byId[stageMemberId],
+        shallowEqual
     )
-    const customStageMemberPosition = useStageSelector<CustomStageMemberPosition>((state) =>
-        deviceId &&
-        state.customStageMemberPositions.byDeviceAndStageMember[deviceId] &&
-        state.customStageMemberPositions.byDeviceAndStageMember[deviceId][stageMemberId]
-            ? state.customStageMemberPositions.byId[
-                  state.customStageMemberPositions.byDeviceAndStageMember[deviceId][stageMemberId]
-              ]
-            : undefined
+    const isStreaming = useStageSelector(
+        (state) => state.audioTracks.byStageMember[stageMemberId]?.length > 0
+    )
+    const customStageMemberPosition = useStageSelector<CustomStageMemberPosition>(
+        (state) =>
+            deviceId &&
+            state.customStageMemberPositions.byDeviceAndStageMember[deviceId] &&
+            state.customStageMemberPositions.byDeviceAndStageMember[deviceId][stageMemberId]
+                ? state.customStageMemberPositions.byId[
+                      state.customStageMemberPositions.byDeviceAndStageMember[deviceId][
+                          stageMemberId
+                      ]
+                  ]
+                : undefined,
+        shallowEqual
     )
     const modified = useMemo(() => {
         return deviceId
@@ -127,6 +136,7 @@ const StageMemberItem = ({
                 modified={modified}
                 showOnlineStatus={true}
                 online={stageMember?.active}
+                streaming={isStreaming}
                 x={position.x}
                 y={position.y}
                 rZ={position.rZ}

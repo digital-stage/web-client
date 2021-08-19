@@ -14,6 +14,7 @@ const AudioTrackItem = ({
     audioTrackId,
     deviceId,
     numAudioTracks,
+    isLocal,
     index,
     username,
     groupColor,
@@ -30,6 +31,7 @@ const AudioTrackItem = ({
     numAudioTracks: number
     index: number
     groupColor: string
+    isLocal: boolean
     username: string
     offsetX: number
     offsetY: number
@@ -105,10 +107,10 @@ const AudioTrackItem = ({
         [deviceId, emit, offsetRz, offsetX, offsetY, audioTrackId]
     )
 
-    if (numAudioTracks > 1 || modified) {
+    if (numAudioTracks > 1 || modified || isLocal) {
         return (
             <RoomElement
-                name={`${username} Track #${index + 1}`}
+                name={`Track ${index + 1}/${numAudioTracks}${username} `}
                 color={groupColor}
                 modified={modified}
                 x={position.x}
@@ -127,7 +129,7 @@ const AudioTrackItem = ({
                 }
                 onFinalChange={handleFinalChange}
                 selected={selection.some((value) => {
-                    if (value.type === 'member') {
+                    if (value.type === 'track') {
                         if (customAudioTrackPosition)
                             return value.id === customAudioTrackPosition._id
                         return value.id === audioTrackId

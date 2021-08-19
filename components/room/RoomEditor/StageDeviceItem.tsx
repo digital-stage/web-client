@@ -44,6 +44,9 @@ const StageDeviceItem = ({
     const stageDevice = useStageSelector<StageDevice | undefined>(
         (state) => state.stageDevices.byId[stageDeviceId]
     )
+    const isLocal = useStageSelector(
+        (state) => !!stageDeviceId && stageDeviceId === state.globals.localStageDeviceId
+    )
     const customStageDevicePosition = useStageSelector<CustomStageDevicePosition>((state) =>
         deviceId &&
         state.customStageDevicePositions.byDeviceAndStageDevice[deviceId] &&
@@ -117,9 +120,10 @@ const StageDeviceItem = ({
             {numStageDevices > 1 || modified ? (
                 <>
                     <RoomElement
-                        name={`${username} #${index + 1}/${numStageDevices}: ${stageDevice?.name}`}
+                        name={`${index + 1}/${numStageDevices}: ${stageDevice?.name}`}
                         color={groupColor}
                         modified={modified}
+                        streaming={audioTrackIds.length > 0}
                         showOnlineStatus={true}
                         online={stageDevice?.active}
                         x={position.x}
@@ -128,7 +132,7 @@ const StageDeviceItem = ({
                         stageWidth={stageWidth}
                         stageHeight={stageHeight}
                         size={48}
-                        src="/room/device.svg"
+                        src={isLocal ? '/room/center.svg' : '/room/device.svg'}
                         onChange={(e) =>
                             setPosition((prev) => ({
                                 x: e.x || prev.x,
@@ -161,6 +165,7 @@ const StageDeviceItem = ({
                     key={stageDeviceId}
                     audioTrackId={audioTrackId}
                     index={index}
+                    isLocal={isLocal}
                     numAudioTracks={audioTrackIds.length}
                     deviceId={deviceId}
                     username={username}

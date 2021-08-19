@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import {
     IAnalyserNode,
     IAudioContext,
@@ -23,7 +23,7 @@ import debug from 'debug'
 import useStageDevicePosition from './useStageDevicePosition'
 import useAudioTrackPosition from './useAudioTrackPosition'
 import useAnimationFrame from '../../hooks/useAnimationFrame'
-import { useDispatch } from 'react-redux'
+import { shallowEqual, useDispatch } from 'react-redux'
 import { addLevel, removeLevel, useStageSelector } from '@digitalstage/api-client-react'
 import useAudioContext from '../../hooks/useAudioContext'
 import useWebRTCTracks from '../../hooks/useWebRTCTracks'
@@ -96,13 +96,15 @@ const AudioTrackRenderer = ({
     deviceId: string
 }): JSX.Element => {
     console.log('RENDER', 'AudioTrackRenderer')
-    const customVolume = useStageSelector<CustomAudioTrackVolume | undefined>((state) =>
-        state.customAudioTrackVolumes.byDeviceAndAudioTrack[deviceId] &&
-        state.customAudioTrackVolumes.byDeviceAndAudioTrack[deviceId][audioTrack._id]
-            ? state.customAudioTrackVolumes.byId[
-                  state.customAudioTrackVolumes.byDeviceAndAudioTrack[deviceId][audioTrack._id]
-              ]
-            : undefined
+    const customVolume = useStageSelector<CustomAudioTrackVolume | undefined>(
+        (state) =>
+            state.customAudioTrackVolumes.byDeviceAndAudioTrack[deviceId] &&
+            state.customAudioTrackVolumes.byDeviceAndAudioTrack[deviceId][audioTrack._id]
+                ? state.customAudioTrackVolumes.byId[
+                      state.customAudioTrackVolumes.byDeviceAndAudioTrack[deviceId][audioTrack._id]
+                  ]
+                : undefined,
+        shallowEqual
     )
     const mediasoupAudioConsumers = useStageSelector((state) => state.mediasoup.audioConsumers.byId)
     const mediasoupAudioProducers = useStageSelector((state) => state.mediasoup.audioProducers.byId)
@@ -111,7 +113,7 @@ const AudioTrackRenderer = ({
     const audioRef = useRef<HTMLAudioElement>(null)
     const [track, setTrack] = useState<MediaStreamTrack>()
     const [sourceNode, setSourceNode] = useState<IMediaStreamAudioSourceNode<IAudioContext>>()
-    const [pannerNode] = useState<IPannerNode<IAudioContext>>(() => {
+    const pannerNode = useMemo<IPannerNode<IAudioContext>>(() => {
         const node = audioContext.createPanner()
         node.panningModel = 'HRTF'
         node.distanceModel = 'linear'
@@ -122,8 +124,11 @@ const AudioTrackRenderer = ({
         node.coneOuterAngle = 90
         node.coneOuterGain = 0.3
         return node
-    })
-    const [gainNode] = useState<IGainNode<IAudioContext>>(audioContext.createGain())
+    }, [audioContext])
+    const gainNode = useMemo<IGainNode<IAudioContext>>(
+        () => audioContext.createGain(),
+        [audioContext]
+    )
     const position = useAudioTrackPosition({ audioTrack, deviceId })
 
     useEffect(() => {
@@ -280,22 +285,25 @@ const StageDeviceRenderer = ({
 }): JSX.Element => {
     console.log('RENDER', 'StageDeviceRenderer')
     const stageDevice = useStageSelector<StageDevice>(
-        (state) => state.stageDevices.byId[stageDeviceId]
+        (state) => state.stageDevices.byId[stageDeviceId],
+        shallowEqual
     )
-    const customVolume = useStageSelector<CustomStageDeviceVolume | undefined>((state) =>
-        state.customStageDeviceVolumes.byDeviceAndStageDevice[deviceId] &&
-        state.customStageDeviceVolumes.byDeviceAndStageDevice[deviceId][stageDeviceId]
-            ? state.customStageDeviceVolumes.byId[
-                  state.customStageDeviceVolumes.byDeviceAndStageDevice[deviceId][stageDeviceId]
-              ]
-            : undefined
+    const customVolume = useStageSelector<CustomStageDeviceVolume | undefined>(
+        (state) =>
+            state.customStageDeviceVolumes.byDeviceAndStageDevice[deviceId] &&
+            state.customStageDeviceVolumes.byDeviceAndStageDevice[deviceId][stageDeviceId]
+                ? state.customStageDeviceVolumes.byId[
+                      state.customStageDeviceVolumes.byDeviceAndStageDevice[deviceId][stageDeviceId]
+                  ]
+                : undefined,
+        shallowEqual
     )
     const audioTracks = useStageSelector((state) =>
         state.audioTracks.byStageDevice[stageDeviceId]
             ? state.audioTracks.byStageDevice[stageDeviceId].map((id) => state.audioTracks.byId[id])
             : []
     )
-    const [pannerNode] = useState<IPannerNode<IAudioContext>>(() => {
+    const pannerNode = useMemo<IPannerNode<IAudioContext>>(() => {
         const node = audioContext.createPanner()
         node.panningModel = 'HRTF'
         node.distanceModel = 'exponential'
@@ -303,33 +311,12 @@ const StageDeviceRenderer = ({
         node.refDistance = 1
         node.rolloffFactor = 20
         return node
-    })
-    const [gainNode] = useState<IGainNode<IAudioContext>>(audioContext.createGain())
-    const [oscillator, setOscillator] = useState<IOscillatorNode<IAudioContext>>()
-    const position = useStageDevicePosition({ stageDeviceId, deviceId })
-
-    useEffect(() => {
-        if (audioContext) {
-            const node = audioContext.createOscillator()
-            node.type = 'square'
-            node.frequency.setValueAtTime(
-                Math.floor(Math.random() * 1000) + 300,
-                audioContext.currentTime
-            ) // value in hertz
-            //node.start()
-            setOscillator(node)
-        }
     }, [audioContext])
-
-    useEffect(() => {
-        if (oscillator && pannerNode) {
-            oscillator.connect(pannerNode)
-            return () => {
-                oscillator.disconnect(pannerNode)
-            }
-        }
-        return undefined
-    }, [oscillator, pannerNode])
+    const gainNode = useMemo<IGainNode<IAudioContext>>(
+        () => audioContext.createGain(),
+        [audioContext]
+    )
+    const position = useStageDevicePosition({ stageDeviceId, deviceId })
 
     useEffect(() => {
         if (pannerNode && gainNode) {
@@ -428,17 +415,23 @@ const StageMemberRenderer = ({
         (state) => state.stageDevices.byStageMember[stageMemberId] || []
     )
     const stageMember = useStageSelector<StageMember>(
-        (state) => state.stageMembers.byId[stageMemberId]
+        (state) => state.stageMembers.byId[stageMemberId],
+        shallowEqual
     )
-    const customVolume = useStageSelector<CustomStageMemberVolume | undefined>((state) =>
-        state.customStageMemberVolumes.byDeviceAndStageMember[deviceId] &&
-        state.customStageMemberVolumes.byDeviceAndStageMember[deviceId][stageMemberId]
-            ? state.customStageMemberVolumes.byId[
-                  state.customStageMemberVolumes.byDeviceAndStageMember[deviceId][stageMemberId]
-              ]
-            : undefined
+    const customVolume = useStageSelector<CustomStageMemberVolume | undefined>(
+        (state) =>
+            state.customStageMemberVolumes.byDeviceAndStageMember[deviceId] &&
+            state.customStageMemberVolumes.byDeviceAndStageMember[deviceId][stageMemberId]
+                ? state.customStageMemberVolumes.byId[
+                      state.customStageMemberVolumes.byDeviceAndStageMember[deviceId][stageMemberId]
+                  ]
+                : undefined,
+        shallowEqual
     )
-    const [gainNode] = useState<IGainNode<IAudioContext>>(audioContext.createGain())
+    const gainNode = useMemo<IGainNode<IAudioContext>>(
+        () => audioContext.createGain(),
+        [audioContext]
+    )
 
     useEffect(() => {
         if (destination && gainNode) {
@@ -505,16 +498,21 @@ const GroupRenderer = ({
 }): JSX.Element => {
     console.log('RENDER', 'GroupRenderer')
     const stageMemberIds = useStageSelector((state) => state.stageMembers.byGroup[groupId] || [])
-    const group = useStageSelector<Group>((state) => state.groups.byId[groupId])
-    const customVolume = useStageSelector<CustomGroupVolume | undefined>((state) =>
-        state.customGroupVolumes.byDeviceAndGroup[deviceId] &&
-        state.customGroupVolumes.byDeviceAndGroup[deviceId][groupId]
-            ? state.customGroupVolumes.byId[
-                  state.customGroupVolumes.byDeviceAndGroup[deviceId][groupId]
-              ]
-            : undefined
+    const group = useStageSelector<Group>((state) => state.groups.byId[groupId], shallowEqual)
+    const customVolume = useStageSelector<CustomGroupVolume | undefined>(
+        (state) =>
+            state.customGroupVolumes.byDeviceAndGroup[deviceId] &&
+            state.customGroupVolumes.byDeviceAndGroup[deviceId][groupId]
+                ? state.customGroupVolumes.byId[
+                      state.customGroupVolumes.byDeviceAndGroup[deviceId][groupId]
+                  ]
+                : undefined,
+        shallowEqual
     )
-    const [gainNode] = useState<IGainNode<IAudioContext>>(audioContext.createGain())
+    const gainNode = useMemo<IGainNode<IAudioContext>>(
+        () => audioContext.createGain(),
+        [audioContext]
+    )
 
     useEffect(() => {
         if (destination && gainNode) {

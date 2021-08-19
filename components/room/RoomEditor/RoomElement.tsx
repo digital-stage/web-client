@@ -34,6 +34,7 @@ const RoomElement = ({
     color,
     showOnlineStatus,
     online,
+    streaming,
     linePoints,
     lineDash,
 }: {
@@ -53,6 +54,7 @@ const RoomElement = ({
     color: string
     showOnlineStatus?: boolean
     online?: boolean
+    streaming?: boolean
     linePoints?: number[]
     lineDash?: number[]
 }) => {
@@ -156,8 +158,8 @@ const RoomElement = ({
                 dragBoundFunc={dragBoundFunc}
                 onDragMove={handleDrag}
                 onDragEnd={handleDragEnd}
-                onClick={onSelected}
-                onTap={onSelected}
+                onClick={() => onSelected()}
+                onTap={() => onSelected()}
             >
                 <Text
                     text={name}
@@ -172,8 +174,8 @@ const RoomElement = ({
                     <Circle
                         x={size / 2}
                         y={size / 2 - 10}
-                        radius={size / 20}
-                        fill={online ? 'green' : 'red'}
+                        radius={size / 12}
+                        fill={online ? (streaming ? 'yellow' : 'green') : 'red'}
                     />
                 ) : null}
                 {sourceImage ? (

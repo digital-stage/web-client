@@ -4,69 +4,68 @@ import { Consumer } from 'mediasoup-client/lib/Consumer'
 import { Notification } from '../state/Notifications'
 import { AuthUser } from '../state/Auth'
 import ReducerAction from './ReducerAction'
-import {ActionCreator} from 'redux'
 
-export const reset: ActionCreator<ReducerAction> = (): ReducerAction => ({
+export const reset = (): ReducerAction => ({
     type: InternalActionTypes.RESET,
 })
 
-export const selectMode: ActionCreator<ReducerAction> = (mode: 'global' | 'personal'): ReducerAction => ({
+export const selectMode = (mode: 'global' | 'personal'): ReducerAction => ({
     type: InternalActionTypes.SELECT_MODE,
     payload: mode,
 })
 
-export const selectDevice: ActionCreator<ReducerAction>= (deviceId: string): ReducerAction => ({
+export const selectDevice = (deviceId: string): ReducerAction => ({
     type: InternalActionTypes.SELECT_DEVICE,
     payload: deviceId,
 })
 
-export const addMediasoupVideoProducer: ActionCreator<ReducerAction> = (id: string, producer: Producer): ReducerAction => ({
+export const addMediasoupVideoProducer = (id: string, producer: Producer) => ({
     type: InternalActionTypes.ADD_MEDIASOUP_VIDEO_PRODUCER,
     payload: {
         id,
         producer,
     },
 })
-export const removeMediasoupVideoProducer: ActionCreator<ReducerAction> = (id: string): ReducerAction => ({
+export const removeMediasoupVideoProducer = (id: string): ReducerAction => ({
     type: InternalActionTypes.REMOVE_MEDIASOUP_VIDEO_PRODUCER,
     payload: id,
 })
-export const addMediasoupAudioProducer: ActionCreator<ReducerAction> = (id: string, producer: Producer): ReducerAction => ({
+export const addMediasoupAudioProducer = (id: string, producer: Producer): ReducerAction => ({
     type: InternalActionTypes.ADD_MEDIASOUP_AUDIO_PRODUCER,
     payload: {
         id,
         producer,
     },
 })
-export const removeMediasoupAudioProducer: ActionCreator<ReducerAction> = (id: string): ReducerAction => ({
+export const removeMediasoupAudioProducer = (id: string): ReducerAction => ({
     type: InternalActionTypes.REMOVE_MEDIASOUP_AUDIO_PRODUCER,
     payload: id,
 })
-export const addMediasoupVideoConsumer: ActionCreator<ReducerAction> = (id: string, consumer: Consumer): ReducerAction => ({
+export const addMediasoupVideoConsumer = (id: string, consumer: Consumer): ReducerAction => ({
     type: InternalActionTypes.ADD_MEDIASOUP_VIDEO_CONSUMER,
     payload: {
         id,
         consumer,
     },
 })
-export const removeMediasoupVideoConsumer: ActionCreator<ReducerAction> = (id: string): ReducerAction => ({
+export const removeMediasoupVideoConsumer = (id: string): ReducerAction => ({
     type: InternalActionTypes.REMOVE_MEDIASOUP_VIDEO_CONSUMER,
     payload: id,
 })
-export const addMediasoupAudioConsumer: ActionCreator<ReducerAction> = (id: string, consumer: Consumer): ReducerAction => ({
+export const addMediasoupAudioConsumer = (id: string, consumer: Consumer): ReducerAction => ({
     type: InternalActionTypes.ADD_MEDIASOUP_AUDIO_CONSUMER,
     payload: {
         id,
         consumer,
     },
 })
-export const removeMediasoupAudioConsumer: ActionCreator<ReducerAction> = (id: string): ReducerAction => ({
+export const removeMediasoupAudioConsumer = (id: string): ReducerAction => ({
     type: InternalActionTypes.REMOVE_MEDIASOUP_AUDIO_CONSUMER,
     payload: id,
 })
 
 /* WebRTC related */
-export const setWebRTCDescription: ActionCreator<ReducerAction> = (
+export const setWebRTCDescription = (
     fromStageDeviceId: string,
     description: RTCSessionDescriptionInit
 ): ReducerAction => ({
@@ -76,7 +75,7 @@ export const setWebRTCDescription: ActionCreator<ReducerAction> = (
         description,
     },
 })
-export const setWebRTCCandidate: ActionCreator<ReducerAction> = (
+export const setWebRTCCandidate = (
     fromStageDeviceId: string,
     candidate: RTCIceCandidate
 ): ReducerAction => ({
@@ -86,53 +85,53 @@ export const setWebRTCCandidate: ActionCreator<ReducerAction> = (
         candidate,
     },
 })
-export const setLocalWebRTCVideoTracks: ActionCreator<ReducerAction> = (tracks: {
+export const setLocalWebRTCVideoTracks = (tracks: {
     [trackId: string]: MediaStreamTrack
 }): ReducerAction => ({
     type: InternalActionTypes.SET_LOCAL_WEBRTC_VIDEO_TRACKS,
     payload: tracks,
 })
 
-export const setLocalWebRTCAudioTracks: ActionCreator<ReducerAction> = (tracks: {
+export const setLocalWebRTCAudioTracks = (tracks: {
     [trackId: string]: MediaStreamTrack
 }): ReducerAction => ({
     type: InternalActionTypes.SET_LOCAL_WEBRTC_AUDIO_TRACKS,
     payload: tracks,
 })
 
-export const addRemoteWebRTCVideoTrack: ActionCreator<ReducerAction> = (track: MediaStreamTrack): ReducerAction => ({
+export const addRemoteWebRTCVideoTrack = (track: MediaStreamTrack): ReducerAction => ({
     type: InternalActionTypes.ADD_REMOTE_WEBRTC_VIDEO_TRACK,
     payload: track,
 })
 
-export const removeRemoteWebRTCVideoTrack: ActionCreator<ReducerAction> = (id: string): ReducerAction => ({
+export const removeRemoteWebRTCVideoTrack = (id: string): ReducerAction => ({
     type: InternalActionTypes.REMOVE_REMOTE_WEBRTC_VIDEO_TRACK,
     payload: id,
 })
 
-export const addRemoteWebRTCAudioTrack: ActionCreator<ReducerAction> = (track: MediaStreamTrack): ReducerAction => ({
+export const addRemoteWebRTCAudioTrack = (track: MediaStreamTrack): ReducerAction => ({
     type: InternalActionTypes.ADD_REMOTE_WEBRTC_AUDIO_TRACK,
     payload: track,
 })
 
-export const removeRemoteWebRTCAudioTrack: ActionCreator<ReducerAction> = (id: string): ReducerAction => ({
+export const removeRemoteWebRTCAudioTrack = (id: string): ReducerAction => ({
     type: InternalActionTypes.REMOVE_REMOTE_WEBRTC_AUDIO_TRACK,
     payload: id,
 })
 
 /* Audio related */
-export const setAudioStarted: ActionCreator<ReducerAction> = (started?: boolean): ReducerAction => ({
+export const setAudioStarted = (started?: boolean): ReducerAction => ({
     type: InternalActionTypes.SET_AUDIO_STARTED,
     payload: started,
 })
-export const addLevel: ActionCreator<ReducerAction> = (uuid: string, level: ArrayBuffer): ReducerAction => ({
+export const addLevel = (uuid: string, level: ArrayBuffer): ReducerAction => ({
     type: InternalActionTypes.ADD_LEVEL,
     payload: {
         uuid: uuid,
         level: level,
     },
 })
-export const removeLevel: ActionCreator<ReducerAction> = (uuid: string): ReducerAction => ({
+export const removeLevel = (uuid: string): ReducerAction => ({
     type: InternalActionTypes.REMOVE_LEVEL,
     payload: uuid,
 })
@@ -142,32 +141,32 @@ type AddNotificationPayload = Notification
 type ChangeNotificationPayload = { id: string } & Partial<Notification>
 type RemoveNotificationPayload = string
 
-export const addNotification: ActionCreator<ReducerAction> = (init: AddNotificationPayload): ReducerAction => ({
+export const addNotification = (init: AddNotificationPayload): ReducerAction => ({
     type: InternalActionTypes.ADD_NOTIFICATION,
     payload: init,
 })
 
-export const changeNotification: ActionCreator<ReducerAction> = (update: ChangeNotificationPayload): ReducerAction => ({
+export const changeNotification = (update: ChangeNotificationPayload): ReducerAction => ({
     type: InternalActionTypes.CHANGE_NOTIFICATION,
     payload: update,
 })
 
-export const removeNotification: ActionCreator<ReducerAction> = (id: RemoveNotificationPayload): ReducerAction => ({
+export const removeNotification = (id: RemoveNotificationPayload): ReducerAction => ({
     type: InternalActionTypes.REMOVE_NOTIFICATION,
     payload: id,
 })
 
-export const setInitialized: ActionCreator<ReducerAction> = (initialized: boolean): ReducerAction => ({
+export const setInitialized = (initialized: boolean): ReducerAction => ({
     type: InternalActionTypes.SET_INITIALIZED,
     payload: initialized,
 })
 
-export const setUser: ActionCreator<ReducerAction> = (user?: AuthUser): ReducerAction => ({
+export const setUser = (user?: AuthUser): ReducerAction => ({
     type: InternalActionTypes.SET_USER,
     payload: user,
 })
 
-export const setToken: ActionCreator<ReducerAction> = (token?: string): ReducerAction => ({
+export const setToken = (token?: string): ReducerAction => ({
     type: InternalActionTypes.SET_TOKEN,
     payload: token,
 })

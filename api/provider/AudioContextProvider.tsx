@@ -6,9 +6,9 @@ import {
 import debug from 'debug'
 import { setAudioStarted, useStageSelector } from '@digitalstage/api-client-react'
 import { useDispatch } from 'react-redux'
-import React, { createContext, useEffect, useState } from 'react'
+import React, { createContext, useCallback, useEffect, useState } from 'react'
 
-const report = debug('useAudioContext')
+const report = debug('AudioContextProvider')
 const reportWarning = report.extend('warn')
 
 interface AudioContextContextT {
@@ -102,12 +102,15 @@ const AudioContextProvider = ({ children }: { children: React.ReactNode }): JSX.
             setDestination(createdDestination)
 
             // Try to start audio context manually
+            report('Try to start audio context automatically...')
             startAudioContext(standardizedAudioContext, createdAudio)
                 .then(() => {
                     report('Started audio context automatically')
                     return undefined
                 })
-                .catch((err) => reportWarning(err))
+                .catch((err) => {
+                    reportWarning(err)
+                })
 
             return () => {
                 report('Closing audio context')
@@ -166,13 +169,23 @@ const AudioContextProvider = ({ children }: { children: React.ReactNode }): JSX.
         return undefined
     }, [audioContext, audio])
 
+    const start = useCallback(() => {
+        if (audioContext && audio) {
+            return startAudioContext(audioContext, audio).catch((err) => {
+                reportWarning(err)
+            })
+        }
+        return undefined
+    }, [audio, audioContext])
+
     const value = React.useMemo<AudioContextContextT>(
         () => ({
             audioContext,
             destination,
             setSampleRate,
+            start,
         }),
-        [audioContext, destination]
+        [audioContext, destination, start]
     )
 
     return <AudioContextContext.Provider value={value}>{children}</AudioContextContext.Provider>
