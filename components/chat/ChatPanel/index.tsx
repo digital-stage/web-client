@@ -131,7 +131,7 @@ const ChatPanel = () => {
                     onSendClicked()
                 }}
             >
-                <input ref={messageRef} type="text" className={styles.input} />
+                <input autoFocus ref={messageRef} type="text" className={styles.input} />
                 <button
                     className={`${styles.mobileButton} round small`}
                     type="submit"

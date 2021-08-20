@@ -87,6 +87,7 @@ const ReportingProvider = ({ children }: { children: React.ReactNode }) => {
     )
 
     // Handle chat messages
+    const users = useStageSelector(state => state.users.byId)
     const localStageMemberId = useStageSelector((state) => state.globals.stageMemberId)
     const chatMessages = useStageSelector((state) => state.chatMessages)
     useEffect(() => {
@@ -101,7 +102,7 @@ const ReportingProvider = ({ children }: { children: React.ReactNode }) => {
                 kind: 'info',
                 message: (
                     <Link href="/chat">
-                        <a>{chatMessage.message}</a>
+                        <a>{chatMessage.stageMemberId}: {chatMessage.message}</a>
                     </Link>
                 ),
                 permanent: false,

@@ -12,6 +12,7 @@ import Tag from '../../ui/Tag'
 import Paragraph from '../../ui/Paragraph'
 import { MdDeleteForever, MdEdit } from 'react-icons/md'
 import { ImEnter, ImExit } from 'react-icons/im'
+import EnterInviteCodeModal from './modals/EnterInviteCodeModal'
 
 const Type = {
     mediasoup: 'Web',
@@ -91,6 +92,7 @@ const StageItem = ({
 }
 
 const StagesList = () => {
+    const [enterCodeRequested, requestEnterCode] = useState<boolean>(false)
     const [editStageRequested, requestStageEdit] = useState<string>(undefined)
     const [removeStageRequested, requestStageRemoval] = useState<string>(undefined)
     const [leaveStageForGoodRequested, requestLeaveStageForGood] = useState<string>(undefined)
@@ -115,6 +117,13 @@ const StagesList = () => {
             <button className="tertiary" onClick={() => requestStageEdit(null)}>
                 Neue Bühne erstellen
             </button>
+            <button className="tertiary" onClick={() => requestEnterCode(true)}>
+                Einladungscode eingeben
+            </button>
+            <EnterInviteCodeModal
+                open={enterCodeRequested}
+                onClose={() => requestEnterCode(false)}
+            />
             <StageModal
                 open={editStageRequested !== undefined}
                 stageId={editStageRequested}
