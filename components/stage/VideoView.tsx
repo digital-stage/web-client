@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { GoMirror } from 'ui/Icons'
+import { GoMirror } from 'react-icons/go'
 import styles from './StageView.module.scss'
 
 const VideoView = ({ track, className }: { track: MediaStreamTrack; className?: string }) => {

@@ -11,11 +11,11 @@ import RemoveGroupModal from 'components/stages/modals/RemoveGroupModal'
 import GroupModal from 'components/stages/modals/GroupModal'
 import StageModal from 'components/stages/modals/StageModal'
 import InviteModal from '../../components/stages/modals/InviteModal'
-import { IoIosArrowDropleft, MdDeleteForever, MdEdit } from 'ui/Icons'
 import Container from 'ui/Container'
 import LeaveStageForGoodModal from '../../components/stages/modals/LeaveStageForGoodModal'
 import { shallowEqual } from 'react-redux'
-import Paragraph from '../../ui/Paragraph'
+import { IoIosArrowDropleft } from 'react-icons/io'
+import { MdDeleteForever, MdEdit } from 'react-icons/md'
 
 const StageView = () => {
     // Dependencies

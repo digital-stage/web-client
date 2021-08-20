@@ -5,7 +5,7 @@ import Link from 'next/link'
 import styles from '../../styles/Devices.module.scss'
 import { useStageSelector } from '@digitalstage/api-client-react'
 import Container from '../../ui/Container'
-import { IoIosArrowDropleft } from '../../ui/Icons'
+import { IoIosArrowDropleft } from 'react-icons/io'
 
 const DevicePage = () => {
     const { query } = useRouter()

@@ -7,18 +7,6 @@ import Image from 'next/image'
 import logo from '../../public/logo.svg'
 import Link from 'next/link'
 import { useStageSelector } from '@digitalstage/api-client-react'
-import {
-    BiChat,
-    BiCube,
-    GoBroadcast,
-    GoSettings,
-    BiDevices,
-    GoListUnordered,
-    FaBug,
-    FaTools,
-    MdMoreHoriz,
-    IoNotification,
-} from '../../ui/Icons'
 
 const Sidebar = () => {
     const { events, pathname } = useRouter()
@@ -53,7 +41,7 @@ const Sidebar = () => {
                     onClick={() => setOpen((prev) => !prev)}
                     className={`secondary round ${styles.sidebarBurgerButton}`}
                 >
-                    <MdMoreHoriz />
+                    <Image layout="fill" src="/icons/burger.svg" alt="Menü öffnen" />
                 </button>
             ) : null}
             <div
@@ -75,7 +63,11 @@ const Sidebar = () => {
                                             pathname === '/stage' ? styles.selected : ''
                                         }`}
                                     >
-                                        <GoBroadcast />
+                                        <Image
+                                            layout="fill"
+                                            src="/icons/stage.svg"
+                                            alt="Aktuelle Bühne"
+                                        />
                                         <span>Stage</span>
                                     </a>
                                 </Link>
@@ -85,7 +77,11 @@ const Sidebar = () => {
                                             pathname === '/mixer' ? styles.selected : ''
                                         }`}
                                     >
-                                        <GoSettings />
+                                        <Image
+                                            layout="fill"
+                                            src="/icons/settings.svg"
+                                            alt="Mischpult"
+                                        />
                                         <span>Mischpult</span>
                                     </a>
                                 </Link>
@@ -95,8 +91,12 @@ const Sidebar = () => {
                                             pathname === '/room' ? styles.selected : ''
                                         }`}
                                     >
-                                        <BiCube />
-                                        <span>3D Audio</span>
+                                        <Image
+                                            layout="fill"
+                                            src="/icons/3daudio.svg"
+                                            alt="3D Audio"
+                                        />
+                                        <span>3D Adio</span>
                                     </a>
                                 </Link>
                                 <Link href="/chat">
@@ -105,7 +105,7 @@ const Sidebar = () => {
                                             pathname === '/chat' ? styles.selected : ''
                                         }`}
                                     >
-                                        <BiChat />
+                                        <Image layout="fill" src="/icons/chat.svg" alt="3D Audio" />
                                         <span>Chat</span>
                                     </a>
                                 </Link>
@@ -118,7 +118,7 @@ const Sidebar = () => {
                                         pathname.startsWith('/devices') ? styles.selected : ''
                                     }`}
                                 >
-                                    <BiDevices />
+                                    <Image layout="fill" src="/icons/devices.svg" alt="Geräte" />
                                     <span>Geräte</span>
                                 </a>
                             </Link>
@@ -129,7 +129,11 @@ const Sidebar = () => {
                                     pathname.startsWith('/settings') ? styles.selected : ''
                                 }`}
                             >
-                                <FaTools />
+                                <Image
+                                    layout="fill"
+                                    src="/icons/settings.svg"
+                                    alt="Einstellungen"
+                                />
                                 <span>Einstellungen</span>
                             </a>
                         </Link>
@@ -139,7 +143,7 @@ const Sidebar = () => {
                                     pathname.startsWith('/stages') ? styles.selected : ''
                                 }`}
                             >
-                                <GoListUnordered />
+                                <Image layout="fill" src="/icons/stages.svg" alt="Meine Bühnen" />
                                 <span>Bühnen</span>
                             </a>
                         </Link>
@@ -153,14 +157,18 @@ const Sidebar = () => {
                                         pathname === '/notifications' ? styles.selected : ''
                                     }`}
                                 >
-                                    <IoNotification />
+                                    <Image
+                                        layout="fill"
+                                        src="/icons/notification.svg"
+                                        alt="Ereignisse"
+                                    />
                                     <span>Ereignisse</span>
                                 </a>
                             </Link>
                         ) : null}
                         <Link href="https://forum.digital-stage.org/c/deutsch/ds-web/30">
                             <a target="_blank" className={styles.sidebarItem}>
-                                <FaBug />
+                                <Image layout="fill" src="/icons/bug.svg" alt="Feedback" />
                                 <span>Feedback</span>
                             </a>
                         </Link>

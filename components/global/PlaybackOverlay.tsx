@@ -1,9 +1,9 @@
 import React from 'react'
 
 import styles from './PlaybackOverlay.module.css'
-import { FaPlay } from '../../ui/Icons'
 import { useStageSelector } from '@digitalstage/api-client-react'
 import useAudioContext from '../../api/hooks/useAudioContext'
+import { FaPlay } from 'react-icons/fa'
 
 const PlaybackOverlay = (): JSX.Element | null => {
     const signedIn = useStageSelector((state) => state.auth.initialized && !!state.auth.token)

@@ -4,8 +4,8 @@ import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-type
 import Notification from '../../../ui/Notification'
 import Modal, { ModalButton, ModalFooter, ModalHeader } from 'ui/Modal'
 import TextInput from 'ui/TextInput'
-import { BiReset } from 'ui/Icons'
 import styles from './InviteModal.module.scss'
+import { BiReset } from 'react-icons/bi'
 
 const InviteModal = ({
     open,

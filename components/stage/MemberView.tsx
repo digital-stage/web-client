@@ -5,7 +5,7 @@ import Avatar from './Avatar'
 import { useConnection, useStageSelector } from '@digitalstage/api-client-react'
 import { ClientDeviceEvents, VideoTrack } from '@digitalstage/api-types'
 import useWebRTCTracks from '../../api/hooks/useWebRTCTracks'
-import { AiFillStar, AiOutlineStar } from '../../ui/Icons'
+import { AiFillStar, AiOutlineStar } from 'react-icons/ai'
 
 const MemberView = ({
     memberId,

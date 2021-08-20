@@ -4,8 +4,8 @@ import { useDebounceCallback } from '@react-hook/debounce'
 import { useThrottleCallback } from '@react-hook/throttle'
 import React from 'react'
 import LevelMeter from './LevelMeter'
-import { BiReset } from 'ui/Icons'
 import { useStageSelector } from '@digitalstage/api-client-react'
+import { BiReset } from 'react-icons/bi'
 
 /**
  * Base for the logarithmic ratio below 0db

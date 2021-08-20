@@ -2,23 +2,15 @@ import { selectDevice, useConnection, useStageSelector } from '@digitalstage/api
 import styles from './DevicesList.module.scss'
 import { shallowEqual, useDispatch } from 'react-redux'
 import React, { useMemo, useState } from 'react'
-import {
-    FaRaspberryPi,
-    FaTrash,
-    GoBrowser,
-    GoDeviceDesktop,
-    MdEdit,
-    MdMic,
-    MdMicOff,
-    MdVideocam,
-    MdVideocamOff,
-} from 'ui/Icons'
 import Link from 'next/link'
 import DeleteModal from './DeleteModal'
 import { useRouter } from 'next/router'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
 import List, { ListItem } from '../../ui/List'
 import Switch from '../../ui/Switch'
+import { MdEdit, MdMic, MdMicOff, MdVideocam, MdVideocamOff } from 'react-icons/md'
+import { GoBrowser, GoDeviceDesktop } from 'react-icons/go'
+import { FaRaspberryPi, FaTrash } from 'react-icons/fa'
 
 const TypeNames = {
     jammer: 'Jammer-Client',

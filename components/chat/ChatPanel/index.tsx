@@ -7,7 +7,7 @@ import { useConnection, useReport, Users, useStageSelector } from '@digitalstage
 import useForceUpdate from './useForceUpdate'
 import Notification from '../../../ui/Notification'
 import Panel from '../../../ui/Panel'
-import { AiOutlineSend } from 'ui/Icons'
+import { AiOutlineSend } from 'react-icons/ai'
 
 const convertTime = (time: number): string => {
     const min = (Date.now() - time) / 60000

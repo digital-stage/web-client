@@ -493,11 +493,7 @@ const ReactiveMixingPanel = () => {
     const stageId = useStageSelector((state) => state.globals.stageId)
 
     if (stageId) {
-        return (
-            <div>
-                <StagePanel stageId={stageId} />
-            </div>
-        )
+        return <StagePanel stageId={stageId} />
     }
     return <div>Not inside any stage</div>
 }

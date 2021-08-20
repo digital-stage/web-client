@@ -6,11 +6,12 @@ import List, { ListItem } from '../../ui/List'
 import styles from './StagesList.module.scss'
 import { ClientDeviceEvents, Stage } from '@digitalstage/api-types'
 import StageModal from './modals/StageModal'
-import { ImEnter, ImExit, MdDeleteForever, MdEdit } from '../../ui/Icons'
 import RemoveStageModal from './modals/RemoveStageModal'
 import LeaveStageForGoodModal from './modals/LeaveStageForGoodModal'
 import Tag from '../../ui/Tag'
 import Paragraph from '../../ui/Paragraph'
+import { MdDeleteForever, MdEdit } from 'react-icons/md'
+import { ImEnter, ImExit } from 'react-icons/im'
 
 const Type = {
     mediasoup: 'Web',

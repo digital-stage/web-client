@@ -3,9 +3,9 @@ import styles from './DeviceSelector.module.scss'
 import Select from '../../ui/Select'
 import { useConnection, useStageSelector, selectDevice } from '@digitalstage/api-client-react'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
-import { ImExit, MdMic, MdMicOff, MdVideocam, MdVideocamOff } from '../../ui/Icons'
 import { useDispatch } from 'react-redux'
-import Switch from '../../ui/Switch'
+import { MdMic, MdMicOff, MdVideocam, MdVideocamOff } from 'react-icons/md'
+import { ImExit } from 'react-icons/im'
 
 const DeviceSelector = ({
     className,

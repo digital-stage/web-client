@@ -8,7 +8,7 @@ const TextSwitch = ({
 }: {
     className?: string
     value: string
-    onSelect: (key: React.Key) => any
+    onSelect?: (key: React.Key) => any
     children: Array<ReactElement<{ key: React.Key }>>
 }) => {
     return (
@@ -20,9 +20,9 @@ const TextSwitch = ({
                           <div
                               className={`option ${child.key === value ? 'selected' : ''}`}
                               key={child.key}
-                              onClick={() => {
+                              onClick={onSelect ? () => {
                                   if (child.key) onSelect(child.key)
-                              }}
+                              } : undefined}
                           >
                               {child}
                           </div>
