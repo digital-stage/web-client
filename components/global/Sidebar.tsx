@@ -7,6 +7,11 @@ import Image from 'next/image'
 import logo from '../../public/logo.svg'
 import Link from 'next/link'
 import { useStageSelector } from '@digitalstage/api-client-react'
+import { GoBroadcast, GoListUnordered, GoSettings } from 'react-icons/go'
+import { BiChat, BiCube, BiDevices } from 'react-icons/bi'
+import { FaBug, FaTools } from 'react-icons/fa'
+import { MdMoreHoriz } from 'react-icons/md'
+import { IoIosNotifications } from 'react-icons/io'
 
 const Sidebar = () => {
     const { events, pathname } = useRouter()
@@ -41,7 +46,7 @@ const Sidebar = () => {
                     onClick={() => setOpen((prev) => !prev)}
                     className={`secondary round ${styles.sidebarBurgerButton}`}
                 >
-                    <Image layout="fill" src="/icons/burger.svg" alt="Menü öffnen" />
+                    <MdMoreHoriz />
                 </button>
             ) : null}
             <div
@@ -63,11 +68,7 @@ const Sidebar = () => {
                                             pathname === '/stage' ? styles.selected : ''
                                         }`}
                                     >
-                                        <Image
-                                            layout="fill"
-                                            src="/icons/stage.svg"
-                                            alt="Aktuelle Bühne"
-                                        />
+                                        <GoBroadcast />
                                         <span>Stage</span>
                                     </a>
                                 </Link>
@@ -77,11 +78,7 @@ const Sidebar = () => {
                                             pathname === '/mixer' ? styles.selected : ''
                                         }`}
                                     >
-                                        <Image
-                                            layout="fill"
-                                            src="/icons/settings.svg"
-                                            alt="Mischpult"
-                                        />
+                                        <GoSettings />
                                         <span>Mischpult</span>
                                     </a>
                                 </Link>
@@ -91,12 +88,8 @@ const Sidebar = () => {
                                             pathname === '/room' ? styles.selected : ''
                                         }`}
                                     >
-                                        <Image
-                                            layout="fill"
-                                            src="/icons/3daudio.svg"
-                                            alt="3D Audio"
-                                        />
-                                        <span>3D Adio</span>
+                                        <BiCube />
+                                        <span>3D Audio</span>
                                     </a>
                                 </Link>
                                 <Link href="/chat">
@@ -105,7 +98,7 @@ const Sidebar = () => {
                                             pathname === '/chat' ? styles.selected : ''
                                         }`}
                                     >
-                                        <Image layout="fill" src="/icons/chat.svg" alt="3D Audio" />
+                                        <BiChat />
                                         <span>Chat</span>
                                     </a>
                                 </Link>
@@ -118,7 +111,7 @@ const Sidebar = () => {
                                         pathname.startsWith('/devices') ? styles.selected : ''
                                     }`}
                                 >
-                                    <Image layout="fill" src="/icons/devices.svg" alt="Geräte" />
+                                    <BiDevices />
                                     <span>Geräte</span>
                                 </a>
                             </Link>
@@ -129,11 +122,7 @@ const Sidebar = () => {
                                     pathname.startsWith('/settings') ? styles.selected : ''
                                 }`}
                             >
-                                <Image
-                                    layout="fill"
-                                    src="/icons/settings.svg"
-                                    alt="Einstellungen"
-                                />
+                                <FaTools />
                                 <span>Einstellungen</span>
                             </a>
                         </Link>
@@ -143,7 +132,7 @@ const Sidebar = () => {
                                     pathname.startsWith('/stages') ? styles.selected : ''
                                 }`}
                             >
-                                <Image layout="fill" src="/icons/stages.svg" alt="Meine Bühnen" />
+                                <GoListUnordered />
                                 <span>Bühnen</span>
                             </a>
                         </Link>
@@ -157,18 +146,14 @@ const Sidebar = () => {
                                         pathname === '/notifications' ? styles.selected : ''
                                     }`}
                                 >
-                                    <Image
-                                        layout="fill"
-                                        src="/icons/notification.svg"
-                                        alt="Ereignisse"
-                                    />
+                                    <IoIosNotifications />
                                     <span>Ereignisse</span>
                                 </a>
                             </Link>
                         ) : null}
                         <Link href="https://forum.digital-stage.org/c/deutsch/ds-web/30">
                             <a target="_blank" className={styles.sidebarItem}>
-                                <Image layout="fill" src="/icons/bug.svg" alt="Feedback" />
+                                <FaBug />
                                 <span>Feedback</span>
                             </a>
                         </Link>
