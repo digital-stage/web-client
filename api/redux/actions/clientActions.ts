@@ -4,6 +4,7 @@ import { Consumer } from 'mediasoup-client/lib/Consumer'
 import { Notification } from '../state/Notifications'
 import { AuthUser } from '../state/Auth'
 import ReducerAction from './ReducerAction'
+import { ITeckosClient } from 'teckos-client'
 
 export const reset = (): ReducerAction => ({
     type: InternalActionTypes.RESET,
@@ -159,6 +160,22 @@ export const removeNotification = (id: RemoveNotificationPayload): ReducerAction
 export const setInitialized = (initialized: boolean): ReducerAction => ({
     type: InternalActionTypes.SET_INITIALIZED,
     payload: initialized,
+})
+
+export const connect = (token?: string): ReducerAction => ({
+    type: InternalActionTypes.CONNECT,
+    payload: token,
+})
+export const disconnect = (): ReducerAction => ({
+    type: InternalActionTypes.DISCONNECT,
+})
+/*
+I know, storing a whole connection object seems ruff. But the alternative is React Context API.
+And this would lead to a */
+
+export const setConnection = (connection?: ITeckosClient): ReducerAction => ({
+    type: InternalActionTypes.SET_CONNECTION,
+    payload: connection,
 })
 
 export const setUser = (user?: AuthUser): ReducerAction => ({

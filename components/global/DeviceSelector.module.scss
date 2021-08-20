@@ -34,6 +34,8 @@
   color: #f4f4f4;
   padding-left: 4px;
   padding-right: 4px;
+  flex-shrink: 1;
+  flex-grow: 1;
 }
 
 .label {
@@ -44,5 +46,5 @@
 }
 
 .select {
-  max-width: 50vw;
+  flex-shrink: 1;
 }

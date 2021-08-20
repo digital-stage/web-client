@@ -13,6 +13,7 @@ import PlaybackOverlay from '../components/global/PlaybackOverlay'
 import StageJoiner from '../components/global/StageJoiner'
 import { useRouter } from 'next/router'
 import debug from 'debug'
+import NotificationBar from '../components/global/NotifcationBar'
 
 const CheckAuthWrapper = () => {
     const { push, pathname } = useRouter()
@@ -32,6 +33,8 @@ export function reportWebVitals(metric: NextWebVitalsMetric) {
     debug('Analytics')(metric)
 }
 
+const MemorizedSidebar = React.memo(Sidebar)
+
 function MyApp({ Component, pageProps }: AppProps) {
     return (
         <>
@@ -48,10 +51,11 @@ function MyApp({ Component, pageProps }: AppProps) {
                     <Background />
                     <ConnectionOverlay>
                         <div className="inner">
+                            <NotificationBar />
                             <Component {...pageProps} />
                         </div>
                         <DeviceSelector />
-                        <Sidebar />
+                        <MemorizedSidebar />
                         <StageJoiner />
                         <ProfileMenu />
                         <PlaybackOverlay />

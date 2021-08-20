@@ -3,9 +3,9 @@ import store from './redux/store'
 import * as React from 'react'
 import DigitalStageServices from './services/DigitalStageServices'
 import StageHandlingProvider from './provider/StageHandlingProvider'
-import ConnectionProvider from './provider/ConnectionProvider'
 import WebRTCProvider from './provider/WebRTCProvider'
 import AudioContextProvider from './provider/AudioContextProvider'
+import ReportingProvider from './provider/ReportingProvider'
 
 const MemorizedDigitalStageServices = React.memo(DigitalStageServices)
 
@@ -16,7 +16,7 @@ const DigitalStageProvider = ({ children }: { children: React.ReactNode }) => {
 
     return (
         <Provider store={store}>
-            <ConnectionProvider>
+            <ReportingProvider>
                 <StageHandlingProvider>
                     <AudioContextProvider>
                         <WebRTCProvider>
@@ -25,7 +25,7 @@ const DigitalStageProvider = ({ children }: { children: React.ReactNode }) => {
                         </WebRTCProvider>
                     </AudioContextProvider>
                 </StageHandlingProvider>
-            </ConnectionProvider>
+            </ReportingProvider>
         </Provider>
     )
 }

@@ -13,24 +13,37 @@ import { FaBug, FaTools } from 'react-icons/fa'
 import { MdMoreHoriz } from 'react-icons/md'
 import { IoIosNotifications } from 'react-icons/io'
 
+const SidebarItem = ({
+    children,
+    href,
+    onClick,
+}: {
+    children: React.ReactNode
+    href: string
+    onClick?: () => void
+}) => {
+    const { pathname } = useRouter()
+    return (
+        <Link href={href}>
+            <a
+                className={`${styles.sidebarItem} ${pathname === href ? styles.selected : ''}`}
+                onClick={onClick}
+            >
+                {children}
+            </a>
+        </Link>
+    )
+}
+
 const Sidebar = () => {
-    const { events, pathname } = useRouter()
     const [open, setOpen] = useState<boolean>(false)
     const openState = useOpenState(open)
-    const signedIn = useStageSelector((state) => !!state.auth.token)
-    const insideStage = useStageSelector((state) => !!state.globals.stageId)
-    const deviceCount = useStageSelector((state) => state.devices.allIds.length)
-    const numNotifications = useStageSelector((state) => state.notifications.allIds.length)
-
-    useEffect(() => {
-        if (events) {
-            const handler = () => setOpen(false)
-            events.on('routeChangeStart', handler)
-            return () => {
-                events.off('routeChangeStart', handler)
-            }
-        }
-    }, [events])
+    const signedIn = useStageSelector<boolean>((state) => !!state.auth.token)
+    const insideStage = useStageSelector<boolean>((state) => !!state.globals.stageId)
+    const deviceCount = useStageSelector<number>((state) => state.devices.allIds.length)
+    const hasNotifications = useStageSelector<boolean>(
+        (state) => state.notifications.allIds.length > 0
+    )
 
     return (
         <>
@@ -62,94 +75,46 @@ const Sidebar = () => {
                     <div className={styles.sidebarBody}>
                         {insideStage ? (
                             <>
-                                <Link href="/stage">
-                                    <a
-                                        className={`${styles.sidebarItem} ${
-                                            pathname === '/stage' ? styles.selected : ''
-                                        }`}
-                                    >
-                                        <GoBroadcast />
-                                        <span>Stage</span>
-                                    </a>
-                                </Link>
-                                <Link href="/mixer">
-                                    <a
-                                        className={`${styles.sidebarItem} ${
-                                            pathname === '/mixer' ? styles.selected : ''
-                                        }`}
-                                    >
-                                        <GoSettings />
-                                        <span>Mischpult</span>
-                                    </a>
-                                </Link>
-                                <Link href="/room">
-                                    <a
-                                        className={`${styles.sidebarItem} ${
-                                            pathname === '/room' ? styles.selected : ''
-                                        }`}
-                                    >
-                                        <BiCube />
-                                        <span>3D Audio</span>
-                                    </a>
-                                </Link>
-                                <Link href="/chat">
-                                    <a
-                                        className={`${styles.sidebarItem} ${
-                                            pathname === '/chat' ? styles.selected : ''
-                                        }`}
-                                    >
-                                        <BiChat />
-                                        <span>Chat</span>
-                                    </a>
-                                </Link>
+                                <SidebarItem onClick={() => setOpen(false)} href="/stage">
+                                    <GoBroadcast />
+                                    <span>Stage</span>
+                                </SidebarItem>
+                                <SidebarItem onClick={() => setOpen(false)} href="/mixer">
+                                    <GoSettings />
+                                    <span>Mischpult</span>
+                                </SidebarItem>
+                                <SidebarItem onClick={() => setOpen(false)} href="/room">
+                                    <BiCube />
+                                    <span>3D Audio</span>
+                                </SidebarItem>
+                                <SidebarItem onClick={() => setOpen(false)} href="/chat">
+                                    <BiChat />
+                                    <span>Chat</span>
+                                </SidebarItem>
                             </>
                         ) : null}
                         {deviceCount > 1 ? (
-                            <Link href="/devices">
-                                <a
-                                    className={`${styles.sidebarItem} ${
-                                        pathname.startsWith('/devices') ? styles.selected : ''
-                                    }`}
-                                >
-                                    <BiDevices />
-                                    <span>Geräte</span>
-                                </a>
-                            </Link>
+                            <SidebarItem href="/devices">
+                                <BiDevices />
+                                <span>Geräte</span>
+                            </SidebarItem>
                         ) : undefined}
-                        <Link href="/settings/device">
-                            <a
-                                className={`${styles.sidebarItem} ${
-                                    pathname.startsWith('/settings') ? styles.selected : ''
-                                }`}
-                            >
-                                <FaTools />
-                                <span>Einstellungen</span>
-                            </a>
-                        </Link>
-                        <Link href="/stages">
-                            <a
-                                className={`${styles.sidebarItem} ${
-                                    pathname.startsWith('/stages') ? styles.selected : ''
-                                }`}
-                            >
-                                <GoListUnordered />
-                                <span>Bühnen</span>
-                            </a>
-                        </Link>
+                        <SidebarItem href="/settings/device">
+                            <FaTools />
+                            <span>Einstellungen</span>
+                        </SidebarItem>
+                        <SidebarItem href="/stages">
+                            <GoListUnordered />
+                            <span>Bühnen</span>
+                        </SidebarItem>
                     </div>
                     <div className={styles.sidebarSpacer} />
                     <div className={styles.sidebarFooter}>
-                        {numNotifications > 0 ? (
-                            <Link href="/notifications">
-                                <a
-                                    className={`${styles.sidebarItem} ${
-                                        pathname === '/notifications' ? styles.selected : ''
-                                    }`}
-                                >
-                                    <IoIosNotifications />
-                                    <span>Ereignisse</span>
-                                </a>
-                            </Link>
+                        {hasNotifications ? (
+                            <SidebarItem href="/notifications">
+                                <IoIosNotifications />
+                                <span>Ereignisse</span>
+                            </SidebarItem>
                         ) : null}
                         <Link href="https://forum.digital-stage.org/c/deutsch/ds-web/30">
                             <a target="_blank" className={styles.sidebarItem}>

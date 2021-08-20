@@ -1,29 +1,25 @@
-import { useDispatch } from 'react-redux'
 import React, { useCallback } from 'react'
-import { addNotification } from '../redux/actions/clientActions'
-import { v4 as uuidv4 } from 'uuid'
 import { KIND } from '../redux/state/Notifications'
+import useReporting from './useReporting'
 
 interface ReportContextT {
     report: (kind: KIND[keyof KIND], message: React.ReactNode, permanent?: boolean) => void
 }
 
 const useReport = (): ReportContextT => {
-    const dispatch = useDispatch()
+    const { addNotification } = useReporting()
+
     const report = useCallback(
         (kind: KIND[keyof KIND] = 'info', message: React.ReactNode, permanent?: boolean) => {
-            dispatch(
-                addNotification({
-                    id: uuidv4(),
-                    date: new Date().getTime(),
-                    kind: kind,
-                    message: message,
-                    permanent: permanent,
-                    featured: true,
-                })
-            )
+            addNotification({
+                date: new Date().getTime(),
+                kind: kind,
+                message: message,
+                permanent: permanent,
+                featured: true,
+            })
         },
-        [dispatch]
+        [addNotification]
     )
 
     return {

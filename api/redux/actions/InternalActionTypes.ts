@@ -3,6 +3,10 @@ enum InternalActionTypes {
 
     SET_INITIALIZED = 'set-initialized',
 
+    CONNECT = 'connect',
+    DISCONNECT = 'disconnect',
+    SET_CONNECTION = 'set-connection',
+
     RESET = 'reset',
 
     SELECT_DEVICE = 'select-device',

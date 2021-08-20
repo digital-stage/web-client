@@ -37,7 +37,7 @@ const DeviceSelector = ({
                 {devices.length > 1 && (
                     <div className={styles.deviceSelectorItem}>
                         <Select
-                          className={styles.select}
+                            className={styles.select}
                             value={selectedDevice?._id}
                             onChange={(event) => {
                                 dispatch(selectDevice(event.currentTarget.value))

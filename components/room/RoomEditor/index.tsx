@@ -9,7 +9,6 @@ import RoomSelection from './RoomSelection'
 import GroupItem from './GroupItem'
 import TextSwitch from 'ui/TextSwitch'
 import ResetPanel from './ResetPanel'
-import { ConnectionContext } from 'api/provider/ConnectionProvider'
 
 const RoomEditor = ({ stageId }: { stageId: string }) => {
     const innerRef = useRef<HTMLDivElement>(null)
@@ -44,45 +43,34 @@ const RoomEditor = ({ stageId }: { stageId: string }) => {
                 <div className={styles.inner} ref={innerRef}>
                     <ReactReduxContext.Consumer>
                         {(store) => (
-                            <ConnectionContext.Consumer>
-                                {(connectionContext) => (
-                                    <KonvaStage
-                                        width={stage.width * FACTOR}
-                                        height={stage.height * FACTOR}
-                                        onClick={onStageClicked}
-                                        onTap={onStageClicked}
-                                    >
-                                        <KonvaLayer>
-                                            <ReactReduxContext.Provider value={store}>
-                                                <ConnectionContext.Provider
-                                                    value={connectionContext}
-                                                >
-                                                    {groupIds.map((groupId) => (
-                                                        <GroupItem
-                                                            key={groupId}
-                                                            groupId={groupId}
-                                                            deviceId={
-                                                                selectedMode === 'global'
-                                                                    ? undefined
-                                                                    : selectedDeviceId
-                                                            }
-                                                            stageWidth={stage.width}
-                                                            stageHeight={stage.height}
-                                                            selection={selection}
-                                                            onSelected={(selection) =>
-                                                                setSelection((prev) => [
-                                                                    ...prev,
-                                                                    selection,
-                                                                ])
-                                                            }
-                                                        />
-                                                    ))}
-                                                </ConnectionContext.Provider>
-                                            </ReactReduxContext.Provider>
-                                        </KonvaLayer>
-                                    </KonvaStage>
-                                )}
-                            </ConnectionContext.Consumer>
+                            <KonvaStage
+                                width={stage.width * FACTOR}
+                                height={stage.height * FACTOR}
+                                onClick={onStageClicked}
+                                onTap={onStageClicked}
+                            >
+                                <KonvaLayer>
+                                    <ReactReduxContext.Provider value={store}>
+                                        {groupIds.map((groupId) => (
+                                            <GroupItem
+                                                key={groupId}
+                                                groupId={groupId}
+                                                deviceId={
+                                                    selectedMode === 'global'
+                                                        ? undefined
+                                                        : selectedDeviceId
+                                                }
+                                                stageWidth={stage.width}
+                                                stageHeight={stage.height}
+                                                selection={selection}
+                                                onSelected={(selection) =>
+                                                    setSelection((prev) => [...prev, selection])
+                                                }
+                                            />
+                                        ))}
+                                    </ReactReduxContext.Provider>
+                                </KonvaLayer>
+                            </KonvaStage>
                         )}
                     </ReactReduxContext.Consumer>
                 </div>

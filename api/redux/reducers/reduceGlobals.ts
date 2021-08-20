@@ -36,6 +36,12 @@ function reduceGlobals(
                 levels: {},
             }
         }
+        case InternalActionTypes.SET_CONNECTION: {
+            return {
+                ...state,
+                connection: action.payload,
+            }
+        }
         case InternalActionTypes.SET_AUDIO_STARTED: {
             return {
                 ...state,

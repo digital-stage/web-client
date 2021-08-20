@@ -1,3 +1,5 @@
+import { ITeckosClient } from 'teckos-client'
+
 interface Globals {
     ready: boolean
 
@@ -20,5 +22,7 @@ interface Globals {
     levels: {
         [uuid: string]: ArrayBuffer
     }
+
+    connection?: ITeckosClient
 }
 export default Globals

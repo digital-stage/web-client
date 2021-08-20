@@ -16,12 +16,13 @@ import StageDevices from './StageDevices'
 import StageMembers from './StageMembers'
 import Stages from './Stages'
 import Mediasoup from './Mediasoup'
-import Notifications from './Notifications'
+import Notifications, { Notification } from './Notifications'
 import Auth from './Auth'
 
 export type {
     Auth,
     Notifications,
+    Notification,
     CustomGroupPositions,
     CustomGroupVolumes,
     CustomAudioTrackPositions,

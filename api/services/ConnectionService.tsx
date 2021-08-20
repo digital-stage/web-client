@@ -1,8 +1,7 @@
 import debug from 'debug'
 import { ITeckosClient, TeckosClientWithJWT } from 'teckos-client'
-import { SocketEvent } from 'teckos-client/dist/types'
-import React, { createContext, ReactNode, useCallback, useEffect, useState } from 'react'
-import { reset, useStageSelector } from '@digitalstage/api-client-react'
+import React, { useEffect } from 'react'
+import { setConnection, useStageSelector } from '@digitalstage/api-client-react'
 import { useDispatch } from 'react-redux'
 import getInitialDevice from '../utils/getInitialDevice'
 import registerSocketHandler from '../redux/registerSocketHandler'
@@ -10,20 +9,8 @@ import registerSocketHandler from '../redux/registerSocketHandler'
 const log = debug('ConnectionProvider')
 const logWarning = log.extend('warn')
 
-interface ConnectionContextT {
-    connection?: ITeckosClient
-    emit: (event: SocketEvent, ...args: any[]) => boolean | undefined
-}
-
-const ConnectionContext = createContext<ConnectionContextT>({
-    emit: () => {
-        throw new Error('Please wrap your inner DOM with ConnectionProvider')
-    },
-})
-
-const ConnectionProvider = ({ children }: { children: ReactNode }): JSX.Element => {
-    console.log('RERENDER ConnectionProvider')
-    const [connection, setConnection] = useState<ITeckosClient | undefined>()
+const ConnectionService = (): JSX.Element => {
+    console.log('RERENDER ConnectionService')
     const userId = useStageSelector<string | undefined>((state) => state.auth.user?._id)
     const token = useStageSelector<string | undefined>((state) => state.auth.token)
     const dispatch = useDispatch()
@@ -60,7 +47,7 @@ const ConnectionProvider = ({ children }: { children: ReactNode }): JSX.Element 
                 })
                 .then((conn) => {
                     if (isActive) {
-                        setConnection(conn)
+                        dispatch(setConnection(conn))
                         conn.connect()
                     }
                 })
@@ -70,34 +57,12 @@ const ConnectionProvider = ({ children }: { children: ReactNode }): JSX.Element 
                     log('Closing connection to API server')
                     conn.disconnect()
                 }
-                dispatch(reset())
-                setConnection(undefined)
+                dispatch(setConnection(undefined))
             }
         }
     }, [dispatch, token, userId])
 
-    const emit = useCallback(
-        (event: SocketEvent, ...args: any[]) => {
-            if (connection) {
-                return connection.emit(event, ...args)
-            }
-            logWarning('Not connected')
-            return undefined
-        },
-        [connection]
-    )
-
-    const value = React.useMemo<ConnectionContextT>(
-        () => ({
-            connection,
-            emit,
-        }),
-        [connection, emit]
-    )
-
-    return <ConnectionContext.Provider value={value}>{children}</ConnectionContext.Provider>
+    return null
 }
 
-export type { ConnectionContextT }
-export { ConnectionContext }
-export default ConnectionProvider
+export default ConnectionService
