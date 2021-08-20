@@ -1,6 +1,7 @@
 .panel {
     flex-grow: 1;
     padding: 12px;
+    margin-bottom: 24px;
 }
 
 .messages {

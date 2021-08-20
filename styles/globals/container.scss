@@ -1,11 +1,10 @@
 .container {
   display: block;
   width: 100%;
-  padding: 48px 24px 62px 24px;
+  padding: 52px 8px 62px 8px;
   margin: 0 auto;
   min-height: 100vh;
   position: relative;
-
 
   @media only screen and (min-width: 600px) and (min-height: 600px) {
     padding: 24px 24px 96px;

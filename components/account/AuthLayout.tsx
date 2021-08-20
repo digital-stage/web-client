@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import React, { useEffect } from 'react'
-import classes from './AuthLayout.module.css'
+import classes from './AuthLayout.module.scss'
 import { SecondaryHeadlineLink } from '../../ui/HeadlineLink'
 import { useRouter } from 'next/router'
 import Container from '../../ui/Container'

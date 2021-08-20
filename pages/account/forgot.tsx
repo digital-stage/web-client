@@ -1,6 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
-import AuthLayout from 'components/global/AuthLayout'
+import AuthLayout from 'components/account/AuthLayout'
 import ForgetPasswordForm from 'components/account/ForgetPasswordForm'
 import Paragraph from '../../ui/Paragraph'
 

@@ -48,7 +48,7 @@ const DeviceEntry = ({
             className={deviceId === localDeviceId && styles.selected}
         >
             <div className={styles.caption}>
-                <span className={styles.icon}>{TypeIcons[device.type]}</span>
+                {TypeIcons[device.type]}
                 {device.name ||
                     (device.type === 'browser'
                         ? `${device.os}: ${device.browser}`

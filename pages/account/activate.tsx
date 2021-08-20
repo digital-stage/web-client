@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import Link from 'next/link'
 import ActivationForm from 'components/account/ActivationForm'
 import { useStageSelector } from '@digitalstage/api-client-react'
-import AuthLayout from 'components/global/AuthLayout'
+import AuthLayout from 'components/account/AuthLayout'
 import Paragraph from '../../ui/Paragraph'
 
 const Activate = () => {

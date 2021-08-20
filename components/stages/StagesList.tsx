@@ -43,7 +43,7 @@ const StageItem = ({
     const { requestJoin } = useStageJoiner()
     const { emit } = useConnection()
     return (
-        <ListItem selected={isActive}>
+        <ListItem className={isActive ? styles.active : ''}>
             <Link href={`/stages/${stage._id}`}>
                 <a className={styles.stageName}>
                     {stage.name}

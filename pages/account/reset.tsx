@@ -1,7 +1,7 @@
 import React from 'react'
 import { useRouter } from 'next/router'
 import ResetPasswordForm from 'components/account/ResetPasswordForm'
-import AuthLayout from 'components/global/AuthLayout'
+import AuthLayout from 'components/account/AuthLayout'
 import Paragraph from '../../ui/Paragraph'
 
 const Reset = () => {
