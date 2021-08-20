@@ -48,6 +48,7 @@
     "yup": "^0.32.9"
   },
   "devDependencies": {
+    "@babel/core": "^7.0.0-0",
     "@types/node": "^16.6.2",
     "@types/react": "^17.0.19",
     "eslint": "^7.32.0",
