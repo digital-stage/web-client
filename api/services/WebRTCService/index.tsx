@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import {
     addRemoteWebRTCAudioTrack,
     addRemoteWebRTCVideoTrack,
-    logger,
     setLocalWebRTCAudioTracks,
     setLocalWebRTCVideoTracks,
     useStageSelector,
@@ -20,6 +19,13 @@ import getVideoTracks from '../../utils/getVideoTracks'
 import getAudioTracks from '../../utils/getAudioTracks'
 import omit from 'lodash/omit'
 import { ITeckosClient } from 'teckos-client'
+import debug from 'debug'
+
+const report = debug('WebRTCService')
+const logger = {
+    trace: report,
+    error: report.extend('error'),
+}
 
 const WebRTCService = () => {
     const connection = useStageSelector<ITeckosClient>((state) => state.globals.connection)

@@ -7,18 +7,15 @@ import ConnectionService from './ConnectionService'
 import WebRTCService from './WebRTCService'
 
 const DigitalStageServices = () => {
-    if (process.browser) {
-        return (
-            <>
-                <AutoLoginService />
-                <ConnectionService />
-                <MediaDeviceUpdateService />
-                <MediasoupService />
-                <WebRTCService />
-                <AudioRenderService />
-            </>
-        )
-    }
-    return null
+    return (
+        <>
+            <AutoLoginService />
+            <ConnectionService />
+            <MediaDeviceUpdateService />
+            <MediasoupService />
+            <WebRTCService />
+            <AudioRenderService />
+        </>
+    )
 }
 export default DigitalStageServices
