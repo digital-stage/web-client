@@ -6,6 +6,7 @@ import { AppDispatch, RootState } from './redux/store'
 import useConnection from './hooks/useConnection'
 import useStageSelector from './redux/useStageSelector'
 import useStageJoiner from './hooks/useStageJoiner'
+import logger from './utils/logger'
 
 export * from './redux/actions'
 export * from './redux/state'
@@ -18,4 +19,5 @@ export {
     useReport,
     useConnection,
     useAuth,
+    logger,
 }

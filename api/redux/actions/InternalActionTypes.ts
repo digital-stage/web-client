@@ -1,4 +1,6 @@
 enum InternalActionTypes {
+    INIT = 'init',
+
     NEXT_INIT = '@@INIT',
 
     SET_INITIALIZED = 'set-initialized',

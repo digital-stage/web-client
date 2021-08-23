@@ -32,6 +32,8 @@
     "lodash": "^4.17.21",
     "mediasoup-client": "^3.6.37",
     "next": "^11.1.0",
+    "pino": "^6.13.1",
+    "pino-logflare": "^0.3.12",
     "react": "^17.0.2",
     "react-code-input": "^3.10.1",
     "react-color": "^2.19.3",
@@ -51,6 +53,7 @@
   "devDependencies": {
     "@babel/core": "^7.0.0-0",
     "@types/node": "^16.6.2",
+    "@types/pino": "^6.3.11",
     "@types/react": "^17.0.19",
     "eslint": "^7.32.0",
     "eslint-config-next": "^11.1.0",

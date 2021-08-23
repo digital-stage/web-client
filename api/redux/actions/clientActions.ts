@@ -6,6 +6,10 @@ import { AuthUser } from '../state/Auth'
 import ReducerAction from './ReducerAction'
 import { ITeckosClient } from 'teckos-client'
 
+export const init = (): ReducerAction => ({
+    type: InternalActionTypes.INIT,
+})
+
 export const reset = (): ReducerAction => ({
     type: InternalActionTypes.RESET,
 })
@@ -66,26 +70,6 @@ export const removeMediasoupAudioConsumer = (id: string): ReducerAction => ({
 })
 
 /* WebRTC related */
-export const setWebRTCDescription = (
-    fromStageDeviceId: string,
-    description: RTCSessionDescriptionInit
-): ReducerAction => ({
-    type: InternalActionTypes.SET_DESCRIPTION,
-    payload: {
-        fromStageDeviceId,
-        description,
-    },
-})
-export const setWebRTCCandidate = (
-    fromStageDeviceId: string,
-    candidate: RTCIceCandidate
-): ReducerAction => ({
-    type: InternalActionTypes.SET_CANDIDATE,
-    payload: {
-        fromStageDeviceId,
-        candidate,
-    },
-})
 export const setLocalWebRTCVideoTracks = (tracks: {
     [trackId: string]: MediaStreamTrack
 }): ReducerAction => ({
@@ -190,6 +174,7 @@ export const setToken = (token?: string): ReducerAction => ({
 
 export type { AddNotificationPayload, ChangeNotificationPayload, RemoveNotificationPayload }
 const clientActions = {
+    init,
     reset,
 
     /* Auth management */

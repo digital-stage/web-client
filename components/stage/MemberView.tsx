@@ -4,7 +4,6 @@ import VideoView from './VideoView'
 import Avatar from './Avatar'
 import { useConnection, useStageSelector } from '@digitalstage/api-client-react'
 import { ClientDeviceEvents, VideoTrack } from '@digitalstage/api-types'
-import useWebRTCTracks from '../../api/hooks/useWebRTCTracks'
 import { AiFillStar, AiOutlineStar } from 'react-icons/ai'
 
 const MemberView = ({
@@ -26,8 +25,8 @@ const MemberView = ({
     )
     const mediasoupVideoConsumers = useStageSelector((state) => state.mediasoup.videoConsumers)
     const mediasoupVideoProducers = useStageSelector((state) => state.mediasoup.videoProducers)
-    const { localVideoTracks: localWebRTCTracks, remoteVideoTracks: remoteWebRTCTracks } =
-        useWebRTCTracks()
+    const localWebRTCTracks = useStageSelector((state) => state.webrtc.localVideoTracks)
+    const remoteWebRTCTracks = useStageSelector((state) => state.webrtc.remoteVideoTracks)
     const { emit } = useConnection()
 
     const videos = useMemo<MediaStreamTrack[]>(() => {

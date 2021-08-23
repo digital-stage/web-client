@@ -7,7 +7,6 @@ import getInitialDevice from '../utils/getInitialDevice'
 import registerSocketHandler from '../redux/registerSocketHandler'
 
 const log = debug('ConnectionProvider')
-const logWarning = log.extend('warn')
 
 const ConnectionService = (): JSX.Element => {
     console.log('RERENDER ConnectionService')

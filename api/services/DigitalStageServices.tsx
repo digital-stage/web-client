@@ -4,6 +4,7 @@ import React from 'react'
 import AudioRenderService from './AudioRenderer'
 import MediaDeviceUpdateService from './MediaDeviceUpdateService'
 import ConnectionService from './ConnectionService'
+import WebRTCService from './WebRTCService'
 
 const DigitalStageServices = () => {
     if (process.browser) {
@@ -13,6 +14,7 @@ const DigitalStageServices = () => {
                 <ConnectionService />
                 <MediaDeviceUpdateService />
                 <MediasoupService />
+                <WebRTCService />
                 <AudioRenderService />
             </>
         )

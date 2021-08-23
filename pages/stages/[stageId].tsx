@@ -74,13 +74,15 @@ const StageView = () => {
                         </button>
                     ) : null}
                 </h3>
-                <div className={styles.row}>
-                    <div className={styles.stageActions}>
-                        <button onClick={() => requestGroupEdit(null)}>
-                            Neue Gruppe erstellen
-                        </button>
+                {isStageAdmin ? (
+                    <div className={styles.row}>
+                        <div className={styles.stageActions}>
+                            <button onClick={() => requestGroupEdit(null)}>
+                                Neue Gruppe erstellen
+                            </button>
+                        </div>
                     </div>
-                </div>
+                ) : null}
 
                 {groups ? (
                     <div className={styles.row}>
@@ -122,32 +124,30 @@ const StageView = () => {
                                                     </button>
                                                 )}
                                             </div>
-                                            <div className={styles.groupManagement}>
-                                                <button
-                                                    className="round small"
-                                                    onClick={() => requestGroupEdit(group._id)}
-                                                >
-                                                    <MdEdit />
-                                                </button>
-                                                <button
-                                                    className="small"
-                                                    onClick={() => requestInviteCode(group._id)}
-                                                >
-                                                    Einladen
-                                                </button>
-                                                {isStageAdmin ? (
-                                                    <>
-                                                        <button
-                                                            className="small"
-                                                            onClick={() =>
-                                                                requestGroupRemoval(group._id)
-                                                            }
-                                                        >
-                                                            <MdDeleteForever />
-                                                        </button>
-                                                    </>
-                                                ) : null}
-                                            </div>
+                                            {isStageAdmin ? (
+                                                <div className={styles.groupManagement}>
+                                                    <button
+                                                        className="round small"
+                                                        onClick={() => requestGroupEdit(group._id)}
+                                                    >
+                                                        <MdEdit />
+                                                    </button>
+                                                    <button
+                                                        className="small"
+                                                        onClick={() => requestInviteCode(group._id)}
+                                                    >
+                                                        Einladen
+                                                    </button>
+                                                    <button
+                                                        className="small"
+                                                        onClick={() =>
+                                                            requestGroupRemoval(group._id)
+                                                        }
+                                                    >
+                                                        <MdDeleteForever />
+                                                    </button>
+                                                </div>
+                                            ) : null}
                                         </div>
                                     </div>
                                 </AltListItem>

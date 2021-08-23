@@ -1,5 +1,4 @@
-import { TeckosClient } from 'teckos-client'
-import Cookie from 'js-cookie'
+import { ITeckosClient } from 'teckos-client'
 import {
     ClientDeviceEvents,
     ServerDeviceEvents,
@@ -9,7 +8,7 @@ import actions from './actions'
 import { AppDispatch } from '@digitalstage/api-client-react'
 import { BrowserDevice } from '@digitalstage/api-types/dist/model/browser'
 
-const registerSocketHandler = (dispatch: AppDispatch, socket: TeckosClient): TeckosClient => {
+const registerSocketHandler = (dispatch: AppDispatch, socket: ITeckosClient): ITeckosClient => {
     socket.setMaxListeners(80)
     socket.on('disconnect', () => {
         // Cleanup

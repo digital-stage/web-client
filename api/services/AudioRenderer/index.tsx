@@ -6,7 +6,6 @@ import {
     IConvolverNode,
     IGainNode,
     IMediaStreamAudioSourceNode,
-    IOscillatorNode,
     IPannerNode,
 } from 'standardized-audio-context'
 import {
@@ -26,7 +25,6 @@ import useAnimationFrame from '../../hooks/useAnimationFrame'
 import { shallowEqual, useDispatch } from 'react-redux'
 import { addLevel, removeLevel, useStageSelector } from '@digitalstage/api-client-react'
 import useAudioContext from '../../hooks/useAudioContext'
-import useWebRTCTracks from '../../hooks/useWebRTCTracks'
 
 const report = debug('useAudioRenderer')
 const reportError = report.extend('error')
@@ -108,8 +106,8 @@ const AudioTrackRenderer = ({
     )
     const mediasoupAudioConsumers = useStageSelector((state) => state.mediasoup.audioConsumers.byId)
     const mediasoupAudioProducers = useStageSelector((state) => state.mediasoup.audioProducers.byId)
-    const { localAudioTracks: localWebRTCTracks, remoteAudioTracks: remoteWebRTCTracks } =
-        useWebRTCTracks()
+    const localWebRTCTracks = useStageSelector((state) => state.webrtc.localAudioTracks)
+    const remoteWebRTCTracks = useStageSelector((state) => state.webrtc.remoteAudioTracks)
     const audioRef = useRef<HTMLAudioElement>(null)
     const [track, setTrack] = useState<MediaStreamTrack>()
     const [sourceNode, setSourceNode] = useState<IMediaStreamAudioSourceNode<IAudioContext>>()
