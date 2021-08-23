@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import styles from './Chat.module.css'
 import React from 'react'
 import Link from 'next/link'
-import { useConnection, useReport, Users, useStageSelector } from '@digitalstage/api-client-react'
+import { useEmit, useReport, Users, useStageSelector } from '@digitalstage/api-client-react'
 import useForceUpdate from './useForceUpdate'
 import Notification from '../../../ui/Notification'
 import Panel from '../../../ui/Panel'
@@ -77,7 +77,7 @@ const ChatPanel = () => {
     const [error, setError] = useState<string>()
     const messages = useStageSelector<ChatMessage[]>((state) => state.chatMessages)
     const messageRef = useRef<HTMLInputElement>(null)
-    const { emit } = useConnection()
+    const emit = useEmit()
     const { report } = useReport()
     const localUserId = useStageSelector<string | undefined>((state) => state.globals.localUserId)
     const users = useStageSelector<Users>((state) => state.users)

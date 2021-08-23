@@ -1,5 +1,5 @@
 import RoomSelection from './RoomSelection'
-import { useConnection, useStageSelector } from '@digitalstage/api-client-react'
+import { useEmit, useStageSelector } from '@digitalstage/api-client-react'
 import {
     ClientDeviceEvents,
     ClientDevicePayloads,
@@ -35,7 +35,7 @@ const StageMemberItem = ({
     selection: RoomSelection[]
     onSelected: (selection: RoomSelection) => void
 }) => {
-    const { emit } = useConnection()
+    const emit = useEmit()
     const stageMember = useStageSelector<StageMember | undefined>(
         (state) => state.stageMembers.byId[stageMemberId],
         shallowEqual

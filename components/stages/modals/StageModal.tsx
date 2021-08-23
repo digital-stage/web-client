@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import { useConnection, useStageSelector } from '@digitalstage/api-client-react'
+import { useEmit, useStageSelector } from '@digitalstage/api-client-react'
 import { ClientDeviceEvents, ClientDevicePayloads, Stage } from '@digitalstage/api-types'
 import React, { useCallback, useState } from 'react'
 import { Field, Form, Formik } from 'formik'
@@ -20,7 +20,7 @@ const StageModal = ({
     stageId?: string
 }) => {
     const [error, setError] = useState<string>()
-    const { emit } = useConnection()
+    const emit = useEmit()
     const stage = useStageSelector<Stage | undefined>((state) =>
         stageId ? state.stages.byId[stageId] : undefined
     )

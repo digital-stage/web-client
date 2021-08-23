@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react'
 import { useRouter } from 'next/router'
-import { useConnection, useStageJoiner, useStageSelector } from '@digitalstage/api-client-react'
+import { useEmit, useStageJoiner, useStageSelector } from '@digitalstage/api-client-react'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
 import Modal, { ModalButton, ModalFooter } from '../../ui/Modal'
 import TextInput from '../../ui/TextInput'
@@ -19,7 +19,7 @@ interface ErrorCodes {
 const StageJoiner = (): JSX.Element | null => {
     const ready = useStageSelector((state) => state.globals.ready)
     const { stageId, groupId, password, reset, requestJoin } = useStageJoiner()
-    const { emit } = useConnection()
+    const emit = useEmit()
     const [retries, setRetries] = useState<number>(0)
     const [wrongPassword, setWrongPassword] = useState<boolean>(false)
     const [notFound, setNotFound] = useState<boolean>(false)

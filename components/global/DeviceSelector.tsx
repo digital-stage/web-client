@@ -1,7 +1,7 @@
 import React from 'react'
 import styles from './DeviceSelector.module.scss'
 import Select from '../../ui/Select'
-import { useConnection, useStageSelector, selectDevice } from '@digitalstage/api-client-react'
+import { useEmit, useStageSelector, selectDevice } from '@digitalstage/api-client-react'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
 import { useDispatch } from 'react-redux'
 import { MdMic, MdMicOff, MdVideocam, MdVideocamOff } from 'react-icons/md'
@@ -14,7 +14,7 @@ const DeviceSelector = ({
     React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
     'children'
 >) => {
-    const { emit } = useConnection()
+    const emit = useEmit()
     const dispatch = useDispatch()
     const ready = useStageSelector((state) => state.globals.ready)
     const localDeviceId = useStageSelector((state) => state.globals.localDeviceId)

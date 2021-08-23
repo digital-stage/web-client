@@ -1,4 +1,4 @@
-import { useConnection, useStageSelector } from '@digitalstage/api-client-react'
+import { useEmit, useStageSelector } from '@digitalstage/api-client-react'
 import { ClientDeviceEvents, ClientDevicePayloads, Group } from '@digitalstage/api-types'
 import Modal, { ModalButton, ModalFooter, ModalHeader } from 'ui/Modal'
 import React, { useState } from 'react'
@@ -15,7 +15,7 @@ const RemoveGroupModal = ({
     open: boolean
     onClose: () => void
 }) => {
-    const { emit } = useConnection()
+    const emit = useEmit()
     const group = useStageSelector<Group | undefined>((state) =>
         groupId ? state.groups.byId[groupId] : undefined
     )

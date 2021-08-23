@@ -1,5 +1,5 @@
 import {
-    useConnection,
+    useEmit,
     useReport,
     useStageJoiner,
     useStageSelector,
@@ -12,7 +12,7 @@ const JoinPage = () => {
     const { query } = useRouter()
     const { requestJoin } = useStageJoiner()
     const { report } = useReport()
-    const { emit } = useConnection()
+    const { emit } = useEmit()
     const ready = useStageSelector((state) => state.globals.ready)
 
     useEffect(() => {

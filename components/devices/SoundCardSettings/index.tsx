@@ -1,5 +1,5 @@
 import { ClientDeviceEvents, Device, SoundCard } from '@digitalstage/api-types'
-import { useConnection, useStageSelector } from '@digitalstage/api-client-react'
+import { useEmit, useStageSelector } from '@digitalstage/api-client-react'
 import { shallowEqual } from 'react-redux'
 import Switch from '../../../ui/Switch'
 import Select from '../../../ui/Select'
@@ -9,7 +9,7 @@ const ChannelSelector = ({ soundCardId }: { soundCardId: string }) => {
         (state) => state.soundCards.byId[soundCardId],
         shallowEqual
     )
-    const { emit } = useConnection()
+    const emit = useEmit()
     if (!soundCard) return null
     return (
         <ul>
@@ -66,7 +66,7 @@ const ChannelSelector = ({ soundCardId }: { soundCardId: string }) => {
 }
 const SoundCardSettings = ({ deviceId }: { deviceId: string }) => {
     const device = useStageSelector<Device>((state) => state.devices.byId[deviceId])
-    const { emit } = useConnection()
+    const emit = useEmit()
     const soundCards = useStageSelector<SoundCard[]>((state) =>
         state.soundCards.byDevice[device._id]
             ? state.soundCards.byDevice[device._id].map(

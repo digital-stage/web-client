@@ -4,14 +4,14 @@ import Notification from '../../ui/Notification'
 import LiveInput from '../../ui/LiveInput'
 import {
     requestPasswordReset,
-    useConnection,
+    useEmit,
     useStageSelector,
 } from '@digitalstage/api-client-react'
 import Paragraph from '../../ui/Paragraph'
 import OptionsList, { OptionsListItem } from '../../ui/OptionsList'
 
 const ProfileEditor = () => {
-    const { emit } = useConnection()
+    const emit = useEmit()
     const authUser = useStageSelector((state) => state.auth.user)
     const localUser = useStageSelector<User | undefined>((state) =>
         state.globals.localUserId ? state.users.byId[state.globals.localUserId] : undefined

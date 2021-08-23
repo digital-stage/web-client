@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
-import { useConnection, useStageJoiner, useStageSelector } from '@digitalstage/api-client-react'
+import { useEmit, useStageJoiner, useStageSelector } from '@digitalstage/api-client-react'
 import Link from 'next/link'
 import Loading from '../../components/global/Loading'
 import AltList, { AltListItem } from 'ui/AltList'
@@ -25,7 +25,7 @@ const StageView = () => {
         if (Array.isArray(stageId)) return stageId.pop()
         return stageId
     }, [query])
-    const { emit } = useConnection()
+    const { emit } = useEmit()
     const { currentStageId, currentGroupId } = useStageSelector((state) =>
         state.globals.stageId
             ? { currentStageId: state.globals.stageId, currentGroupId: state.globals.groupId }

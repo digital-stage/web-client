@@ -1,4 +1,4 @@
-import { useConnection, useStageSelector } from '@digitalstage/api-client-react'
+import { useEmit, useStageSelector } from '@digitalstage/api-client-react'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
 import React, { useCallback, useEffect, useState } from 'react'
 import Modal, { ModalButton, ModalFooter, ModalHeader } from 'ui/Modal'
@@ -14,7 +14,7 @@ const RemoveStageModal = ({
     open: boolean
     onClose: () => void
 }) => {
-    const { emit } = useConnection()
+    const emit = useEmit()
     const stageName = useStageSelector((state) =>
         stageId ? state.stages.byId[stageId]?.name : undefined
     )

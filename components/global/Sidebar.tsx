@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import useOpenState from '../../ui/useOpenState'
 import Backdrop from '../../ui/Backdrop'
 import styles from './Sidebar.module.scss'
@@ -94,16 +94,16 @@ const Sidebar = () => {
                             </>
                         ) : null}
                         {deviceCount > 1 ? (
-                            <SidebarItem href="/devices">
+                            <SidebarItem onClick={() => setOpen(false)}  href="/devices">
                                 <BiDevices />
                                 <span>Geräte</span>
                             </SidebarItem>
                         ) : undefined}
-                        <SidebarItem href="/settings/device">
+                        <SidebarItem onClick={() => setOpen(false)}  href="/settings/device">
                             <FaTools />
                             <span>Einstellungen</span>
                         </SidebarItem>
-                        <SidebarItem href="/stages">
+                        <SidebarItem onClick={() => setOpen(false)}  href="/stages">
                             <GoListUnordered />
                             <span>Bühnen</span>
                         </SidebarItem>
@@ -111,7 +111,7 @@ const Sidebar = () => {
                     <div className={styles.sidebarSpacer} />
                     <div className={styles.sidebarFooter}>
                         {hasNotifications ? (
-                            <SidebarItem href="/notifications">
+                            <SidebarItem onClick={() => setOpen(false)} href="/notifications">
                                 <IoIosNotifications />
                                 <span>Ereignisse</span>
                             </SidebarItem>

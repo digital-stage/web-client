@@ -6,12 +6,12 @@ import {
     removeMediasoupAudioConsumer,
     removeMediasoupAudioProducer,
     removeMediasoupVideoProducer,
-    useConnection,
+    useEmit,
     useStageSelector,
 } from '@digitalstage/api-client-react'
 import { shallowEqual, useDispatch } from 'react-redux'
 import { ITeckosClient, TeckosClient } from 'teckos-client'
-import { Device, Device as MDevice } from 'mediasoup-client/lib/Device'
+import { Device as MediasoupDevice } from 'mediasoup-client/lib/Device'
 import {
     closeConsumer,
     createConsumer,
@@ -40,7 +40,7 @@ const error = info.extend('error')
 
 const MediasoupService = () => {
     const dispatch = useDispatch()
-    const { emit } = useConnection()
+    const emit = useEmit()
     const localDevice = useStageSelector<BrowserDevice | undefined>(
         (state) =>
             state.globals.localDeviceId
@@ -77,7 +77,7 @@ const MediasoupService = () => {
         return undefined
     }, [stage])
 
-    const [device, setDevice] = useState<Device>()
+    const [device, setDevice] = useState<MediasoupDevice>()
     const [connection, setConnection] = useState<ITeckosClient>()
     const [sendTransport, setSendTransport] = useState<Transport>()
     const [receiveTransport, setReceiveTransport] = useState<Transport>()
@@ -99,7 +99,7 @@ const MediasoupService = () => {
             conn.on('connect', async () => {
                 info(`Connected to router ${routerUrl}`)
                 try {
-                    const device = new MDevice()
+                    const device = new MediasoupDevice()
                     const rtpCapabilities = await getRTPCapabilities(conn)
                     await device.load({ routerRtpCapabilities: rtpCapabilities })
                     console.log('CONNECTING HERE')

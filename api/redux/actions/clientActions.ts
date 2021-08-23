@@ -1,10 +1,11 @@
-import { InternalActionTypes } from '@digitalstage/api-client-react'
-import { Producer } from 'mediasoup-client/lib/Producer'
-import { Consumer } from 'mediasoup-client/lib/Consumer'
-import { Notification } from '../state/Notifications'
-import { AuthUser } from '../state/Auth'
+import {Producer} from 'mediasoup-client/lib/Producer'
+import {Consumer} from 'mediasoup-client/lib/Consumer'
+import {Notification} from '../state/Notifications'
+import {AuthUser} from '../state/Auth'
 import ReducerAction from './ReducerAction'
-import { ITeckosClient } from 'teckos-client'
+import InternalActionTypes from "./InternalActionTypes";
+import {uuid4} from "@sentry/utils";
+import {SocketEvent} from "teckos-client/dist/types";
 
 export const init = (): ReducerAction => ({
     type: InternalActionTypes.INIT,
@@ -141,25 +142,28 @@ export const removeNotification = (id: RemoveNotificationPayload): ReducerAction
     payload: id,
 })
 
+export const reportError = (error: Error): ReducerAction => addNotification({
+    id: uuid4(),
+    date: new Date().getTime(),
+    kind: 'error',
+    message: error.message,
+    permanent: true,
+    featured: true
+})
+
+
 export const setInitialized = (initialized: boolean): ReducerAction => ({
     type: InternalActionTypes.SET_INITIALIZED,
     payload: initialized,
 })
 
-export const connect = (token?: string): ReducerAction => ({
-    type: InternalActionTypes.CONNECT,
-    payload: token,
+export const setEmit = (emit?: (event: SocketEvent, ...args: any[]) => boolean): ReducerAction => ({
+    type: InternalActionTypes.SET_EMIT,
+    payload: emit
 })
+
 export const disconnect = (): ReducerAction => ({
     type: InternalActionTypes.DISCONNECT,
-})
-/*
-I know, storing a whole connection object seems ruff. But the alternative is React Context API.
-And this would lead to a */
-
-export const setConnection = (connection?: ITeckosClient): ReducerAction => ({
-    type: InternalActionTypes.SET_CONNECTION,
-    payload: connection,
 })
 
 export const setUser = (user?: AuthUser): ReducerAction => ({
@@ -167,9 +171,12 @@ export const setUser = (user?: AuthUser): ReducerAction => ({
     payload: user,
 })
 
-export const setToken = (token?: string): ReducerAction => ({
+export const setToken = (token?: string, staySignedIn?: boolean): ReducerAction => ({
     type: InternalActionTypes.SET_TOKEN,
-    payload: token,
+    payload: {
+        token,
+        staySignedIn
+    },
 })
 
 export type { AddNotificationPayload, ChangeNotificationPayload, RemoveNotificationPayload }

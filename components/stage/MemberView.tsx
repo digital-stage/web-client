@@ -2,7 +2,7 @@ import React, { useMemo } from 'react'
 import styles from './StageView.module.scss'
 import VideoView from './VideoView'
 import Avatar from './Avatar'
-import { useConnection, useStageSelector } from '@digitalstage/api-client-react'
+import { useEmit, useStageSelector } from '@digitalstage/api-client-react'
 import { ClientDeviceEvents, VideoTrack } from '@digitalstage/api-types'
 import { AiFillStar, AiOutlineStar } from 'react-icons/ai'
 
@@ -27,7 +27,7 @@ const MemberView = ({
     const mediasoupVideoProducers = useStageSelector((state) => state.mediasoup.videoProducers)
     const localWebRTCTracks = useStageSelector((state) => state.webrtc.localVideoTracks)
     const remoteWebRTCTracks = useStageSelector((state) => state.webrtc.remoteVideoTracks)
-    const { emit } = useConnection()
+    const emit = useEmit()
 
     const videos = useMemo<MediaStreamTrack[]>(() => {
         return videoTracks.reduce<MediaStreamTrack[]>(

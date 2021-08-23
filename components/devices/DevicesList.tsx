@@ -1,4 +1,4 @@
-import { selectDevice, useConnection, useStageSelector } from '@digitalstage/api-client-react'
+import { selectDevice, useEmit, useStageSelector } from '@digitalstage/api-client-react'
 import styles from './DevicesList.module.scss'
 import { shallowEqual, useDispatch } from 'react-redux'
 import React, { useMemo, useState } from 'react'
@@ -39,7 +39,7 @@ const DeviceEntry = ({
     const selected = useMemo(() => {
         return selectedDeviceId === deviceId
     }, [deviceId, selectedDeviceId])
-    const { emit } = useConnection()
+    const emit = useEmit()
 
     return (
         <ListItem

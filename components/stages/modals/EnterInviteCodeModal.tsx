@@ -3,7 +3,7 @@ import Modal, { ModalButton, ModalFooter, ModalHeader } from 'ui/Modal'
 import Notificaton from '../../../ui/Notification'
 import Paragraph from '../../../ui/Paragraph'
 import dynamic from 'next/dynamic'
-import { useConnection, useStageJoiner } from '@digitalstage/api-client-react'
+import { useEmit, useStageJoiner } from '@digitalstage/api-client-react'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
 import styles from './EnterInviteCodeModal.module.scss'
 
@@ -13,7 +13,7 @@ const EnterInviteCodeModal = ({ open, onClose }: { open: boolean; onClose: () =>
     const [working, setWorking] = useState<boolean>(false)
     const [error, setError] = useState<string>()
     const [code, setCode] = useState<string>()
-    const { emit } = useConnection()
+    const emit = useEmit()
     const { requestJoin } = useStageJoiner()
 
     useEffect(() => {

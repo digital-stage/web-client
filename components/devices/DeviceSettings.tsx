@@ -1,4 +1,4 @@
-import { useConnection, useStageSelector } from '@digitalstage/api-client-react'
+import { useEmit, useStageSelector } from '@digitalstage/api-client-react'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
 import React from 'react'
 import { shallowEqual } from 'react-redux'
@@ -11,7 +11,7 @@ import OptionsList, { OptionsListItem } from '../../ui/OptionsList'
 
 const DeviceSettings = ({ deviceId }: { deviceId: string }) => {
     const device = useStageSelector((state) => state.devices.byId[deviceId], shallowEqual)
-    const { emit } = useConnection()
+    const emit = useEmit()
     return (
         <>
             <LiveInput

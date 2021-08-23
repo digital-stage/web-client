@@ -1,5 +1,5 @@
 import styles from './StageView.module.scss'
-import { useConnection, useStageSelector } from '@digitalstage/api-client-react'
+import { useEmit, useStageSelector } from '@digitalstage/api-client-react'
 import Backdrop from '../../ui/Backdrop'
 import React from 'react'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
@@ -17,7 +17,7 @@ const ConductorView = () => {
               )
             : false
     )
-    const { emit } = useConnection()
+    const emit = useEmit()
     const openState = useOpenState(directors.length > 0)
 
     return (

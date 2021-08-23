@@ -1,4 +1,4 @@
-import { selectMode, useConnection, useStageSelector } from '@digitalstage/api-client-react'
+import { selectMode, useEmit, useStageSelector } from '@digitalstage/api-client-react'
 import React, { useCallback, useMemo, useState } from 'react'
 import styles from './ReactiveMixingPanel.module.scss'
 import VolumeSlider from './VolumeSlider'
@@ -41,7 +41,7 @@ const AudioTrackPanel = ({
     audioTrackId: string
     deviceId?: string
 }) => {
-    const { emit } = useConnection()
+    const emit = useEmit()
     const audioTrack = useStageSelector((state) => state.audioTracks.byId[audioTrackId])
     const customAudioTrack = useStageSelector((state) =>
         deviceId &&
@@ -106,7 +106,7 @@ const StageDevicePanel = ({
     stageDeviceId: string
     deviceId?: string
 }) => {
-    const { emit } = useConnection()
+    const emit = useEmit()
     const [expanded, setExpanded] = useState<boolean>(false)
     const audioTrackIds = useStageSelector(
         (state) => state.audioTracks.byStageDevice[stageDeviceId] || []
@@ -198,7 +198,7 @@ const StageMemberPanel = ({
     stageMemberId: string
     deviceId?: string
 }) => {
-    const { emit } = useConnection()
+    const emit = useEmit()
     const [expanded, setExpanded] = useState<boolean>(false)
     const stageDeviceIds = useStageSelector(
         (state) => state.stageDevices.byStageMember[stageMemberId] || []
@@ -284,7 +284,7 @@ const StageMemberPanel = ({
 }
 
 const GroupPanel = ({ groupId, deviceId }: { groupId: string; deviceId?: string }) => {
-    const { emit } = useConnection()
+    const emit = useEmit()
     const [expanded, setExpanded] = useState<boolean>(true)
     const stageMemberIds = useStageSelector((state) => state.stageMembers.byGroup[groupId] || [])
     const group = useStageSelector((state) => state.groups.byId[groupId])
@@ -366,7 +366,7 @@ const GroupPanel = ({ groupId, deviceId }: { groupId: string; deviceId?: string 
 }
 
 const ResetAllButton = ({ deviceId }: { deviceId?: string }) => {
-    const { emit } = useConnection()
+    const emit = useEmit()
     const groupIds = useStageSelector((state) => state.groups.allIds)
     const stageMemberIds = useStageSelector((state) => state.stageMembers.allIds)
     const stageDeviceIds = useStageSelector((state) => state.stageDevices.allIds)

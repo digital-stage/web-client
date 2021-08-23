@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { useConnection } from '@digitalstage/api-client-react'
+import { useEmit } from '@digitalstage/api-client-react'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
 import Notification from '../../../ui/Notification'
 import Modal, { ModalButton, ModalFooter, ModalHeader } from 'ui/Modal'
@@ -18,7 +18,7 @@ const InviteModal = ({
     stageId: string
     groupId: string
 }) => {
-    const connection = useConnection()
+    const connection = useEmit()
     const [resetOpen, setResetOpen] = useState<boolean>(false)
     const [code, setCode] = useState<string>()
     const [info, setInfo] = useState<string>()

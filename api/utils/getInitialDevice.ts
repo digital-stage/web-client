@@ -1,12 +1,10 @@
-import Cookie from 'js-cookie'
 import { BrowserDevice, WebMediaDevice } from '@digitalstage/api-types'
 import * as Bowser from 'bowser'
 
 const getInitialDevice = async (
-    userId: string,
-    permanent: boolean
+    permanent: boolean,
+    uuid?: string
 ): Promise<Partial<Omit<BrowserDevice, '_id'>>> => {
-    const uuid = Cookie.get(userId)
     const browser = Bowser.getParser(window.navigator.userAgent)
     if (navigator !== undefined) {
         const inputAudioDevices: WebMediaDevice[] = []

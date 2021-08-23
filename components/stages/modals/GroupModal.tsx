@@ -1,4 +1,4 @@
-import { useConnection, useStageSelector } from '@digitalstage/api-client-react'
+import { useEmit, useStageSelector } from '@digitalstage/api-client-react'
 import { ClientDeviceEvents, ClientDevicePayloads, Group } from '@digitalstage/api-types'
 import React, { useCallback, useState } from 'react'
 import { Field, Form, Formik } from 'formik'
@@ -21,7 +21,7 @@ const GroupModal = ({
     groupId?: string | null
 }) => {
     const [error, setError] = useState<string>()
-    const { emit } = useConnection()
+    const emit = useEmit()
     const group = useStageSelector<Group | undefined>(
         (state) => (groupId ? state.groups.byId[groupId] : undefined),
         shallowEqual

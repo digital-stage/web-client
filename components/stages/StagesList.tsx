@@ -1,4 +1,4 @@
-import { useConnection, useStageJoiner, useStageSelector } from '@digitalstage/api-client-react'
+import { useEmit, useStageJoiner, useStageSelector } from '@digitalstage/api-client-react'
 import { shallowEqual } from 'react-redux'
 import React, { useState } from 'react'
 import Link from 'next/link'
@@ -42,7 +42,7 @@ const StageItem = ({
     )
     const isStageAdmin = stage?.admins.find((id) => id === userId)
     const { requestJoin } = useStageJoiner()
-    const { emit } = useConnection()
+    const emit = useEmit()
     return (
         <ListItem className={isActive ? styles.active : ''}>
             <Link href={`/stages/${stage._id}`}>

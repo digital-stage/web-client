@@ -1,4 +1,4 @@
-import { useConnection, useStageSelector } from '@digitalstage/api-client-react'
+import { useEmit, useStageSelector } from '@digitalstage/api-client-react'
 import React, { useCallback } from 'react'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
 import styles from './RoomEditor.module.scss'
@@ -24,7 +24,7 @@ const DEFAULT_POSITION = {
 }
 
 const ResetPanel = ({ deviceId, selection }: { deviceId?: string; selection: RoomSelection[] }) => {
-    const { emit } = useConnection()
+    const emit = useEmit()
     const groupIds = useStageSelector((state) => state.groups.allIds)
     const stageMemberIds = useStageSelector((state) => state.stageMembers.allIds)
     const stageDeviceIds = useStageSelector((state) => state.stageDevices.allIds)

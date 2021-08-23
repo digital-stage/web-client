@@ -1,6 +1,4 @@
 import { AuthUser } from './redux/state/Auth'
-import InternalActionTypes from './redux/actions/InternalActionTypes'
-import Cookie from 'js-cookie'
 
 export const ErrorCodes = {
     Unauthorized: 401,
@@ -65,8 +63,7 @@ const createUserWithEmailAndPassword = (
 
 const signInWithEmailAndPassword = (
     email: string,
-    password: string,
-    staySignedIn: boolean
+    password: string
 ): Promise<string> =>
     fetch(`${process.env.NEXT_PUBLIC_AUTH_URL}/login`, {
         headers: {
@@ -81,10 +78,6 @@ const signInWithEmailAndPassword = (
         .then((res) => {
             if (res.ok) return res.json()
             throw new AuthError(res.status, res.statusText)
-        })
-        .then(async (resToken) => {
-            Cookie.set('token', resToken, { expires: staySignedIn ? 7 : undefined })
-            return resToken
         })
 
 const signInWithToken = (token: string) => {
@@ -159,7 +152,6 @@ export const logout = (token: string): Promise<void> =>
         method: 'POST',
     }).then((res) => {
         if (!res.ok) throw new AuthError(res.status, res.statusText)
-        Cookie.remove('token')
         return undefined
     })
 

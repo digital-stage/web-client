@@ -1,5 +1,5 @@
 import RoomSelection from './RoomSelection'
-import { useConnection, useStageSelector } from '@digitalstage/api-client-react'
+import { useEmit, useStageSelector } from '@digitalstage/api-client-react'
 import {
     ClientDeviceEvents,
     ClientDevicePayloads,
@@ -26,7 +26,7 @@ const GroupItem = ({
     selection: RoomSelection[]
     onSelected: (selection: RoomSelection) => void
 }) => {
-    const { emit } = useConnection()
+    const emit = useEmit()
     const stageMemberIds = useStageSelector<string[]>(
         (state) => state.stageMembers.byGroup[groupId] || []
     )

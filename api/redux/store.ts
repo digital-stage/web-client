@@ -1,6 +1,4 @@
-import { applyMiddleware, combineReducers, createStore } from 'redux'
 import reduceAuth from './reducers/reduceAuth'
-import thunk from 'redux-thunk'
 import reduceGlobals from './reducers/reduceGlobals'
 import reduceAudioTracks from './reducers/reduceAudioTracks'
 import reduceChatMessage from './reducers/reduceChatMessage'
@@ -24,42 +22,43 @@ import reduceRouters from './reducers/reduceRouters'
 import reduceNotifications from './reducers/reduceNotifications'
 import reduceMediasoup from './reducers/reduceMediasoup'
 import reduceWebRTC from './reducers/reduceWebRTC'
-import { composeWithDevTools } from 'redux-devtools-extension'
-import cookieMiddleware from './cookieMiddleware'
+import connectionMiddleware from "./connectionMiddleware";
+import mediasoupMiddleware from "./mediasoupMiddleware";
+import {configureStore} from "@reduxjs/toolkit";
 
-const rootReducer = combineReducers({
-    auth: reduceAuth,
-    globals: reduceGlobals,
-    chatMessages: reduceChatMessage,
-    devices: reduceDevices,
-    soundCards: reduceSoundCards,
-    routers: reduceRouters,
-    users: reduceUsers,
-    stages: reduceStages,
-    groups: reduceGroups,
-    stageMembers: reduceStageMembers,
-    stageDevices: reduceStageDevices,
-    videoTracks: reduceVideoTracks,
-    audioTracks: reduceAudioTracks,
-    customGroupVolumes: reduceCustomGroupVolumes,
-    customGroupPositions: reduceCustomGroupPositions,
-    customStageMemberVolumes: reduceCustomStageMemberVolumes,
-    customStageMemberPositions: reduceCustomStageMemberPositions,
-    customStageDeviceVolumes: reduceCustomStageDeviceVolumes,
-    customStageDevicePositions: reduceCustomStageDevicePositions,
-    customAudioTrackVolumes: reduceCustomAudioTrackVolumes,
-    customAudioTrackPositions: reduceCustomAudioTrackPositions,
-    notifications: reduceNotifications,
-    mediasoup: reduceMediasoup,
-    webrtc: reduceWebRTC,
+const reducer = {
+  auth: reduceAuth,
+  globals: reduceGlobals,
+  chatMessages: reduceChatMessage,
+  devices: reduceDevices,
+  soundCards: reduceSoundCards,
+  routers: reduceRouters,
+  users: reduceUsers,
+  stages: reduceStages,
+  groups: reduceGroups,
+  stageMembers: reduceStageMembers,
+  stageDevices: reduceStageDevices,
+  videoTracks: reduceVideoTracks,
+  audioTracks: reduceAudioTracks,
+  customGroupVolumes: reduceCustomGroupVolumes,
+  customGroupPositions: reduceCustomGroupPositions,
+  customStageMemberVolumes: reduceCustomStageMemberVolumes,
+  customStageMemberPositions: reduceCustomStageMemberPositions,
+  customStageDeviceVolumes: reduceCustomStageDeviceVolumes,
+  customStageDevicePositions: reduceCustomStageDevicePositions,
+  customAudioTrackVolumes: reduceCustomAudioTrackVolumes,
+  customAudioTrackPositions: reduceCustomAudioTrackPositions,
+  notifications: reduceNotifications,
+  mediasoup: reduceMediasoup,
+  webrtc: reduceWebRTC,
+}
+
+const store = configureStore({
+  reducer: reducer,
+  devTools: true,
 })
 
-const store = createStore(
-    rootReducer,
-    composeWithDevTools(applyMiddleware(thunk, cookieMiddleware))
-)
-
-export type RootState = ReturnType<typeof store.getState>
+//export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch
 
 export default store

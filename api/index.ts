@@ -2,10 +2,11 @@ import DigitalStageProvider from './DigitalStageProvider'
 import useAnimationFrame from './hooks/useAnimationFrame'
 import useAuth from './hooks/useAuth'
 import useReport from './hooks/useReport'
-import { AppDispatch, RootState } from './redux/store'
-import useConnection from './hooks/useConnection'
+import { AppDispatch } from './redux/store'
+import useEmit from './hooks/useEmit'
 import useStageSelector from './redux/useStageSelector'
 import useStageJoiner from './hooks/useStageJoiner'
+import { RootState } from './redux/state'
 
 export * from './redux/actions'
 export * from './redux/state'
@@ -16,6 +17,6 @@ export {
     DigitalStageProvider,
     useAnimationFrame,
     useReport,
-    useConnection,
+    useEmit,
     useAuth,
 }

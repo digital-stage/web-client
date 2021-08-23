@@ -1,5 +1,5 @@
 import RoomSelection from './RoomSelection'
-import { useConnection, useStageSelector } from '@digitalstage/api-client-react'
+import { useEmit, useStageSelector } from '@digitalstage/api-client-react'
 import {
     ClientDeviceEvents,
     ClientDevicePayloads,
@@ -41,7 +41,7 @@ const AudioTrackItem = ({
     selection: RoomSelection[]
     onSelected: (selection: RoomSelection) => void
 }) => {
-    const { emit } = useConnection()
+    const emit = useEmit()
     const audioTrack = useStageSelector<AudioTrack | undefined>(
         (state) => state.audioTracks.byId[audioTrackId]
     )

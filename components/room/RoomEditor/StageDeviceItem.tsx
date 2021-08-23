@@ -1,5 +1,5 @@
 import RoomSelection from './RoomSelection'
-import { useConnection, useStageSelector } from '@digitalstage/api-client-react'
+import { useEmit, useStageSelector } from '@digitalstage/api-client-react'
 import {
     ClientDeviceEvents,
     ClientDevicePayloads,
@@ -40,7 +40,7 @@ const StageDeviceItem = ({
     selection: RoomSelection[]
     onSelected: (selection: RoomSelection) => void
 }) => {
-    const { emit } = useConnection()
+    const emit = useEmit()
     const stageDevice = useStageSelector<StageDevice | undefined>(
         (state) => state.stageDevices.byId[stageDeviceId]
     )

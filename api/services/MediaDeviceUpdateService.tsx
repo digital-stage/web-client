@@ -1,4 +1,4 @@
-import { useConnection, useStageSelector } from '@digitalstage/api-client-react'
+import { useEmit, useStageSelector } from '@digitalstage/api-client-react'
 import { shallowEqual } from 'react-redux'
 import { useEffect } from 'react'
 import { refreshMediaDevices } from './MediasoupService/util'
@@ -12,7 +12,7 @@ const MediaDeviceUpdateService = () => {
                 : undefined,
         shallowEqual
     )
-    const { emit } = useConnection()
+    const emit = useEmit()
 
     useEffect(() => {
         if (emit && localDevice?._id) {
