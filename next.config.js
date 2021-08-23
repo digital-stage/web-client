@@ -3,12 +3,7 @@
 
 const moduleExports = {
     // Your existing module.exports
-    reactStrictMode: true,
-    resolve: {
-        alias: {
-            'react-dom$': 'react-dom/profiling',
-        }
-    }
+    reactStrictMode: true
 }
 
 const SentryWebpackPluginOptions = {
@@ -24,5 +19,5 @@ const SentryWebpackPluginOptions = {
 }
 
 const withTM = require('next-transpile-modules')(['konva', 'react-konva'])
-//module.exports = withTM(withSentryConfig(moduleExports, SentryWebpackPluginOptions))
 module.exports = withTM(moduleExports)
+//module.exports = withTM(withSentryConfig(moduleExports, SentryWebpackPluginOptions))
