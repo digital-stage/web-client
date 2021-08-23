@@ -1,16 +1,16 @@
-import React, { useCallback } from 'react'
+import { useCallback } from 'react'
 import { KIND } from '../redux/state/Notifications'
 import useReporting from './useReporting'
 
 interface ReportContextT {
-    report: (kind: KIND[keyof KIND], message: React.ReactNode, permanent?: boolean) => void
+    report: (kind: KIND[keyof KIND], message: string, link?: string, permanent?: boolean) => void
 }
 
 const useReport = (): ReportContextT => {
     const { addNotification } = useReporting()
 
     const report = useCallback(
-        (kind: KIND[keyof KIND] = 'info', message: React.ReactNode, permanent?: boolean) => {
+        (kind: KIND[keyof KIND] = 'info', message: string, link?: string, permanent?: boolean) => {
             addNotification({
                 date: new Date().getTime(),
                 kind: kind,

@@ -5,7 +5,6 @@ import {AuthUser} from '../state/Auth'
 import ReducerAction from './ReducerAction'
 import InternalActionTypes from "./InternalActionTypes";
 import {uuid4} from "@sentry/utils";
-import {SocketEvent} from "teckos-client/dist/types";
 
 export const init = (): ReducerAction => ({
     type: InternalActionTypes.INIT,
@@ -151,15 +150,9 @@ export const reportError = (error: Error): ReducerAction => addNotification({
     featured: true
 })
 
-
 export const setInitialized = (initialized: boolean): ReducerAction => ({
     type: InternalActionTypes.SET_INITIALIZED,
     payload: initialized,
-})
-
-export const setEmit = (emit?: (event: SocketEvent, ...args: any[]) => boolean): ReducerAction => ({
-    type: InternalActionTypes.SET_EMIT,
-    payload: emit
 })
 
 export const disconnect = (): ReducerAction => ({

@@ -2,8 +2,7 @@ import { ChatMessage, ClientDeviceEvents, ClientDevicePayloads } from '@digitals
 import { useCallback, useEffect, useRef, useState } from 'react'
 import styles from './Chat.module.css'
 import React from 'react'
-import Link from 'next/link'
-import { useEmit, useReport, Users, useStageSelector } from '@digitalstage/api-client-react'
+import { useEmit, Users, useStageSelector } from '@digitalstage/api-client-react'
 import useForceUpdate from './useForceUpdate'
 import Notification from '../../../ui/Notification'
 import Panel from '../../../ui/Panel'
@@ -78,7 +77,6 @@ const ChatPanel = () => {
     const messages = useStageSelector<ChatMessage[]>((state) => state.chatMessages)
     const messageRef = useRef<HTMLInputElement>(null)
     const emit = useEmit()
-    const { report } = useReport()
     const localUserId = useStageSelector<string | undefined>((state) => state.globals.localUserId)
     const users = useStageSelector<Users>((state) => state.users)
 
@@ -95,21 +93,6 @@ const ChatPanel = () => {
             }
         }
     }, [messageRef, emit])
-
-    useEffect(() => {
-        if (messages.length > 0) {
-            // Report last message
-            if (messages[messages.length - 1].userId !== localUserId) {
-                report(
-                    'info',
-                    <div>
-                        {users.byId[messages[messages.length - 1].userId].name}:&nbsp;
-                        <Link href="/chat">{messages[messages.length - 1].message}</Link>
-                    </div>
-                )
-            }
-        }
-    }, [report, messages, localUserId, users.byId])
 
     return (
         <Panel className={styles.panel}>

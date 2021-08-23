@@ -7,7 +7,6 @@ import {
     changeNotification as changeNotificationAction,
     removeNotification as removeNotificationAction,
 } from '@digitalstage/api-client-react'
-import Link from 'next/link'
 import debug from 'debug'
 import { useDispatch } from 'react-redux'
 
@@ -87,7 +86,6 @@ const ReportingProvider = ({ children }: { children: React.ReactNode }) => {
     )
 
     // Handle chat messages
-    const users = useStageSelector(state => state.users.byId)
     const localStageMemberId = useStageSelector((state) => state.globals.stageMemberId)
     const chatMessages = useStageSelector((state) => state.chatMessages)
     useEffect(() => {
@@ -100,11 +98,8 @@ const ReportingProvider = ({ children }: { children: React.ReactNode }) => {
             addNotification({
                 date: new Date().getTime(),
                 kind: 'info',
-                message: (
-                    <Link href="/chat">
-                        <a>{chatMessage.stageMemberId}: {chatMessage.message}</a>
-                    </Link>
-                ),
+                message: `${chatMessage.stageMemberId}: ${chatMessage.message}`,
+                link: "/chat",
                 permanent: false,
                 featured: true,
             })

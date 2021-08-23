@@ -1,5 +1,5 @@
 import { shallowEqual, useSelector } from 'react-redux'
-import { RootState } from './store'
+import { RootState } from './state'
 
 const useStageSelector = <T>(
     selector: (state: RootState) => T,

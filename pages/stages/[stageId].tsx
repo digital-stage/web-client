@@ -25,7 +25,7 @@ const StageView = () => {
         if (Array.isArray(stageId)) return stageId.pop()
         return stageId
     }, [query])
-    const { emit } = useEmit()
+    const emit = useEmit()
     const { currentStageId, currentGroupId } = useStageSelector((state) =>
         state.globals.stageId
             ? { currentStageId: state.globals.stageId, currentGroupId: state.globals.groupId }

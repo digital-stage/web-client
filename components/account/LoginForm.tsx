@@ -14,7 +14,7 @@ const LoginForm = (): JSX.Element => {
 
     const handleSubmit = useCallback(
         (values) =>
-            signInWithEmailAndPassword(values.email, values.password, values.staySignedIn)
+            signInWithEmailAndPassword(values.email, values.password)
                 .then(async (token) => {
                     const user = await getUserByToken(token)
                     batch(() => {
@@ -24,7 +24,10 @@ const LoginForm = (): JSX.Element => {
                         })
                         dispatch({
                             type: InternalActionTypes.SET_TOKEN,
-                            payload: token,
+                            payload: {
+                                token: token,
+                                staySignedIn: values.staySignedIn,
+                            },
                         })
                     })
                     setError(undefined)

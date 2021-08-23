@@ -18,16 +18,16 @@ const InviteModal = ({
     stageId: string
     groupId: string
 }) => {
-    const connection = useEmit()
+    const emit = useEmit()
     const [resetOpen, setResetOpen] = useState<boolean>(false)
     const [code, setCode] = useState<string>()
     const [info, setInfo] = useState<string>()
     const [error, setError] = useState<string>()
 
     const resetCode = useCallback((): Promise<string> => {
-        if (connection && stageId && groupId) {
+        if (emit && stageId && groupId) {
             return new Promise<string>((resolve, reject) =>
-                connection.emit(
+                emit(
                     ClientDeviceEvents.RevokeInviteCode,
                     { stageId, groupId } as ClientDevicePayloads.RevokeInviteCode,
                     (err: string | null, code_?: string) => {
@@ -39,11 +39,11 @@ const InviteModal = ({
             )
         }
         throw new Error(`Internal error: not ready: ${stageId} and ${groupId}`)
-    }, [connection, stageId, groupId])
+    }, [emit, stageId, groupId])
 
     useEffect(() => {
-        if (connection && stageId && groupId) {
-            connection.emit(
+        if (emit && stageId && groupId) {
+            emit(
                 ClientDeviceEvents.EncodeInviteCode,
                 { stageId, groupId } as ClientDevicePayloads.EncodeInviteCode,
                 (err: string | null, code_?: string) => {
@@ -56,7 +56,7 @@ const InviteModal = ({
                 }
             )
         }
-    }, [connection, stageId, groupId])
+    }, [emit, stageId, groupId])
 
     useEffect(() => {
         if (open) {

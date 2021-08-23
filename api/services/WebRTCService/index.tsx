@@ -18,8 +18,8 @@ import WebRTCConnection from './WebRTCConnection'
 import getVideoTracks from '../../utils/getVideoTracks'
 import getAudioTracks from '../../utils/getAudioTracks'
 import omit from 'lodash/omit'
-import { ITeckosClient } from 'teckos-client'
 import debug from 'debug'
+import useConnection from "../../hooks/useConnection";
 
 const report = debug('WebRTCService')
 const logger = {
@@ -28,7 +28,7 @@ const logger = {
 }
 
 const WebRTCService = () => {
-    const connection = useStageSelector<ITeckosClient>((state) => state.globals.connection)
+    const connection = useConnection()
     const emit = connection ? connection.emit : undefined
     const [ready, setReady] = useState<boolean>(false)
     const dispatch = useDispatch()

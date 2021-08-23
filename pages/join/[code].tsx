@@ -12,7 +12,7 @@ const JoinPage = () => {
     const { query } = useRouter()
     const { requestJoin } = useStageJoiner()
     const { report } = useReport()
-    const { emit } = useEmit()
+    const emit = useEmit()
     const ready = useStageSelector((state) => state.globals.ready)
 
     useEffect(() => {

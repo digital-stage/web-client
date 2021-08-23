@@ -9,7 +9,8 @@ interface Notification {
     id: string
     date: number
     kind: KIND[keyof KIND]
-    message: any
+    message: string
+    link?: string
     featured: boolean
     permanent: boolean
 }

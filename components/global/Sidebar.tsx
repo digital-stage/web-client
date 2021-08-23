@@ -94,16 +94,16 @@ const Sidebar = () => {
                             </>
                         ) : null}
                         {deviceCount > 1 ? (
-                            <SidebarItem onClick={() => setOpen(false)}  href="/devices">
+                            <SidebarItem onClick={() => setOpen(false)} href="/devices">
                                 <BiDevices />
                                 <span>Geräte</span>
                             </SidebarItem>
                         ) : undefined}
-                        <SidebarItem onClick={() => setOpen(false)}  href="/settings/device">
+                        <SidebarItem onClick={() => setOpen(false)} href="/settings/device">
                             <FaTools />
                             <span>Einstellungen</span>
                         </SidebarItem>
-                        <SidebarItem onClick={() => setOpen(false)}  href="/stages">
+                        <SidebarItem onClick={() => setOpen(false)} href="/stages">
                             <GoListUnordered />
                             <span>Bühnen</span>
                         </SidebarItem>

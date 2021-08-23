@@ -22,9 +22,8 @@ import reduceRouters from './reducers/reduceRouters'
 import reduceNotifications from './reducers/reduceNotifications'
 import reduceMediasoup from './reducers/reduceMediasoup'
 import reduceWebRTC from './reducers/reduceWebRTC'
-import connectionMiddleware from "./connectionMiddleware";
-import mediasoupMiddleware from "./mediasoupMiddleware";
 import {configureStore} from "@reduxjs/toolkit";
+import authMiddleware from "./authMiddleware";
 
 const reducer = {
   auth: reduceAuth,
@@ -56,6 +55,7 @@ const reducer = {
 const store = configureStore({
   reducer: reducer,
   devTools: true,
+  middleware: getDefaultMiddleware => getDefaultMiddleware().concat(authMiddleware)
 })
 
 //export type RootState = ReturnType<typeof store.getState>
