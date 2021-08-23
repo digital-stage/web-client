@@ -1,5 +1,5 @@
 // next.config.js
-//const { withSentryConfig } = require('@sentry/nextjs')
+const { withSentryConfig } = require('@sentry/nextjs')
 
 const moduleExports = {
     // Your existing module.exports
@@ -19,5 +19,5 @@ const SentryWebpackPluginOptions = {
 }
 
 const withTM = require('next-transpile-modules')(['konva', 'react-konva'])
-module.exports = withTM(moduleExports)
-//module.exports = withTM(withSentryConfig(moduleExports, SentryWebpackPluginOptions))
+//module.exports = withTM(moduleExports)
+module.exports = withSentryConfig(withTM(moduleExports), SentryWebpackPluginOptions)
