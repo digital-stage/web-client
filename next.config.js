@@ -1,6 +1,4 @@
 // next.config.js
-const { withSentryConfig } = require('@sentry/nextjs')
-
 const moduleExports = {
     // Your existing module.exports
     reactStrictMode: true
@@ -19,5 +17,5 @@ const SentryWebpackPluginOptions = {
 }
 
 const withTM = require('next-transpile-modules')(['konva', 'react-konva'])
-//module.exports = withTM(moduleExports)
-module.exports = withSentryConfig(withTM(moduleExports), SentryWebpackPluginOptions)
+module.exports = withTM(moduleExports)
+//module.exports = process.env.NODE_ENV !== "production" ? require('@sentry/nextjs').withSentryConfig(withTM(moduleExports), SentryWebpackPluginOptions) : withTM(moduleExports)

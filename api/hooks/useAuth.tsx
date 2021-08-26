@@ -26,4 +26,4 @@ const useAuth = (): AuthContextT => {
         token,
     }
 }
-export default useAuth
+export { useAuth }

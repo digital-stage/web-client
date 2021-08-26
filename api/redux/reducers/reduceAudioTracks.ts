@@ -1,9 +1,9 @@
 import omit from 'lodash/omit'
 import without from 'lodash/without'
 import { ServerDeviceEvents, ServerDevicePayloads, AudioTrack } from '@digitalstage/api-types'
-import upsert from '../utils/upsert'
+import { upsert } from '../utils/upsert'
 import AudioTracks from '../state/AudioTracks'
-import InternalActionTypes from '../actions/InternalActionTypes'
+import { InternalActionTypes } from '../actions/InternalActionTypes'
 
 const addAudioTrack = (state: AudioTracks, audioTrack: AudioTrack): AudioTracks => ({
     ...state,

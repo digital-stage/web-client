@@ -5,7 +5,7 @@ export interface KIND {
     error: 'error'
 }
 
-interface Notification {
+export interface Notification {
     id: string
     date: number
     kind: KIND[keyof KIND]
@@ -15,12 +15,9 @@ interface Notification {
     permanent: boolean
 }
 
-interface Notifications {
+export interface Notifications {
     byId: {
         [id: string]: Notification
     }
     allIds: string[]
 }
-
-export type { Notification }
-export default Notifications

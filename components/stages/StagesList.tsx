@@ -1,7 +1,6 @@
-import { useEmit, useStageJoiner, useStageSelector } from '@digitalstage/api-client-react'
-import { shallowEqual } from 'react-redux'
+import { requestJoin, useEmit, useStageSelector } from '@digitalstage/api-client-react'
+import { shallowEqual, useDispatch } from 'react-redux'
 import React, { useState } from 'react'
-import Link from 'next/link'
 import List, { ListItem } from '../../ui/List'
 import styles from './StagesList.module.scss'
 import { ClientDeviceEvents, Stage } from '@digitalstage/api-types'
@@ -13,6 +12,7 @@ import Paragraph from '../../ui/Paragraph'
 import { MdDeleteForever, MdEdit } from 'react-icons/md'
 import { ImEnter, ImExit } from 'react-icons/im'
 import EnterInviteCodeModal from './modals/EnterInviteCodeModal'
+import { useStageJoiner } from '../../api/hooks/useStageJoiner'
 
 const Type = {
     mediasoup: 'Web',
@@ -41,17 +41,18 @@ const StageItem = ({
         (state) => state.globals.stageId && state.globals.stageId === stageId
     )
     const isStageAdmin = stage?.admins.find((id) => id === userId)
-    const { requestJoin } = useStageJoiner()
+    const { join } = useStageJoiner()
     const emit = useEmit()
     return (
-        <ListItem className={isActive ? styles.active : ''}>
-            <Link href={`/stages/${stage._id}`}>
-                <a className={styles.stageName}>
-                    {stage.name}
-                    <Tag kind="success">{Type[stage.videoType]}</Tag>
-                    <Tag kind="warn">{Type[stage.audioType]}</Tag>
-                </a>
-            </Link>
+        <ListItem
+            className={isActive ? styles.active : ''}
+            onSelect={() => join({ stageId, password: stage.password })}
+        >
+            <a className={styles.stageName}>
+                {stage.name}
+                <Tag kind="success">{Type[stage.videoType]}</Tag>
+                <Tag kind="warn">{Type[stage.audioType]}</Tag>
+            </a>
             <span>
                 {isStageAdmin ? (
                     <>
@@ -71,9 +72,7 @@ const StageItem = ({
                     !isActive ? (
                         <button
                             className="round primary small"
-                            onClick={() =>
-                                requestJoin({ stageId: stageId, password: stage.password })
-                            }
+                            onClick={() => join({ stageId: stageId, password: stage.password })}
                         >
                             <ImEnter />
                         </button>

@@ -1,8 +1,8 @@
 import omit from 'lodash/omit'
 import without from 'lodash/without'
 import { ServerDeviceEvents, ServerDevicePayloads } from '@digitalstage/api-types'
-import upsert from '../utils/upsert'
-import InternalActionTypes from '../actions/InternalActionTypes'
+import { upsert } from '../utils/upsert'
+import { InternalActionTypes } from '../actions/InternalActionTypes'
 import Devices from '../state/Devices'
 
 function reduceDevices(
@@ -31,8 +31,6 @@ function reduceDevices(
                     ...state.byId,
                     [device._id]: {
                         ...device,
-                        createdAt: new Date(device.createdAt),
-                        lastLoginAt: new Date(device.lastLoginAt),
                     },
                 },
                 allIds: upsert<string>(state.allIds, device._id),

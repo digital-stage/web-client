@@ -5,7 +5,7 @@ import * as Yup from 'yup'
 import TextInput from '../../ui/TextInput'
 import Notification from '../../ui/Notification'
 import { batch, useDispatch } from 'react-redux'
-import InternalActionTypes from '../../api/redux/actions/InternalActionTypes'
+import { InternalActionTypes } from '@digitalstage/api-client-react'
 import translateError from './translateError'
 
 const LoginForm = (): JSX.Element => {

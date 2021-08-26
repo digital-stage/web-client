@@ -1,9 +1,10 @@
 import React, { useCallback, useState } from 'react'
 import { useRouter } from 'next/router'
-import { useEmit, useStageJoiner, useStageSelector } from '@digitalstage/api-client-react'
+import { useEmit, useStageSelector } from '@digitalstage/api-client-react'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
 import Modal, { ModalButton, ModalFooter } from '../../ui/Modal'
 import TextInput from '../../ui/TextInput'
+import { useStageJoiner } from '../../api/hooks/useStageJoiner'
 
 interface ErrorCodes {
     InvalidPassword: 'Invalid password'
@@ -18,7 +19,16 @@ interface ErrorCodes {
  */
 const StageJoiner = (): JSX.Element | null => {
     const ready = useStageSelector((state) => state.globals.ready)
-    const { stageId, groupId, password, reset, requestJoin } = useStageJoiner()
+    const { join, resetJoin } = useStageJoiner()
+    const { stageId, groupId, password } = useStageSelector((state) =>
+        state.globals.request
+            ? state.globals.request
+            : {
+                  stageId: undefined,
+                  groupId: undefined,
+                  password: undefined,
+              }
+    )
     const emit = useEmit()
     const [retries, setRetries] = useState<number>(0)
     const [wrongPassword, setWrongPassword] = useState<boolean>(false)
@@ -30,14 +40,16 @@ const StageJoiner = (): JSX.Element | null => {
         setNotFound(false)
         setWrongPassword(false)
         setRetries(0)
-        reset()
-    }, [reset])
+        resetJoin()
+    }, [resetJoin])
 
-    const joinStage = useCallback(() => {
+    const handleJoinRequest = useCallback(() => {
         setNotFound(false)
         setWrongPassword(false)
         // Try to connect
+        console.log('Try to join1')
         if (emit && stageId) {
+            console.log('Try to join')
             emit(
                 ClientDeviceEvents.JoinStage,
                 { stageId, groupId, password } as ClientDevicePayloads.JoinStage,
@@ -54,15 +66,15 @@ const StageJoiner = (): JSX.Element | null => {
                 }
             )
         }
-    }, [stageId, groupId, emit, password, clear, router])
+    }, [emit, stageId, groupId, password, clear, router])
 
     React.useEffect(() => {
         if (ready) {
-            joinStage()
+            handleJoinRequest()
         }
-    }, [ready, joinStage])
+    }, [ready, handleJoinRequest])
 
-    if (stageId && groupId)
+    if (stageId)
         return (
             <>
                 <Modal size="small" open={notFound} onClose={() => setNotFound(false)}>
@@ -86,7 +98,7 @@ const StageJoiner = (): JSX.Element | null => {
                         <ModalButton
                             onClick={() => {
                                 setRetries((prev) => prev + 1)
-                                requestJoin({
+                                join({
                                     stageId,
                                     groupId,
                                     password: intPassword ? intPassword : null,

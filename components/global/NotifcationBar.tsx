@@ -1,9 +1,9 @@
 import NotificationItem from '../../ui/Notification'
-import { useStageSelector } from '@digitalstage/api-client-react'
-import useReporting from '../../api/hooks/useReporting'
+import { changeNotification, useStageSelector } from '@digitalstage/api-client-react'
+import { useDispatch } from 'react-redux'
 
 const NotificationBar = () => {
-    const { changeNotification } = useReporting()
+    const dispatch = useDispatch()
     const featuredNotifications = useStageSelector((state) =>
         state.notifications.allIds
             .map((id) => state.notifications.byId[id])
@@ -15,9 +15,12 @@ const NotificationBar = () => {
                 <NotificationItem
                     closeable={!notification.permanent}
                     onClose={() =>
-                        changeNotification(notification.id, {
-                            featured: false,
-                        })
+                        dispatch(
+                            changeNotification({
+                                id: notification.id,
+                                featured: false,
+                            })
+                        )
                     }
                     key={notification.id}
                     kind={notification.kind}

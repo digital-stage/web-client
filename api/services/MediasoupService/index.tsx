@@ -1,45 +1,29 @@
-import {
-    addMediasoupAudioConsumer,
-    addMediasoupAudioProducer,
-    addMediasoupVideoConsumer,
-    addMediasoupVideoProducer,
-    removeMediasoupAudioConsumer,
-    removeMediasoupAudioProducer,
-    removeMediasoupVideoProducer,
-    useEmit,
-    useStageSelector,
-} from '@digitalstage/api-client-react'
-import { shallowEqual, useDispatch } from 'react-redux'
+import { useEmit, useStageSelector } from '@digitalstage/api-client-react'
+import { shallowEqual } from 'react-redux'
 import { ITeckosClient, TeckosClient } from 'teckos-client'
 import { Device as MediasoupDevice } from 'mediasoup-client/lib/Device'
 import {
-    closeConsumer,
-    createConsumer,
     createProducer,
     createWebRTCTransport,
     getRTPCapabilities,
     publishProducer,
-    resumeConsumer,
     stopProducer,
+    unpublishProducer,
 } from './util'
 import debug from 'debug'
-import { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { BrowserDevice } from '@digitalstage/api-types/dist/model/browser'
-import {
-    ClientDeviceEvents,
-    MediasoupAudioTrack,
-    MediasoupVideoTrack,
-    Stage,
-} from '@digitalstage/api-types'
+import { MediasoupAudioTrack, MediasoupVideoTrack, Stage } from '@digitalstage/api-types'
 import { Transport } from 'mediasoup-client/lib/Transport'
-import getAudioTracks from '../../utils/getAudioTracks'
 import getVideoTracks from '../../utils/getVideoTracks'
+import { Producer } from 'mediasoup-client/lib/Producer'
+import { useDispatchTracks } from '../../provider/TrackProvider'
 
-const info = debug('mediasoup')
-const error = info.extend('error')
+const report = debug('mediasoup')
+const reportError = report.extend('error')
 
 const MediasoupService = () => {
-    const dispatch = useDispatch()
+    report('RERENDER')
     const emit = useEmit()
     const localDevice = useStageSelector<BrowserDevice | undefined>(
         (state) =>
@@ -48,6 +32,7 @@ const MediasoupService = () => {
                 : undefined,
         shallowEqual
     )
+    const localStageDeviceId = useStageSelector<string>((state) => state.globals.localStageDeviceId)
     const stage = useStageSelector<Stage | undefined>(
         (state) => (state.stages.byId ? state.stages.byId[state.globals.stageId] : undefined),
         shallowEqual
@@ -76,289 +61,119 @@ const MediasoupService = () => {
         }
         return undefined
     }, [stage])
-
-    const [device, setDevice] = useState<MediasoupDevice>()
-    const [connection, setConnection] = useState<ITeckosClient>()
-    const [sendTransport, setSendTransport] = useState<Transport>()
-    const [receiveTransport, setReceiveTransport] = useState<Transport>()
+    const [connection, setConnection] = useState<{
+        routerConnection: ITeckosClient
+        sendTransport: Transport
+        receiveTransport: Transport
+        device: MediasoupDevice
+    }>(undefined)
     useEffect(() => {
         if (routerUrl) {
             let transports: Transport[] = []
-            info(`Connecting to router ${routerUrl}`)
-            const conn = new TeckosClient(routerUrl, {
+            report(`Connecting to router ${routerUrl}`)
+            const routerConnection = new TeckosClient(routerUrl, {
                 reconnection: true,
             })
             const disconnect = () => {
                 transports.map((transport) => transport.close())
-                conn.disconnect()
+                routerConnection.disconnect()
             }
-            conn.on('disconnect', () => {
-                info(`Disconnected from router`)
+            routerConnection.on('disconnect', () => {
+                report(`Disconnected from router`)
                 disconnect()
             })
-            conn.on('connect', async () => {
-                info(`Connected to router ${routerUrl}`)
+            routerConnection.on('connect', async () => {
+                report(`Connected to router ${routerUrl}`)
                 try {
                     const device = new MediasoupDevice()
-                    const rtpCapabilities = await getRTPCapabilities(conn)
+                    const rtpCapabilities = await getRTPCapabilities(routerConnection)
                     await device.load({ routerRtpCapabilities: rtpCapabilities })
                     console.log('CONNECTING HERE')
                     transports = await Promise.all([
-                        createWebRTCTransport(conn, device, 'send'),
-                        createWebRTCTransport(conn, device, 'receive'),
+                        createWebRTCTransport(routerConnection, device, 'send'),
+                        createWebRTCTransport(routerConnection, device, 'receive'),
                     ])
-                    setConnection(conn)
-                    setDevice(device)
-                    setSendTransport(transports[0])
-                    setReceiveTransport(transports[1])
+                    setConnection({
+                        routerConnection,
+                        sendTransport: transports[0],
+                        receiveTransport: transports[0],
+                        device: device,
+                    })
                 } catch (err) {
-                    error(err)
+                    reportError(err)
                 }
             })
-            conn.connect()
+            routerConnection.connect()
 
             return () => {
-                info(`Disconnecting from router`)
+                report(`Disconnecting from router`)
                 disconnect()
-                setDevice(undefined)
                 setConnection(undefined)
-                setSendTransport(undefined)
-                setReceiveTransport(undefined)
             }
         }
     }, [routerUrl])
 
+    const dispatchTracks = useDispatchTracks()
     const videoProducers = useStageSelector((state) => state.mediasoup.videoProducers)
     useEffect(() => {
-        if (emit && connection && sendTransport && stage?._id) {
-            if (localDevice?.sendVideo && !localDevice.useP2P) {
-                getVideoTracks(localDevice.inputVideoDeviceId).then((tracks) =>
-                    tracks.map(async (track) => {
-                        const producer = await createProducer(sendTransport, track)
-                        if (producer.paused) {
-                            info(`Producer ${producer.id} is paused`)
-                            producer.resume()
-                        }
-                        const localProducer = await publishProducer(emit, stage._id, producer)
-                        info(`Published video ${producer.id}`)
-                        dispatch(addMediasoupVideoProducer(localProducer._id, producer))
-                    })
-                )
+        if (
+            emit &&
+            connection &&
+            stage?._id &&
+            localStageDeviceId &&
+            localDevice?.sendVideo &&
+            !localDevice.useP2P
+        ) {
+            const { sendTransport } = connection
+            let abort: boolean = false
+            let producer: Producer
+            let publishedId: string
+            getVideoTracks(localDevice.inputVideoDeviceId).then((tracks) =>
+                tracks.map(async (track) => {
+                    if (!abort) {
+                        producer = await createProducer(sendTransport, track)
+                    }
+                    if (!abort && producer.paused) {
+                        report(`Video producer ${producer.id} is paused`)
+                        producer.resume()
+                    }
+                    if (!abort) {
+                        const { _id } = await publishProducer(emit, stage._id, producer)
+                        report(`Published video producer ${producer.id}`)
+                        publishedId = _id
+                        dispatchTracks({
+                            type: 'addLocalVideoTrack',
+                            id: localStageDeviceId,
+                            track: producer.track,
+                        })
+                    }
+                })
+            )
+            return () => {
+                abort = true
+                if (producer) {
+                    stopProducer(connection.routerConnection, producer).catch((err) =>
+                        reportError(err)
+                    )
+                    if (publishedId) {
+                        unpublishProducer(emit, producer, publishedId).catch((err) =>
+                            reportError(err)
+                        )
+                    }
+                }
             }
         }
     }, [
+        dispatchTracks,
+        localStageDeviceId,
         emit,
         connection,
-        dispatch,
         localDevice?.inputVideoDeviceId,
         localDevice?.sendVideo,
         localDevice?.useP2P,
-        sendTransport,
         stage?._id,
-    ])
-    useEffect(() => {
-        if (connection && emit) {
-            if (!localDevice?.sendVideo || localDevice?.useP2P) {
-                videoProducers.allIds.map((id) => {
-                    emit(ClientDeviceEvents.RemoveVideoTrack, id)
-                    dispatch(removeMediasoupVideoProducer(id))
-                    return stopProducer(connection, videoProducers.byId[id])
-                })
-            }
-        }
-    }, [
-        emit,
-        connection,
-        dispatch,
-        localDevice?.sendVideo,
-        localDevice?.useP2P,
-        videoProducers.allIds,
-        videoProducers.byId,
-    ])
-
-    const audioProducers = useStageSelector((state) => state.mediasoup.audioProducers)
-    useEffect(() => {
-        if (emit && connection && sendTransport && stage?._id) {
-            if (localDevice?.sendAudio && !localDevice.useP2P) {
-                getAudioTracks({
-                    inputAudioDeviceId: localDevice.inputAudioDeviceId,
-                    autoGainControl: localDevice.autoGainControl,
-                    echoCancellation: localDevice.echoCancellation,
-                    noiseSuppression: localDevice.noiseSuppression,
-                    sampleRate: localDevice.sampleRate,
-                }).then((tracks) =>
-                    tracks.map(async (track) => {
-                        const producer = await createProducer(sendTransport, track)
-                        if (producer.paused) {
-                            info(`Producer ${producer.id} is paused`)
-                            producer.resume()
-                        }
-                        const localProducer = await publishProducer(emit, stage._id, producer)
-                        info(`Published audio ${producer.id}`)
-                        dispatch(addMediasoupAudioProducer(localProducer._id, producer))
-                    })
-                )
-            }
-        }
-    }, [
-        emit,
-        connection,
-        dispatch,
-        localDevice?.autoGainControl,
-        localDevice?.echoCancellation,
-        localDevice?.inputAudioDeviceId,
-        localDevice?.inputVideoDeviceId,
-        localDevice?.noiseSuppression,
-        localDevice?.sampleRate,
-        localDevice?.sendAudio,
-        localDevice?.useP2P,
-        sendTransport,
-        stage?._id,
-    ])
-    useEffect(() => {
-        if (connection && emit) {
-            if (!localDevice?.sendAudio || localDevice?.useP2P) {
-                audioProducers.allIds.map((id) => {
-                    emit(ClientDeviceEvents.RemoveAudioTrack, id)
-                    dispatch(removeMediasoupAudioProducer(id))
-                    return stopProducer(connection, audioProducers.byId[id])
-                })
-            }
-        }
-    }, [
-        emit,
-        audioProducers.allIds,
-        audioProducers.byId,
-        connection,
-        dispatch,
-        localDevice?.sendAudio,
-        localDevice?.useP2P,
-        videoProducers.allIds,
-        videoProducers.byId,
-    ])
-
-    const videoConsumers = useStageSelector((state) => state.mediasoup.videoConsumers)
-    useEffect(() => {
-        if (connection && receiveTransport) {
-            console.log('Sync video consumers')
-            if (localDevice?.receiveVideo) {
-                // Add missing consumers
-                const addedTracks = videoTracks.filter(
-                    (track) => !videoConsumers.byId[track._id] && track.deviceId !== localDevice._id
-                )
-                const removedTracks = videoConsumers.allIds.filter((id) =>
-                    videoTracks.find((videoTrack) => videoTrack._id !== id)
-                )
-                Promise.all([
-                    addedTracks.map(async (track) => {
-                        const consumer = await createConsumer(
-                            connection,
-                            device,
-                            receiveTransport,
-                            track.producerId
-                        )
-                        if (consumer.paused) await resumeConsumer(connection, consumer)
-                        dispatch(addMediasoupVideoConsumer(track._id, consumer))
-                    }),
-                    removedTracks.map(async (id) => {
-                        dispatch(removeMediasoupAudioConsumer(id))
-                        await closeConsumer(connection, videoConsumers.byId[id])
-                    }),
-                ]).catch((err) => console.error(err))
-            }
-        }
-    }, [
-        connection,
-        device,
-        dispatch,
-        localDevice?._id,
-        localDevice?.receiveVideo,
-        receiveTransport,
-        videoConsumers.allIds,
-        videoConsumers.byId,
-        videoTracks,
-    ])
-    useEffect(() => {
-        if (connection) {
-            if (!localDevice?.receiveVideo) {
-                videoConsumers.allIds.map((id) => {
-                    dispatch(removeMediasoupAudioConsumer(id))
-                    return closeConsumer(connection, videoConsumers.byId[id])
-                })
-            }
-        }
-    }, [
-        connection,
-        device,
-        dispatch,
-        localDevice?.receiveVideo,
-        receiveTransport,
-        videoConsumers.allIds,
-        videoConsumers.byId,
-        videoTracks,
-    ])
-
-    const audioConsumers = useStageSelector((state) => state.mediasoup.audioConsumers)
-    useEffect(() => {
-        if (connection && receiveTransport) {
-            console.log('Sync audio consumers')
-            if (localDevice?.receiveAudio) {
-                // Add missing consumers
-                const addedTracks = audioTracks.filter(
-                    (track) => !audioConsumers.byId[track._id] && track.deviceId !== localDevice._id
-                )
-                const removedTracks = audioConsumers.allIds.filter((id) =>
-                    audioTracks.find((audioTrack) => audioTrack._id !== id)
-                )
-                Promise.all([
-                    addedTracks.map(async (track) => {
-                        const consumer = await createConsumer(
-                            connection,
-                            device,
-                            receiveTransport,
-                            track.producerId
-                        )
-                        if (consumer.paused) await resumeConsumer(connection, consumer)
-                        dispatch(addMediasoupAudioConsumer(track._id, consumer))
-                    }),
-                    removedTracks.map(async (id) => {
-                        dispatch(removeMediasoupAudioConsumer(id))
-                        await closeConsumer(connection, audioConsumers.byId[id])
-                    }),
-                ]).catch((err) => console.error(err))
-            }
-        }
-    }, [
-        connection,
-        device,
-        dispatch,
-        localDevice?._id,
-        localDevice?.receiveAudio,
-        receiveTransport,
-        audioConsumers.allIds,
-        audioConsumers.byId,
-        audioTracks,
-    ])
-    useEffect(() => {
-        if (connection) {
-            if (!localDevice?.receiveAudio) {
-                audioConsumers.allIds.map((id) => {
-                    dispatch(removeMediasoupAudioConsumer(id))
-                    return closeConsumer(connection, audioConsumers.byId[id])
-                })
-            }
-        }
-    }, [
-        connection,
-        device,
-        dispatch,
-        localDevice?.receiveAudio,
-        receiveTransport,
-        audioConsumers.allIds,
-        audioConsumers.byId,
-        audioTracks,
     ])
 
     return null
 }
-export default MediasoupService
+export { MediasoupService }

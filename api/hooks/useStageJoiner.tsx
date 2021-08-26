@@ -1,7 +1,35 @@
-import * as React from 'react'
-import { StageHandlingContext, StageHandlingContextT } from '../provider/StageHandlingProvider'
+import { useDispatch } from 'react-redux'
+import { useCallback } from 'react'
+import { requestJoin, useEmit } from '@digitalstage/api-client-react'
+import { ClientDeviceEvents } from '@digitalstage/api-types'
 
-const useStageJoiner = (): StageHandlingContextT =>
-    React.useContext<StageHandlingContextT>(StageHandlingContext)
+const useStageJoiner = (): {
+    join: (payload: { stageId: string; groupId?: string; password?: string }) => void
+    leave: () => void
+    resetJoin: () => void
+} => {
+    const emit = useEmit()
+    const dispatch = useDispatch()
 
-export default useStageJoiner
+    const join = useCallback(
+        (payload: { stageId: string; groupId?: string; password?: string }) => {
+            dispatch(requestJoin(payload))
+        },
+        [dispatch]
+    )
+
+    const leave = useCallback(() => {
+        emit(ClientDeviceEvents.LeaveStage)
+    }, [emit])
+
+    const resetJoin = useCallback(() => {
+        dispatch(requestJoin())
+    }, [dispatch])
+
+    return {
+        join,
+        leave,
+        resetJoin,
+    }
+}
+export { useStageJoiner }

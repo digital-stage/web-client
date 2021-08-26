@@ -21,10 +21,11 @@ import {
 import debug from 'debug'
 import useStageDevicePosition from './useStageDevicePosition'
 import useAudioTrackPosition from './useAudioTrackPosition'
-import useAnimationFrame from '../../hooks/useAnimationFrame'
-import { shallowEqual, useDispatch } from 'react-redux'
-import { addLevel, removeLevel, useStageSelector } from '@digitalstage/api-client-react'
-import useAudioContext from '../../hooks/useAudioContext'
+import { useAnimationFrame } from '../../hooks/useAnimationFrame'
+import { useAudioContext } from './../../provider/AudioContextProvider'
+import { useAudioLevelDispatch } from '../../provider/AudioLevelProvider'
+import { shallowEqual } from 'react-redux'
+import { useStageSelector } from './../../redux/useStageSelector'
 
 const report = debug('useAudioRenderer')
 const reportError = report.extend('error')
@@ -47,7 +48,7 @@ const useLevelPublishing = (
     audioNode?: IAudioNode<IAudioContext>,
     enabled?: boolean
 ) => {
-    const dispatch = useDispatch()
+    const dispatch = useAudioLevelDispatch()
     const [analyserNode] = useState<IAnalyserNode<IAudioContext>>(() => {
         const analyser = audioContext.createAnalyser()
         analyser.minDecibels = -100
@@ -59,9 +60,9 @@ const useLevelPublishing = (
     useEffect(() => {
         if (id && dispatch && array && enabled) {
             report('Registering level for ' + id)
-            dispatch(addLevel(id, array.buffer))
+            dispatch({ type: 'add', id: id, level: array.buffer })
             return () => {
-                dispatch(removeLevel(id))
+                dispatch({ type: 'remove', id: id })
             }
         }
     }, [id, array, enabled, dispatch])
@@ -653,7 +654,7 @@ const StageRenderer = ({
 }
 
 const AudioRenderService = () => {
-    console.log('RERENDER AudioRenderService')
+    report('RERENDER')
     const stageId = useStageSelector<string | undefined>((state) => state.globals.stageId)
     const { audioContext, destination } = useAudioContext()
     const localDeviceId = useStageSelector<string | undefined>(
@@ -674,4 +675,4 @@ const AudioRenderService = () => {
     return null
 }
 
-export default AudioRenderService
+export { AudioRenderService }

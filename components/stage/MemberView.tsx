@@ -5,6 +5,7 @@ import Avatar from './Avatar'
 import { useEmit, useStageSelector } from '@digitalstage/api-client-react'
 import { ClientDeviceEvents, VideoTrack } from '@digitalstage/api-types'
 import { AiFillStar, AiOutlineStar } from 'react-icons/ai'
+import { useTracks } from '../../api/provider/TrackProvider'
 
 const MemberView = ({
     memberId,
@@ -23,36 +24,23 @@ const MemberView = ({
         (state) =>
             state.videoTracks.byStageMember[memberId]?.map((id) => state.videoTracks.byId[id]) || []
     )
-    const mediasoupVideoConsumers = useStageSelector((state) => state.mediasoup.videoConsumers)
-    const mediasoupVideoProducers = useStageSelector((state) => state.mediasoup.videoProducers)
-    const localWebRTCTracks = useStageSelector((state) => state.webrtc.localVideoTracks)
-    const remoteWebRTCTracks = useStageSelector((state) => state.webrtc.remoteVideoTracks)
+    const { remoteVideoTracks, localVideoTrack } = useTracks()
+    const localStageDeviceId = useStageSelector((state) => state.globals.localStageDeviceId)
     const emit = useEmit()
 
     const videos = useMemo<MediaStreamTrack[]>(() => {
         return videoTracks.reduce<MediaStreamTrack[]>(
             (prev: MediaStreamTrack[], curr: VideoTrack) => {
-                if (mediasoupVideoConsumers.byId[curr._id]) {
-                    return [...prev, mediasoupVideoConsumers.byId[curr._id].track]
-                } else if (mediasoupVideoProducers.byId[curr._id]) {
-                    const track = mediasoupVideoProducers.byId[curr._id].track
-                    if (track) return [...prev, track]
-                } else if (curr.trackId && localWebRTCTracks[curr.trackId]) {
-                    return [...prev, localWebRTCTracks[curr.trackId]]
-                } else if (curr.trackId && remoteWebRTCTracks[curr.trackId]) {
-                    return [...prev, remoteWebRTCTracks[curr.trackId]]
+                if (localStageDeviceId === curr.stageDeviceId && localVideoTrack) {
+                    return [...prev, localVideoTrack]
+                } else if (remoteVideoTracks[curr.stageDeviceId]) {
+                    return [...prev, remoteVideoTracks[curr.stageDeviceId]]
                 }
                 return prev
             },
             []
         )
-    }, [
-        localWebRTCTracks,
-        mediasoupVideoConsumers.byId,
-        mediasoupVideoProducers.byId,
-        remoteWebRTCTracks,
-        videoTracks,
-    ])
+    }, [localStageDeviceId, localVideoTrack, remoteVideoTracks, videoTracks])
 
     console.log('RERENDER MemberVideo', videos)
 

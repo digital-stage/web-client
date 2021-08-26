@@ -5,8 +5,8 @@ import {
     ServerDeviceEvents,
     CustomStageDeviceVolume,
 } from '@digitalstage/api-types'
-import upsert from '../utils/upsert'
-import InternalActionTypes from '../actions/InternalActionTypes'
+import { upsert } from '../utils/upsert'
+import { InternalActionTypes } from '../actions/InternalActionTypes'
 import CustomStageDeviceVolumes from '../state/CustomStageDeviceVolumes'
 
 const addCustomStageDeviceVolume = (

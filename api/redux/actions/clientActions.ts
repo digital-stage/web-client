@@ -1,10 +1,10 @@
-import {Producer} from 'mediasoup-client/lib/Producer'
-import {Consumer} from 'mediasoup-client/lib/Consumer'
-import {Notification} from '../state/Notifications'
-import {AuthUser} from '../state/Auth'
-import ReducerAction from './ReducerAction'
-import InternalActionTypes from "./InternalActionTypes";
-import {uuid4} from "@sentry/utils";
+import { Producer } from 'mediasoup-client/lib/Producer'
+import { Consumer } from 'mediasoup-client/lib/Consumer'
+import { Notification } from '../state/Notifications'
+import { AuthUser } from '../state/Auth'
+import { ReducerAction } from './ReducerAction'
+import { InternalActionTypes } from './InternalActionTypes'
+import { uuid4 } from '@sentry/utils'
 
 export const init = (): ReducerAction => ({
     type: InternalActionTypes.INIT,
@@ -17,6 +17,15 @@ export const reset = (): ReducerAction => ({
 export const selectMode = (mode: 'global' | 'personal'): ReducerAction => ({
     type: InternalActionTypes.SELECT_MODE,
     payload: mode,
+})
+
+export const requestJoin = (payload?: {
+    stageId: string
+    groupId?: string
+    password?: string
+}): ReducerAction => ({
+    type: InternalActionTypes.REQUEST_JOIN,
+    payload,
 })
 
 export const selectDevice = (deviceId: string): ReducerAction => ({
@@ -104,23 +113,6 @@ export const removeRemoteWebRTCAudioTrack = (id: string): ReducerAction => ({
     payload: id,
 })
 
-/* Audio related */
-export const setAudioStarted = (started?: boolean): ReducerAction => ({
-    type: InternalActionTypes.SET_AUDIO_STARTED,
-    payload: started,
-})
-export const addLevel = (uuid: string, level: ArrayBuffer): ReducerAction => ({
-    type: InternalActionTypes.ADD_LEVEL,
-    payload: {
-        uuid: uuid,
-        level: level,
-    },
-})
-export const removeLevel = (uuid: string): ReducerAction => ({
-    type: InternalActionTypes.REMOVE_LEVEL,
-    payload: uuid,
-})
-
 /* Notificatons */
 type AddNotificationPayload = Notification
 type ChangeNotificationPayload = { id: string } & Partial<Notification>
@@ -141,22 +133,19 @@ export const removeNotification = (id: RemoveNotificationPayload): ReducerAction
     payload: id,
 })
 
-export const reportError = (error: Error): ReducerAction => addNotification({
-    id: uuid4(),
-    date: new Date().getTime(),
-    kind: 'error',
-    message: error.message,
-    permanent: true,
-    featured: true
-})
+export const reportError = (error: Error): ReducerAction =>
+    addNotification({
+        id: uuid4(),
+        date: new Date().getTime(),
+        kind: 'error',
+        message: error.message,
+        permanent: true,
+        featured: true,
+    })
 
 export const setInitialized = (initialized: boolean): ReducerAction => ({
     type: InternalActionTypes.SET_INITIALIZED,
     payload: initialized,
-})
-
-export const disconnect = (): ReducerAction => ({
-    type: InternalActionTypes.DISCONNECT,
 })
 
 export const setUser = (user?: AuthUser): ReducerAction => ({
@@ -168,7 +157,7 @@ export const setToken = (token?: string, staySignedIn?: boolean): ReducerAction 
     type: InternalActionTypes.SET_TOKEN,
     payload: {
         token,
-        staySignedIn
+        staySignedIn,
     },
 })
 
@@ -176,6 +165,9 @@ export type { AddNotificationPayload, ChangeNotificationPayload, RemoveNotificat
 const clientActions = {
     init,
     reset,
+
+    /* Stage management */
+    requestJoin,
 
     /* Auth management */
     setInitialized,
@@ -208,11 +200,6 @@ const clientActions = {
     addNotification,
     changeNotification,
     removeNotification,
-
-    /* Audio management */
-    addLevel,
-    removeLevel,
-    setAudioStarted,
 }
 
-export default clientActions
+export { clientActions }

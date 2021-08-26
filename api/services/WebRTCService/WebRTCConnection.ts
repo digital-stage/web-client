@@ -1,11 +1,10 @@
 'use strict'
 import { config } from './config'
 import debug from 'debug'
-import { SocketEvent } from 'teckos-client/dist/types'
 import { ITeckosClient } from 'teckos-client'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
 
-const log = debug('WebRTCProvider').extend('Connection')
+const log = debug('WebRTCService').extend('Connection')
 const logWarning = log.extend('warn')
 const logError = log.extend('error')
 
@@ -150,19 +149,41 @@ class WebRTCConnection {
         })
     }
 
-    public async setVideoTrack(track: MediaStreamTrack): Promise<void> {
-        if (this.videoSender) {
-            if (!this.videoSender.track || track.id !== this.videoSender.track.id) {
-                await this.videoSender.replaceTrack(track)
+    public addTrack(track: MediaStreamTrack): void {
+        this.connection.addTrack(track)
+    }
+
+    public removeTrack(id: string): void {
+        const sender = this.connection.getSenders().find((sender) => sender.track?.id === id)
+        if (sender) {
+            this.connection.removeTrack(sender)
+        }
+    }
+
+    public async setVideoTrack(track?: MediaStreamTrack): Promise<void> {
+        if (track) {
+            if (this.videoSender) {
+                if (!this.videoSender.track || track.id !== this.videoSender.track.id) {
+                    log('Replace video track')
+                    await this.videoSender.replaceTrack(track)
+                }
+            } else {
+                log('Adding video track')
+                this.videoSender = this.connection.addTrack(track)
             }
         } else {
-            this.videoSender = this.connection.addTrack(track)
+            if (this.videoSender) {
+                log('Removing video track')
+                this.connection.removeTrack(this.videoSender)
+                this.videoSender = undefined
+            }
         }
     }
 
     public async setAudioTrack(track: MediaStreamTrack): Promise<void> {
         if (this.audioSender) {
             if (!this.audioSender.track || track.id !== this.audioSender.track.id) {
+                log('Replace audio track')
                 await this.audioSender.replaceTrack(track)
             }
         } else {
@@ -171,4 +192,4 @@ class WebRTCConnection {
     }
 }
 
-export default WebRTCConnection
+export { WebRTCConnection }

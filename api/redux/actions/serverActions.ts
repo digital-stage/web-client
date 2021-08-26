@@ -1,5 +1,5 @@
 import { Device, ServerDeviceEvents, ServerDevicePayloads } from '@digitalstage/api-types'
-import ReducerAction from './ReducerAction'
+import { ReducerAction } from './ReducerAction'
 
 const messageSent = (message: ServerDevicePayloads.ChatMessageSend): ReducerAction => ({
     type: ServerDeviceEvents.ChatMessageSend,
@@ -342,4 +342,4 @@ const serverActions = {
     changeVideoTrack,
     removeVideoTrack,
 }
-export default serverActions
+export { serverActions }

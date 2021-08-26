@@ -1,10 +1,14 @@
 import { useEmit, useStageSelector } from '@digitalstage/api-client-react'
 import { shallowEqual } from 'react-redux'
-import { useEffect } from 'react'
+import React from 'react'
 import { refreshMediaDevices } from './MediasoupService/util'
 import { BrowserDevice } from '@digitalstage/api-types/dist/model/browser'
+import debug from 'debug'
+
+const report = debug('MediaDeviceUpdateService')
 
 const MediaDeviceUpdateService = () => {
+    report('RERENDER')
     const localDevice = useStageSelector(
         (state) =>
             state.globals.localDeviceId
@@ -14,7 +18,7 @@ const MediaDeviceUpdateService = () => {
     )
     const emit = useEmit()
 
-    useEffect(() => {
+    React.useEffect(() => {
         if (emit && localDevice?._id) {
             navigator.mediaDevices.ondevicechange = () =>
                 refreshMediaDevices(
@@ -38,4 +42,4 @@ const MediaDeviceUpdateService = () => {
 
     return null
 }
-export default MediaDeviceUpdateService
+export { MediaDeviceUpdateService }

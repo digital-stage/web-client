@@ -30,4 +30,4 @@ const useAnimationFrame = (callback: (deltaTime: number) => any, timeout?: numbe
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []) // Make sure the effect runs only once
 }
-export default useAnimationFrame
+export { useAnimationFrame }

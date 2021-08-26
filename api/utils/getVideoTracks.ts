@@ -14,4 +14,4 @@ const getVideoTracks = (inputVideoDeviceId?: string): Promise<MediaStreamTrack[]
                   },
         })
         .then((stream) => stream.getVideoTracks())
-export default getVideoTracks
+export { getVideoTracks }

@@ -1,5 +1,5 @@
 import WebRTC from '../state/WebRTC'
-import InternalActionTypes from '../actions/InternalActionTypes'
+import { InternalActionTypes } from '../actions/InternalActionTypes'
 import omit from 'lodash/omit'
 
 function reduceWebRTC(

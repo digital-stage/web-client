@@ -1,7 +1,6 @@
-import React, { createContext, useCallback, useEffect, useMemo, useState } from 'react'
+import React from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import {
-    useStageSelector,
     Notification,
     addNotification as addNotificationAction,
     changeNotification as changeNotificationAction,
@@ -22,7 +21,7 @@ const throwAddProviderError = () => {
     throw new Error('Please wrap around your DOM tree with the NotificationProvider')
 }
 
-const ReportingContext = createContext<ReportingContextT>({
+const ReportingContext = React.createContext<ReportingContextT>({
     addNotification: throwAddProviderError,
     changeNotification: throwAddProviderError,
     removeNotification: throwAddProviderError,
@@ -30,10 +29,10 @@ const ReportingContext = createContext<ReportingContextT>({
 
 const ReportingProvider = ({ children }: { children: React.ReactNode }) => {
     const dispatch = useDispatch()
-    const [, setTimeouts] = useState<any[]>([])
+    const [, setTimeouts] = React.useState<any[]>([])
 
     // Clean up timeouts
-    useEffect(() => {
+    React.useEffect(() => {
         return () => {
             setTimeouts((prev) => {
                 prev.forEach((timeout) => clearTimeout(timeout))
@@ -42,7 +41,7 @@ const ReportingProvider = ({ children }: { children: React.ReactNode }) => {
         }
     }, [])
 
-    const changeNotification = useCallback(
+    const changeNotification = React.useCallback(
         (id: string, update: Partial<Omit<Notification, 'id'>>) => {
             dispatch(
                 changeNotificationAction({
@@ -54,7 +53,7 @@ const ReportingProvider = ({ children }: { children: React.ReactNode }) => {
         [dispatch]
     )
 
-    const addNotification = useCallback(
+    const addNotification = React.useCallback(
         (notification: Omit<Notification, 'id'>) => {
             log('addNotification')
             const id = uuidv4()
@@ -80,34 +79,13 @@ const ReportingProvider = ({ children }: { children: React.ReactNode }) => {
         [dispatch]
     )
 
-    const removeNotification = useCallback(
+    const removeNotification = React.useCallback(
         (id: string) => dispatch(removeNotificationAction(id)),
         [dispatch]
     )
 
-    // Handle chat messages
-    const localStageMemberId = useStageSelector((state) => state.globals.stageMemberId)
-    const chatMessages = useStageSelector((state) => state.chatMessages)
-    useEffect(() => {
-        if (chatMessages.length > 0) {
-            // Always use only last chat message
-            const chatMessage = chatMessages[chatMessages.length - 1]
-            if (chatMessage.stageMemberId === localStageMemberId) {
-                //TODO: omit
-            }
-            addNotification({
-                date: new Date().getTime(),
-                kind: 'info',
-                message: `${chatMessage.stageMemberId}: ${chatMessage.message}`,
-                link: "/chat",
-                permanent: false,
-                featured: true,
-            })
-        }
-    }, [addNotification, chatMessages, localStageMemberId])
-
     // Memorize published state
-    const value = useMemo(() => {
+    const value = React.useMemo(() => {
         return {
             addNotification,
             changeNotification,
@@ -118,5 +96,4 @@ const ReportingProvider = ({ children }: { children: React.ReactNode }) => {
     return <ReportingContext.Provider value={value}>{children}</ReportingContext.Provider>
 }
 
-export { ReportingContext }
-export default ReportingProvider
+export { ReportingContext, ReportingProvider }

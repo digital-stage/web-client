@@ -5,9 +5,9 @@ import {
     ServerDeviceEvents,
     CustomAudioTrackVolume,
 } from '@digitalstage/api-types'
-import upsert from '../utils/upsert'
+import { upsert } from '../utils/upsert'
 import CustomAudioTrackVolumes from '../state/CustomAudioTrackVolumes'
-import InternalActionTypes from '../actions/InternalActionTypes'
+import { InternalActionTypes } from '../actions/InternalActionTypes'
 
 const addCustomAudioTrackVolume = (
     state: CustomAudioTrackVolumes,

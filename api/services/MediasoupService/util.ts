@@ -324,6 +324,29 @@ export const publishProducer = (
         )
     })
 
+export const unpublishProducer = (
+    emit: (event: SocketEvent, ...args: any[]) => boolean,
+    producer: Producer,
+    publishedId: string
+) =>
+    new Promise<void>((resolve, reject) => {
+        if (producer.kind === 'video') {
+            emit(ClientDeviceEvents.RemoveVideoTrack, publishedId, (error: string | null) => {
+                if (error) {
+                    return reject(error)
+                }
+                return resolve()
+            })
+        } else if (producer.kind === 'audio') {
+            emit(ClientDeviceEvents.RemoveAudioTrack, publishedId, (error: string | null) => {
+                if (error) {
+                    return reject(error)
+                }
+                return resolve()
+            })
+        }
+    })
+
 export const consume = (
     routerConnection: ITeckosClient,
     receiveTransport: mediasoupClient.types.Transport,

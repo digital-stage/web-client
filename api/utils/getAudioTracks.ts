@@ -19,4 +19,4 @@ const getAudioTracks = (options: {
         })
         .then((stream) => stream.getAudioTracks())
 }
-export default getAudioTracks
+export { getAudioTracks }

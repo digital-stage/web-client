@@ -1,8 +1,7 @@
 import { ServerDeviceEvents, ServerDevicePayloads } from '@digitalstage/api-types'
 import Globals from '../state/Globals'
-import InternalActionTypes from '../actions/InternalActionTypes'
+import { InternalActionTypes } from '../actions/InternalActionTypes'
 import { BrowserDevice } from '@digitalstage/api-types/dist/model/browser'
-import omit from 'lodash/omit'
 
 function reduceGlobals(
     state: Globals = {
@@ -12,15 +11,12 @@ function reduceGlobals(
         groupId: undefined,
         localDeviceId: undefined,
         localUserId: undefined,
-        audioStarted: false,
-        levels: {},
     },
     action: {
         type: string
         payload: any
     }
 ): Globals {
-    console.log(action.type)
     switch (action.type) {
         case InternalActionTypes.RESET: {
             return {
@@ -33,28 +29,12 @@ function reduceGlobals(
                 localDeviceId: undefined,
                 localStageDeviceId: undefined,
                 localUserId: undefined,
-                levels: {},
             }
         }
-        case InternalActionTypes.SET_AUDIO_STARTED: {
+        case InternalActionTypes.REQUEST_JOIN: {
             return {
                 ...state,
-                audioStarted: action.payload,
-            }
-        }
-        case InternalActionTypes.ADD_LEVEL: {
-            return {
-                ...state,
-                levels: {
-                    ...state.levels,
-                    [action.payload.uuid]: action.payload.level,
-                },
-            }
-        }
-        case InternalActionTypes.REMOVE_LEVEL: {
-            return {
-                ...state,
-                levels: omit(state.levels, action.payload),
+                request: action.payload,
             }
         }
         case InternalActionTypes.SELECT_DEVICE: {

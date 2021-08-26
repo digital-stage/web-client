@@ -1,6 +1,6 @@
 import indexOf from 'lodash/indexOf'
 
-const upsert = <T>(arr: Readonly<T[]>, value: T): T[] => {
+export const upsert = <T>(arr: Readonly<T[]>, value: T): T[] => {
     if (!arr) {
         return [value]
     }
@@ -9,4 +9,3 @@ const upsert = <T>(arr: Readonly<T[]>, value: T): T[] => {
     }
     return [...arr]
 }
-export default upsert

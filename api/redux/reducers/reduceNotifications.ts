@@ -1,4 +1,4 @@
-import InternalActionTypes from '../actions/InternalActionTypes'
+import { InternalActionTypes } from '../actions/InternalActionTypes'
 import Notifications from '../state/Notifications'
 import {
     AddNotificationPayload,

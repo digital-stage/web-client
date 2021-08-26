@@ -5,8 +5,8 @@ import {
     ServerDeviceEvents,
     CustomStageMemberPosition,
 } from '@digitalstage/api-types'
-import upsert from '../utils/upsert'
-import InternalActionTypes from '../actions/InternalActionTypes'
+import { upsert } from '../utils/upsert'
+import { InternalActionTypes } from '../actions/InternalActionTypes'
 import CustomStageMemberPositions from '../state/CustomStageMemberPositions'
 
 const addCustomStageMemberPosition = (

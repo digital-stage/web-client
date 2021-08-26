@@ -1,9 +1,8 @@
 import * as React from 'react'
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
-import { logout, useStageSelector } from '@digitalstage/api-client-react'
+import { logout, useStageSelector, InternalActionTypes } from '@digitalstage/api-client-react'
 import { useDispatch } from 'react-redux'
-import InternalActionTypes from '../../api/redux/actions/InternalActionTypes'
 
 const Logout = (): JSX.Element => {
     const { replace } = useRouter()

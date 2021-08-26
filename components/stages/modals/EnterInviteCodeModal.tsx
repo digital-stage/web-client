@@ -3,9 +3,10 @@ import Modal, { ModalButton, ModalFooter, ModalHeader } from 'ui/Modal'
 import Notificaton from '../../../ui/Notification'
 import Paragraph from '../../../ui/Paragraph'
 import dynamic from 'next/dynamic'
-import { useEmit, useStageJoiner } from '@digitalstage/api-client-react'
+import { requestJoin, useEmit } from '@digitalstage/api-client-react'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
 import styles from './EnterInviteCodeModal.module.scss'
+import { useDispatch } from 'react-redux'
 
 const ReactCodeInput = dynamic(import('react-code-input'))
 
@@ -14,10 +15,10 @@ const EnterInviteCodeModal = ({ open, onClose }: { open: boolean; onClose: () =>
     const [error, setError] = useState<string>()
     const [code, setCode] = useState<string>()
     const emit = useEmit()
-    const { requestJoin } = useStageJoiner()
+    const dispatch = useDispatch()
 
     useEffect(() => {
-        if (emit && requestJoin && code && code?.length === 4) {
+        if (emit && dispatch && code && code?.length === 4) {
             setWorking(true)
             emit(
                 ClientDeviceEvents.DecodeInviteCode,
@@ -27,10 +28,12 @@ const EnterInviteCodeModal = ({ open, onClose }: { open: boolean; onClose: () =>
                     result?: { stageId: string; groupId: string; code: string }
                 ) => {
                     if (result) {
-                        requestJoin({
-                            stageId: result.stageId,
-                            groupId: result.groupId,
-                        })
+                        dispatch(
+                            requestJoin({
+                                stageId: result.stageId,
+                                groupId: result.groupId,
+                            })
+                        )
                     } else {
                         setError('Ungültiger Code')
                     }
@@ -38,7 +41,7 @@ const EnterInviteCodeModal = ({ open, onClose }: { open: boolean; onClose: () =>
                 }
             )
         }
-    }, [code, emit, requestJoin])
+    }, [code, emit, dispatch])
 
     useEffect(() => {
         if (code?.length < 4) setError(undefined)

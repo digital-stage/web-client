@@ -1,5 +1,5 @@
 import { ChatMessage, ServerDeviceEvents, ServerDevicePayloads } from '@digitalstage/api-types'
-import InternalActionTypes from '../actions/InternalActionTypes'
+import { InternalActionTypes } from '../actions/InternalActionTypes'
 
 function reduceChatMessage(
     state: Array<ChatMessage> = [],

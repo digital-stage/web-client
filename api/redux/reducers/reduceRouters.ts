@@ -1,8 +1,8 @@
 import omit from 'lodash/omit'
 import without from 'lodash/without'
 import { ServerDevicePayloads, ServerDeviceEvents } from '@digitalstage/api-types'
-import upsert from '../utils/upsert'
-import InternalActionTypes from '../actions/InternalActionTypes'
+import { upsert } from '../utils/upsert'
+import { InternalActionTypes } from '../actions/InternalActionTypes'
 import Routers from '../state/Routers'
 
 function reduceRouters(

@@ -9,7 +9,7 @@ import {
     StageMember,
     ThreeDimensionalProperties,
 } from '@digitalstage/api-types'
-import useStageSelector from 'api/redux/useStageSelector'
+import { useStageSelector } from 'api/redux/useStageSelector'
 import { shallowEqual } from 'react-redux'
 
 const useStageDevicePosition = ({

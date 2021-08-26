@@ -1,13 +1,16 @@
 import { batch, useDispatch } from 'react-redux'
-import { useEffect } from 'react'
+import React from 'react'
 import { setInitialized, setToken, setUser, signInWithToken } from '@digitalstage/api-client-react'
 import cookie from 'js-cookie'
+import debug from 'debug'
+
+const report = debug('AutoLoginService')
 
 const AutoLoginService = () => {
-    console.log('RERENDER AutoLoginService')
+    report('RERENDER')
     const dispatch = useDispatch()
 
-    useEffect(() => {
+    React.useEffect(() => {
         console.log('Verifying token')
         const token = cookie.get('token')
         if (token) {
@@ -30,4 +33,4 @@ const AutoLoginService = () => {
     }, [dispatch])
     return null
 }
-export default AutoLoginService
+export { AutoLoginService }

@@ -5,9 +5,9 @@ import {
     ServerDeviceEvents,
     CustomGroupPosition,
 } from '@digitalstage/api-types'
-import upsert from '../utils/upsert'
+import { upsert } from '../utils/upsert'
 import CustomGroupPositions from '../state/CustomGroupPositions'
-import InternalActionTypes from '../actions/InternalActionTypes'
+import { InternalActionTypes } from '../actions/InternalActionTypes'
 
 const addCustomGroupPosition = (
     state: CustomGroupPositions,

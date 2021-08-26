@@ -19,7 +19,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@digitalstage/api-types": "^0.4.0",
+    "@digitalstage/api-types": "^0.4.6",
     "@react-hook/debounce": "^4.0.0",
     "@react-hook/throttle": "^2.2.0",
     "@reduxjs/toolkit": "^1.6.1",
@@ -31,6 +31,7 @@
     "konva": "8.1.3",
     "lodash": "^4.17.21",
     "mediasoup-client": "^3.6.37",
+    "nanoid": "^3.1.25",
     "next": "^11.1.0",
     "react": "^17.0.2",
     "react-code-input": "^3.10.1",
@@ -44,13 +45,12 @@
     "redux-devtools-extension": "^2.13.9",
     "standardized-audio-context": "^25.3.6",
     "teckos-client": "^0.2.0",
-    "uuid": "^8.3.2",
     "webrtc-adapter": "^8.1.0",
     "yup": "^0.32.9"
   },
   "devDependencies": {
     "@babel/core": "^7.15.0",
-    "@types/node": "^16.7.1",
+    "@types/node": "^16.7.2",
     "@types/react": "^17.0.19",
     "eslint": "^7.32.0",
     "eslint-config-next": "^11.1.0",
@@ -58,7 +58,7 @@
     "eslint-plugin-prettier": "^3.4.1",
     "next-transpile-modules": "^8.0.0",
     "prettier": "^2.3.2",
-    "sass": "^1.38.0",
+    "sass": "^1.38.1",
     "typescript": "^4.3.5",
     "ws": "^8.2.0"
   }

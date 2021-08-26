@@ -1,5 +1,3 @@
-import { User } from '@digitalstage/api-types'
-
 export interface AuthUser {
     _id: string
     name: string
@@ -7,10 +5,8 @@ export interface AuthUser {
     password: string
 }
 
-interface Auth {
+export interface Auth {
     initialized: boolean
     user?: AuthUser
     token?: string
 }
-
-export default Auth

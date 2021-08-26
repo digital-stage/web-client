@@ -5,9 +5,9 @@ import {
     ServerDevicePayloads,
     ServerDeviceEvents,
 } from '@digitalstage/api-types'
-import upsert from '../utils/upsert'
+import { upsert } from '../utils/upsert'
 import CustomGroupVolumes from '../state/CustomGroupVolumes'
-import InternalActionTypes from '../actions/InternalActionTypes'
+import { InternalActionTypes } from '../actions/InternalActionTypes'
 
 const addCustomGroupVolume = (
     state: CustomGroupVolumes,

@@ -1,6 +1,6 @@
 import omit from 'lodash/omit'
 import without from 'lodash/without'
-import InternalActionTypes from '../actions/InternalActionTypes'
+import { InternalActionTypes } from '../actions/InternalActionTypes'
 import Mediasoup from '../state/Mediasoup'
 import { Producer } from 'mediasoup-client/lib/Producer'
 import { Consumer } from 'mediasoup-client/lib/Consumer'

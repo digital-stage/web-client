@@ -22,40 +22,42 @@ import reduceRouters from './reducers/reduceRouters'
 import reduceNotifications from './reducers/reduceNotifications'
 import reduceMediasoup from './reducers/reduceMediasoup'
 import reduceWebRTC from './reducers/reduceWebRTC'
-import {configureStore} from "@reduxjs/toolkit";
-import authMiddleware from "./authMiddleware";
+import { configureStore } from '@reduxjs/toolkit'
+import { authMiddleware } from './authMiddleware'
+import { notificationMiddleware } from './notificationMiddleware'
 
 const reducer = {
-  auth: reduceAuth,
-  globals: reduceGlobals,
-  chatMessages: reduceChatMessage,
-  devices: reduceDevices,
-  soundCards: reduceSoundCards,
-  routers: reduceRouters,
-  users: reduceUsers,
-  stages: reduceStages,
-  groups: reduceGroups,
-  stageMembers: reduceStageMembers,
-  stageDevices: reduceStageDevices,
-  videoTracks: reduceVideoTracks,
-  audioTracks: reduceAudioTracks,
-  customGroupVolumes: reduceCustomGroupVolumes,
-  customGroupPositions: reduceCustomGroupPositions,
-  customStageMemberVolumes: reduceCustomStageMemberVolumes,
-  customStageMemberPositions: reduceCustomStageMemberPositions,
-  customStageDeviceVolumes: reduceCustomStageDeviceVolumes,
-  customStageDevicePositions: reduceCustomStageDevicePositions,
-  customAudioTrackVolumes: reduceCustomAudioTrackVolumes,
-  customAudioTrackPositions: reduceCustomAudioTrackPositions,
-  notifications: reduceNotifications,
-  mediasoup: reduceMediasoup,
-  webrtc: reduceWebRTC,
+    auth: reduceAuth,
+    globals: reduceGlobals,
+    chatMessages: reduceChatMessage,
+    devices: reduceDevices,
+    soundCards: reduceSoundCards,
+    routers: reduceRouters,
+    users: reduceUsers,
+    stages: reduceStages,
+    groups: reduceGroups,
+    stageMembers: reduceStageMembers,
+    stageDevices: reduceStageDevices,
+    videoTracks: reduceVideoTracks,
+    audioTracks: reduceAudioTracks,
+    customGroupVolumes: reduceCustomGroupVolumes,
+    customGroupPositions: reduceCustomGroupPositions,
+    customStageMemberVolumes: reduceCustomStageMemberVolumes,
+    customStageMemberPositions: reduceCustomStageMemberPositions,
+    customStageDeviceVolumes: reduceCustomStageDeviceVolumes,
+    customStageDevicePositions: reduceCustomStageDevicePositions,
+    customAudioTrackVolumes: reduceCustomAudioTrackVolumes,
+    customAudioTrackPositions: reduceCustomAudioTrackPositions,
+    notifications: reduceNotifications,
+    mediasoup: reduceMediasoup,
+    webrtc: reduceWebRTC,
 }
 
 const store = configureStore({
-  reducer: reducer,
-  devTools: true,
-  middleware: getDefaultMiddleware => getDefaultMiddleware().concat(authMiddleware)
+    reducer: reducer,
+    devTools: true,
+    middleware: (getDefaultMiddleware) =>
+        getDefaultMiddleware().concat(authMiddleware).concat(notificationMiddleware),
 })
 
 //export type RootState = ReturnType<typeof store.getState>

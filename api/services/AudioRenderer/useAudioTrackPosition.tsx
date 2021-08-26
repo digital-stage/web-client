@@ -6,7 +6,7 @@ import {
     ThreeDimensionalProperties,
 } from '@digitalstage/api-types'
 import useStageDevicePosition from './useStageDevicePosition'
-import useStageSelector from 'api/redux/useStageSelector'
+import { useStageSelector } from 'api/redux/useStageSelector'
 import { shallowEqual } from 'react-redux'
 
 const useAudioTrackPosition = ({

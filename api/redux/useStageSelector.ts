@@ -6,4 +6,4 @@ const useStageSelector = <T>(
     equalityFn?: (left: T, right: T) => boolean
 ): T => useSelector<RootState, T>(selector, equalityFn ? equalityFn : shallowEqual)
 
-export default useStageSelector
+export { useStageSelector }
