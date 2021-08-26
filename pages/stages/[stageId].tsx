@@ -42,7 +42,7 @@ const StageView = () => {
     )
     const userId = useStageSelector((state) => state.globals.localUserId)
     const isStageAdmin = stage?.admins.find((id) => id === userId)
-    const { requestJoin } = useStageJoiner()
+    const { join } = useStageJoiner()
 
     // Internal state
     const [inviteCodeRequested, requestInviteCode] = useState<string>(undefined)
@@ -112,7 +112,7 @@ const StageView = () => {
                                                 ) : (
                                                     <button
                                                         onClick={() =>
-                                                            requestJoin({
+                                                            join({
                                                                 stageId: stage._id,
                                                                 groupId: group._id,
                                                                 password: stage.password,

@@ -51,7 +51,7 @@ const getInitialDevice = async (
             canVideo: inputVideoDevices.length > 0,
             receiveAudio: true,
             receiveVideo: true,
-            useP2P: true,
+            useP2P: false,
         }
     }
     return {

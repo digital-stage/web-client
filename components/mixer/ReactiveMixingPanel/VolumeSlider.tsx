@@ -1,10 +1,9 @@
-import { useCallback, useEffect, useState } from 'react'
 import styles from './VolumeSlider.module.scss'
 import { useDebounceCallback } from '@react-hook/debounce'
 import { useThrottleCallback } from '@react-hook/throttle'
 import React from 'react'
 import LevelMeter from './LevelMeter'
-import { useStageSelector } from '@digitalstage/api-client-react'
+import { useAudioLevel } from '@digitalstage/api-client-react'
 import { BiReset } from 'react-icons/bi'
 
 /**
@@ -119,14 +118,14 @@ const VolumeSlider = ({
     onChange: (volume: number, muted: boolean) => void
     onReset: () => void
 }) => {
-    const levels = useStageSelector((state) => state.globals.levels)
-    const [value, setValue] = useState<number>(convertLogToLinear(volume))
-    const [dbValue, setDbValue] = useState<string>()
+    const levels = useAudioLevel()
+    const [value, setValue] = React.useState<number>(convertLogToLinear(volume))
+    const [dbValue, setDbValue] = React.useState<string>()
 
-    useEffect(() => {
+    React.useEffect(() => {
         setValue(convertLogToLinear(volume))
     }, [volume])
-    const publish = useCallback(
+    const publish = React.useCallback(
         (v: number, m: boolean) => {
             onChange(convertLinearToLog(v), m)
         },
@@ -139,11 +138,11 @@ const VolumeSlider = ({
         10
     )
 
-    useEffect(() => {
+    React.useEffect(() => {
         requestDbUpdate(value)
     }, [requestDbUpdate, value])
 
-    const handleInternalChange = useCallback(
+    const handleInternalChange = React.useCallback(
         (e) => {
             const v = e.target.value as number
             setValue(v)
@@ -152,7 +151,7 @@ const VolumeSlider = ({
         [requestPublication, muted]
     )
 
-    const handleInternalMuteToggle = useCallback(() => {
+    const handleInternalMuteToggle = React.useCallback(() => {
         publish(value, !muted)
     }, [muted, publish, value])
 

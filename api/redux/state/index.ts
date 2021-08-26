@@ -16,8 +16,8 @@ import StageDevices from './StageDevices'
 import StageMembers from './StageMembers'
 import Stages from './Stages'
 import Mediasoup from './Mediasoup'
-import Notifications, {Notification} from './Notifications'
-import Auth from './Auth'
+import {Notifications ,Notification} from './Notifications'
+import {Auth} from './Auth'
 import {ChatMessage} from "@digitalstage/api-types";
 import CustomStageDeviceVolumes from "./CustomStageDeviceVolumes";
 import CustomStageDevicePositions from "./CustomStageDevicePositions";

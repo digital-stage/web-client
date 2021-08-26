@@ -9,11 +9,13 @@ import { RootState } from './redux/state'
 import { useConnection } from './hooks/useConnection'
 import { useAudioContext, useAudioContextDispatch } from './provider/AudioContextProvider'
 import { useAudioLevel } from './provider/AudioLevelProvider'
+import { useStageJoiner } from './hooks/useStageJoiner'
 
 export * from './redux/actions'
 export * from './redux/state'
 export type { RootState, AppDispatch }
 export {
+    useStageJoiner,
     useAudioContext,
     useAudioContextDispatch,
     useAudioLevel,

@@ -10,7 +10,7 @@ import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-type
 
 const JoinPage = () => {
     const { query } = useRouter()
-    const { requestJoin } = useStageJoiner()
+    const { join } = useStageJoiner()
     const { report } = useReport()
     const emit = useEmit()
     const ready = useStageSelector((state) => state.globals.ready)
@@ -30,7 +30,7 @@ const JoinPage = () => {
                     }
                     const { stageId, groupId } = result
                     console.log(stageId, groupId)
-                    return requestJoin({
+                    return join({
                         stageId,
                         groupId,
                         password: null,
@@ -38,7 +38,7 @@ const JoinPage = () => {
                 }
             )
         }
-    }, [emit, query, ready, report, requestJoin])
+    }, [emit, query, ready, report, join])
 
     return <div>Trete bei ...</div>
 }

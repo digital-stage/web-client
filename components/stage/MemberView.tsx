@@ -5,7 +5,10 @@ import Avatar from './Avatar'
 import { useEmit, useStageSelector } from '@digitalstage/api-client-react'
 import { ClientDeviceEvents, VideoTrack } from '@digitalstage/api-types'
 import { AiFillStar, AiOutlineStar } from 'react-icons/ai'
-import { useTracks } from '../../api/provider/TrackProvider'
+import { useVideoConsumers, useVideoProducers } from '../../api/services/MediasoupService'
+import debug from 'debug'
+
+const report = debug('MemberView')
 
 const MemberView = ({
     memberId,
@@ -18,31 +21,30 @@ const MemberView = ({
     groupName?: string
     hasAdminRights?: boolean
 }) => {
+    report('RENDER')
     const member = useStageSelector((state) => state.stageMembers.byId[memberId])
     const user = useStageSelector((state) => (member ? state.users.byId[member.userId] : undefined))
     const videoTracks = useStageSelector(
         (state) =>
             state.videoTracks.byStageMember[memberId]?.map((id) => state.videoTracks.byId[id]) || []
     )
-    const { remoteVideoTracks, localVideoTrack } = useTracks()
-    const localStageDeviceId = useStageSelector((state) => state.globals.localStageDeviceId)
+    const videoConsumers = useVideoConsumers()
+    const videoProducers = useVideoProducers()
     const emit = useEmit()
 
     const videos = useMemo<MediaStreamTrack[]>(() => {
         return videoTracks.reduce<MediaStreamTrack[]>(
             (prev: MediaStreamTrack[], curr: VideoTrack) => {
-                if (localStageDeviceId === curr.stageDeviceId && localVideoTrack) {
-                    return [...prev, localVideoTrack]
-                } else if (remoteVideoTracks[curr.stageDeviceId]) {
-                    return [...prev, remoteVideoTracks[curr.stageDeviceId]]
+                if (videoProducers[curr._id]) {
+                    return [...prev, videoProducers[curr._id].track]
+                } else if (videoConsumers[curr._id]) {
+                    return [...prev, videoConsumers[curr._id].track]
                 }
                 return prev
             },
             []
         )
-    }, [localStageDeviceId, localVideoTrack, remoteVideoTracks, videoTracks])
-
-    console.log('RERENDER MemberVideo', videos)
+    }, [videoProducers, videoConsumers, videoTracks])
 
     const ConductorButton = () =>
         hasAdminRights ? (

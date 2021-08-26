@@ -21,18 +21,6 @@ const logger = {
     error: report.extend('error'),
 }
 
-type Action = {type: "send-video",  }
-type State = {
-    peerConnections: {
-        [stageDeviceId: string]: WebRTCConnection
-    },
-    remoteVideoTracks: {
-        [trackId: string]:
-    }
-}
-function reducePeerConnections() {
-
-}
 
 const WebRTCService = () => {
     report('RERENDER')
@@ -181,7 +169,6 @@ const WebRTCService = () => {
     /**
      * Capture local video track
      */
-    const [state, dispatch] = React.useReducer()
     React.useEffect(() => {
         if (
             stageId &&
@@ -224,9 +211,6 @@ const WebRTCService = () => {
                                 }
                             }
                         )
-                        setPeerConnections(prev => {
-
-                        })
                         connections.forEach((peerConnection) => peerConnection.addTrack(track))
                     })
                 }
