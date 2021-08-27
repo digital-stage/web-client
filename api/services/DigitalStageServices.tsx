@@ -9,23 +9,16 @@ import { ConnectionService } from './ConnectionService'
 
 const report = debug('DigitalStageServices')
 
-const MemoizedConnectionService = React.memo(ConnectionService)
-const MemoizedAudioLoginService = React.memo(AutoLoginService)
-const MemoizedMediaDeviceUpdateService = React.memo(MediaDeviceUpdateService)
-const MemoizedAudioRenderService = React.memo(AudioRenderService)
-const MemoizedMediasoupService = React.memo(MediasoupService)
-const MemoizedWebRTCService = React.memo(WebRTCService)
-
 const DigitalStageServices = () => {
     report('RERENDER')
     return (
         <>
-            <MemoizedConnectionService />
-            <MemoizedAudioLoginService />
-            <MemoizedMediaDeviceUpdateService />
-            <MemoizedAudioRenderService />
-            <MemoizedMediasoupService />
-            <MemoizedWebRTCService />
+            <ConnectionService />
+            <AutoLoginService />
+            <MediaDeviceUpdateService />
+            <AudioRenderService />
+            <MediasoupService />
+            <WebRTCService />
         </>
     )
 }

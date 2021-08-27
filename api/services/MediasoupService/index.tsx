@@ -14,7 +14,7 @@ import {
 import debug from 'debug'
 import React from 'react'
 import { BrowserDevice } from '@digitalstage/api-types/dist/model/browser'
-import { MediasoupVideoTrack, Stage } from '@digitalstage/api-types'
+import { MediasoupVideoTrack } from '@digitalstage/api-types'
 import { Transport } from 'mediasoup-client/lib/Transport'
 import { getVideoTracks } from '../../utils/getVideoTracks'
 import { Producer } from 'mediasoup-client/lib/Producer'
@@ -42,9 +42,6 @@ const DispatchVideoConsumerContext = React.createContext<DispatchConsumerList>(u
 const MediasoupProvider = ({ children }: { children: React.ReactNode }) => {
     const [videoProducers, setVideoProducers] = React.useState<ProducerList>({})
     const [videoConsumers, setVideoConsumers] = React.useState<ConsumerList>({})
-
-    report(videoProducers)
-    report(videoConsumers)
 
     return (
         <DispatchVideoProducerContext.Provider value={setVideoProducers}>
@@ -82,30 +79,27 @@ const MediasoupService = () => {
                 : undefined,
         shallowEqual
     )
-    const stage = useStageSelector<Stage | undefined>(
-        (state) => (state.stages.byId ? state.stages.byId[state.globals.stageId] : undefined),
-        shallowEqual
-    )
-    const routerUrl = React.useMemo<string | undefined>(() => {
-        if (
-            stage &&
-            (stage?.videoType === 'mediasoup' || stage?.audioType === 'mediasoup') &&
-            stage.mediasoup
-        ) {
-            return `${stage.mediasoup.url}:${stage.mediasoup.port}`
+    const stageId = useStageSelector<string>((state) => state.globals.stageId)
+    const routerUrl = useStageSelector<string>((state) => {
+        if (state.globals.stageId) {
+            const stage = state.stages.byId[state.globals.stageId]
+            if (stage.videoType === 'mediasoup' || stage.audioType === 'mediasoup') {
+                return `${stage.mediasoup.url}:${stage.mediasoup.port}`
+            }
         }
-        return undefined
-    }, [stage])
+    })
     const [connection, setConnection] = React.useState<ConnectionState>(undefined)
     React.useEffect(() => {
         if (routerUrl) {
-            let transports: Transport[] = []
+            let sendTransport: Transport
+            let receiveTransport: Transport
             report(`Connecting to router ${routerUrl}`)
             const routerConnection = new TeckosClient(routerUrl, {
                 reconnection: true,
             })
             const disconnect = () => {
-                transports.map((transport) => transport.close())
+                receiveTransport.close()
+                sendTransport.close()
                 routerConnection.disconnect()
             }
             routerConnection.on('disconnect', () => {
@@ -118,14 +112,16 @@ const MediasoupService = () => {
                     const device = new MediasoupDevice()
                     const rtpCapabilities = await getRTPCapabilities(routerConnection)
                     await device.load({ routerRtpCapabilities: rtpCapabilities })
-                    transports = await Promise.all([
-                        createWebRTCTransport(routerConnection, device, 'send'),
-                        createWebRTCTransport(routerConnection, device, 'receive'),
-                    ])
+                    sendTransport = await createWebRTCTransport(routerConnection, device, 'send')
+                    receiveTransport = await createWebRTCTransport(
+                        routerConnection,
+                        device,
+                        'receive'
+                    )
                     setConnection({
                         routerConnection,
-                        sendTransport: transports[0],
-                        receiveTransport: transports[1],
+                        sendTransport,
+                        receiveTransport,
                         device: device,
                     })
                 } catch (err) {
@@ -143,10 +139,13 @@ const MediasoupService = () => {
     }, [routerUrl])
 
     const videoTracks = useStageSelector<MediasoupVideoTrack[]>((state) =>
-        stage?.videoType === 'mediasoup' && state.videoTracks.byStage[stage._id]
-            ? (state.videoTracks.byStage[stage._id]
+        state.globals.stageId && state.videoTracks.byStage[state.globals.stageId]
+            ? (state.videoTracks.byStage[state.globals.stageId]
                   .map((id) => state.videoTracks.byId[id])
-                  .filter((track) => track.type === 'mediasoup') as MediasoupVideoTrack[])
+                  .filter(
+                      (track) =>
+                          track.type === 'mediasoup' && track.stageDeviceId !== localStageDeviceId
+                  ) as MediasoupVideoTrack[])
             : []
     )
 
@@ -190,7 +189,7 @@ const MediasoupService = () => {
         if (
             emit &&
             connection &&
-            stage?._id &&
+            stageId &&
             !localDevice.useP2P &&
             localStageDeviceId &&
             localDevice?.sendVideo
@@ -211,8 +210,8 @@ const MediasoupService = () => {
                         producer.resume()
                     }
                     if (!abort) {
-                        const { _id } = await publishProducer(emit, stage._id, producer.id, 'video')
-                        report(`Published video producer ${producer.id}`)
+                        const { _id } = await publishProducer(emit, stageId, producer.id, 'video')
+                        report(`Published video track ${_id}`)
                         publishedIds.push(_id)
                         setVideoProducers((prev) => ({
                             ...prev,
@@ -229,6 +228,7 @@ const MediasoupService = () => {
                     )
                 })
                 publishedIds.map((publishedId) => {
+                    report(`Unpublished video track ${publishedId}`)
                     unpublishProducer(emit, publishedId, 'video').catch((err) => reportError(err))
                 })
             }
@@ -240,10 +240,11 @@ const MediasoupService = () => {
         localDevice?.inputVideoDeviceId,
         localDevice?.sendVideo,
         localDevice?.useP2P,
-        stage?._id,
+        stageId,
         setVideoProducers,
     ])
 
     return null
 }
+MediasoupService.whyDidYouRender = true
 export { MediasoupService, MediasoupProvider, useVideoProducers, useVideoConsumers }

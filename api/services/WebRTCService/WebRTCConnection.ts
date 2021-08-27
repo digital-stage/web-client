@@ -4,9 +4,9 @@ import debug from 'debug'
 import { ITeckosClient } from 'teckos-client'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
 
-const log = debug('WebRTCService').extend('Connection')
-const logWarning = log.extend('warn')
-const logError = log.extend('error')
+const report = debug('WebRTCService').extend('WebRTCConnection')
+const reportTrace = report.extend('trace')
+const reportError = report.extend('error')
 
 export type OnTrackCallback = (track: MediaStreamTrack) => void
 
@@ -37,28 +37,34 @@ class WebRTCConnection {
         this.polite = localStageDeviceId.localeCompare(stageDeviceId) > 0
         this.connection = new RTCPeerConnection(config)
         this.connection.oniceconnectionstatechange = () => {
-            logWarning('iceConnectionState', this.connection.iceConnectionState)
+            reportTrace(
+                `with ${this.stageDeviceId}: iceConnectionState`,
+                this.connection.iceConnectionState
+            )
             if (this.connection.connectionState == 'failed') this.connection.restartIce()
         }
         this.connection.onnegotiationneeded = async () => {
             try {
-                log('Making offer', this.polite ? 'polite' : 'rude')
+                reportTrace(
+                    `to ${this.stageDeviceId}: Making offer`,
+                    this.polite ? 'polite' : 'rude'
+                )
                 this.makingOffer = true
                 await this.connection.setLocalDescription()
-                log('Sending offer to ' + stageDeviceId)
+                reportTrace(`to ${this.stageDeviceId}: Sending offer to ${stageDeviceId}`)
                 return emit(ClientDeviceEvents.SendP2POffer, {
                     from: localStageDeviceId,
                     to: stageDeviceId,
                     offer: this.connection.localDescription,
                 } as ClientDevicePayloads.SendP2POffer)
             } catch (err) {
-                logError(err)
+                reportError(err)
             } finally {
                 this.makingOffer = false
             }
         }
         this.connection.onicecandidateerror = (e) => {
-            logError(e)
+            reportError(e)
         }
         this.connection.ontrack = (ev) => {
             if (
@@ -75,15 +81,21 @@ class WebRTCConnection {
             } as ClientDevicePayloads.SendIceCandidate)
 
         this.connection.onconnectionstatechange = () => {
-            logWarning('connectionState', this.connection.connectionState)
+            reportTrace(
+                `with ${this.stageDeviceId}: connectionState`,
+                this.connection.connectionState
+            )
         }
         this.connection.onsignalingstatechange = () => {
-            logWarning('signalingState', this.connection.signalingState)
+            reportTrace(
+                `with ${this.stageDeviceId}: signalingState`,
+                this.connection.signalingState
+            )
         }
     }
 
     public connect() {
-        log('connect()')
+        reportTrace(`to ${this.stageDeviceId}: connect()`)
         if (!this.initialVideoSender) {
             this.initialVideoSender = this.connection.addTransceiver('video').sender
         }
@@ -101,24 +113,24 @@ class WebRTCConnection {
             // Detect collision
             this.ignoreOffer = !this.polite && this.makingOffer
             if (this.ignoreOffer) {
-                log(
-                    'Ignoring offer',
+                reportTrace(
+                    `from ${this.stageDeviceId}: Ignoring offer`,
                     this.makingOffer,
                     this.polite ? 'polite' : 'rude',
                     this.connection.signalingState
                 )
                 return
             }
-            log(
-                'Accepting offer',
+            reportTrace(
+                `from ${this.stageDeviceId}: Accepting offer`,
                 this.makingOffer,
                 this.polite ? 'polite' : 'rude',
                 this.connection.signalingState
             )
             await this.connection.setRemoteDescription(description)
             await this.connection.setLocalDescription()
-            log(
-                'Answering offer',
+            reportTrace(
+                `to ${this.stageDeviceId}: Answering offer`,
                 this.makingOffer,
                 this.polite ? 'polite' : 'rude',
                 this.connection.signalingState
@@ -129,31 +141,33 @@ class WebRTCConnection {
                 answer: this.connection.localDescription,
             } as ClientDevicePayloads.SendP2PAnswer)
         } else if (this.connection.signalingState === 'have-local-offer') {
-            log(
-                'Accepting answer',
+            reportTrace(
+                `from ${this.stageDeviceId}: Accepting answer`,
                 this.makingOffer,
                 this.polite ? 'polite' : 'rude',
                 this.connection.signalingState
             )
             await this.connection.setRemoteDescription(description)
-        } else {
-            log('HÄH?')
         }
     }
 
     public addIceCandidate(iceCandidate: RTCIceCandidate | null): Promise<void> {
         return this.connection.addIceCandidate(iceCandidate).catch((err) => {
             if (!this.ignoreOffer) {
-                logError(err)
+                reportError(err)
             } else {
-                logError('Ignoring error, since Im making an offer right now')
+                reportError(
+                    `from ${this.stageDeviceId}: Ignoring error, since Im making an offer right now`
+                )
             }
         })
     }
 
     public addTrack(track: MediaStreamTrack): void {
+        reportTrace(`to ${this.stageDeviceId}: Adding track ${track.id}`)
         this.connection.addTrack(track)
         if (track.kind === 'video' && this.initialVideoSender) {
+            reportTrace(`to ${this.stageDeviceId}: Removing initial sender`)
             this.connection.removeTrack(this.initialVideoSender)
             this.initialVideoSender = undefined
         } else if (track.kind === 'audio' && this.initialAudioSender) {

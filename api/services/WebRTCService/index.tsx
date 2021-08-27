@@ -105,12 +105,14 @@ const WebRTCService = () => {
                                     logger.trace('Got new remote video from ' + stageId)
                                     setRemoteVideoTracks((prev) => ({
                                         ...prev,
-                                        [from]: [...prev[from], track],
+                                        [from]: prev[from] ? [...prev[from], track] : [],
                                     }))
                                     track.onended = () => {
                                         setRemoteVideoTracks((prev) => ({
                                             ...prev,
-                                            [from]: prev[from].filter((t) => t.id === track.id),
+                                            [from]: prev[from]
+                                                ? prev[from].filter((t) => t.id === track.id)
+                                                : [],
                                         }))
                                     }
                                 }
@@ -179,14 +181,18 @@ const WebRTCService = () => {
                                     logger.trace('Got new remote video from ' + stageId)
                                     setRemoteVideoTracks((prev) => ({
                                         ...prev,
-                                        [stageDeviceId]: [...prev[stageDeviceId], track],
+                                        [stageDeviceId]: prev[stageDeviceId]
+                                            ? [...prev[stageDeviceId], track]
+                                            : [track],
                                     }))
                                     track.onended = () => {
                                         setRemoteVideoTracks((prev) => ({
                                             ...prev,
-                                            [stageDeviceId]: prev[stageDeviceId].filter(
-                                                (t) => t.id !== track.id
-                                            ),
+                                            [stageDeviceId]: prev[stageDeviceId]
+                                                ? prev[stageDeviceId].filter(
+                                                      (t) => t.id !== track.id
+                                                  )
+                                                : [],
                                         }))
                                     }
                                 }
@@ -222,6 +228,7 @@ const WebRTCService = () => {
                     tracks.forEach((track) => track.stop())
                 } else {
                     addedTracks = tracks
+                    report('Have ' + tracks.length + ' tracks')
                     tracks.forEach((track) => {
                         emit(
                             ClientDeviceEvents.CreateVideoTrack,
@@ -243,7 +250,9 @@ const WebRTCService = () => {
                             }
                         )
                         setPeerConnections((prev) => {
-                            Object.values(prev).forEach((peerConnection) =>
+                            const peerConnections = Object.values(prev)
+                            report('Sending video track to ' + peerConnections.length)
+                            peerConnections.forEach((peerConnection) =>
                                 peerConnection.addTrack(track)
                             )
                             return prev
