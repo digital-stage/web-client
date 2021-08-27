@@ -12,13 +12,19 @@ const PeerConnection = ({
     stageDeviceId,
     onRemoteTrack,
     tracks,
+    currentDescription,
+    currentCandidate,
 }: {
     stageDeviceId: string
-    onRemoteTrack: (track: MediaStreamTrack) => void
+    onRemoteTrack: (stageDeviceId: string, track: MediaStreamTrack) => void
     tracks: MediaStreamTrack[]
-}) => {
-    const connection = React.useRef<RTCPeerConnection>(undefined)
+    currentDescription?: RTCSessionDescriptionInit
+    currentCandidate?: RTCIceCandidate | null
+}): JSX.Element => {
+    report('RENDER')
+    const connection = React.useRef<RTCPeerConnection>(new RTCPeerConnection(config))
     const makingOffer = React.useRef<boolean>(false)
+    const ignoreOffer = React.useRef<boolean>(false)
     const videoSender = React.useRef<RTCRtpSender>(undefined)
     const audioSender = React.useRef<RTCRtpSender>(undefined)
     const localStageDeviceId = useStageSelector((state) => state.globals.localStageDeviceId)
@@ -29,8 +35,9 @@ const PeerConnection = ({
     )
 
     React.useEffect(() => {
-        if (stageDeviceId && emit) {
-            const peerConnection = new RTCPeerConnection(config)
+        if (stageDeviceId && emit && localStageDeviceId && onRemoteTrack && connection.current) {
+            reportTrace('Attaching handlers to peer connection')
+            const peerConnection = connection.current
             peerConnection.oniceconnectionstatechange = () => {
                 reportTrace(
                     `with ${stageDeviceId}: iceConnectionState`,
@@ -62,8 +69,9 @@ const PeerConnection = ({
                 if (
                     (!videoSender.current || ev.track.id !== videoSender.current.track?.id) &&
                     (!audioSender.current || ev.track.id !== audioSender.current.track?.id)
-                )
-                    onRemoteTrack(ev.track)
+                ) {
+                    onRemoteTrack(stageDeviceId, ev.track)
+                }
             }
             peerConnection.onicecandidate = (ev) =>
                 emit(ClientDeviceEvents.SendIceCandidate, {
@@ -81,22 +89,95 @@ const PeerConnection = ({
             peerConnection.onsignalingstatechange = () => {
                 reportTrace(`with ${stageDeviceId}: signalingState`, peerConnection.signalingState)
             }
-            connection.current = peerConnection
         }
     }, [emit, isPolite, localStageDeviceId, stageDeviceId, onRemoteTrack])
 
+    const handleDescription = React.useCallback(
+        async (description: RTCSessionDescriptionInit) => {
+            if (description.type == 'offer') {
+                // Detect collision
+                ignoreOffer.current = !isPolite && makingOffer.current
+                if (ignoreOffer.current) {
+                    reportTrace(
+                        `from ${stageDeviceId}: Ignoring offer`,
+                        makingOffer.current,
+                        isPolite ? 'polite' : 'rude',
+                        connection.current.signalingState
+                    )
+                    return
+                }
+                reportTrace(
+                    `from ${stageDeviceId}: Accepting offer`,
+                    makingOffer,
+                    isPolite ? 'polite' : 'rude',
+                    connection.current.signalingState
+                )
+                await connection.current.setRemoteDescription(description)
+                await connection.current.setLocalDescription()
+                reportTrace(
+                    `to ${stageDeviceId}: Answering offer`,
+                    makingOffer.current,
+                    isPolite ? 'polite' : 'rude',
+                    connection.current.signalingState
+                )
+                emit(ClientDeviceEvents.SendP2PAnswer, {
+                    from: localStageDeviceId,
+                    to: stageDeviceId,
+                    answer: connection.current.localDescription,
+                } as ClientDevicePayloads.SendP2PAnswer)
+            } else if (connection.current.signalingState === 'have-local-offer') {
+                reportTrace(
+                    `from ${stageDeviceId}: Accepting answer`,
+                    makingOffer.current,
+                    isPolite ? 'polite' : 'rude',
+                    connection.current.signalingState
+                )
+                await connection.current.setRemoteDescription(description)
+            }
+        },
+        [emit, isPolite, localStageDeviceId, stageDeviceId]
+    )
+
+    const handleCandidate = React.useCallback(
+        (candidate: RTCIceCandidate | null) =>
+            connection.current.addIceCandidate(candidate).catch((err) => {
+                if (!ignoreOffer.current) {
+                    throw err
+                }
+            }),
+        []
+    )
+
+    React.useEffect(() => {
+        if (currentDescription) {
+            handleDescription(currentDescription).catch((err) => reportError(err))
+        }
+    }, [currentDescription, handleDescription])
+
+    React.useEffect(() => {
+        if (currentCandidate) {
+            handleCandidate(currentCandidate).catch((err) => reportError(err))
+        }
+    }, [currentCandidate, handleCandidate])
+
     React.useEffect(() => {
         const senders = connection.current.getSenders()
+        senders.map((sender) => {
+            if (sender.track && !tracks.find((track) => track.id === sender.track.id)) {
+                connection.current.removeTrack(sender)
+            }
+        })
         tracks.map((track) => {
-            if (!senders.find((sender) => sender.track?.id === track.id)) {
+            if (!senders.find((sender) => sender.track && sender.track?.id === track.id)) {
                 const sender = connection.current.addTrack(track)
-                track.onended = () => {
-                    connection.current.removeTrack(sender)
-                }
+                const endTrack = () => connection.current.removeTrack(sender)
+                track.onmute = endTrack
+                track.onended = endTrack
             }
         })
     }, [tracks])
 
     return null
 }
-export { PeerConnection }
+const MemoizedPeerConnection = React.memo(PeerConnection)
+export { MemoizedPeerConnection as PeerConnection }
