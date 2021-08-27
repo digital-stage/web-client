@@ -1,17 +1,21 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React from 'react'
 import { GoMirror } from 'react-icons/go'
 import styles from './StageView.module.scss'
+import debug from 'debug'
+
+const report = debug('VideoView')
 
 const VideoView = ({ track, className }: { track: MediaStreamTrack; className?: string }) => {
-    const [mirrored, setMirrored] = useState<boolean>(false)
-    const landscape = useMemo<boolean>(() => {
+    report('RENDER')
+    const [mirrored, setMirrored] = React.useState<boolean>(false)
+    const landscape = React.useMemo<boolean>(() => {
         const settings = track.getSettings()
         if (settings.aspectRatio) return settings.aspectRatio >= 1
         return true
     }, [track])
-    const videoRef = useRef<HTMLVideoElement>(null)
+    const videoRef = React.useRef<HTMLVideoElement>(null)
 
-    useEffect(() => {
+    React.useEffect(() => {
         if (track && videoRef.current) {
             videoRef.current.srcObject = new MediaStream([track])
         }
@@ -35,4 +39,4 @@ const VideoView = ({ track, className }: { track: MediaStreamTrack; className?: 
     )
 }
 
-export default VideoView
+export { VideoView }

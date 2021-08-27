@@ -2,25 +2,30 @@ import React from 'react'
 import { AudioRenderService } from './AudioRenderer'
 import { MediaDeviceUpdateService } from './MediaDeviceUpdateService'
 import { AutoLoginService } from './AutoLoginService'
+import { MediasoupService } from './MediasoupService'
+import { WebRTCService } from './WebRTCService'
 import debug from 'debug'
-import {MediasoupService} from "./MediasoupService";
+import { ConnectionService } from './ConnectionService'
 
 const report = debug('DigitalStageServices')
 
-const MemorizedAudioLoginService = React.memo(AutoLoginService)
-const MemorizedMediaDeviceUpdateService = React.memo(MediaDeviceUpdateService)
-const MemorizedAudioRenderService = React.memo(AudioRenderService)
-const MemorizedMediasoupService = React.memo(MediasoupService)
-//const MemorizedWebRTCService = React.memo(WebRTCService)
+const MemoizedConnectionService = React.memo(ConnectionService)
+const MemoizedAudioLoginService = React.memo(AutoLoginService)
+const MemoizedMediaDeviceUpdateService = React.memo(MediaDeviceUpdateService)
+const MemoizedAudioRenderService = React.memo(AudioRenderService)
+const MemoizedMediasoupService = React.memo(MediasoupService)
+const MemoizedWebRTCService = React.memo(WebRTCService)
 
 const DigitalStageServices = () => {
     report('RERENDER')
     return (
         <>
-            <MemorizedAudioLoginService />
-            <MemorizedMediaDeviceUpdateService />
-            <MemorizedAudioRenderService />
-            <MemorizedMediasoupService />
+            <MemoizedConnectionService />
+            <MemoizedAudioLoginService />
+            <MemoizedMediaDeviceUpdateService />
+            <MemoizedAudioRenderService />
+            <MemoizedMediasoupService />
+            <MemoizedWebRTCService />
         </>
     )
 }

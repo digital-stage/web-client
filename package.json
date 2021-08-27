@@ -49,6 +49,7 @@
     "yup": "^0.32.9"
   },
   "devDependencies": {
+    "@welldone-software/why-did-you-render": "^6.2.1",
     "@babel/core": "^7.15.0",
     "@types/node": "^16.7.2",
     "@types/react": "^17.0.19",
@@ -59,7 +60,7 @@
     "next-transpile-modules": "^8.0.0",
     "prettier": "^2.3.2",
     "sass": "^1.38.1",
-    "typescript": "^4.3.5",
+    "typescript": "^4.4.2",
     "ws": "^8.2.0"
   }
 }

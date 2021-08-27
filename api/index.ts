@@ -3,13 +3,16 @@ import { useAnimationFrame } from './hooks/useAnimationFrame'
 import { useAuth } from './hooks/useAuth'
 import { useReport } from './hooks/useReport'
 import { AppDispatch } from './redux/store'
-import { useEmit } from './hooks/useEmit'
 import { useStageSelector } from './redux/useStageSelector'
 import { RootState } from './redux/state'
-import { useConnection } from './hooks/useConnection'
 import { useAudioContext, useAudioContextDispatch } from './provider/AudioContextProvider'
 import { useAudioLevel } from './provider/AudioLevelProvider'
 import { useStageJoiner } from './hooks/useStageJoiner'
+import { useRemoteVideoTracks } from './services/WebRTCService'
+import { useLocalVideoTracks } from './services/WebRTCService'
+import { useVideoConsumers } from './services/MediasoupService'
+import { useVideoProducers } from './services/MediasoupService'
+import { useEmit, useConnection, ConnectionStateContext } from './services/ConnectionService'
 
 export * from './redux/actions'
 export * from './redux/state'
@@ -26,4 +29,9 @@ export {
     useEmit,
     useConnection,
     useAuth,
+    useLocalVideoTracks,
+    useRemoteVideoTracks,
+    useVideoProducers,
+    useVideoConsumers,
+    ConnectionStateContext,
 }

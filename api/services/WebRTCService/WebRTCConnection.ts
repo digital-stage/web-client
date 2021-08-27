@@ -17,6 +17,8 @@ class WebRTCConnection {
     private readonly stageDeviceId: string
     private readonly emit: ITeckosClient['emit']
     private readonly onTrack: OnTrackCallback
+    private initialVideoSender: RTCRtpSender
+    private initialAudioSender: RTCRtpSender
     private videoSender: RTCRtpSender
     private audioSender: RTCRtpSender
     private makingOffer: boolean = false
@@ -56,7 +58,7 @@ class WebRTCConnection {
             }
         }
         this.connection.onicecandidateerror = (e) => {
-            logError(e.errorCode + ': ' + e.errorText)
+            logError(e)
         }
         this.connection.ontrack = (ev) => {
             if (
@@ -82,11 +84,11 @@ class WebRTCConnection {
 
     public connect() {
         log('connect()')
-        if (!this.videoSender) {
-            this.videoSender = this.connection.addTransceiver('video').sender
+        if (!this.initialVideoSender) {
+            this.initialVideoSender = this.connection.addTransceiver('video').sender
         }
-        if (!this.audioSender) {
-            this.audioSender = this.connection.addTransceiver('audio').sender
+        if (!this.initialAudioSender) {
+            this.initialAudioSender = this.connection.addTransceiver('audio').sender
         }
     }
 
@@ -151,43 +153,20 @@ class WebRTCConnection {
 
     public addTrack(track: MediaStreamTrack): void {
         this.connection.addTrack(track)
+        if (track.kind === 'video' && this.initialVideoSender) {
+            this.connection.removeTrack(this.initialVideoSender)
+            this.initialVideoSender = undefined
+        } else if (track.kind === 'audio' && this.initialAudioSender) {
+            this.connection.removeTrack(this.initialAudioSender)
+            this.initialAudioSender = undefined
+        }
     }
 
     public removeTrack(id: string): void {
+        //TODO: Discuss if removal of track is necessary when track is ended
         const sender = this.connection.getSenders().find((sender) => sender.track?.id === id)
         if (sender) {
             this.connection.removeTrack(sender)
-        }
-    }
-
-    public async setVideoTrack(track?: MediaStreamTrack): Promise<void> {
-        if (track) {
-            if (this.videoSender) {
-                if (!this.videoSender.track || track.id !== this.videoSender.track.id) {
-                    log('Replace video track')
-                    await this.videoSender.replaceTrack(track)
-                }
-            } else {
-                log('Adding video track')
-                this.videoSender = this.connection.addTrack(track)
-            }
-        } else {
-            if (this.videoSender) {
-                log('Removing video track')
-                this.connection.removeTrack(this.videoSender)
-                this.videoSender = undefined
-            }
-        }
-    }
-
-    public async setAudioTrack(track: MediaStreamTrack): Promise<void> {
-        if (this.audioSender) {
-            if (!this.audioSender.track || track.id !== this.audioSender.track.id) {
-                log('Replace audio track')
-                await this.audioSender.replaceTrack(track)
-            }
-        } else {
-            this.audioSender = this.connection.addTrack(track)
         }
     }
 }

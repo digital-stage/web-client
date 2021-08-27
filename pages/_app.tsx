@@ -1,3 +1,4 @@
+import '../scripts/wdyr'
 import React, { useEffect } from 'react'
 import './../styles/root.css'
 import './../styles/index.scss'

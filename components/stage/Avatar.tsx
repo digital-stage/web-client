@@ -15,4 +15,5 @@ const Avatar = ({ name, color }: { name: string; color: string }) => (
             .join('')}
     </div>
 )
-export default Avatar
+const MemoizedAvatar = React.memo(Avatar)
+export { MemoizedAvatar as Avatar }

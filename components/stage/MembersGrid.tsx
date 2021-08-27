@@ -1,29 +1,36 @@
 import React from 'react'
 import styles from './StageView.module.scss'
 import { useStageSelector } from '@digitalstage/api-client-react'
-import MemberView from './MemberView'
+import { MemberView } from './MemberView'
 import Panel from 'ui/Panel'
 
-const GroupView = ({ groupId, hasAdminRights }: { groupId: string; hasAdminRights: boolean }) => {
+const GroupView = ({
+    groupId,
+    hasCurrentUserAdminRights,
+}: {
+    groupId: string
+    hasCurrentUserAdminRights: boolean
+}) => {
     const { name, color } = useStageSelector((state) => state.groups.byId[groupId])
-    const memberIds = useStageSelector<string[]>(
+    const stageMemberIds = useStageSelector<string[]>(
         (state) => state.stageMembers.byGroup[groupId] || []
     )
 
     return (
         <>
-            {memberIds.map((memberId) => (
+            {stageMemberIds.map((stageMemberId) => (
                 <MemberView
-                    key={memberId}
-                    memberId={memberId}
+                    key={stageMemberId}
+                    stageMemberId={stageMemberId}
                     groupName={name}
                     groupColor={color}
-                    hasAdminRights={hasAdminRights}
+                    hasCurrentUserAdminRights={hasCurrentUserAdminRights}
                 />
             ))}
         </>
     )
 }
+const MemoizedGroupView = React.memo(GroupView)
 
 const ConductorOverlay = ({ stageId }: { stageId: string }) => {
     const conductorIds = useStageSelector<string[]>((state) =>
@@ -36,7 +43,7 @@ const ConductorOverlay = ({ stageId }: { stageId: string }) => {
                 <Panel kind="black">
                     <div className={styles.membersGrid}>
                         {conductorIds.map((conductorId) => (
-                            <MemberView key={conductorId} memberId={conductorId} />
+                            <MemberView key={conductorId} stageMemberId={conductorId} />
                         ))}
                     </div>
                 </Panel>
@@ -45,27 +52,30 @@ const ConductorOverlay = ({ stageId }: { stageId: string }) => {
     }
     return null
 }
+const MemoizedConductorOverlay = React.memo(ConductorOverlay)
 
 const MembersGrid = ({
     stageId,
     showLanes,
-    hasAdminRights,
+    hasCurrentUserAdminRights,
 }: {
     stageId: string
     showLanes: boolean
-    hasAdminRights: boolean
+    hasCurrentUserAdminRights: boolean
 }) => {
     const groupIds = useStageSelector<string[]>((state) => state.groups.byStage[stageId] || [])
-
-    console.log('STAGEVIEW Have ' + groupIds.length + ' groups')
 
     return (
         <div className={`${styles.membersGrid} ${showLanes ? styles.lanes : ''}`}>
             {groupIds.map((groupId) => (
-                <GroupView key={groupId} groupId={groupId} hasAdminRights={hasAdminRights} />
+                <MemoizedGroupView
+                    key={groupId}
+                    groupId={groupId}
+                    hasCurrentUserAdminRights={hasCurrentUserAdminRights}
+                />
             ))}
-            {!hasAdminRights ? <ConductorOverlay stageId={stageId} /> : null}
+            {!hasCurrentUserAdminRights ? <MemoizedConductorOverlay stageId={stageId} /> : null}
         </div>
     )
 }
-export default MembersGrid
+export { MembersGrid }
