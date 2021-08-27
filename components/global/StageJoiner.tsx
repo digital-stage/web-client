@@ -1,10 +1,14 @@
 import React, { useCallback, useState } from 'react'
 import { useRouter } from 'next/router'
-import { useEmit, useStageSelector } from '@digitalstage/api-client-react'
+import { useEmit, useNotification, useStageSelector } from '@digitalstage/api-client-react'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
 import Modal, { ModalButton, ModalFooter } from '../../ui/Modal'
 import TextInput from '../../ui/TextInput'
 import { useStageJoiner } from '../../api/hooks/useStageJoiner'
+import debug from 'debug'
+
+const report = debug('StageJoiner')
+const reportError = report.extend('error')
 
 interface ErrorCodes {
     InvalidPassword: 'Invalid password'
@@ -35,6 +39,7 @@ const StageJoiner = (): JSX.Element | null => {
     const [notFound, setNotFound] = useState<boolean>(false)
     const router = useRouter()
     const [intPassword, setIntPassword] = useState<string>()
+    const notify = useNotification()
 
     const clear = useCallback(() => {
         setNotFound(false)
@@ -47,26 +52,30 @@ const StageJoiner = (): JSX.Element | null => {
         setNotFound(false)
         setWrongPassword(false)
         // Try to connect
-        console.log('Try to join1')
-        if (emit && stageId) {
-            console.log('Try to join')
+        if (emit && stageId && notify) {
+            report('Try to join')
             emit(
                 ClientDeviceEvents.JoinStage,
                 { stageId, groupId, password } as ClientDevicePayloads.JoinStage,
                 (err: string | null) => {
                     if (err) {
-                        console.log(err)
                         if (err === 'Invalid password') {
                             return setWrongPassword(true)
+                        } else if (err == 'NotFound') {
+                            return setNotFound(true)
                         }
-                        return setNotFound(true)
+                        reportError(err)
+                        return notify({
+                            kind: 'error',
+                            message: err,
+                        })
                     }
                     clear()
                     return router.push('/stage')
                 }
             )
         }
-    }, [emit, stageId, groupId, password, clear, router])
+    }, [emit, stageId, groupId, password, clear, router, notify])
 
     React.useEffect(() => {
         if (ready) {

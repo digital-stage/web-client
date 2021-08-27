@@ -1,4 +1,4 @@
-import { useEmit, useStageSelector } from '@digitalstage/api-client-react'
+import { useEmit, useErrorReporting, useStageSelector } from '@digitalstage/api-client-react'
 import { shallowEqual } from 'react-redux'
 import { ITeckosClient, TeckosClient } from 'teckos-client'
 import { Device as MediasoupDevice } from 'mediasoup-client/lib/Device'
@@ -21,7 +21,6 @@ import { Producer } from 'mediasoup-client/lib/Producer'
 import { Consumer } from 'mediasoup-client/lib/Consumer'
 
 const report = debug('MediasoupService')
-const reportError = report.extend('error')
 
 type ConnectionState = {
     routerConnection: ITeckosClient
@@ -71,14 +70,23 @@ const useVideoConsumers = (): ConsumerList => {
 const MediasoupService = () => {
     report('RERENDER')
     const emit = useEmit()
+    const reportError = useErrorReporting()
     const localStageDeviceId = useStageSelector<string>((state) => state.globals.localStageDeviceId)
-    const localDevice = useStageSelector<BrowserDevice | undefined>(
-        (state) =>
-            state.globals.localDeviceId
-                ? (state.devices.byId[state.globals.localDeviceId] as BrowserDevice)
-                : undefined,
-        shallowEqual
-    )
+    const { inputVideoDeviceId, sendVideo, useP2P } = useStageSelector<{
+        inputVideoDeviceId?: string
+        sendVideo?: boolean
+        useP2P?: boolean
+    }>((state) => {
+        if (state.globals.localDeviceId) {
+            const localDevice = state.devices.byId[state.globals.localDeviceId] as BrowserDevice
+            return {
+                inputVideoDeviceId: localDevice.inputVideoDeviceId,
+                sendVideo: localDevice.sendVideo,
+                useP2P: localDevice.useP2P,
+            }
+        }
+        return {}
+    }, shallowEqual)
     const stageId = useStageSelector<string>((state) => state.globals.stageId)
     const routerUrl = useStageSelector<string>((state) => {
         if (state.globals.stageId) {
@@ -90,7 +98,7 @@ const MediasoupService = () => {
     })
     const [connection, setConnection] = React.useState<ConnectionState>(undefined)
     React.useEffect(() => {
-        if (routerUrl) {
+        if (routerUrl && reportError) {
             let sendTransport: Transport
             let receiveTransport: Transport
             report(`Connecting to router ${routerUrl}`)
@@ -136,7 +144,7 @@ const MediasoupService = () => {
                 setConnection(undefined)
             }
         }
-    }, [routerUrl])
+    }, [reportError, routerUrl])
 
     const videoTracks = useStageSelector<MediasoupVideoTrack[]>((state) =>
         state.globals.stageId && state.videoTracks.byStage[state.globals.stageId]
@@ -188,17 +196,18 @@ const MediasoupService = () => {
     React.useEffect(() => {
         if (
             emit &&
+            reportError &&
             connection &&
             stageId &&
-            !localDevice.useP2P &&
+            !useP2P &&
             localStageDeviceId &&
-            localDevice?.sendVideo
+            sendVideo
         ) {
             const { sendTransport } = connection
             let abort: boolean = false
             let producers: Producer[] = []
             let publishedIds: string[] = []
-            getVideoTracks(localDevice.inputVideoDeviceId).then((tracks) =>
+            getVideoTracks(inputVideoDeviceId).then((tracks) =>
                 tracks.map(async (track) => {
                     let producer: Producer
                     if (!abort) {
@@ -237,11 +246,12 @@ const MediasoupService = () => {
         localStageDeviceId,
         emit,
         connection,
-        localDevice?.inputVideoDeviceId,
-        localDevice?.sendVideo,
-        localDevice?.useP2P,
         stageId,
         setVideoProducers,
+        reportError,
+        useP2P,
+        sendVideo,
+        inputVideoDeviceId,
     ])
 
     return null

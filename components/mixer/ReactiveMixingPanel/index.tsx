@@ -123,7 +123,6 @@ const StageDevicePanel = ({
     )
     const updateVolume = useCallback(
         (volume: number, muted: boolean) => {
-            console.log(muted)
             if (deviceId) {
                 emit(ClientDeviceEvents.SetCustomStageDeviceVolume, {
                     stageDeviceId,

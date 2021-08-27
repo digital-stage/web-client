@@ -9,7 +9,6 @@ import { batch } from 'react-redux'
 import { RootState } from '@digitalstage/api-client-react'
 
 const report = debug('authMiddleware')
-const reportError = report.extend('error')
 
 const initializeApplication: any = (token?: string) => async (dispatch) => {
     if (token) {
@@ -24,7 +23,7 @@ const initializeApplication: any = (token?: string) => async (dispatch) => {
                 })
             }
         } catch (e) {
-            reportError(e)
+            console.error(e)
         }
     }
     dispatch(setInitialized(true))

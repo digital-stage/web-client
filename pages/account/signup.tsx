@@ -10,7 +10,6 @@ const SignUp = () => {
 
     useEffect(() => {
         if (push && signedIn) {
-            console.log('SIGNED IN')
             push('/')
         }
     }, [push, signedIn])

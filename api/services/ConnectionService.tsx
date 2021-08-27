@@ -1,7 +1,7 @@
 import debug from 'debug'
 import { ITeckosClient, TeckosClientWithJWT } from 'teckos-client'
 import React from 'react'
-import { useStageSelector } from '@digitalstage/api-client-react'
+import { useNotification, useStageSelector } from '@digitalstage/api-client-react'
 import { useDispatch } from 'react-redux'
 import getInitialDevice from '../utils/getInitialDevice'
 import registerSocketHandler from '../redux/registerSocketHandler'
@@ -9,7 +9,6 @@ import Cookie from 'js-cookie'
 import { SocketEvent } from 'teckos-client/dist/types'
 
 const report = debug('ConnectionService')
-const reportError = report.extend('error')
 
 type ConnectionState = ITeckosClient
 type ConnectionDispatch = React.Dispatch<React.SetStateAction<ConnectionState>>
@@ -41,14 +40,14 @@ const useEmit = (): ((event: SocketEvent, ...args: any[]) => boolean) => {
 
 const ConnectionService = (): JSX.Element => {
     report('RENDER')
-
     const userId = useStageSelector<string | undefined>((state) => state.auth.user?._id)
     const token = useStageSelector<string | undefined>((state) => state.auth.token)
     const dispatch = useDispatch()
     const setConnection = React.useContext(ConnectionDispatchContext)
+    const notify = useNotification()
 
     React.useEffect(() => {
-        if (setConnection && token && userId) {
+        if (setConnection && token && userId && notify) {
             let isActive = true
             let conn: ITeckosClient
 
@@ -95,7 +94,11 @@ const ConnectionService = (): JSX.Element => {
                     }
                 })
                 .catch((err) => {
-                    reportError(err)
+                    notify({
+                        kind: 'error',
+                        message: err,
+                    })
+                    console.error(err)
                 })
             return () => {
                 isActive = false
@@ -106,7 +109,7 @@ const ConnectionService = (): JSX.Element => {
                 setConnection(undefined)
             }
         }
-    }, [dispatch, setConnection, token, userId])
+    }, [dispatch, notify, setConnection, token, userId])
 
     return null
 }

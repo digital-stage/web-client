@@ -8,27 +8,28 @@ import translateError from './translateError'
 import {
     AuthError,
     createUserWithEmailAndPassword,
-    useReport,
+    useNotification,
 } from '@digitalstage/api-client-react'
 
 const SignUpForm = () => {
     const [error, setError] = useState<string>()
     const { push } = useRouter()
-    const { report } = useReport()
+    const notify = useNotification()
 
     const handleSubmit = useCallback(
         (values) => {
             createUserWithEmailAndPassword(values.email, values.password, values.name)
                 .then(() =>
-                    report(
-                        'info',
-                        'Bitte schaue in Deinen Mails nach - wir haben Dir einen Bestätigungscode geschickt'
-                    )
+                    notify({
+                        kind: 'info',
+                        message:
+                            'Bitte schaue in Deinen Mails nach - wir haben Dir einen Bestätigungscode geschickt',
+                    })
                 )
                 .then(() => push('/account/activate'))
                 .catch((err: AuthError) => setError(translateError(err)))
         },
-        [push, report]
+        [push, notify]
     )
 
     return (

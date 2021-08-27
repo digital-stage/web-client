@@ -32,6 +32,9 @@ const WebRTCProvider = ({ children }: { children: React.ReactNode }) => {
     const [localVideoTracks, setLocalVideoTracks] = React.useState<TrackList>([])
     const [remoteVideoTracks, setRemoteVideoTracks] = React.useState<StageDeviceTrackList>({})
 
+    report('local', localVideoTracks)
+    report('remote', remoteVideoTracks)
+
     return (
         <DispatchLocalVideoTracksContext.Provider value={setLocalVideoTracks}>
             <LocalVideoTracksContext.Provider value={localVideoTracks}>
@@ -224,6 +227,7 @@ const WebRTCService = (): JSX.Element => {
     const setRemoteVideoTracks = React.useContext(DispatchRemoteVideoTracksContext)
     const onRemoteTrack = React.useCallback(
         (stageDeviceId: string, track: MediaStreamTrack) => {
+            report('ADDING REMOTE TRACK ' + track.id)
             setRemoteVideoTracks((prev) => ({
                 ...prev,
                 [stageDeviceId]: prev[stageDeviceId] ? [...prev[stageDeviceId], track] : [track],

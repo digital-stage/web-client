@@ -29,8 +29,6 @@ const useStageMemberTracks = (stageMemberId: string) => {
 
     const videos = React.useMemo(() => {
         const tracks: MediaStreamTrack[] = []
-        if (stageDeviceIds.find((id) => id === localStageDeviceId)) {
-        }
         stageDeviceIds.forEach((stageDeviceId) => {
             if (stageDeviceId === localStageDeviceId) {
                 // Add all local WebRTC tracks

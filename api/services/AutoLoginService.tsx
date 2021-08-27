@@ -11,12 +11,10 @@ const AutoLoginService = () => {
     const dispatch = useDispatch()
 
     React.useEffect(() => {
-        console.log('Verifying token')
         const token = cookie.get('token')
         if (token) {
             signInWithToken(token)
                 .then((user) => {
-                    console.log('Signed in')
                     batch(() => {
                         dispatch(setUser(user))
                         dispatch(setToken(token))
@@ -27,7 +25,6 @@ const AutoLoginService = () => {
                 })
                 .finally(() => dispatch(setInitialized(true)))
         } else {
-            console.log('No token available')
             dispatch(setInitialized(true))
         }
     }, [dispatch])

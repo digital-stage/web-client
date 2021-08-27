@@ -28,7 +28,6 @@ import { shallowEqual } from 'react-redux'
 import { useStageSelector } from './../../redux/useStageSelector'
 
 const report = debug('useAudioRenderer')
-const reportError = report.extend('error')
 
 const yRotationToVector = (degrees: number): [number, number, number] => {
     // convert degrees to radians and offset the angle so 0 points towards the listener
@@ -94,7 +93,6 @@ const AudioTrackRenderer = ({
     destination: IAudioNode<IAudioContext>
     deviceId: string
 }): JSX.Element => {
-    console.log('RENDER', 'AudioTrackRenderer')
     const customVolume = useStageSelector<CustomAudioTrackVolume | undefined>(
         (state) =>
             state.customAudioTrackVolumes.byDeviceAndAudioTrack[deviceId] &&
@@ -168,7 +166,7 @@ const AudioTrackRenderer = ({
             audioRef.current.srcObject = stream
             audioRef.current.autoplay = true
             audioRef.current.muted = true
-            audioRef.current.play().catch((err) => reportError(err))
+            audioRef.current.play().catch((err) => console.error(err))
             const source = audioContext.createMediaStreamSource(stream)
             setSourceNode(source)
         }
@@ -282,7 +280,6 @@ const StageDeviceRenderer = ({
     destination: IAudioNode<IAudioContext>
     deviceId: string
 }): JSX.Element => {
-    console.log('RENDER', 'StageDeviceRenderer')
     const stageDevice = useStageSelector<StageDevice>(
         (state) => state.stageDevices.byId[stageDeviceId],
         shallowEqual
@@ -409,7 +406,6 @@ const StageMemberRenderer = ({
     destination: IAudioNode<IAudioContext>
     deviceId: string
 }): JSX.Element => {
-    console.log('RENDER StageMemberRenderer')
     const stageDeviceIds = useStageSelector(
         (state) => state.stageDevices.byStageMember[stageMemberId] || []
     )
@@ -495,7 +491,6 @@ const GroupRenderer = ({
     destination: IAudioNode<IAudioContext>
     deviceId: string
 }): JSX.Element => {
-    console.log('RENDER', 'GroupRenderer')
     const stageMemberIds = useStageSelector((state) => state.stageMembers.byGroup[groupId] || [])
     const group = useStageSelector<Group>((state) => state.groups.byId[groupId], shallowEqual)
     const customVolume = useStageSelector<CustomGroupVolume | undefined>(
@@ -600,7 +595,6 @@ const StageRenderer = ({
     deviceId: string
     useReverb: boolean
 }): JSX.Element => {
-    console.log('RENDER StageRenderer')
     const groupIds = useStageSelector((state) => state.groups.byStage[stageId] || [])
     const localStageDeviceId = useStageSelector<string | undefined>(
         (state) => state.globals.localStageDeviceId
@@ -617,7 +611,7 @@ const StageRenderer = ({
                     node.buffer = audioBuffer
                     return setConvolverNode(node)
                 })
-                .catch((err) => reportError(err))
+                .catch((err) => console.error(err))
         } else {
             setConvolverNode(undefined)
         }

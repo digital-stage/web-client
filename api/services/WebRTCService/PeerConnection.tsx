@@ -1,12 +1,11 @@
 import React from 'react'
-import { useEmit, useStageSelector } from '@digitalstage/api-client-react'
+import { useEmit, useNotification, useStageSelector } from '@digitalstage/api-client-react'
 import { config } from './config'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
 import debug from 'debug'
 
 const report = debug('WebRTCService').extend('PeerConnection')
 const reportTrace = report.extend('trace')
-const reportError = report.extend('error')
 
 const PeerConnection = ({
     stageDeviceId,
@@ -22,6 +21,7 @@ const PeerConnection = ({
     currentCandidate?: RTCIceCandidate | null
 }): JSX.Element => {
     report('RENDER')
+    const notify = useNotification()
     const connection = React.useRef<RTCPeerConnection>(new RTCPeerConnection(config))
     const makingOffer = React.useRef<boolean>(false)
     const ignoreOffer = React.useRef<boolean>(false)
@@ -35,7 +35,14 @@ const PeerConnection = ({
     )
 
     React.useEffect(() => {
-        if (stageDeviceId && emit && localStageDeviceId && onRemoteTrack && connection.current) {
+        if (
+            stageDeviceId &&
+            emit &&
+            localStageDeviceId &&
+            onRemoteTrack &&
+            connection.current &&
+            notify
+        ) {
             reportTrace('Attaching handlers to peer connection')
             const peerConnection = connection.current
             peerConnection.oniceconnectionstatechange = () => {
@@ -57,13 +64,21 @@ const PeerConnection = ({
                         offer: peerConnection.localDescription,
                     } as ClientDevicePayloads.SendP2POffer)
                 } catch (err) {
-                    reportError(err)
+                    notify({
+                        kind: 'error',
+                        message: err,
+                    })
+                    console.error(err)
                 } finally {
                     makingOffer.current = false
                 }
             }
-            peerConnection.onicecandidateerror = (e) => {
-                reportError(e)
+            peerConnection.onicecandidateerror = (err) => {
+                notify({
+                    kind: 'error',
+                    message: err,
+                })
+                console.error(err)
             }
             peerConnection.ontrack = (ev) => {
                 if (
@@ -90,7 +105,7 @@ const PeerConnection = ({
                 reportTrace(`with ${stageDeviceId}: signalingState`, peerConnection.signalingState)
             }
         }
-    }, [emit, isPolite, localStageDeviceId, stageDeviceId, onRemoteTrack])
+    }, [emit, isPolite, localStageDeviceId, stageDeviceId, onRemoteTrack, notify])
 
     const handleDescription = React.useCallback(
         async (description: RTCSessionDescriptionInit) => {
@@ -149,16 +164,28 @@ const PeerConnection = ({
     )
 
     React.useEffect(() => {
-        if (currentDescription) {
-            handleDescription(currentDescription).catch((err) => reportError(err))
+        if (currentDescription && notify) {
+            handleDescription(currentDescription).catch((err) => {
+                notify({
+                    kind: 'error',
+                    message: err,
+                })
+                console.error(err)
+            })
         }
-    }, [currentDescription, handleDescription])
+    }, [currentDescription, handleDescription, notify])
 
     React.useEffect(() => {
-        if (currentCandidate) {
-            handleCandidate(currentCandidate).catch((err) => reportError(err))
+        if (currentCandidate && notify) {
+            handleCandidate(currentCandidate).catch((err) => {
+                notify({
+                    kind: 'error',
+                    message: err,
+                })
+                console.error(err)
+            })
         }
-    }, [currentCandidate, handleCandidate])
+    }, [currentCandidate, handleCandidate, notify])
 
     React.useEffect(() => {
         const senders = connection.current.getSenders()
@@ -169,6 +196,7 @@ const PeerConnection = ({
         })
         tracks.map((track) => {
             if (!senders.find((sender) => sender.track && sender.track?.id === track.id)) {
+                report('ADDING LOCAL TRACK ' + track.id)
                 const sender = connection.current.addTrack(track)
                 const endTrack = () => connection.current.removeTrack(sender)
                 track.onmute = endTrack

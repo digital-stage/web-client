@@ -1,7 +1,7 @@
 import { DigitalStageProvider } from './DigitalStageProvider'
 import { useAnimationFrame } from './hooks/useAnimationFrame'
 import { useAuth } from './hooks/useAuth'
-import { useReport } from './hooks/useReport'
+import { useNotification } from './hooks/useNotification'
 import { AppDispatch } from './redux/store'
 import { useStageSelector } from './redux/useStageSelector'
 import { RootState } from './redux/state'
@@ -13,6 +13,7 @@ import { useLocalVideoTracks } from './services/WebRTCService'
 import { useVideoConsumers } from './services/MediasoupService'
 import { useVideoProducers } from './services/MediasoupService'
 import { useEmit, useConnection, ConnectionStateContext } from './services/ConnectionService'
+import { useErrorReporting } from './hooks/useErrorReporting'
 
 export * from './redux/actions'
 export * from './redux/state'
@@ -25,7 +26,7 @@ export {
     useStageSelector,
     DigitalStageProvider,
     useAnimationFrame,
-    useReport,
+    useNotification,
     useEmit,
     useConnection,
     useAuth,
@@ -33,5 +34,6 @@ export {
     useRemoteVideoTracks,
     useVideoProducers,
     useVideoConsumers,
+    useErrorReporting,
     ConnectionStateContext,
 }
