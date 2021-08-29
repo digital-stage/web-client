@@ -3,8 +3,8 @@ import styles from './StageView.module.scss'
 import { VideoView } from './VideoView'
 import { Avatar } from './Avatar'
 import {
-    useLocalVideoTracks,
-    useRemoteVideoTracks,
+    useWebRTCLocalVideoTracks,
+    useWebRTCRemoteVideoTracks,
     useStageSelector,
     useVideoConsumers,
     useVideoProducers,
@@ -24,8 +24,8 @@ const useStageMemberTracks = (stageMemberId: string) => {
     const localStageDeviceId = useStageSelector((state) => state.globals.localStageDeviceId)
     const videoConsumers = useVideoConsumers()
     const videoProducers = useVideoProducers()
-    const localVideoTracks = useLocalVideoTracks()
-    const remoteVideoTracks = useRemoteVideoTracks()
+    const localVideoTracks = useWebRTCLocalVideoTracks()
+    const remoteVideoTracks = useWebRTCRemoteVideoTracks()
 
     const videos = React.useMemo(() => {
         const tracks: MediaStreamTrack[] = []
