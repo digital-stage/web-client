@@ -214,12 +214,12 @@ const WebRTCService = (): JSX.Element => {
         } else {
           addedTracks = tracks
           report(`Have ${tracks.length} tracks`)
-          tracks.forEach((track) => {
+          tracks.forEach((track, index) => {
             emit(
               ClientDeviceEvents.CreateVideoTrack,
               {
                 stageId,
-                trackId: localStageDeviceId,
+                trackId: localStageDeviceId + index,
                 type: 'browser',
               } as ClientDevicePayloads.CreateVideoTrack,
               (error: string | null, videoTrack) => {
@@ -303,12 +303,12 @@ const WebRTCService = (): JSX.Element => {
         } else {
           addedTracks = tracks
           report(`Have ${tracks.length} tracks`)
-          tracks.forEach((track) => {
+          tracks.forEach((track, index) => {
             emit(
               ClientDeviceEvents.CreateAudioTrack,
               {
                 stageId,
-                trackId: localStageDeviceId,
+                trackId: localStageDeviceId + index,
                 type: 'browser',
               } as ClientDevicePayloads.CreateAudioTrack,
               (error: string | null, videoTrack) => {
