@@ -10,12 +10,14 @@ const reportTrace = report.extend('trace')
 const PeerConnection = ({
     stageDeviceId,
     onRemoteTrack,
+    onStats,
     tracks,
     currentDescription,
     currentCandidate,
 }: {
     stageDeviceId: string
     onRemoteTrack: (stageDeviceId: string, track: MediaStreamTrack) => void
+    onStats: (trackId: string, stats: RTCStatsReport) => void
     tracks: MediaStreamTrack[]
     currentDescription?: RTCSessionDescriptionInit
     currentCandidate?: RTCIceCandidate | null
@@ -33,6 +35,7 @@ const PeerConnection = ({
         () => localStageDeviceId.localeCompare(stageDeviceId) > 0,
         [localStageDeviceId, stageDeviceId]
     )
+    const [receivedTracks, setReceivedTracks] = React.useState<MediaStreamTrack[]>([])
 
     React.useEffect(() => {
         if (
@@ -86,6 +89,11 @@ const PeerConnection = ({
                     (!audioSender.current || ev.track.id !== audioSender.current.track?.id)
                 ) {
                     onRemoteTrack(stageDeviceId, ev.track)
+                    setReceivedTracks((prev) => [...prev, ev.track])
+                    const onEnded = () =>
+                        setReceivedTracks((prev) => prev.filter((t) => t.id !== ev.track.id))
+                    ev.track.addEventListener('mute', onEnded)
+                    ev.track.addEventListener('ended', onEnded)
                 }
             }
             peerConnection.onicecandidate = (ev) =>
@@ -105,7 +113,15 @@ const PeerConnection = ({
                 reportTrace(`with ${stageDeviceId}: signalingState`, peerConnection.signalingState)
             }
         }
-    }, [emit, isPolite, localStageDeviceId, stageDeviceId, onRemoteTrack, notify])
+    }, [
+        emit,
+        isPolite,
+        localStageDeviceId,
+        stageDeviceId,
+        onRemoteTrack,
+        notify,
+        setReceivedTracks,
+    ])
 
     const handleDescription = React.useCallback(
         async (description: RTCSessionDescriptionInit) => {
@@ -162,6 +178,21 @@ const PeerConnection = ({
             }),
         []
     )
+
+    React.useEffect(() => {
+        if (process.env.NODE_ENV === 'development') {
+            const id = setInterval(() => {
+                if (connection.current) {
+                    receivedTracks.map((track) =>
+                        connection.current.getStats(track).then((stats) => onStats(track.id, stats))
+                    )
+                }
+            }, 5000)
+            return () => {
+                clearInterval(id)
+            }
+        }
+    }, [onStats, receivedTracks])
 
     React.useEffect(() => {
         if (currentDescription && notify) {

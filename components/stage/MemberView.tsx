@@ -10,51 +10,40 @@ import {
     useVideoProducers,
 } from '@digitalstage/api-client-react'
 import { ConductorButton } from './ConductorButton'
+import { useWebRTCStats } from '../../api/services/WebRTCService'
 
 const useStageMemberTracks = (stageMemberId: string) => {
     const videoTracks = useStageSelector(
         (state) =>
             state.videoTracks.byStageMember[stageMemberId]
                 ?.map((id) => state.videoTracks.byId[id])
-                .map((track) => ({ _id: track._id, stageDeviceId: track.stageDeviceId })) || []
+                .map((track) => ({
+                    _id: track._id,
+                    stageDeviceId: track.stageDeviceId,
+                    trackId: track.trackId,
+                })) || []
     )
-    const stageDeviceIds = useStageSelector(
-        (state) => state.stageDevices.byStageMember[stageMemberId] || []
-    )
-    const localStageDeviceId = useStageSelector((state) => state.globals.localStageDeviceId)
     const videoConsumers = useVideoConsumers()
     const videoProducers = useVideoProducers()
     const localVideoTracks = useWebRTCLocalVideoTracks()
     const remoteVideoTracks = useWebRTCRemoteVideoTracks()
 
     const videos = React.useMemo(() => {
-        const tracks: MediaStreamTrack[] = []
-        stageDeviceIds.forEach((stageDeviceId) => {
-            if (stageDeviceId === localStageDeviceId) {
-                // Add all local WebRTC tracks
-                tracks.push(...localVideoTracks)
-            } else if (remoteVideoTracks[stageDeviceId]) {
-                // Add all remote WebRTC tracks
-                tracks.push(...remoteVideoTracks[stageDeviceId])
-            }
-        })
-        videoTracks.forEach((videoTrack) => {
+        return videoTracks.reduce<MediaStreamTrack[]>((prev, videoTrack) => {
             if (videoProducers[videoTrack._id]) {
-                tracks.push(videoProducers[videoTrack._id].track)
+                return [...prev, videoProducers[videoTrack._id].track]
             } else if (videoConsumers[videoTrack._id]) {
-                tracks.push(videoConsumers[videoTrack._id].track)
+                return [...prev, videoConsumers[videoTrack._id].track]
+            } else if (videoTrack.trackId) {
+                if (localVideoTracks[videoTrack.trackId]) {
+                    return [...prev, localVideoTracks[videoTrack.trackId]]
+                } else if (remoteVideoTracks[videoTrack.trackId]) {
+                    return [...prev, remoteVideoTracks[videoTrack.trackId]]
+                }
             }
-        })
-        return tracks
-    }, [
-        localStageDeviceId,
-        localVideoTracks,
-        remoteVideoTracks,
-        stageDeviceIds,
-        videoConsumers,
-        videoProducers,
-        videoTracks,
-    ])
+            return prev
+        }, [])
+    }, [localVideoTracks, remoteVideoTracks, videoConsumers, videoProducers, videoTracks])
     return React.useMemo(() => videos, [videos])
 }
 
@@ -77,6 +66,8 @@ const VideoTrackView = ({
     userName: string
     hasCurrentUserAdminRights: boolean
 }) => {
+    const stats = useWebRTCStats(track.id)
+    console.log(stats)
     return (
         <div
             key={track.id}
@@ -100,6 +91,25 @@ const VideoTrackView = ({
                     </h6>
                     <h5 className={styles.memberName}>{userName}</h5>
                 </div>
+                {stats ? (
+                    <span className={styles.stats}>
+                        {stats.totalRoundTripTime ? (
+                            stats.roundTripTimeMeasurements ? (
+                                <span>{`RTT ${
+                                    stats.totalRoundTripTime / stats.roundTripTimeMeasurements
+                                }ms`}</span>
+                            ) : (
+                                <span>{`TRTT ${stats.totalRoundTripTime}ms`}</span>
+                            )
+                        ) : null}
+                        {stats.jitter ? <span>{`Jitter ${stats.jitter}/s`}</span> : null}
+                        {stats.jitterBufferDelay && stats.jitterBufferEmittedCount ? (
+                            <span>{`Jitterbuffer ${
+                                stats.jitterBufferDelay / stats.jitterBufferEmittedCount
+                            }ms`}</span>
+                        ) : null}
+                    </span>
+                ) : null}
             </div>
             {hasCurrentUserAdminRights ? <ConductorButton stageMemberId={stageMemberId} /> : null}
         </div>

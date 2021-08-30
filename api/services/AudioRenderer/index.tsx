@@ -26,7 +26,7 @@ import { useAudioContext } from './../../provider/AudioContextProvider'
 import { useAudioLevelDispatch } from '../../provider/AudioLevelProvider'
 import { shallowEqual } from 'react-redux'
 import { useStageSelector } from './../../redux/useStageSelector'
-import {useWebRTCLocalAudioTracks, useWebRTCRemoteAudioTracks} from "../WebRTCService";
+import { useWebRTCLocalAudioTracks, useWebRTCRemoteAudioTracks } from '../WebRTCService'
 
 const report = debug('useAudioRenderer')
 
@@ -128,7 +128,6 @@ const AudioTrackRenderer = ({
         [audioContext]
     )
     const position = useAudioTrackPosition({ audioTrack, deviceId })
-    const isLocalStageDevice = useStageSelector(state => state.globals.localStageDeviceId === audioTrack.stageDeviceId)
 
     useEffect(() => {
         setTrack((prev) => {
@@ -137,13 +136,11 @@ const AudioTrackRenderer = ({
                     return mediasoupAudioProducers[audioTrack._id].track
                 if (mediasoupAudioConsumers[audioTrack._id])
                     return mediasoupAudioConsumers[audioTrack._id].track
-                if(isLocalStageDevice && localWebRTCTracks.length > 0) {
-                    return localWebRTCTracks[0]
-                }
-                if (audioTrack.trackId && remoteWebRTCTracks[audioTrack.trackId] && remoteWebRTCTracks[audioTrack.trackId].length > 0) {
-                    const t = remoteWebRTCTracks[audioTrack.trackId]
-                    report('Using Remote WebRTC track', t)
-                    return remoteWebRTCTracks[audioTrack.trackId][0]
+                if (audioTrack.trackId) {
+                    if (localWebRTCTracks[audioTrack.trackId])
+                        return localWebRTCTracks[audioTrack.trackId]
+                    if (remoteWebRTCTracks[audioTrack.trackId])
+                        return remoteWebRTCTracks[audioTrack.trackId]
                 }
             }
             report('NO TRACK FOUND')

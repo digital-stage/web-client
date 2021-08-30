@@ -193,6 +193,16 @@ $portraitAspectRatio: math.div($width, $height);
           color: white;
         }
       }
+
+      .stats {
+        font-size: 0.6rem;
+        color: var(---grey-4);
+
+        span {
+          padding-left: 2px;
+          padding-right: 2px;
+        }
+      }
     }
 
 

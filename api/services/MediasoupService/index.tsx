@@ -66,6 +66,9 @@ const useVideoConsumers = (): ConsumerList => {
         throw new Error('useVideoConsumers must be used within a MediasoupProvider')
     return state
 }
+const useLatencyReport = () => {
+    return null
+}
 
 const MediasoupService = () => {
     report('RERENDER')
