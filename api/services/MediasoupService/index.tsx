@@ -14,11 +14,13 @@ import {
 import debug from 'debug'
 import React from 'react'
 import { BrowserDevice } from '@digitalstage/api-types/dist/model/browser'
-import { MediasoupVideoTrack } from '@digitalstage/api-types'
+import { MediasoupAudioTrack, MediasoupVideoTrack } from '@digitalstage/api-types'
 import { Transport } from 'mediasoup-client/lib/Transport'
 import { getVideoTracks } from '../../utils/getVideoTracks'
 import { Producer } from 'mediasoup-client/lib/Producer'
 import { Consumer } from 'mediasoup-client/lib/Consumer'
+import { getAudioTracks } from '../../utils/getAudioTracks'
+import { omit } from 'lodash'
 
 const report = debug('MediasoupService')
 
@@ -38,16 +40,30 @@ const VideoProducerContext = React.createContext<ProducerList>(undefined)
 const DispatchVideoProducerContext = React.createContext<DispatchProducerList>(undefined)
 const VideoConsumerContext = React.createContext<ConsumerList>(undefined)
 const DispatchVideoConsumerContext = React.createContext<DispatchConsumerList>(undefined)
+const AudioProducerContext = React.createContext<ProducerList>(undefined)
+const DispatchAudioProducerContext = React.createContext<DispatchProducerList>(undefined)
+const AudioConsumerContext = React.createContext<ConsumerList>(undefined)
+const DispatchAudioConsumerContext = React.createContext<DispatchConsumerList>(undefined)
 const MediasoupProvider = ({ children }: { children: React.ReactNode }) => {
     const [videoProducers, setVideoProducers] = React.useState<ProducerList>({})
     const [videoConsumers, setVideoConsumers] = React.useState<ConsumerList>({})
+    const [audioProducers, setAudioProducers] = React.useState<ProducerList>({})
+    const [audioConsumers, setAudioConsumers] = React.useState<ConsumerList>({})
 
     return (
         <DispatchVideoProducerContext.Provider value={setVideoProducers}>
             <VideoProducerContext.Provider value={videoProducers}>
                 <DispatchVideoConsumerContext.Provider value={setVideoConsumers}>
                     <VideoConsumerContext.Provider value={videoConsumers}>
-                        {children}
+                        <DispatchAudioProducerContext.Provider value={setAudioProducers}>
+                            <AudioProducerContext.Provider value={audioProducers}>
+                                <DispatchAudioConsumerContext.Provider value={setAudioConsumers}>
+                                    <AudioConsumerContext.Provider value={audioConsumers}>
+                                        {children}
+                                    </AudioConsumerContext.Provider>
+                                </DispatchAudioConsumerContext.Provider>
+                            </AudioProducerContext.Provider>
+                        </DispatchAudioProducerContext.Provider>
                     </VideoConsumerContext.Provider>
                 </DispatchVideoConsumerContext.Provider>
             </VideoProducerContext.Provider>
@@ -72,17 +88,40 @@ const MediasoupService = () => {
     const emit = useEmit()
     const reportError = useErrorReporting()
     const localStageDeviceId = useStageSelector<string>((state) => state.globals.localStageDeviceId)
-    const { inputVideoDeviceId, sendVideo, useP2P } = useStageSelector<{
+
+    const {
+        inputVideoDeviceId,
+        sendVideo,
+        sendAudio,
+        useP2P,
+        inputAudioDeviceId,
+        autoGainControl,
+        echoCancellation,
+        noiseSuppression,
+        sampleRate,
+    } = useStageSelector<{
         inputVideoDeviceId?: string
         sendVideo?: boolean
+        sendAudio?: boolean
         useP2P?: boolean
+        inputAudioDeviceId?: string
+        autoGainControl?: boolean
+        echoCancellation?: boolean
+        noiseSuppression?: boolean
+        sampleRate?: number
     }>((state) => {
         if (state.globals.localDeviceId) {
             const localDevice = state.devices.byId[state.globals.localDeviceId] as BrowserDevice
             return {
                 inputVideoDeviceId: localDevice.inputVideoDeviceId,
                 sendVideo: localDevice.sendVideo,
+                sendAudio: localDevice.sendAudio,
                 useP2P: localDevice.useP2P,
+                inputAudioDeviceId: localDevice.inputAudioDeviceId,
+                autoGainControl: localDevice.autoGainControl,
+                echoCancellation: localDevice.echoCancellation,
+                noiseSuppression: localDevice.noiseSuppression,
+                sampleRate: localDevice.sampleRate,
             }
         }
         return {}
@@ -156,7 +195,6 @@ const MediasoupService = () => {
                   ) as MediasoupVideoTrack[])
             : []
     )
-
     const setVideoConsumers = React.useContext(DispatchVideoConsumerContext)
     React.useEffect(() => {
         if (setVideoConsumers && connection?.routerConnection && connection.receiveTransport) {
@@ -194,15 +232,7 @@ const MediasoupService = () => {
 
     const setVideoProducers = React.useContext(DispatchVideoProducerContext)
     React.useEffect(() => {
-        if (
-            emit &&
-            reportError &&
-            connection &&
-            stageId &&
-            !useP2P &&
-            localStageDeviceId &&
-            sendVideo
-        ) {
+        if (emit && reportError && connection && stageId && !useP2P && sendVideo) {
             const { sendTransport } = connection
             let abort: boolean = false
             let producers: Producer[] = []
@@ -239,11 +269,11 @@ const MediasoupService = () => {
                 publishedIds.map((publishedId) => {
                     report(`Unpublished video track ${publishedId}`)
                     unpublishProducer(emit, publishedId, 'video').catch((err) => reportError(err))
+                    setVideoProducers((prev) => omit(prev, publishedId))
                 })
             }
         }
     }, [
-        localStageDeviceId,
         emit,
         connection,
         stageId,
@@ -252,6 +282,116 @@ const MediasoupService = () => {
         useP2P,
         sendVideo,
         inputVideoDeviceId,
+    ])
+
+    const audioTracks = useStageSelector<MediasoupAudioTrack[]>((state) =>
+        state.globals.stageId && state.audioTracks.byStage[state.globals.stageId]
+            ? (state.audioTracks.byStage[state.globals.stageId]
+                  .map((id) => state.audioTracks.byId[id])
+                  .filter(
+                      (track) =>
+                          track.type === 'mediasoup' && track.stageDeviceId !== localStageDeviceId
+                  ) as MediasoupAudioTrack[])
+            : []
+    )
+
+    const setAudioConsumers = React.useContext(DispatchAudioConsumerContext)
+    React.useEffect(() => {
+        if (setAudioConsumers && connection?.routerConnection && connection.receiveTransport) {
+            report('Sync audio tracks', audioTracks)
+            setAudioConsumers((prevState) => {
+                // Clean up
+                const existing: ConsumerList = Object.keys(prevState).reduce((prev, trackId) => {
+                    if (audioTracks.find((track) => track._id === trackId)) {
+                        return {
+                            ...prev,
+                            [trackId]: prevState[trackId],
+                        }
+                    }
+                    return prev
+                }, {})
+                // Add new async (and add them later)
+                audioTracks.map((track) => {
+                    if (!prevState[track._id]) {
+                        consume(
+                            connection.routerConnection,
+                            connection.receiveTransport,
+                            connection.device,
+                            track.producerId
+                        ).then((consumer) =>
+                            setAudioConsumers((prev) => ({ ...prev, [track._id]: consumer }))
+                        )
+                    }
+                })
+                return {
+                    ...existing,
+                }
+            })
+        }
+    }, [audioTracks, connection, setAudioConsumers])
+
+    const setAudioProducers = React.useContext(DispatchAudioProducerContext)
+    React.useEffect(() => {
+        if (emit && reportError && connection && stageId && !useP2P && sendAudio) {
+            const { sendTransport } = connection
+            let abort: boolean = false
+            let producers: Producer[] = []
+            let publishedIds: string[] = []
+            getAudioTracks({
+                inputAudioDeviceId,
+                autoGainControl,
+                echoCancellation,
+                noiseSuppression,
+                sampleRate,
+            }).then((tracks) =>
+                tracks.map(async (track) => {
+                    let producer: Producer
+                    if (!abort) {
+                        producer = await createProducer(sendTransport, track)
+                        producers.push(producer)
+                    }
+                    if (!abort && producer.paused) {
+                        report(`Audio producer ${producer.id} is paused`)
+                        producer.resume()
+                    }
+                    if (!abort) {
+                        const { _id } = await publishProducer(emit, stageId, producer.id, 'audio')
+                        report(`Published audio track ${_id}`)
+                        publishedIds.push(_id)
+                        setAudioProducers((prev) => ({
+                            ...prev,
+                            [_id]: producer,
+                        }))
+                    }
+                })
+            )
+            return () => {
+                abort = true
+                producers.map((producer) => {
+                    stopProducer(connection.routerConnection, producer).catch((err) =>
+                        reportError(err)
+                    )
+                })
+                publishedIds.map((publishedId) => {
+                    report(`Unpublished audio track ${publishedId}`)
+                    unpublishProducer(emit, publishedId, 'audio').catch((err) => reportError(err))
+                    setAudioProducers((prev) => omit(prev, publishedId))
+                })
+            }
+        }
+    }, [
+        emit,
+        connection,
+        stageId,
+        reportError,
+        useP2P,
+        sendAudio,
+        inputAudioDeviceId,
+        autoGainControl,
+        echoCancellation,
+        noiseSuppression,
+        sampleRate,
+        setAudioProducers,
     ])
 
     return null
