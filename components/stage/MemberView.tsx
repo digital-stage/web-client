@@ -96,10 +96,11 @@ const VideoTrackView = ({
                         {stats.totalRoundTripTime ? (
                             stats.roundTripTimeMeasurements ? (
                                 <span>{`RTT ${
-                                    stats.totalRoundTripTime / stats.roundTripTimeMeasurements
+                                    (stats.totalRoundTripTime / stats.roundTripTimeMeasurements) *
+                                    1000
                                 }ms`}</span>
                             ) : (
-                                <span>{`TRTT ${stats.totalRoundTripTime}ms`}</span>
+                                <span>{`TRTT ${stats.totalRoundTripTime * 1000}ms`}</span>
                             )
                         ) : null}
                         {stats.jitter ? <span>{`Jitter ${stats.jitter}/s`}</span> : null}
