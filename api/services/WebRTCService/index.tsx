@@ -13,6 +13,7 @@ import {useStageSelector} from 'api/redux/useStageSelector'
 import {useConnection} from '../ConnectionService'
 import {PeerConnection} from './PeerConnection'
 import {getAudioTracks} from "../../utils/getAudioTracks";
+import {omit} from "lodash";
 
 const report = debug('WebRTCService')
 const logger = {
@@ -21,24 +22,24 @@ const logger = {
 }
 type TrackList = MediaStreamTrack[]
 type DispatchTrackList = React.Dispatch<React.SetStateAction<TrackList>>
-type StageDeviceTrackList = { [stageDeviceId: string]: TrackList }
-type DispatchStageDeviceTrackList = React.Dispatch<React.SetStateAction<StageDeviceTrackList>>
+type TrackMap = { [stageDeviceId: string]: TrackList }
+type DispatchStageDeviceTrackList = React.Dispatch<React.SetStateAction<TrackMap>>
 
-const RemoteVideoTracksContext = React.createContext<StageDeviceTrackList>(undefined)
+const RemoteVideoTracksContext = React.createContext<TrackMap>(undefined)
 const DispatchRemoteVideoTracksContext =
   React.createContext<DispatchStageDeviceTrackList>(undefined)
-const LocalVideoTracksContext = React.createContext<TrackList>(undefined)
-const DispatchLocalVideoTracksContext = React.createContext<DispatchTrackList>(undefined)
-const RemoteAudioTracksContext = React.createContext<StageDeviceTrackList>(undefined)
+const LocalVideoTracksContext = React.createContext<TrackMap>(undefined)
+const DispatchLocalVideoTracksContext = React.createContext<DispatchStageDeviceTrackList>(undefined)
+const RemoteAudioTracksContext = React.createContext<TrackMap>(undefined)
 const DispatchRemoteAudioTracksContext =
   React.createContext<DispatchStageDeviceTrackList>(undefined)
-const LocalAudioTracksContext = React.createContext<TrackList>(undefined)
-const DispatchLocalAudioTracksContext = React.createContext<DispatchTrackList>(undefined)
+const LocalAudioTracksContext = React.createContext<TrackMap>(undefined)
+const DispatchLocalAudioTracksContext = React.createContext<DispatchStageDeviceTrackList>(undefined)
 const WebRTCProvider = ({children}: { children: React.ReactNode }) => {
-  const [localVideoTracks, setLocalVideoTracks] = React.useState<TrackList>([])
-  const [remoteVideoTracks, setRemoteVideoTracks] = React.useState<StageDeviceTrackList>({})
-  const [localAudioTracks, setLocalAudioTracks] = React.useState<TrackList>([])
-  const [remoteAudioTracks, setRemoteAudioTracks] = React.useState<StageDeviceTrackList>({})
+  const [localVideoTracks, setLocalVideoTracks] = React.useState<TrackMap>([])
+  const [remoteVideoTracks, setRemoteVideoTracks] = React.useState<TrackMap>({})
+  const [localAudioTracks, setLocalAudioTracks] = React.useState<TrackMap>([])
+  const [remoteAudioTracks, setRemoteAudioTracks] = React.useState<TrackMap>({})
 
   return (
     <DispatchLocalVideoTracksContext.Provider value={setLocalVideoTracks}>
@@ -66,7 +67,7 @@ const useWebRTCLocalVideoTracks = (): TrackList => {
     throw new Error('useWebRTCLocalVideoTracks must be used within a WebRTCProvider')
   return state
 }
-const useWebRTCRemoteVideoTracks = (): StageDeviceTrackList => {
+const useWebRTCRemoteVideoTracks = (): TrackMap => {
   const state = React.useContext(RemoteVideoTracksContext)
   if (state === undefined)
     throw new Error('useWebRTCRemoteVideoTracks must be used within a WebRTCProvider')
@@ -78,7 +79,7 @@ const useWebRTCLocalAudioTracks = (): TrackList => {
     throw new Error('useWebRTCLocalAudioTracks must be used within a WebRTCProvider')
   return state
 }
-const useWebRTCRemoteAudioTracks = (): StageDeviceTrackList => {
+const useWebRTCRemoteAudioTracks = (): TrackMap => {
   const state = React.useContext(RemoteAudioTracksContext)
   if (state === undefined)
     throw new Error('useWebRTCRemoteAudioTracks must be used within a WebRTCProvider')
@@ -230,7 +231,10 @@ const WebRTCService = (): JSX.Element => {
                 } else {
                   logger.trace('Published local video track')
                   publishedIds.push(videoTrack._id)
-                  setLocalVideoTracks((prev) => [...prev, track])
+                  setLocalVideoTracks((prev) => ({
+                    ...prev,
+                    [videoTrack._id]: track
+                  }))
                 }
               }
             )
@@ -254,12 +258,12 @@ const WebRTCService = (): JSX.Element => {
               }
             }
           )
+          setLocalVideoTracks((prev) => omit(prev, publishedId))
         })
         if (addedTracks) {
           addedTracks.map((track) => {
             logger.trace('Stopping track')
             track.stop()
-            setLocalVideoTracks((prev) => prev.filter((t) => t.id !== track.id))
           })
         }
       }
@@ -319,7 +323,10 @@ const WebRTCService = (): JSX.Element => {
                 } else {
                   logger.trace('Published local audio track')
                   publishedIds.push(videoTrack._id)
-                  setLocalAudioTracks((prev) => [...prev, track])
+                  setLocalAudioTracks((prev) => ({
+                    ...prev,
+                    [videoTrack._id]: track
+                  }))
                 }
               }
             )
@@ -343,12 +350,12 @@ const WebRTCService = (): JSX.Element => {
               }
             }
           )
+          setLocalAudioTracks((prev) => omit(prev, publishedId))
         })
         if (addedTracks) {
           addedTracks.map((track) => {
             logger.trace('Stopping track')
             track.stop()
-            setLocalAudioTracks((prev) => prev.filter((t) => t.id !== track.id))
           })
         }
       }
@@ -396,7 +403,7 @@ const WebRTCService = (): JSX.Element => {
             key={stageDeviceId}
             stageDeviceId={stageDeviceId}
             onRemoteTrack={onRemoteTrack}
-            tracks={localVideoTracks}
+            tracks={Object.values(localVideoTracks)}
             currentDescription={descriptions[stageDeviceId]}
             currentCandidate={candidates[stageDeviceId]}
           />
