@@ -1,8 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { useEffect, useState } from 'react'
-import debug from 'debug'
-
-const reportError = debug('useImage').extend('error')
+import { useErrorReporting } from '@digitalstage/api-client-react'
 
 export const useSvgImage = (
     url: string,
@@ -13,6 +11,7 @@ export const useSvgImage = (
 ): HTMLImageElement | undefined => {
     const [image, setImage] = useState<HTMLImageElement>()
     const [localUrl, setLocalUrl] = useState<string>()
+    const reportError = useErrorReporting()
 
     useEffect(() => {
         fetch(url)
@@ -27,7 +26,7 @@ export const useSvgImage = (
     }, [url, color])
 
     useEffect(() => {
-        if (localUrl) {
+        if (localUrl && reportError) {
             const img: HTMLImageElement = document.createElement<'img'>('img')
 
             const onLoad = () => {
@@ -51,7 +50,7 @@ export const useSvgImage = (
                 img.removeEventListener('error', onError)
             }
         }
-    }, [localUrl, crossOrigin, width, height])
+    }, [localUrl, crossOrigin, width, height, reportError])
 
     useEffect(() => {
         setImage((prev) => {
@@ -78,6 +77,7 @@ const useImage = (
     crossOrigin?: string | null
 ): HTMLImageElement | undefined => {
     const [image, setImage] = useState<HTMLImageElement>()
+    const reportError = useErrorReporting()
 
     useEffect(() => {
         const img: HTMLImageElement = document.createElement<'img'>('img')
@@ -113,7 +113,7 @@ const useImage = (
             img.removeEventListener('load', onLoad)
             img.removeEventListener('error', onError)
         }
-    }, [url, crossOrigin, width, height, color])
+    }, [url, crossOrigin, width, height, color, reportError])
 
     useEffect(() => {
         setImage((prev) => {
@@ -131,4 +131,4 @@ const useImage = (
 
     return image
 }
-export default useImage
+export { useImage }

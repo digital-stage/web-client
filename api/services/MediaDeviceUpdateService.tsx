@@ -3,9 +3,9 @@ import { shallowEqual } from 'react-redux'
 import React from 'react'
 import { refreshMediaDevices } from './MediasoupService/util'
 import { BrowserDevice } from '@digitalstage/api-types/dist/model/browser'
-import debug from 'debug'
+import { trace } from '../logger'
 
-const report = debug('MediaDeviceUpdateService')
+const report = trace('MediaDeviceUpdateService')
 
 const MediaDeviceUpdateService = () => {
     report('RERENDER')

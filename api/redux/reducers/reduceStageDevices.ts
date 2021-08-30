@@ -1,13 +1,10 @@
 import omit from 'lodash/omit'
 import without from 'lodash/without'
-import debug from 'debug'
+
 import { ServerDeviceEvents, ServerDevicePayloads, StageDevice } from '@digitalstage/api-types'
 import { upsert } from '../utils/upsert'
 import { InternalActionTypes } from '../actions/InternalActionTypes'
 import StageDevices from '../state/StageDevices'
-
-const d = debug('reduceStageDevices')
-const err = d.extend('error')
 
 const addStageDevice = (prev: StageDevices, stageDevice: StageDevice): StageDevices => ({
     ...prev,
@@ -91,7 +88,7 @@ function reduceStageDevices(
             }
             const previousStageDevice = prev.byId[stageDevice._id]
             if (!previousStageDevice) {
-                err(`Could not find previous stage device ${stageDevice._id}`)
+                console.error(`Could not find previous stage device ${stageDevice._id}`)
                 return prev
             }
             return {

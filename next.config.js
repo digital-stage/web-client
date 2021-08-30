@@ -17,5 +17,4 @@ const SentryWebpackPluginOptions = {
 }
 
 const withTM = require('next-transpile-modules')(['konva', 'react-konva'])
-module.exports = withTM(moduleExports)
-//module.exports = process.env.NODE_ENV !== "production" ? require('@sentry/nextjs').withSentryConfig(withTM(moduleExports), SentryWebpackPluginOptions) : withTM(moduleExports)
+module.exports = !!process.env.SENTRY_DSN || !!process.env.NEXT_PUBLIC_SENTRY_DSN ? require('@sentry/nextjs').withSentryConfig(withTM(moduleExports), SentryWebpackPluginOptions) : withTM(moduleExports)

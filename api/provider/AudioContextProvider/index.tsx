@@ -1,10 +1,11 @@
 import { IAudioContext, IMediaStreamAudioDestinationNode } from 'standardized-audio-context'
-import debug from 'debug'
+
 import { useStageSelector } from '@digitalstage/api-client-react'
 import React from 'react'
 import { createBuffer, startAudioContext } from './utils'
+import { trace } from '../../logger'
 
-const report = debug('AudioContextProvider')
+const report = trace('AudioContextProvider')
 const reportWarning = report.extend('warn')
 
 type Action =

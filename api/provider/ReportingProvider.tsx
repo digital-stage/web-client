@@ -6,10 +6,11 @@ import {
     changeNotification as changeNotificationAction,
     removeNotification as removeNotificationAction,
 } from '@digitalstage/api-client-react'
-import debug from 'debug'
-import { useDispatch } from 'react-redux'
 
-const log = debug('NotificationProvider')
+import { useDispatch } from 'react-redux'
+import { trace } from '../logger'
+
+const report = trace('NotificationProvider')
 
 export interface ReportingContextT {
     addNotification: (notification: Omit<Notification, 'id'>) => string
@@ -55,7 +56,7 @@ const ReportingProvider = ({ children }: { children: React.ReactNode }) => {
 
     const addNotification = React.useCallback(
         (notification: Omit<Notification, 'id'>) => {
-            log('addNotification')
+            report('addNotification')
             const id = uuidv4()
             dispatch(
                 addNotificationAction({

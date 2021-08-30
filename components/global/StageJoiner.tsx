@@ -1,19 +1,10 @@
 import React, { useCallback, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useEmit, useNotification, useStageSelector } from '@digitalstage/api-client-react'
-import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
+import { ClientDeviceEvents, ClientDevicePayloads, ErrorCodes } from '@digitalstage/api-types'
 import Modal, { ModalButton, ModalFooter } from '../../ui/Modal'
 import TextInput from '../../ui/TextInput'
 import { useStageJoiner } from '../../api/hooks/useStageJoiner'
-import debug from 'debug'
-
-const report = debug('StageJoiner')
-const reportError = report.extend('error')
-
-interface ErrorCodes {
-    InvalidPassword: 'Invalid password'
-    NotFound: 'Not found'
-}
 
 /**
  * The StageJoiner is a usually hidden component,
@@ -53,18 +44,17 @@ const StageJoiner = (): JSX.Element | null => {
         setWrongPassword(false)
         // Try to connect
         if (emit && stageId && notify) {
-            report('Try to join')
             emit(
                 ClientDeviceEvents.JoinStage,
                 { stageId, groupId, password } as ClientDevicePayloads.JoinStage,
                 (err: string | null) => {
                     if (err) {
-                        if (err === 'Invalid password') {
+                        if (err === ErrorCodes.InvalidPassword) {
                             return setWrongPassword(true)
-                        } else if (err == 'NotFound') {
+                        } else if (err == ErrorCodes.StageNotFound) {
                             return setNotFound(true)
                         }
-                        reportError(err)
+                        console.error(err)
                         return notify({
                             kind: 'error',
                             message: err,

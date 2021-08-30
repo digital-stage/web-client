@@ -13,8 +13,8 @@ import ProfileMenu from '../components/global/ProfileMenu'
 import PlaybackOverlay from '../components/global/PlaybackOverlay'
 import StageJoiner from '../components/global/StageJoiner'
 import { useRouter } from 'next/router'
-import debug from 'debug'
 import NotificationBar from '../components/global/NotifcationBar'
+import { trace } from '../api/logger'
 
 const CheckAuthWrapper = () => {
     const { push, pathname } = useRouter()
@@ -30,7 +30,7 @@ const CheckAuthWrapper = () => {
 }
 
 export function reportWebVitals(metric: NextWebVitalsMetric) {
-    debug('Analytics')(metric)
+    trace('Analytics')(metric)
 }
 
 const MemorizedSidebar = React.memo(Sidebar)

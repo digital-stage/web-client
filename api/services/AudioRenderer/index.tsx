@@ -18,7 +18,7 @@ import {
     StageDevice,
     StageMember,
 } from '@digitalstage/api-types'
-import debug from 'debug'
+
 import useStageDevicePosition from './useStageDevicePosition'
 import useAudioTrackPosition from './useAudioTrackPosition'
 import { useAnimationFrame } from '../../hooks/useAnimationFrame'
@@ -27,8 +27,9 @@ import { useAudioLevelDispatch } from '../../provider/AudioLevelProvider'
 import { shallowEqual } from 'react-redux'
 import { useStageSelector } from './../../redux/useStageSelector'
 import { useWebRTCLocalAudioTracks, useWebRTCRemoteAudioTracks } from '../WebRTCService'
+import { trace } from '../../logger'
 
-const report = debug('useAudioRenderer')
+const report = trace('useAudioRenderer')
 
 const yRotationToVector = (degrees: number): [number, number, number] => {
     // convert degrees to radians and offset the angle so 0 points towards the listener

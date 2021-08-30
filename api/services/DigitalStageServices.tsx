@@ -4,10 +4,11 @@ import { MediaDeviceUpdateService } from './MediaDeviceUpdateService'
 import { AutoLoginService } from './AutoLoginService'
 import { MediasoupService } from './MediasoupService'
 import { WebRTCService } from './WebRTCService'
-import debug from 'debug'
-import { ConnectionService } from './ConnectionService'
 
-const report = debug('DigitalStageServices')
+import { ConnectionService } from './ConnectionService'
+import { trace } from '../logger'
+
+const report = trace('DigitalStageServices')
 
 const DigitalStageServices = () => {
     report('RERENDER')

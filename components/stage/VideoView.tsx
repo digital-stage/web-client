@@ -1,12 +1,8 @@
 import React from 'react'
 import { GoMirror } from 'react-icons/go'
 import styles from './StageView.module.scss'
-import debug from 'debug'
-
-const report = debug('VideoView')
 
 const VideoView = ({ track, className }: { track: MediaStreamTrack; className?: string }) => {
-    report('RENDER')
     const [mirrored, setMirrored] = React.useState<boolean>(false)
     const landscape = React.useMemo<boolean>(() => {
         const settings = track.getSettings()

@@ -4,11 +4,12 @@ import { setInitialized, setToken, setUser } from './actions/clientActions'
 import { InternalActionTypes } from './actions/InternalActionTypes'
 import Cookie from 'js-cookie'
 import { getUserByToken } from './actions'
-import debug from 'debug'
+
 import { batch } from 'react-redux'
 import { RootState } from '@digitalstage/api-client-react'
+import { trace } from '../logger'
 
-const report = debug('authMiddleware')
+const report = trace('authMiddleware')
 
 const initializeApplication: any = (token?: string) => async (dispatch) => {
     if (token) {

@@ -1,6 +1,6 @@
 import mediasoupClient from 'mediasoup-client'
 import { ITeckosClient } from 'teckos-client'
-import debug from 'debug'
+
 import {
     AudioTrack,
     ClientDeviceEvents,
@@ -12,9 +12,9 @@ import {
 } from '@digitalstage/api-types'
 import { Device } from 'mediasoup-client/lib/Device'
 import { SocketEvent } from 'teckos-client/dist/types'
+import { trace } from '../../logger'
 
-const report = debug('UseMediasoup:utils')
-const reportError = report.extend('error')
+const report = trace('MediasoupService').extend('utils')
 
 export enum RouterRequests {
     GetRTPCapabilities = 'rtp-capabilities',
@@ -73,7 +73,7 @@ export const createWebRTCTransport = (
                         },
                         (transportError: string) => {
                             if (transportError) {
-                                reportError(error)
+                                console.error(error)
                                 return errCallback(error)
                             }
                             return callback()
@@ -82,7 +82,7 @@ export const createWebRTCTransport = (
                 })
                 transport.on('connectionstatechange', async (state) => {
                     if (state === 'closed' || state === 'failed' || state === 'disconnected') {
-                        reportError(
+                        console.error(
                             `createWebRTCTransport:transport:${direction}:connectionstatechange - Disconnect by server side`
                         )
                     }
@@ -100,7 +100,7 @@ export const createWebRTCTransport = (
                             },
                             (produceError: string | undefined, payload: any) => {
                                 if (produceError) {
-                                    reportError(produceError)
+                                    console.error(produceError)
                                     return errCallback(produceError)
                                 }
                                 return callback({
@@ -133,7 +133,7 @@ export const pauseProducer = (
     new Promise<mediasoupClient.types.Producer>((resolve, reject) =>
         socket.emit(RouterRequests.PauseProducer, producer.id, (error?: string) => {
             if (error) {
-                reportError(error)
+                console.error(error)
                 return reject(error)
             }
             producer.pause()
@@ -149,7 +149,7 @@ export const resumeProducer = (
     new Promise<mediasoupClient.types.Producer>((resolve, reject) =>
         socket.emit(RouterRequests.ResumeProducer, producer.id, (error?: string) => {
             if (error) {
-                reportError(error)
+                console.error(error)
                 return reject(error)
             }
             producer.resume()
@@ -165,7 +165,7 @@ export const stopProducer = (
     new Promise<mediasoupClient.types.Producer>((resolve, reject) =>
         socket.emit(RouterRequests.CloseProducer, producer.id, (error?: string) => {
             if (error) {
-                reportError(error)
+                console.error(error)
                 return reject(error)
             }
             producer.close()
@@ -200,7 +200,7 @@ export const createConsumer = (
                 }
             ) => {
                 if (error) {
-                    reportError(error)
+                    console.error(error)
                     return reject(error)
                 }
                 report(
@@ -242,7 +242,7 @@ export const pauseConsumer = (
         return new Promise<mediasoupClient.types.Consumer>((resolve, reject) =>
             socket.emit(RouterRequests.PauseConsumer, consumer.id, (error?: string) => {
                 if (error) {
-                    reportError(error)
+                    console.error(error)
                     return reject(error)
                 }
                 consumer.pause()
@@ -261,7 +261,7 @@ export const closeConsumer = (
     new Promise<mediasoupClient.types.Consumer>((resolve, reject) =>
         socket.emit(RouterRequests.CloseConsumer, consumer.id, (error?: string) => {
             if (error) {
-                reportError(error)
+                console.error(error)
                 return reject(error)
             }
             consumer.close()
@@ -362,7 +362,7 @@ export const consume = (
                 await resumeConsumer(routerConnection, localConsumer)
             }
             if (localConsumer.paused) {
-                reportError(`Consumer ${localConsumer.id} is still paused after resume`)
+                console.error(`Consumer ${localConsumer.id} is still paused after resume`)
             }
             return localConsumer
         }

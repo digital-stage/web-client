@@ -2,10 +2,9 @@ import React from 'react'
 import { useEmit, useNotification, useStageSelector } from '@digitalstage/api-client-react'
 import { config } from './config'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
-import debug from 'debug'
+import { trace } from '../../logger'
 
-const report = debug('WebRTCService').extend('PeerConnection')
-const reportTrace = report.extend('trace')
+const report = trace('WebRTCService').extend('PeerConnection')
 
 const PeerConnection = ({
     stageDeviceId,
@@ -22,7 +21,6 @@ const PeerConnection = ({
     currentDescription?: RTCSessionDescriptionInit
     currentCandidate?: RTCIceCandidate | null
 }): JSX.Element => {
-    report('RENDER')
     const notify = useNotification()
     const connection = React.useRef<RTCPeerConnection>(new RTCPeerConnection(config))
     const makingOffer = React.useRef<boolean>(false)
@@ -46,10 +44,10 @@ const PeerConnection = ({
             connection.current &&
             notify
         ) {
-            reportTrace('Attaching handlers to peer connection')
+            report('Attaching handlers to peer connection')
             const peerConnection = connection.current
             peerConnection.oniceconnectionstatechange = () => {
-                reportTrace(
+                report(
                     `with ${stageDeviceId}: iceConnectionState`,
                     peerConnection.iceConnectionState
                 )
@@ -57,10 +55,10 @@ const PeerConnection = ({
             }
             peerConnection.onnegotiationneeded = async () => {
                 try {
-                    reportTrace(`to ${stageDeviceId}: Making offer`, isPolite ? 'polite' : 'rude')
+                    report(`to ${stageDeviceId}: Making offer`, isPolite ? 'polite' : 'rude')
                     makingOffer.current = true
                     await peerConnection.setLocalDescription()
-                    reportTrace(`to ${stageDeviceId}: Sending offer to ${stageDeviceId}`)
+                    report(`to ${stageDeviceId}: Sending offer to ${stageDeviceId}`)
                     return emit(ClientDeviceEvents.SendP2POffer, {
                         from: localStageDeviceId,
                         to: stageDeviceId,
@@ -104,13 +102,10 @@ const PeerConnection = ({
                 } as ClientDevicePayloads.SendIceCandidate)
 
             peerConnection.onconnectionstatechange = () => {
-                reportTrace(
-                    `with ${stageDeviceId}: connectionState`,
-                    peerConnection.connectionState
-                )
+                report(`with ${stageDeviceId}: connectionState`, peerConnection.connectionState)
             }
             peerConnection.onsignalingstatechange = () => {
-                reportTrace(`with ${stageDeviceId}: signalingState`, peerConnection.signalingState)
+                report(`with ${stageDeviceId}: signalingState`, peerConnection.signalingState)
             }
         }
     }, [
@@ -129,7 +124,7 @@ const PeerConnection = ({
                 // Detect collision
                 ignoreOffer.current = !isPolite && makingOffer.current
                 if (ignoreOffer.current) {
-                    reportTrace(
+                    report(
                         `from ${stageDeviceId}: Ignoring offer`,
                         makingOffer.current,
                         isPolite ? 'polite' : 'rude',
@@ -137,7 +132,7 @@ const PeerConnection = ({
                     )
                     return
                 }
-                reportTrace(
+                report(
                     `from ${stageDeviceId}: Accepting offer`,
                     makingOffer,
                     isPolite ? 'polite' : 'rude',
@@ -145,7 +140,7 @@ const PeerConnection = ({
                 )
                 await connection.current.setRemoteDescription(description)
                 await connection.current.setLocalDescription()
-                reportTrace(
+                report(
                     `to ${stageDeviceId}: Answering offer`,
                     makingOffer.current,
                     isPolite ? 'polite' : 'rude',
@@ -157,7 +152,7 @@ const PeerConnection = ({
                     answer: connection.current.localDescription,
                 } as ClientDevicePayloads.SendP2PAnswer)
             } else if (connection.current.signalingState === 'have-local-offer') {
-                reportTrace(
+                report(
                     `from ${stageDeviceId}: Accepting answer`,
                     makingOffer.current,
                     isPolite ? 'polite' : 'rude',
@@ -169,15 +164,16 @@ const PeerConnection = ({
         [emit, isPolite, localStageDeviceId, stageDeviceId]
     )
 
-    const handleCandidate = React.useCallback(
-        (candidate: RTCIceCandidate | null) =>
-            connection.current.addIceCandidate(candidate).catch((err) => {
-                if (!ignoreOffer.current) {
-                    throw err
-                }
-            }),
-        []
-    )
+    const handleCandidate = React.useCallback((candidate: RTCIceCandidate | null) => {
+        if (candidate === null) {
+            console.log('We have an null candidate')
+        }
+        return connection.current.addIceCandidate(candidate).catch((err) => {
+            if (!ignoreOffer.current) {
+                throw err
+            }
+        })
+    }, [])
 
     React.useEffect(() => {
         if (process.env.NODE_ENV === 'development') {

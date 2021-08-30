@@ -13,6 +13,7 @@ import { MdDeleteForever, MdEdit } from 'react-icons/md'
 import { ImEnter, ImExit } from 'react-icons/im'
 import EnterInviteCodeModal from './modals/EnterInviteCodeModal'
 import { useStageJoiner } from '../../api/hooks/useStageJoiner'
+import Link from 'next/link'
 
 const Type = {
     mediasoup: 'Web',
@@ -54,15 +55,15 @@ const StageItem = ({
                 <Tag kind="warn">{Type[stage.audioType]}</Tag>
             </a>
             <span>
+                <Link href={`/stages/${stageId}`}>
+                    <a>
+                        <MdEdit />
+                    </a>
+                </Link>
                 {isStageAdmin ? (
-                    <>
-                        <button className="round secondary small" onClick={onEditClicked}>
-                            <MdEdit />
-                        </button>
-                        <button className="round danger small" onClick={onDeleteClicked}>
-                            <MdDeleteForever />
-                        </button>
-                    </>
+                    <button className="round danger small" onClick={onDeleteClicked}>
+                        <MdDeleteForever />
+                    </button>
                 ) : (
                     <button className="round danger small" onClick={onLeaveForGoodClicked}>
                         <MdDeleteForever />

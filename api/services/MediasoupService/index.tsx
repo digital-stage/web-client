@@ -11,7 +11,7 @@ import {
     stopProducer,
     unpublishProducer,
 } from './util'
-import debug from 'debug'
+
 import React from 'react'
 import { BrowserDevice } from '@digitalstage/api-types/dist/model/browser'
 import { MediasoupAudioTrack, MediasoupVideoTrack } from '@digitalstage/api-types'
@@ -21,8 +21,9 @@ import { Producer } from 'mediasoup-client/lib/Producer'
 import { Consumer } from 'mediasoup-client/lib/Consumer'
 import { getAudioTracks } from '../../utils/getAudioTracks'
 import { omit } from 'lodash'
+import { trace } from '../../logger'
 
-const report = debug('MediasoupService')
+const report = trace('MediasoupService')
 
 type ConnectionState = {
     routerConnection: ITeckosClient

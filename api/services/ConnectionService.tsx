@@ -1,4 +1,3 @@
-import debug from 'debug'
 import { ITeckosClient, TeckosClientWithJWT } from 'teckos-client'
 import React from 'react'
 import { useNotification, useStageSelector } from '@digitalstage/api-client-react'
@@ -7,8 +6,9 @@ import getInitialDevice from '../utils/getInitialDevice'
 import registerSocketHandler from '../redux/registerSocketHandler'
 import Cookie from 'js-cookie'
 import { SocketEvent } from 'teckos-client/dist/types'
+import { trace } from '../logger'
 
-const report = debug('ConnectionService')
+const report = trace('ConnectionService')
 
 type ConnectionState = ITeckosClient
 type ConnectionDispatch = React.Dispatch<React.SetStateAction<ConnectionState>>

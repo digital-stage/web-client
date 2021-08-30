@@ -1,12 +1,13 @@
 import omit from 'lodash/omit'
 import without from 'lodash/without'
-import debug from 'debug'
+
 import { StageMember, ServerDeviceEvents, ServerDevicePayloads } from '@digitalstage/api-types'
 import { upsert } from '../utils/upsert'
 import StageMembers from '../state/StageMembers'
 import { InternalActionTypes } from '../actions/InternalActionTypes'
+import { trace } from '../../logger'
 
-const d = debug('reduceStageMembers')
+const d = trace('reduceStageMembers')
 const err = d.extend('error')
 
 const addStageMember = (prev: StageMembers, stageMember: StageMember): StageMembers => ({

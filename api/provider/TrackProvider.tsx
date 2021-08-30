@@ -1,8 +1,8 @@
 import React from 'react'
 import omit from 'lodash/omit'
-import debug from 'debug'
+import { trace } from '../logger'
 
-const report = debug('TrackProvider')
+const report = trace('TrackProvider')
 
 type Action =
     | { type: 'addLocalVideoTrack'; id: string; track: MediaStreamTrack }
