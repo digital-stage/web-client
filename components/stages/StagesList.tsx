@@ -1,5 +1,5 @@
-import { requestJoin, useEmit, useStageSelector } from '@digitalstage/api-client-react'
-import { shallowEqual, useDispatch } from 'react-redux'
+import { useEmit, useStageSelector } from '@digitalstage/api-client-react'
+import { shallowEqual } from 'react-redux'
 import React, { useState } from 'react'
 import List, { ListItem } from '../../ui/List'
 import styles from './StagesList.module.scss'
@@ -14,6 +14,7 @@ import { ImEnter, ImExit } from 'react-icons/im'
 import EnterInviteCodeModal from './modals/EnterInviteCodeModal'
 import { useStageJoiner } from '../../api/hooks/useStageJoiner'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 const Type = {
     mediasoup: 'Web',
@@ -23,43 +24,79 @@ const Type = {
 
 const StageItem = ({
     stageId,
-    onEditClicked,
     onLeaveForGoodClicked,
+    onEditStageClicked,
     onDeleteClicked,
 }: {
     stageId: string
-    onEditClicked: () => void
+    onEditStageClicked: (stageId: string) => void
     onLeaveForGoodClicked: () => void
     onDeleteClicked: () => void
 }) => {
-    const stage = useStageSelector<Stage | undefined>(
-        (state) => state.stages.byId[stageId],
-        shallowEqual
-    )
+    const { push } = useRouter()
+    const { name, admins, password, videoType, audioType } = useStageSelector<{
+        name: string
+        admins: string[]
+        password?: string
+        videoType: string
+        audioType: string
+    }>((state) => {
+        const { name, admins, password, videoType, audioType } = state.stages.byId[stageId]
+        return {
+            name,
+            admins,
+            password,
+            videoType,
+            audioType,
+        }
+    }, shallowEqual)
     const userId = useStageSelector((state) => state.globals.localUserId)
     const hasGroups = useStageSelector((state) => state.groups.byStage[stageId]?.length > 0)
     const isActive = useStageSelector(
         (state) => state.globals.stageId && state.globals.stageId === stageId
     )
-    const isStageAdmin = stage?.admins.find((id) => id === userId)
-    const { join } = useStageJoiner()
+    const isStageAdmin = React.useMemo(() => admins.find((id) => id === userId), [admins, userId])
+    const { join, leave } = useStageJoiner()
     const emit = useEmit()
+    const onListClicked = React.useCallback(() => {
+        if (hasGroups) {
+            if (isActive) {
+                return leave()
+            } else {
+                return join({ stageId, password: password })
+            }
+        }
+        push(`/stages/${stageId}`)
+    }, [hasGroups, isActive, join, leave, password, push, stageId])
+    const onEditClicked = React.useCallback(() => {
+        onEditStageClicked(stageId)
+    }, [onEditStageClicked, stageId])
     return (
-        <ListItem
-            className={isActive ? styles.active : ''}
-            onSelect={() => join({ stageId, password: stage.password })}
-        >
+        <ListItem className={isActive ? styles.active : ''} onSelect={onListClicked}>
             <a className={styles.stageName}>
-                {stage.name}
-                <Tag kind="success">{Type[stage.videoType]}</Tag>
-                <Tag kind="warn">{Type[stage.audioType]}</Tag>
+                {name}
+                <button className="round small" onClick={onEditClicked}>
+                    <MdEdit />
+                </button>
+                <Tag kind="success">{Type[videoType]}</Tag>
+                <Tag kind="warn">{Type[audioType]}</Tag>
             </a>
-            <span>
-                <Link href={`/stages/${stageId}`}>
-                    <a>
-                        <MdEdit />
-                    </a>
-                </Link>
+            <span onClick={(e) => e.stopPropagation()}>
+                {isStageAdmin ? (
+                    <Link href={`/stages/${stageId}`}>
+                        <a>
+                            <MdEdit />
+                        </a>
+                    </Link>
+                ) : null}
+                {isActive ? (
+                    <button
+                        className="round danger small"
+                        onClick={() => emit(ClientDeviceEvents.LeaveStage)}
+                    >
+                        <ImExit />
+                    </button>
+                ) : null}
                 {isStageAdmin ? (
                     <button className="round danger small" onClick={onDeleteClicked}>
                         <MdDeleteForever />
@@ -69,23 +106,6 @@ const StageItem = ({
                         <MdDeleteForever />
                     </button>
                 )}
-                {hasGroups ? (
-                    !isActive ? (
-                        <button
-                            className="round primary small"
-                            onClick={() => join({ stageId: stageId, password: stage.password })}
-                        >
-                            <ImEnter />
-                        </button>
-                    ) : (
-                        <button
-                            className="round danger small"
-                            onClick={() => emit(ClientDeviceEvents.LeaveStage)}
-                        >
-                            <ImExit />
-                        </button>
-                    )
-                ) : null}
             </span>
         </ListItem>
     )
@@ -104,7 +124,7 @@ const StagesList = () => {
                 <StageItem
                     key={stageId}
                     stageId={stageId}
-                    onEditClicked={() => requestStageEdit(stageId)}
+                    onEditStageClicked={() => requestStageEdit()}
                     onLeaveForGoodClicked={() => requestLeaveStageForGood(stageId)}
                     onDeleteClicked={() => requestStageRemoval(stageId)}
                 />
