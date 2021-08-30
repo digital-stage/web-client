@@ -45,14 +45,14 @@
     "react-redux": "^7.2.4",
     "redux": "^4.1.1",
     "redux-devtools-extension": "^2.13.9",
-    "standardized-audio-context": "^25.3.6",
+    "standardized-audio-context": "^25.3.7",
     "teckos-client": "^0.2.0",
     "webrtc-adapter": "^8.1.0",
     "yup": "^0.32.9"
   },
   "devDependencies": {
     "@babel/core": "^7.15.0",
-    "@types/node": "^16.7.6",
+    "@types/node": "^16.7.7",
     "@types/pino": "^6.3.11",
     "@types/react": "^17.0.19",
     "@welldone-software/why-did-you-render": "^6.2.1",

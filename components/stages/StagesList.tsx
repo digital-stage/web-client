@@ -9,7 +9,7 @@ import RemoveStageModal from './modals/RemoveStageModal'
 import LeaveStageForGoodModal from './modals/LeaveStageForGoodModal'
 import Tag from '../../ui/Tag'
 import Paragraph from '../../ui/Paragraph'
-import { MdDeleteForever, MdEdit } from 'react-icons/md'
+import { MdDeleteForever, MdEdit, MdMore, MdMoreHoriz } from 'react-icons/md'
 import { ImEnter, ImExit } from 'react-icons/im'
 import EnterInviteCodeModal from './modals/EnterInviteCodeModal'
 import { useStageJoiner } from '../../api/hooks/useStageJoiner'
@@ -29,7 +29,7 @@ const StageItem = ({
     onDeleteClicked,
 }: {
     stageId: string
-    onEditStageClicked: (stageId: string) => void
+    onEditStageClicked: () => void
     onLeaveForGoodClicked: () => void
     onDeleteClicked: () => void
 }) => {
@@ -68,27 +68,24 @@ const StageItem = ({
         }
         push(`/stages/${stageId}`)
     }, [hasGroups, isActive, join, leave, password, push, stageId])
-    const onEditClicked = React.useCallback(() => {
-        onEditStageClicked(stageId)
-    }, [onEditStageClicked, stageId])
+    const onEditClicked = React.useCallback(
+        (e) => {
+            e.stopPropagation()
+            onEditStageClicked()
+        },
+        [onEditStageClicked]
+    )
     return (
         <ListItem className={isActive ? styles.active : ''} onSelect={onListClicked}>
             <a className={styles.stageName}>
                 {name}
+                <Tag kind="success">{Type[videoType]}</Tag>
+                <Tag kind="warn">{Type[audioType]}</Tag>
                 <button className="round small" onClick={onEditClicked}>
                     <MdEdit />
                 </button>
-                <Tag kind="success">{Type[videoType]}</Tag>
-                <Tag kind="warn">{Type[audioType]}</Tag>
             </a>
             <span onClick={(e) => e.stopPropagation()}>
-                {isStageAdmin ? (
-                    <Link href={`/stages/${stageId}`}>
-                        <a>
-                            <MdEdit />
-                        </a>
-                    </Link>
-                ) : null}
                 {isActive ? (
                     <button
                         className="round danger small"
@@ -96,6 +93,13 @@ const StageItem = ({
                     >
                         <ImExit />
                     </button>
+                ) : null}
+                {isStageAdmin ? (
+                    <Link href={`/stages/${stageId}`}>
+                        <button className="round small">
+                            <MdMoreHoriz />
+                        </button>
+                    </Link>
                 ) : null}
                 {isStageAdmin ? (
                     <button className="round danger small" onClick={onDeleteClicked}>
@@ -124,7 +128,7 @@ const StagesList = () => {
                 <StageItem
                     key={stageId}
                     stageId={stageId}
-                    onEditStageClicked={() => requestStageEdit()}
+                    onEditStageClicked={() => requestStageEdit(stageId)}
                     onLeaveForGoodClicked={() => requestLeaveStageForGood(stageId)}
                     onDeleteClicked={() => requestStageRemoval(stageId)}
                 />
