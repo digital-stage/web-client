@@ -106,7 +106,7 @@ const VideoTrackView = ({
                         {stats.jitter ? <span>{`Jitter ${stats.jitter}/s`}</span> : null}
                         {stats.jitterBufferDelay && stats.jitterBufferEmittedCount ? (
                             <span>{`Jitterbuffer ${
-                                stats.jitterBufferDelay / stats.jitterBufferEmittedCount
+                                (stats.jitterBufferDelay / stats.jitterBufferEmittedCount) * 1000
                             }ms`}</span>
                         ) : null}
                     </span>
