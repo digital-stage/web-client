@@ -28,6 +28,7 @@ import { shallowEqual } from 'react-redux'
 import { useStageSelector } from './../../redux/useStageSelector'
 import { useWebRTCLocalAudioTracks, useWebRTCRemoteAudioTracks } from '../WebRTCService'
 import { trace } from '../../logger'
+import { useAudioConsumers, useAudioProducers } from '../MediasoupService'
 
 const report = trace('useAudioRenderer')
 
@@ -105,8 +106,8 @@ const AudioTrackRenderer = ({
                 : undefined,
         shallowEqual
     )
-    const mediasoupAudioConsumers = useStageSelector((state) => state.mediasoup.audioConsumers.byId)
-    const mediasoupAudioProducers = useStageSelector((state) => state.mediasoup.audioProducers.byId)
+    const mediasoupAudioConsumers = useAudioConsumers()
+    const mediasoupAudioProducers = useAudioProducers()
     const localWebRTCTracks = useWebRTCLocalAudioTracks()
     const remoteWebRTCTracks = useWebRTCRemoteAudioTracks()
     const audioRef = useRef<HTMLAudioElement>(null)

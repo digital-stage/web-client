@@ -9,9 +9,11 @@ const RemoveStageModal = ({
     stageId,
     open,
     onClose,
+    onDelete,
 }: {
     stageId?: string
     open: boolean
+    onDelete?: () => void
     onClose: () => void
 }) => {
     const emit = useEmit()
@@ -35,6 +37,7 @@ const RemoveStageModal = ({
                     if (err) {
                         setError(err)
                     } else {
+                        onDelete()
                         onClose()
                     }
                     setDeleting(false)

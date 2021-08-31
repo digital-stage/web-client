@@ -7,6 +7,7 @@ const Stage = () => {
     const { replace } = useRouter()
     const ready = useStageSelector((state) => state.globals.ready)
     const stageId = useStageSelector((state) => state.globals.stageId)
+
     useEffect(() => {
         if (ready && !stageId) {
             replace('/stages')

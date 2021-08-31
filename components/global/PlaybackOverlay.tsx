@@ -1,6 +1,5 @@
 import React from 'react'
 
-import styles from './PlaybackOverlay.module.css'
 import {
     useAudioContext,
     useAudioContextDispatch,
@@ -20,7 +19,7 @@ const PlaybackOverlay = (): JSX.Element | null => {
                 role="button"
                 tabIndex={0}
                 onClick={() => dispatch({ type: 'start', dispatch })}
-                className={styles.overlay}
+                className="topoverlay"
             >
                 <FaPlay />
             </div>

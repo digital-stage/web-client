@@ -33,6 +33,17 @@ export function reportWebVitals(metric: NextWebVitalsMetric) {
     trace('Analytics')(metric)
 }
 
+const TitleProvider = (): JSX.Element => {
+    const name = useStageSelector((state) =>
+        state.globals.stageId ? state.stages.byId[state.globals.stageId].name : undefined
+    )
+    return (
+        <Head>
+            <title>{name || 'Digital Stage'}</title>
+        </Head>
+    )
+}
+
 const MemorizedSidebar = React.memo(Sidebar)
 
 function MyApp({ Component, pageProps }: AppProps) {
@@ -43,10 +54,13 @@ function MyApp({ Component, pageProps }: AppProps) {
                     name="viewport"
                     content="width=device-width, initial-scale=1.0, shrink-to-fit=no, user-scalable=no"
                 />
+                <link rel="icon" href="/favicon.ico" />
                 <meta name="Apple-mobile-web-app-capable" content="yes" />
                 <meta name="Apple-mobile-web-app-status-bar-style" content="black" />
+                <meta name="description" content="Digital Stage" />
             </Head>
             <DigitalStageProvider>
+                <TitleProvider />
                 <div className="app">
                     <Background />
                     <ConnectionOverlay>

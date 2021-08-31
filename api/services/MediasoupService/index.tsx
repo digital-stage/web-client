@@ -83,6 +83,18 @@ const useVideoConsumers = (): ConsumerList => {
         throw new Error('useVideoConsumers must be used within a MediasoupProvider')
     return state
 }
+const useAudioProducers = (): ProducerList => {
+    const state = React.useContext(AudioProducerContext)
+    if (state === undefined)
+        throw new Error('useAudioProducers must be used within a MediasoupProvider')
+    return state
+}
+const useAudioConsumers = (): ConsumerList => {
+    const state = React.useContext(AudioConsumerContext)
+    if (state === undefined)
+        throw new Error('useAudioConsumers must be used within a MediasoupProvider')
+    return state
+}
 
 const MediasoupService = () => {
     report('RERENDER')
@@ -130,12 +142,19 @@ const MediasoupService = () => {
     const stageId = useStageSelector<string>((state) => state.globals.stageId)
     const routerUrl = useStageSelector<string>((state) => {
         if (state.globals.stageId) {
-            const stage = state.stages.byId[state.globals.stageId]
-            if (stage.videoType === 'mediasoup' || stage.audioType === 'mediasoup') {
-                return `${stage.mediasoup.url}:${stage.mediasoup.port}`
+            const { audioType, videoType, mediasoup } = state.stages.byId[state.globals.stageId]
+            if (videoType === 'mediasoup' || audioType === 'mediasoup') {
+                return `${mediasoup.url}:${mediasoup.port}`
             }
         }
+        return undefined
     })
+    const audioType = useStageSelector((state) =>
+        state.globals.stageId ? state.stages.byId[state.globals.stageId].audioType : undefined
+    )
+    const videoType = useStageSelector((state) =>
+        state.globals.stageId ? state.stages.byId[state.globals.stageId].videoType : undefined
+    )
     const [connection, setConnection] = React.useState<ConnectionState>(undefined)
     React.useEffect(() => {
         if (routerUrl && reportError) {
@@ -233,7 +252,15 @@ const MediasoupService = () => {
 
     const setVideoProducers = React.useContext(DispatchVideoProducerContext)
     React.useEffect(() => {
-        if (emit && reportError && connection && stageId && !useP2P && sendVideo) {
+        if (
+            emit &&
+            reportError &&
+            connection &&
+            stageId &&
+            videoType === 'mediasoup' &&
+            !useP2P &&
+            sendVideo
+        ) {
             const { sendTransport } = connection
             let abort: boolean = false
             let producers: Producer[] = []
@@ -283,6 +310,7 @@ const MediasoupService = () => {
         useP2P,
         sendVideo,
         inputVideoDeviceId,
+        videoType,
     ])
 
     const audioTracks = useStageSelector<MediasoupAudioTrack[]>((state) =>
@@ -333,7 +361,15 @@ const MediasoupService = () => {
 
     const setAudioProducers = React.useContext(DispatchAudioProducerContext)
     React.useEffect(() => {
-        if (emit && reportError && connection && stageId && !useP2P && sendAudio) {
+        if (
+            emit &&
+            reportError &&
+            connection &&
+            stageId &&
+            audioType === 'mediasoup' &&
+            !useP2P &&
+            sendAudio
+        ) {
             const { sendTransport } = connection
             let abort: boolean = false
             let producers: Producer[] = []
@@ -393,9 +429,17 @@ const MediasoupService = () => {
         noiseSuppression,
         sampleRate,
         setAudioProducers,
+        audioType,
     ])
 
     return null
 }
 MediasoupService.whyDidYouRender = true
-export { MediasoupService, MediasoupProvider, useVideoProducers, useVideoConsumers }
+export {
+    MediasoupService,
+    MediasoupProvider,
+    useVideoProducers,
+    useVideoConsumers,
+    useAudioConsumers,
+    useAudioProducers,
+}

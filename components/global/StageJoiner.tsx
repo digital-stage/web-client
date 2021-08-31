@@ -1,7 +1,12 @@
 import React, { useCallback, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useEmit, useNotification, useStageSelector } from '@digitalstage/api-client-react'
-import { ClientDeviceEvents, ClientDevicePayloads, ErrorCodes } from '@digitalstage/api-types'
+import {
+    ClientDeviceEvents,
+    ClientDevicePayloads,
+    ErrorCodes,
+    Group,
+} from '@digitalstage/api-types'
 import Modal, { ModalButton, ModalFooter } from '../../ui/Modal'
 import TextInput from '../../ui/TextInput'
 import { useStageJoiner } from '../../api/hooks/useStageJoiner'
@@ -28,6 +33,7 @@ const StageJoiner = (): JSX.Element | null => {
     const [retries, setRetries] = useState<number>(0)
     const [wrongPassword, setWrongPassword] = useState<boolean>(false)
     const [notFound, setNotFound] = useState<boolean>(false)
+    const [groupMissing, setGroupMissing] = useState<boolean>(false)
     const router = useRouter()
     const [intPassword, setIntPassword] = useState<string>()
     const notify = useNotification()
@@ -35,6 +41,7 @@ const StageJoiner = (): JSX.Element | null => {
     const clear = useCallback(() => {
         setNotFound(false)
         setWrongPassword(false)
+        setGroupMissing(false)
         setRetries(0)
         resetJoin()
     }, [resetJoin])
@@ -42,6 +49,7 @@ const StageJoiner = (): JSX.Element | null => {
     const handleJoinRequest = useCallback(() => {
         setNotFound(false)
         setWrongPassword(false)
+        setGroupMissing(false)
         // Try to connect
         if (emit && stageId && notify) {
             emit(
@@ -53,6 +61,8 @@ const StageJoiner = (): JSX.Element | null => {
                             return setWrongPassword(true)
                         } else if (err == ErrorCodes.StageNotFound) {
                             return setNotFound(true)
+                        } else if (err == ErrorCodes.GroupIdMissing) {
+                            return setGroupMissing(true)
                         }
                         console.error(err)
                         return notify({
@@ -73,6 +83,10 @@ const StageJoiner = (): JSX.Element | null => {
         }
     }, [ready, handleJoinRequest])
 
+    const groups = useStageSelector<Group[]>((state) =>
+        stageId ? state.groups.byStage[stageId].map((id) => state.groups.byId[id]) : []
+    )
+
     if (stageId)
         return (
             <>
@@ -80,6 +94,35 @@ const StageJoiner = (): JSX.Element | null => {
                     <h4>Bühne nicht gefunden</h4>
                     <ModalFooter>
                         <ModalButton onClick={() => setNotFound(false)}>Ok</ModalButton>
+                    </ModalFooter>
+                </Modal>
+                <Modal open={groupMissing} onClose={() => setGroupMissing(false)}>
+                    <h4>Bitte wähle eine Gruppe:</h4>
+                    {groups.map((group) => (
+                        <button
+                            key={group._id}
+                            className=""
+                            onClick={() =>
+                                join({
+                                    stageId,
+                                    groupId: group._id,
+                                    password,
+                                })
+                            }
+                        >
+                            {group.name}
+                        </button>
+                    ))}
+                    <ModalFooter>
+                        <ModalButton
+                            className="danger"
+                            onClick={() => {
+                                setGroupMissing(false)
+                                clear()
+                            }}
+                        >
+                            Abbrechen
+                        </ModalButton>
                     </ModalFooter>
                 </Modal>
                 <Modal open={wrongPassword} onClose={() => clear()}>
