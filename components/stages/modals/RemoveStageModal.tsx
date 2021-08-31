@@ -44,7 +44,7 @@ const RemoveStageModal = ({
                 }
             )
         }
-    }, [emit, onClose, stageId])
+    }, [emit, onClose, onDelete, stageId])
     if (stageId) {
         return (
             <Modal open={open} onClose={onClose} size="small">
