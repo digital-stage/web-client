@@ -5,10 +5,9 @@ import { StageMember, ServerDeviceEvents, ServerDevicePayloads } from '@digitals
 import { upsert } from '../utils/upsert'
 import StageMembers from '../state/StageMembers'
 import { InternalActionTypes } from '../actions/InternalActionTypes'
-import { trace } from '../../logger'
+import { logger } from '../../logger'
 
-const d = trace('reduceStageMembers')
-const err = d.extend('error')
+const {reportError} = logger('reduceStageMembers')
 
 const addStageMember = (prev: StageMembers, stageMember: StageMember): StageMembers => ({
     ...prev,
@@ -74,7 +73,7 @@ function reduceStageMembers(
             }
             const previousStageMember = prev.byId[stageMember._id]
             if (!previousStageMember) {
-                err(`Could not find previous stage member ${stageMember._id}`)
+                reportError(`Could not find previous stage member ${stageMember._id}`)
                 return prev
             }
             if (stageMember.groupId && stageMember.groupId !== previousStageMember.groupId) {

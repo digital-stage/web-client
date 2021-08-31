@@ -6,9 +6,9 @@ import getInitialDevice from '../utils/getInitialDevice'
 import registerSocketHandler from '../redux/registerSocketHandler'
 import Cookie from 'js-cookie'
 import { SocketEvent } from 'teckos-client/dist/types'
-import { trace } from '../logger'
+import { logger } from '../logger'
 
-const report = trace('ConnectionService')
+const { trace } = logger('ConnectionService')
 
 type ConnectionState = ITeckosClient
 type ConnectionDispatch = React.Dispatch<React.SetStateAction<ConnectionState>>
@@ -39,7 +39,7 @@ const useEmit = (): ((event: SocketEvent, ...args: any[]) => boolean) => {
 }
 
 const ConnectionService = (): JSX.Element => {
-    report('RENDER')
+    trace('RENDER')
     const userId = useStageSelector<string | undefined>((state) => state.auth.user?._id)
     const token = useStageSelector<string | undefined>((state) => state.auth.token)
     const dispatch = useDispatch()
@@ -55,7 +55,7 @@ const ConnectionService = (): JSX.Element => {
             getInitialDevice(true, uuid)
                 .then((initialDevice) => {
                     if (isActive) {
-                        report('Creating new connection to API server')
+                        trace('Creating new connection to API server')
                         return new TeckosClientWithJWT(
                             process.env.NEXT_PUBLIC_API_URL,
                             {
@@ -80,11 +80,11 @@ const ConnectionService = (): JSX.Element => {
                 .then((conn) => {
                     if (isActive) {
                         conn.on('reconnect', () => {
-                            report('RECONNECT')
+                            trace('RECONNECT')
                             //setConnection(conn)
                         })
                         conn.on('connect', () => {
-                            report('CONNECTED?')
+                            trace('CONNECTED?')
                         })
                         conn.on('disconnect', () => {
                             //setConnection(undefined)
@@ -103,7 +103,7 @@ const ConnectionService = (): JSX.Element => {
             return () => {
                 isActive = false
                 if (conn) {
-                    report('Closing connection to API server')
+                    trace('Closing connection to API server')
                     conn.disconnect()
                 }
                 setConnection(undefined)
@@ -113,5 +113,4 @@ const ConnectionService = (): JSX.Element => {
 
     return null
 }
-ConnectionService.whyDidYouRender = true
 export { ConnectionProvider, ConnectionService, useConnection, useEmit, ConnectionStateContext }

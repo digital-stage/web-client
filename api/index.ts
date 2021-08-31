@@ -14,7 +14,7 @@ import { useVideoConsumers } from './services/MediasoupService'
 import { useVideoProducers } from './services/MediasoupService'
 import { useEmit, useConnection, ConnectionStateContext } from './services/ConnectionService'
 import { useErrorReporting } from './hooks/useErrorReporting'
-import { trace } from './logger'
+import { logger } from './logger'
 
 export * from './redux/actions'
 export * from './redux/state'
@@ -37,5 +37,5 @@ export {
     useVideoConsumers,
     useErrorReporting,
     ConnectionStateContext,
-    trace,
+    logger,
 }

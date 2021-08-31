@@ -1,12 +1,10 @@
 import { IAudioContext, IMediaStreamAudioDestinationNode } from 'standardized-audio-context'
 
-import { useStageSelector } from '@digitalstage/api-client-react'
 import React from 'react'
 import { createBuffer, startAudioContext } from './utils'
-import { trace } from '../../logger'
+import { logger } from '../../logger'
 
-const report = trace('AudioContextProvider')
-const reportWarning = report.extend('warn')
+const { trace, warn } = logger('AudioContextProvider')
 
 type Action =
     | { type: 'start'; sampleRate?: number; sinkId?: string; dispatch: Dispatch }
@@ -26,7 +24,7 @@ const AudioContextDispatchContext = React.createContext<Dispatch>(undefined)
 function audioContextReducer(prevState: State, action: Action): State {
     switch (action.type) {
         case 'start': {
-            report('Starting audio context')
+            trace('Starting audio context')
             let audioContext = prevState.audioContext
             let destination = prevState.destination
             let player = prevState.player || new Audio()
@@ -36,8 +34,8 @@ function audioContextReducer(prevState: State, action: Action): State {
             ) {
                 // (Re)creation necessary
                 if (audioContext) {
-                    report('Closing audio context')
-                    audioContext.close().catch((err) => reportWarning(err))
+                    trace('Closing audio context')
+                    audioContext.close().catch((err) => warn(err))
                     audioContext.onstatechange = undefined
                 }
                 audioContext = createBuffer(action.sampleRate)
@@ -54,7 +52,7 @@ function audioContextReducer(prevState: State, action: Action): State {
             if (audioContext.state === 'running') {
                 action.dispatch({ type: 'setRunning', running: true })
             } else {
-                startAudioContext(audioContext, player).catch((err) => reportWarning(err))
+                startAudioContext(audioContext, player).catch((err) => warn(err))
             }
             return {
                 ...prevState,
@@ -64,7 +62,7 @@ function audioContextReducer(prevState: State, action: Action): State {
             }
         }
         case 'setSinkId': {
-            report('Specifying sink ID', action.sinkId)
+            trace('Specifying sink ID', action.sinkId)
             const player = prevState.player || new Audio()
             if (action.sinkId && (player as any).sinkId !== undefined) {
                 ;(player as any).setSinkId(action.sinkId)
@@ -75,7 +73,7 @@ function audioContextReducer(prevState: State, action: Action): State {
             }
         }
         case 'setRunning': {
-            report(`Now ${action.running ? `running` : `suspended`}`)
+            trace(`Now ${action.running ? `running` : `suspended`}`)
             return {
                 ...prevState,
                 running: action.running,
@@ -89,53 +87,13 @@ function audioContextReducer(prevState: State, action: Action): State {
 
 const AudioContextProvider = ({ children }: { children: React.ReactNode }): JSX.Element => {
     const [state, dispatch] = React.useReducer(audioContextReducer, {})
-    const sinkId = useStageSelector<string | undefined>((state) =>
-        state.globals.localDeviceId
-            ? (state.devices.byId[state.globals.localDeviceId].outputAudioDeviceId as never)
-            : undefined
-    )
-
-    React.useEffect(() => {
-        dispatch({ type: 'start', dispatch })
-    }, [])
-
-    React.useEffect(() => {
-        if (sinkId) {
-            report('BLABLABLA')
-            dispatch({ type: 'setSinkId', sinkId })
-        }
-    }, [sinkId])
-
-    /**
-     * Try to start audio context with touch gesture on mobile devices
-     */
-    React.useEffect(() => {
-        if (state.audioContext && state.player && !state.running) {
-            report('Adding touch handler to start audio context')
-            const resume = () =>
-                startAudioContext(state.audioContext, state.player)
-                    .then(() => report('Started audio context via touch gesture'))
-                    .catch((err) => reportWarning(err))
-
-            document.body.addEventListener('touchstart', resume, false)
-            document.body.addEventListener('touchend', resume, false)
-            return () => {
-                report('Removed touch handler to start audio context')
-                document.body.removeEventListener('touchstart', resume)
-                document.body.removeEventListener('touchend', resume)
-            }
-        }
-        return undefined
-    }, [state.audioContext, state.player, state.running])
-
-    const value = React.useMemo<State>(() => state, [state])
 
     return (
-        <AudioContextDispatchContext.Provider value={dispatch}>
-            <AudioContextStateContext.Provider value={value}>
-                {children}
-            </AudioContextStateContext.Provider>
-        </AudioContextDispatchContext.Provider>
+      <AudioContextDispatchContext.Provider value={dispatch}>
+          <AudioContextStateContext.Provider value={state}>
+              {children}
+          </AudioContextStateContext.Provider>
+      </AudioContextDispatchContext.Provider>
     )
 }
 
@@ -154,5 +112,6 @@ const useAudioContextDispatch = () => {
     }
     return dispatch
 }
+
 
 export { useAudioContext, useAudioContextDispatch, AudioContextProvider }

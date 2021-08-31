@@ -14,7 +14,7 @@ import PlaybackOverlay from '../components/global/PlaybackOverlay'
 import StageJoiner from '../components/global/StageJoiner'
 import { useRouter } from 'next/router'
 import NotificationBar from '../components/global/NotifcationBar'
-import { trace } from '../api/logger'
+import { logger } from '../api/logger'
 
 const CheckAuthWrapper = () => {
     const { push, pathname } = useRouter()
@@ -30,7 +30,7 @@ const CheckAuthWrapper = () => {
 }
 
 export function reportWebVitals(metric: NextWebVitalsMetric) {
-    trace('Analytics')(metric)
+    logger('Analytics').trace(metric)
 }
 
 const TitleProvider = (): JSX.Element => {

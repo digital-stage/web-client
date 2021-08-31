@@ -7,17 +7,17 @@ import { getUserByToken } from './actions'
 
 import { batch } from 'react-redux'
 import { RootState } from '@digitalstage/api-client-react'
-import { trace } from '../logger'
+import { logger } from '../logger'
 
-const report = trace('authMiddleware')
+const { trace } = logger('authMiddleware')
 
 const initializeApplication: any = (token?: string) => async (dispatch) => {
     if (token) {
         try {
-            report('Verifying token from cookie')
+            trace('Verifying token from cookie')
             const user = await getUserByToken(token)
             if (user) {
-                report('Auto logged in')
+                trace('Auto logged in')
                 batch(() => {
                     dispatch(setToken(token))
                     dispatch(setUser(user))

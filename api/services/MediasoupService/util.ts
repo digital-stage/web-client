@@ -12,9 +12,9 @@ import {
 } from '@digitalstage/api-types'
 import { Device } from 'mediasoup-client/lib/Device'
 import { SocketEvent } from 'teckos-client/dist/types'
-import { trace } from '../../logger'
+import { logger } from '../../logger'
 
-const report = trace('MediasoupService').extend('utils')
+const { trace, reportError } = logger('MediasoupService:utils')
 
 export enum RouterRequests {
     GetRTPCapabilities = 'rtp-capabilities',
@@ -58,13 +58,13 @@ export const createWebRTCTransport = (
                 if (error) {
                     return reject(error)
                 }
-                report('createWebRTCTransport')
+                trace('createWebRTCTransport')
                 const transport: mediasoupClient.types.Transport =
                     direction === 'send'
                         ? device.createSendTransport(transportOptions)
                         : device.createRecvTransport(transportOptions)
                 transport.on('connect', async ({ dtlsParameters }, callback, errCallback) => {
-                    report(`createWebRTCTransport:transport:${direction}:connect`)
+                    trace(`createWebRTCTransport:transport:${direction}:connect`)
                     routerConnection.emit(
                         RouterRequests.ConnectTransport,
                         {
@@ -73,7 +73,7 @@ export const createWebRTCTransport = (
                         },
                         (transportError: string) => {
                             if (transportError) {
-                                console.error(error)
+                                reportError(error)
                                 return errCallback(error)
                             }
                             return callback()
@@ -82,14 +82,14 @@ export const createWebRTCTransport = (
                 })
                 transport.on('connectionstatechange', async (state) => {
                     if (state === 'closed' || state === 'failed' || state === 'disconnected') {
-                        console.error(
+                        reportError(
                             `createWebRTCTransport:transport:${direction}:connectionstatechange - Disconnect by server side`
                         )
                     }
                 })
                 if (direction === 'send') {
                     transport.on('produce', async (producer, callback, errCallback) => {
-                        report(`createWebRTCTransport:transport:${direction}:produce`)
+                        trace(`createWebRTCTransport:transport:${direction}:produce`)
                         routerConnection.emit(
                             RouterRequests.CreateProducer,
                             {
@@ -100,7 +100,7 @@ export const createWebRTCTransport = (
                             },
                             (produceError: string | undefined, payload: any) => {
                                 if (produceError) {
-                                    console.error(produceError)
+                                    reportError(produceError)
                                     return errCallback(produceError)
                                 }
                                 return callback({
@@ -133,11 +133,11 @@ export const pauseProducer = (
     new Promise<mediasoupClient.types.Producer>((resolve, reject) =>
         socket.emit(RouterRequests.PauseProducer, producer.id, (error?: string) => {
             if (error) {
-                console.error(error)
+                reportError(error)
                 return reject(error)
             }
             producer.pause()
-            report(`Paused producer ${producer.id}`)
+            trace(`Paused producer ${producer.id}`)
             return resolve(producer)
         })
     )
@@ -149,11 +149,11 @@ export const resumeProducer = (
     new Promise<mediasoupClient.types.Producer>((resolve, reject) =>
         socket.emit(RouterRequests.ResumeProducer, producer.id, (error?: string) => {
             if (error) {
-                console.error(error)
+                reportError(error)
                 return reject(error)
             }
             producer.resume()
-            report(`Resumed producer ${producer.id}`)
+            trace(`Resumed producer ${producer.id}`)
             return resolve(producer)
         })
     )
@@ -165,11 +165,11 @@ export const stopProducer = (
     new Promise<mediasoupClient.types.Producer>((resolve, reject) =>
         socket.emit(RouterRequests.CloseProducer, producer.id, (error?: string) => {
             if (error) {
-                console.error(error)
+                reportError(error)
                 return reject(error)
             }
             producer.close()
-            report(`Stopped producer ${producer.id}`)
+            trace(`Stopped producer ${producer.id}`)
             return resolve(producer)
         })
     )
@@ -200,15 +200,15 @@ export const createConsumer = (
                 }
             ) => {
                 if (error) {
-                    console.error(error)
+                    reportError(error)
                     return reject(error)
                 }
-                report(
+                trace(
                     `Server created consumer ${data.id} for producer ${data.producerId}, consuming now`
                 )
                 return transport.consume(data).then(async (consumer) => {
                     if (data.paused) {
-                        report('Pausing consumer, since it is paused server-side too')
+                        trace('Pausing consumer, since it is paused server-side too')
                         await consumer.pause()
                     }
                     return resolve(consumer)
@@ -226,7 +226,7 @@ export const resumeConsumer = (
             routerConnection.emit(RouterRequests.ResumeConsumer, consumer.id, (error?: string) => {
                 if (error) return reject(error)
                 consumer.resume()
-                report(`Resumed consumer ${consumer.id}`)
+                trace(`Resumed consumer ${consumer.id}`)
                 return resolve(consumer)
             })
         )
@@ -242,11 +242,11 @@ export const pauseConsumer = (
         return new Promise<mediasoupClient.types.Consumer>((resolve, reject) =>
             socket.emit(RouterRequests.PauseConsumer, consumer.id, (error?: string) => {
                 if (error) {
-                    console.error(error)
+                    reportError(error)
                     return reject(error)
                 }
                 consumer.pause()
-                report(`Paused consumer ${consumer.id}`)
+                trace(`Paused consumer ${consumer.id}`)
                 return resolve(consumer)
             })
         )
@@ -261,11 +261,11 @@ export const closeConsumer = (
     new Promise<mediasoupClient.types.Consumer>((resolve, reject) =>
         socket.emit(RouterRequests.CloseConsumer, consumer.id, (error?: string) => {
             if (error) {
-                console.error(error)
+                reportError(error)
                 return reject(error)
             }
             consumer.close()
-            report(`Closed consumer ${consumer.id}`)
+            trace(`Closed consumer ${consumer.id}`)
             return resolve(consumer)
         })
     )
@@ -274,11 +274,11 @@ export const produce = (
     sendTransport: mediasoupClient.types.Transport,
     track: MediaStreamTrack
 ): Promise<mediasoupClient.types.Producer> => {
-    report(`Creating producer for track ${track.id}`)
+    trace(`Creating producer for track ${track.id}`)
     if (!track) throw new Error('Could not create producer: Track is undefined')
     return createProducer(sendTransport, track).then((producer) => {
         if (producer.paused) {
-            report(`Producer ${producer.id} is paused`)
+            trace(`Producer ${producer.id} is paused`)
         }
         return producer
     })
@@ -353,16 +353,16 @@ export const consume = (
     device: mediasoupClient.Device,
     producerId: string
 ): Promise<mediasoupClient.types.Consumer> => {
-    report(`Consuming ${producerId}`)
+    trace(`Consuming ${producerId}`)
     return createConsumer(routerConnection, device, receiveTransport, producerId).then(
         async (localConsumer) => {
-            report(`Created consumer ${localConsumer.id} to consume ${producerId}`)
+            trace(`Created consumer ${localConsumer.id} to consume ${producerId}`)
             if (localConsumer.paused) {
-                report(`Consumer ${localConsumer.id} is paused, try to resume it`)
+                trace(`Consumer ${localConsumer.id} is paused, try to resume it`)
                 await resumeConsumer(routerConnection, localConsumer)
             }
             if (localConsumer.paused) {
-                console.error(`Consumer ${localConsumer.id} is still paused after resume`)
+                reportError(`Consumer ${localConsumer.id} is still paused after resume`)
             }
             return localConsumer
         }

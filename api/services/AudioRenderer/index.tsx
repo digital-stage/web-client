@@ -27,10 +27,10 @@ import { useAudioLevelDispatch } from '../../provider/AudioLevelProvider'
 import { shallowEqual } from 'react-redux'
 import { useStageSelector } from './../../redux/useStageSelector'
 import { useWebRTCLocalAudioTracks, useWebRTCRemoteAudioTracks } from '../WebRTCService'
-import { trace } from '../../logger'
+import { logger } from '../../logger'
 import { useAudioConsumers, useAudioProducers } from '../MediasoupService'
 
-const report = trace('useAudioRenderer')
+const { trace } = logger('useAudioRenderer')
 
 const yRotationToVector = (degrees: number): [number, number, number] => {
     // convert degrees to radians and offset the angle so 0 points towards the listener
@@ -61,7 +61,7 @@ const useLevelPublishing = (
     const [array] = useState<Uint8Array>(new Uint8Array(analyserNode.frequencyBinCount))
     useEffect(() => {
         if (id && dispatch && array && enabled) {
-            report('Registering level for ' + id)
+            trace('Registering level for ' + id)
             dispatch({ type: 'add', id: id, level: array.buffer })
             return () => {
                 dispatch({ type: 'remove', id: id })
@@ -145,7 +145,7 @@ const AudioTrackRenderer = ({
                         return remoteWebRTCTracks[audioTrack.trackId]
                 }
             }
-            report('NO TRACK FOUND')
+            trace('NO TRACK FOUND')
             return prev
         })
     }, [
@@ -645,7 +645,6 @@ const StageRenderer = ({
 }
 
 const AudioRenderService = () => {
-    report('RERENDER')
     const stageId = useStageSelector<string | undefined>((state) => state.globals.stageId)
     const { audioContext, destination } = useAudioContext()
     const localDeviceId = useStageSelector<string | undefined>(

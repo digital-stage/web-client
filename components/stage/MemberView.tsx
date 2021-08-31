@@ -3,11 +3,11 @@ import styles from './StageView.module.scss'
 import { VideoView } from './VideoView'
 import { Avatar } from './Avatar'
 import {
-    useWebRTCLocalVideoTracks,
-    useWebRTCRemoteVideoTracks,
     useStageSelector,
     useVideoConsumers,
     useVideoProducers,
+    useWebRTCLocalVideoTracks,
+    useWebRTCRemoteVideoTracks,
 } from '@digitalstage/api-client-react'
 import { ConductorButton } from './ConductorButton'
 import { useWebRTCStats } from '../../api/services/WebRTCService'
@@ -28,7 +28,7 @@ const useStageMemberTracks = (stageMemberId: string) => {
     const localVideoTracks = useWebRTCLocalVideoTracks()
     const remoteVideoTracks = useWebRTCRemoteVideoTracks()
 
-    const videos = React.useMemo(() => {
+    return React.useMemo(() => {
         return videoTracks.reduce<MediaStreamTrack[]>((prev, videoTrack) => {
             if (videoProducers[videoTrack._id]) {
                 return [...prev, videoProducers[videoTrack._id].track]
@@ -44,7 +44,6 @@ const useStageMemberTracks = (stageMemberId: string) => {
             return prev
         }, [])
     }, [localVideoTracks, remoteVideoTracks, videoConsumers, videoProducers, videoTracks])
-    return React.useMemo(() => videos, [videos])
 }
 
 const MemoizedVideoView = React.memo(VideoView)
@@ -67,7 +66,6 @@ const VideoTrackView = ({
     hasCurrentUserAdminRights: boolean
 }) => {
     const stats = useWebRTCStats(track.id)
-    console.log(stats)
     return (
         <div
             key={track.id}

@@ -3,12 +3,10 @@ import { shallowEqual } from 'react-redux'
 import React from 'react'
 import { refreshMediaDevices } from './MediasoupService/util'
 import { BrowserDevice } from '@digitalstage/api-types/dist/model/browser'
-import { trace } from '../logger'
+import { logger } from '../logger'
 
-const report = trace('MediaDeviceUpdateService')
 
 const MediaDeviceUpdateService = () => {
-    report('RERENDER')
     const localDevice = useStageSelector(
         (state) =>
             state.globals.localDeviceId

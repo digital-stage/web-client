@@ -2,12 +2,9 @@ import { batch, useDispatch } from 'react-redux'
 import React from 'react'
 import { setInitialized, setToken, setUser, signInWithToken } from '@digitalstage/api-client-react'
 import cookie from 'js-cookie'
-import { trace } from '../logger'
 
-const report = trace('AutoLoginService')
 
 const AutoLoginService = () => {
-    report('RERENDER')
     const dispatch = useDispatch()
 
     React.useEffect(() => {

@@ -1,8 +1,8 @@
 import React from 'react'
 import omit from 'lodash/omit'
-import { trace } from '../logger'
+import { logger } from '../logger'
 
-const report = trace('TrackProvider')
+const { trace } = logger('TrackProvider')
 
 type Action =
     | { type: 'addLocalVideoTrack'; id: string; track: MediaStreamTrack }
@@ -33,7 +33,7 @@ const TrackStateContext = React.createContext<State>(undefined)
 const TrackDispatchContext = React.createContext<Dispatch>(undefined)
 
 function reduceTracks(prevState: State, action: Action) {
-    report(action.type)
+    trace(action.type)
     switch (action.type) {
         case 'addLocalVideoTrack': {
             const { id, track } = action
@@ -116,7 +116,7 @@ const TrackProvider = ({ children }: { children: React.ReactNode }) => {
         remoteAudioTracks: {},
     })
 
-    report(state)
+    trace(state)
 
     return (
         <TrackDispatchContext.Provider value={dispatch}>

@@ -21,9 +21,9 @@ import { Producer } from 'mediasoup-client/lib/Producer'
 import { Consumer } from 'mediasoup-client/lib/Consumer'
 import { getAudioTracks } from '../../utils/getAudioTracks'
 import { omit } from 'lodash'
-import { trace } from '../../logger'
+import { logger } from '../../logger'
 
-const report = trace('MediasoupService')
+const { trace } = logger('MediasoupService')
 
 type ConnectionState = {
     routerConnection: ITeckosClient
@@ -97,7 +97,6 @@ const useAudioConsumers = (): ConsumerList => {
 }
 
 const MediasoupService = () => {
-    report('RERENDER')
     const emit = useEmit()
     const reportError = useErrorReporting()
     const localStageDeviceId = useStageSelector<string>((state) => state.globals.localStageDeviceId)
@@ -160,7 +159,7 @@ const MediasoupService = () => {
         if (routerUrl && reportError) {
             let sendTransport: Transport
             let receiveTransport: Transport
-            report(`Connecting to router ${routerUrl}`)
+            trace(`Connecting to router ${routerUrl}`)
             const routerConnection = new TeckosClient(routerUrl, {
                 reconnection: true,
             })
@@ -170,11 +169,11 @@ const MediasoupService = () => {
                 routerConnection.disconnect()
             }
             routerConnection.on('disconnect', () => {
-                report(`Disconnected from router`)
+                trace(`Disconnected from router`)
                 disconnect()
             })
             routerConnection.on('connect', async () => {
-                report(`Connected to router ${routerUrl}`)
+                trace(`Connected to router ${routerUrl}`)
                 try {
                     const device = new MediasoupDevice()
                     const rtpCapabilities = await getRTPCapabilities(routerConnection)
@@ -198,7 +197,7 @@ const MediasoupService = () => {
             routerConnection.connect()
 
             return () => {
-                report(`Disconnecting from router`)
+                trace(`Disconnecting from router`)
                 disconnect()
                 setConnection(undefined)
             }
@@ -218,7 +217,7 @@ const MediasoupService = () => {
     const setVideoConsumers = React.useContext(DispatchVideoConsumerContext)
     React.useEffect(() => {
         if (setVideoConsumers && connection?.routerConnection && connection.receiveTransport) {
-            report('Sync video tracks', videoTracks)
+            trace('Sync video tracks', videoTracks)
             setVideoConsumers((prevState) => {
                 // Clean up
                 const existing: ConsumerList = Object.keys(prevState).reduce((prev, trackId) => {
@@ -273,12 +272,12 @@ const MediasoupService = () => {
                         producers.push(producer)
                     }
                     if (!abort && producer.paused) {
-                        report(`Video producer ${producer.id} is paused`)
+                        trace(`Video producer ${producer.id} is paused`)
                         producer.resume()
                     }
                     if (!abort) {
                         const { _id } = await publishProducer(emit, stageId, producer.id, 'video')
-                        report(`Published video track ${_id}`)
+                        trace(`Published video track ${_id}`)
                         publishedIds.push(_id)
                         setVideoProducers((prev) => ({
                             ...prev,
@@ -295,7 +294,7 @@ const MediasoupService = () => {
                     )
                 })
                 publishedIds.map((publishedId) => {
-                    report(`Unpublished video track ${publishedId}`)
+                    trace(`Unpublished video track ${publishedId}`)
                     unpublishProducer(emit, publishedId, 'video').catch((err) => reportError(err))
                     setVideoProducers((prev) => omit(prev, publishedId))
                 })
@@ -327,7 +326,7 @@ const MediasoupService = () => {
     const setAudioConsumers = React.useContext(DispatchAudioConsumerContext)
     React.useEffect(() => {
         if (setAudioConsumers && connection?.routerConnection && connection.receiveTransport) {
-            report('Sync audio tracks', audioTracks)
+            trace('Sync audio tracks', audioTracks)
             setAudioConsumers((prevState) => {
                 // Clean up
                 const existing: ConsumerList = Object.keys(prevState).reduce((prev, trackId) => {
@@ -388,12 +387,12 @@ const MediasoupService = () => {
                         producers.push(producer)
                     }
                     if (!abort && producer.paused) {
-                        report(`Audio producer ${producer.id} is paused`)
+                        trace(`Audio producer ${producer.id} is paused`)
                         producer.resume()
                     }
                     if (!abort) {
                         const { _id } = await publishProducer(emit, stageId, producer.id, 'audio')
-                        report(`Published audio track ${_id}`)
+                        trace(`Published audio track ${_id}`)
                         publishedIds.push(_id)
                         setAudioProducers((prev) => ({
                             ...prev,
@@ -410,7 +409,7 @@ const MediasoupService = () => {
                     )
                 })
                 publishedIds.map((publishedId) => {
-                    report(`Unpublished audio track ${publishedId}`)
+                    trace(`Unpublished audio track ${publishedId}`)
                     unpublishProducer(emit, publishedId, 'audio').catch((err) => reportError(err))
                     setAudioProducers((prev) => omit(prev, publishedId))
                 })
@@ -434,7 +433,6 @@ const MediasoupService = () => {
 
     return null
 }
-MediasoupService.whyDidYouRender = true
 export {
     MediasoupService,
     MediasoupProvider,
