@@ -1,7 +1,8 @@
 // next.config.js
 const moduleExports = {
     // Your existing module.exports
-    reactStrictMode: true
+    reactStrictMode: true,
+    experimental: {esmExternals: true}
 }
 
 const SentryWebpackPluginOptions = {
@@ -16,5 +17,5 @@ const SentryWebpackPluginOptions = {
     // https://github.com/getsentry/sentry-webpack-plugin#options.
 }
 
-const withTM = require('next-transpile-modules')(['konva', 'react-konva'])
-module.exports = !!process.env.SENTRY_DSN || !!process.env.NEXT_PUBLIC_SENTRY_DSN ? require('@sentry/nextjs').withSentryConfig(withTM(moduleExports), SentryWebpackPluginOptions) : withTM(moduleExports)
+//const withTM = require('next-transpile-modules')(['konva', 'react-konva'])
+module.exports = !!process.env.SENTRY_DSN || !!process.env.NEXT_PUBLIC_SENTRY_DSN ? require('@sentry/nextjs').withSentryConfig(moduleExports, SentryWebpackPluginOptions) : moduleExports
