@@ -129,7 +129,9 @@ $portraitAspectRatio: math.div($width, $height);
       display: flex;
       flex-direction: row;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
+      flex-wrap: wrap;
+      margin-right: 36px;
 
       &.centered {
         top: 0;
@@ -168,6 +170,7 @@ $portraitAspectRatio: math.div($width, $height);
         transition-property: background-color;
         transition-duration: 200ms;
         transition-timing-function: cubic-bezier(0.2, 0.8, 0.4, 1);
+        margin: 0 4px;
 
         &.online {
           background-color: var(---success);
@@ -195,10 +198,14 @@ $portraitAspectRatio: math.div($width, $height);
       }
 
       .stats {
+        display: inline-flex;
+        flex-wrap: wrap;
         font-size: 0.6rem;
-        color: var(---grey-4);
+        color: var(---muted);
+        padding: 4px;
 
         span {
+          display: inline-flex;
           padding-left: 2px;
           padding-right: 2px;
         }

@@ -1,5 +1,5 @@
-import { useAnimationFrame } from '@digitalstage/api-client-react'
 import React, { CanvasHTMLAttributes, useRef } from 'react'
+import useAnimationFrame from 'use-animation-frame'
 
 const USE_MAX = true
 
@@ -47,7 +47,7 @@ const LevelMeter = ({
 }): JSX.Element => {
     const canvasRef = useRef<HTMLCanvasElement>(null)
 
-    useAnimationFrame((t) => {
+    useAnimationFrame(() => {
         if (buffer && canvasRef.current) {
             const value = calculate(buffer)
             const { width } = canvasRef.current
@@ -76,7 +76,7 @@ const LevelMeter = ({
                 }
             }
         }
-    }) // 15 fps
+    }, [buffer, vertical]) // 15 fps
 
     // eslint-disable-next-line react/jsx-props-no-spreading
     return <canvas {...other} ref={canvasRef} />

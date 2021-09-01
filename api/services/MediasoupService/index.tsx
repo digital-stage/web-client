@@ -87,6 +87,12 @@ const useAudioConsumers = (): ConsumerList => {
         throw new Error('useAudioConsumers must be used within a MediasoupProvider')
     return state
 }
+const useAudioConsumer = (trackId: string): Consumer => {
+    const state = useAudioConsumers()
+    return React.useMemo(() => {
+        return state[trackId]
+    }, [trackId, state])
+}
 
 const MediasoupService = () => {
     const emit = useEmit()
@@ -420,5 +426,6 @@ export {
     useVideoProducer,
     useVideoConsumers,
     useAudioConsumers,
+    useAudioConsumer,
     useAudioProducer,
 }

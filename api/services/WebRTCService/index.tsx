@@ -150,6 +150,7 @@ const useWebRTCStats = (trackId: string): WebRTCStatistics => {
                     )
                 }
             })
+            console.log(stats)
             return stats
         }
         return undefined

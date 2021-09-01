@@ -16,6 +16,8 @@ const useStageMemberTracks = (stageMemberId: string) => {
     const isLocal = useStageSelector<boolean>(
         (state) => state.stageMembers.byId[stageMemberId].userId === state.globals.localUserId
     )
+    const videoProducer = useVideoProducer()
+    const localVideoTrack = useWebRTCLocalVideoTrack()
     const videoTracks = useStageSelector(
         (state) =>
             state.videoTracks.byStageMember[stageMemberId]
@@ -30,8 +32,6 @@ const useStageMemberTracks = (stageMemberId: string) => {
         (state) => state.stageDevices.byStageMember[stageMemberId] || []
     )
     const videoConsumers = useVideoConsumers()
-    const videoProducer = useVideoProducer()
-    const localVideoTrack = useWebRTCLocalVideoTrack()
     const remoteVideoTracks = useWebRTCRemoteVideoTracks()
 
     return React.useMemo(() => {
@@ -173,6 +173,7 @@ const MemberWithoutVideo = ({
 
 const MemoizedVideoTrackView = React.memo(VideoTrackView)
 const MemoizedMemberWithoutVideo = React.memo(MemberWithoutVideo)
+
 const MemberView = ({
     stageMemberId,
     groupColor,
@@ -184,6 +185,9 @@ const MemberView = ({
     groupName?: string
     hasCurrentUserAdminRights?: boolean
 }) => {
+    const isLocal = useStageSelector<boolean>(
+        (state) => state.stageMembers.byId[stageMemberId].userId === state.globals.localUserId
+    )
     const userName = useStageSelector(
         (state) => state.users.byId[state.stageMembers.byId[stageMemberId].userId].name
     )

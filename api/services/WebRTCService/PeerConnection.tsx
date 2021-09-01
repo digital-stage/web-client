@@ -191,7 +191,7 @@ const PeerConnection = ({
     )
 
     React.useEffect(() => {
-        if (process.env.NODE_ENV === 'development') {
+        if (process.env.NODE_ENV !== 'production') {
             const id = setInterval(() => {
                 if (peerConnection) {
                     receivedTracks.map((track) =>
