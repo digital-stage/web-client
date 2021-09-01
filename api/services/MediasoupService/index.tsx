@@ -16,11 +16,10 @@ import React from 'react'
 import { BrowserDevice } from '@digitalstage/api-types/dist/model/browser'
 import { MediasoupAudioTrack, MediasoupVideoTrack } from '@digitalstage/api-types'
 import { Transport } from 'mediasoup-client/lib/Transport'
-import { getVideoTracks } from '../../utils/getVideoTracks'
+import { getVideoTrack } from '../../utils/getVideoTrack'
 import { Producer } from 'mediasoup-client/lib/Producer'
 import { Consumer } from 'mediasoup-client/lib/Consumer'
-import { getAudioTracks } from '../../utils/getAudioTracks'
-import { omit } from 'lodash'
+import { getAudioTrack } from '../../utils/getAudioTrack'
 import { logger } from '../../logger'
 
 const { trace } = logger('MediasoupService')
@@ -32,23 +31,22 @@ type ConnectionState = {
     device: MediasoupDevice
 }
 
-type ProducerList = { [trackId: string]: Producer }
 type ConsumerList = { [trackId: string]: Consumer }
-type DispatchProducerList = React.Dispatch<React.SetStateAction<ProducerList>>
-type DispatchConsumerList = React.Dispatch<React.SetStateAction<ConsumerList>>
+type DispatchProducer = React.Dispatch<React.SetStateAction<Producer>>
+type DispatchConsumersList = React.Dispatch<React.SetStateAction<ConsumerList>>
 
-const VideoProducerContext = React.createContext<ProducerList>(undefined)
-const DispatchVideoProducerContext = React.createContext<DispatchProducerList>(undefined)
+const VideoProducerContext = React.createContext<Producer>(undefined)
+const DispatchVideoProducerContext = React.createContext<DispatchProducer>(undefined)
 const VideoConsumerContext = React.createContext<ConsumerList>(undefined)
-const DispatchVideoConsumerContext = React.createContext<DispatchConsumerList>(undefined)
-const AudioProducerContext = React.createContext<ProducerList>(undefined)
-const DispatchAudioProducerContext = React.createContext<DispatchProducerList>(undefined)
+const DispatchVideoConsumerContext = React.createContext<DispatchConsumersList>(undefined)
+const AudioProducerContext = React.createContext<Producer>(undefined)
+const DispatchAudioProducerContext = React.createContext<DispatchProducer>(undefined)
 const AudioConsumerContext = React.createContext<ConsumerList>(undefined)
-const DispatchAudioConsumerContext = React.createContext<DispatchConsumerList>(undefined)
+const DispatchAudioConsumerContext = React.createContext<DispatchConsumersList>(undefined)
 const MediasoupProvider = ({ children }: { children: React.ReactNode }) => {
-    const [videoProducers, setVideoProducers] = React.useState<ProducerList>({})
+    const [videoProducers, setVideoProducers] = React.useState<Producer>()
     const [videoConsumers, setVideoConsumers] = React.useState<ConsumerList>({})
-    const [audioProducers, setAudioProducers] = React.useState<ProducerList>({})
+    const [audioProducers, setAudioProducers] = React.useState<Producer>()
     const [audioConsumers, setAudioConsumers] = React.useState<ConsumerList>({})
 
     return (
@@ -71,11 +69,8 @@ const MediasoupProvider = ({ children }: { children: React.ReactNode }) => {
         </DispatchVideoProducerContext.Provider>
     )
 }
-const useVideoProducers = (): ProducerList => {
-    const state = React.useContext(VideoProducerContext)
-    if (state === undefined)
-        throw new Error('useVideoProducers must be used within a MediasoupProvider')
-    return state
+const useVideoProducer = (): Producer => {
+    return React.useContext(VideoProducerContext)
 }
 const useVideoConsumers = (): ConsumerList => {
     const state = React.useContext(VideoConsumerContext)
@@ -83,11 +78,8 @@ const useVideoConsumers = (): ConsumerList => {
         throw new Error('useVideoConsumers must be used within a MediasoupProvider')
     return state
 }
-const useAudioProducers = (): ProducerList => {
-    const state = React.useContext(AudioProducerContext)
-    if (state === undefined)
-        throw new Error('useAudioProducers must be used within a MediasoupProvider')
-    return state
+const useAudioProducer = (): Producer => {
+    return React.useContext(AudioProducerContext)
 }
 const useAudioConsumers = (): ConsumerList => {
     const state = React.useContext(AudioConsumerContext)
@@ -100,7 +92,6 @@ const MediasoupService = () => {
     const emit = useEmit()
     const reportError = useErrorReporting()
     const localStageDeviceId = useStageSelector<string>((state) => state.globals.localStageDeviceId)
-
     const {
         inputVideoDeviceId,
         sendVideo,
@@ -249,7 +240,7 @@ const MediasoupService = () => {
         }
     }, [connection, setVideoConsumers, videoTracks])
 
-    const setVideoProducers = React.useContext(DispatchVideoProducerContext)
+    const setVideoProducer = React.useContext(DispatchVideoProducerContext)
     React.useEffect(() => {
         if (
             emit &&
@@ -258,53 +249,48 @@ const MediasoupService = () => {
             stageId &&
             videoType === 'mediasoup' &&
             !useP2P &&
-            sendVideo
+            sendVideo &&
+            setVideoProducer
         ) {
             const { sendTransport } = connection
             let abort: boolean = false
-            let producers: Producer[] = []
-            let publishedIds: string[] = []
-            getVideoTracks(inputVideoDeviceId).then((tracks) =>
-                tracks.map(async (track) => {
-                    let producer: Producer
-                    if (!abort) {
-                        producer = await createProducer(sendTransport, track)
-                        producers.push(producer)
-                    }
-                    if (!abort && producer.paused) {
-                        trace(`Video producer ${producer.id} is paused`)
-                        producer.resume()
-                    }
-                    if (!abort) {
-                        const { _id } = await publishProducer(emit, stageId, producer.id, 'video')
-                        trace(`Published video track ${_id}`)
-                        publishedIds.push(_id)
-                        setVideoProducers((prev) => ({
-                            ...prev,
-                            [_id]: producer,
-                        }))
-                    }
-                })
-            )
+            let producer: Producer
+            let publishedId: string
+            getVideoTrack(inputVideoDeviceId).then(async (track) => {
+                if (!abort) {
+                    producer = await createProducer(sendTransport, track)
+                }
+                if (!abort && producer.paused) {
+                    trace(`Video producer ${producer.id} is paused`)
+                    producer.resume()
+                }
+                if (!abort) {
+                    const { _id } = await publishProducer(emit, stageId, producer.id, 'video')
+                    trace(`Published video track ${_id}`)
+                    publishedId = _id
+                    setVideoProducer(producer)
+                }
+            })
             return () => {
                 abort = true
-                producers.map((producer) => {
+                if (publishedId) {
+                    unpublishProducer(emit, publishedId, 'video')
+                        .then(() => trace(`Unpublished video track ${publishedId}`))
+                        .catch((err) => reportError(err))
+                }
+                if (producer) {
                     stopProducer(connection.routerConnection, producer).catch((err) =>
                         reportError(err)
                     )
-                })
-                publishedIds.map((publishedId) => {
-                    trace(`Unpublished video track ${publishedId}`)
-                    unpublishProducer(emit, publishedId, 'video').catch((err) => reportError(err))
-                    setVideoProducers((prev) => omit(prev, publishedId))
-                })
+                    setVideoProducer(undefined)
+                }
             }
         }
     }, [
         emit,
         connection,
         stageId,
-        setVideoProducers,
+        setVideoProducer,
         reportError,
         useP2P,
         sendVideo,
@@ -358,7 +344,7 @@ const MediasoupService = () => {
         }
     }, [audioTracks, connection, setAudioConsumers])
 
-    const setAudioProducers = React.useContext(DispatchAudioProducerContext)
+    const setAudioProducer = React.useContext(DispatchAudioProducerContext)
     React.useEffect(() => {
         if (
             emit &&
@@ -367,52 +353,47 @@ const MediasoupService = () => {
             stageId &&
             audioType === 'mediasoup' &&
             !useP2P &&
-            sendAudio
+            sendAudio &&
+            setAudioProducer
         ) {
             const { sendTransport } = connection
             let abort: boolean = false
-            let producers: Producer[] = []
-            let publishedIds: string[] = []
-            getAudioTracks({
+            let producer: Producer
+            let publishedId: string
+            getAudioTrack({
                 inputAudioDeviceId,
                 autoGainControl,
                 echoCancellation,
                 noiseSuppression,
                 sampleRate,
-            }).then((tracks) =>
-                tracks.map(async (track) => {
-                    let producer: Producer
-                    if (!abort) {
-                        producer = await createProducer(sendTransport, track)
-                        producers.push(producer)
-                    }
-                    if (!abort && producer.paused) {
-                        trace(`Audio producer ${producer.id} is paused`)
-                        producer.resume()
-                    }
-                    if (!abort) {
-                        const { _id } = await publishProducer(emit, stageId, producer.id, 'audio')
-                        trace(`Published audio track ${_id}`)
-                        publishedIds.push(_id)
-                        setAudioProducers((prev) => ({
-                            ...prev,
-                            [_id]: producer,
-                        }))
-                    }
-                })
-            )
+            }).then(async (track) => {
+                if (!abort) {
+                    producer = await createProducer(sendTransport, track)
+                }
+                if (!abort && producer.paused) {
+                    trace(`Audio producer ${producer.id} is paused`)
+                    producer.resume()
+                }
+                if (!abort) {
+                    const { _id } = await publishProducer(emit, stageId, producer.id, 'audio')
+                    trace(`Published audio track ${_id}`)
+                    publishedId = _id
+                    setAudioProducer(producer)
+                }
+            })
             return () => {
                 abort = true
-                producers.map((producer) => {
+                if (publishedId) {
+                    unpublishProducer(emit, publishedId, 'audio')
+                        .then(() => trace(`Unpublished audio track ${publishedId}`))
+                        .catch((err) => reportError(err))
+                }
+                if (producer) {
                     stopProducer(connection.routerConnection, producer).catch((err) =>
                         reportError(err)
                     )
-                })
-                publishedIds.map((publishedId) => {
-                    trace(`Unpublished audio track ${publishedId}`)
-                    unpublishProducer(emit, publishedId, 'audio').catch((err) => reportError(err))
-                    setAudioProducers((prev) => omit(prev, publishedId))
-                })
+                    setAudioProducer(undefined)
+                }
             }
         }
     }, [
@@ -427,8 +408,8 @@ const MediasoupService = () => {
         echoCancellation,
         noiseSuppression,
         sampleRate,
-        setAudioProducers,
         audioType,
+        setAudioProducer,
     ])
 
     return null
@@ -436,8 +417,8 @@ const MediasoupService = () => {
 export {
     MediasoupService,
     MediasoupProvider,
-    useVideoProducers,
+    useVideoProducer,
     useVideoConsumers,
     useAudioConsumers,
-    useAudioProducers,
+    useAudioProducer,
 }

@@ -84,7 +84,9 @@ const StageJoiner = (): JSX.Element | null => {
     }, [ready, handleJoinRequest])
 
     const groups = useStageSelector<Group[]>((state) =>
-        stageId ? state.groups.byStage[stageId].map((id) => state.groups.byId[id]) : []
+        stageId && state.groups.byStage[stageId]
+            ? state.groups.byStage[stageId].map((id) => state.groups.byId[id])
+            : []
     )
 
     if (stageId)

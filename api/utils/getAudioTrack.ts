@@ -1,10 +1,10 @@
-const getAudioTracks = (options: {
+const getAudioTrack = (options: {
     inputAudioDeviceId?: string
     sampleRate?: number
     autoGainControl?: boolean
     echoCancellation?: boolean
     noiseSuppression?: boolean
-}): Promise<MediaStreamTrack[]> => {
+}): Promise<MediaStreamTrack> => {
     const audioOptions = {
         deviceId: options.inputAudioDeviceId || undefined,
         sampleRate: options.sampleRate || undefined,
@@ -17,6 +17,6 @@ const getAudioTracks = (options: {
             video: false,
             audio: audioOptions,
         })
-        .then((stream) => stream.getAudioTracks())
+        .then((stream) => stream.getAudioTracks().pop())
 }
-export { getAudioTracks }
+export { getAudioTrack }

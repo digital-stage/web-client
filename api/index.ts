@@ -8,10 +8,17 @@ import { RootState } from './redux/state'
 import { useAudioContext, useAudioContextDispatch } from './provider/AudioContextProvider'
 import { useAudioLevel } from './provider/AudioLevelProvider'
 import { useStageJoiner } from './hooks/useStageJoiner'
-import { useWebRTCRemoteVideoTracks } from './services/WebRTCService'
-import { useWebRTCLocalVideoTracks } from './services/WebRTCService'
+import {
+    useWebRTCLocalAudioTrack,
+    useWebRTCRemoteAudioTrack,
+    useWebRTCRemoteAudioTracks,
+    useWebRTCRemoteVideoTrack,
+    useWebRTCRemoteVideoTracks,
+    useWebRTCStats,
+} from './services/WebRTCService'
+import { useWebRTCLocalVideoTrack } from './services/WebRTCService'
 import { useVideoConsumers } from './services/MediasoupService'
-import { useVideoProducers } from './services/MediasoupService'
+import { useVideoProducer } from './services/MediasoupService'
 import { useEmit, useConnection, ConnectionStateContext } from './services/ConnectionService'
 import { useErrorReporting } from './hooks/useErrorReporting'
 import { logger } from './logger'
@@ -31,9 +38,14 @@ export {
     useEmit,
     useConnection,
     useAuth,
-    useWebRTCLocalVideoTracks,
+    useWebRTCLocalVideoTrack,
     useWebRTCRemoteVideoTracks,
-    useVideoProducers,
+    useWebRTCRemoteVideoTrack,
+    useWebRTCLocalAudioTrack,
+    useWebRTCRemoteAudioTracks,
+    useWebRTCRemoteAudioTrack,
+    useWebRTCStats,
+    useVideoProducer,
     useVideoConsumers,
     useErrorReporting,
     ConnectionStateContext,

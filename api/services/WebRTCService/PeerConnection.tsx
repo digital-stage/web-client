@@ -3,28 +3,25 @@ import { useEmit, useNotification, useStageSelector } from '@digitalstage/api-cl
 import { config } from './config'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
 import { logger } from '../../logger'
+import { Broker, DescriptionListener, IceCandidateListener } from './Broker'
+import { useWebRTCLocalAudioTrack, useWebRTCLocalVideoTrack } from './index'
 
-const { trace, warn, reportError } = logger('WebRTCService:PeerConnection')
+const { trace, reportError } = logger('WebRTCService:PeerConnection')
 
 const PeerConnection = ({
     stageDeviceId,
     onRemoteTrack,
     onStats,
-    tracks,
-    currentDescription,
-    currentCandidate,
+    broker,
 }: {
     stageDeviceId: string
     onRemoteTrack: (stageDeviceId: string, track: MediaStreamTrack) => void
     onStats: (trackId: string, stats: RTCStatsReport) => void
-    tracks: MediaStreamTrack[]
-    currentDescription?: RTCSessionDescriptionInit
-    currentCandidate?: RTCIceCandidate | null
+    broker: Broker
 }): JSX.Element => {
+    const [ready, setReady] = React.useState<boolean>(false)
     const notify = useNotification()
-    //const [ready, setReady] = React.useState<boolean>(false)
-    const ready = React.useRef<boolean>(false)
-    const connection = React.useRef<RTCPeerConnection>(new RTCPeerConnection(config))
+    const [peerConnection, setPeerConnection] = React.useState<RTCPeerConnection>()
     const makingOffer = React.useRef<boolean>(false)
     const ignoreOffer = React.useRef<boolean>(false)
     const videoSender = React.useRef<RTCRtpSender>(undefined)
@@ -38,16 +35,25 @@ const PeerConnection = ({
     const [receivedTracks, setReceivedTracks] = React.useState<MediaStreamTrack[]>([])
 
     React.useEffect(() => {
+        trace('Created new peer connection ' + stageDeviceId)
+        const connection = new RTCPeerConnection(config)
+        setPeerConnection(connection)
+        return () => {
+            trace('Closing peer connection ' + stageDeviceId)
+            connection.close()
+        }
+    }, [stageDeviceId])
+
+    React.useEffect(() => {
         if (
             stageDeviceId &&
             emit &&
             localStageDeviceId &&
             onRemoteTrack &&
-            connection.current &&
+            peerConnection &&
             notify
         ) {
-            trace('Attaching handlers to peer connection')
-            const peerConnection = connection.current
+            trace(`Attaching handlers to peer connection ${stageDeviceId}`)
             peerConnection.oniceconnectionstatechange = () => {
                 trace(
                     `with ${stageDeviceId}: iceConnectionState`,
@@ -109,10 +115,7 @@ const PeerConnection = ({
             peerConnection.onsignalingstatechange = () => {
                 trace(`with ${stageDeviceId}: signalingState`, peerConnection.signalingState)
             }
-            ready.current = true
-            // Make offer by sending dummy tracks
-            //peerConnection.addTransceiver("video")
-            //peerConnection.addTransceiver("audio")
+            setReady(true)
         }
     }, [
         emit,
@@ -122,6 +125,7 @@ const PeerConnection = ({
         onRemoteTrack,
         notify,
         setReceivedTracks,
+        peerConnection,
     ])
 
     const handleDescription = React.useCallback(
@@ -134,7 +138,7 @@ const PeerConnection = ({
                         `from ${stageDeviceId}: Ignoring offer`,
                         makingOffer.current,
                         isPolite ? 'polite' : 'rude',
-                        connection.current.signalingState
+                        peerConnection.signalingState
                     )
                     return
                 }
@@ -142,53 +146,56 @@ const PeerConnection = ({
                     `from ${stageDeviceId}: Accepting offer`,
                     makingOffer,
                     isPolite ? 'polite' : 'rude',
-                    connection.current.signalingState
+                    peerConnection.signalingState
                 )
-                await connection.current.setRemoteDescription(description)
-                await connection.current.setLocalDescription()
+                await peerConnection.setRemoteDescription(description)
+                await peerConnection.setLocalDescription()
                 trace(
                     `to ${stageDeviceId}: Answering offer`,
                     makingOffer.current,
                     isPolite ? 'polite' : 'rude',
-                    connection.current.signalingState
+                    peerConnection.signalingState
                 )
                 emit(ClientDeviceEvents.SendP2PAnswer, {
                     from: localStageDeviceId,
                     to: stageDeviceId,
-                    answer: connection.current.localDescription,
+                    answer: peerConnection.localDescription,
                 } as ClientDevicePayloads.SendP2PAnswer)
-            } else if (connection.current.signalingState === 'have-local-offer') {
+            } else if (peerConnection.signalingState === 'have-local-offer') {
                 trace(
                     `from ${stageDeviceId}: Accepting answer`,
                     makingOffer.current,
                     isPolite ? 'polite' : 'rude',
-                    connection.current.signalingState
+                    peerConnection.signalingState
                 )
-                await connection.current.setRemoteDescription(description)
+                await peerConnection.setRemoteDescription(description)
             } else {
-                reportError("Got answer, but made no offer")
+                reportError('Got answer, but made no offer')
             }
         },
-        [emit, isPolite, localStageDeviceId, stageDeviceId]
+        [emit, isPolite, localStageDeviceId, peerConnection, stageDeviceId]
     )
 
-    const handleCandidate = React.useCallback((candidate: RTCIceCandidate | null) => {
-        if (candidate === null) {
-            console.log('We have an null candidate')
-        }
-        return connection.current.addIceCandidate(candidate).catch((err) => {
-            if (!ignoreOffer.current) {
-                throw err
+    const handleCandidate = React.useCallback(
+        (candidate: RTCIceCandidate | null) => {
+            if (candidate === null) {
+                console.log('We have an null candidate')
             }
-        })
-    }, [])
+            return peerConnection.addIceCandidate(candidate).catch((err) => {
+                if (!ignoreOffer.current) {
+                    throw err
+                }
+            })
+        },
+        [peerConnection]
+    )
 
     React.useEffect(() => {
         if (process.env.NODE_ENV === 'development') {
             const id = setInterval(() => {
-                if (connection.current) {
+                if (peerConnection) {
                     receivedTracks.map((track) =>
-                        connection.current.getStats(track).then((stats) => onStats(track.id, stats))
+                        peerConnection.getStats(track).then((stats) => onStats(track.id, stats))
                     )
                 }
             }, 5000)
@@ -196,57 +203,73 @@ const PeerConnection = ({
                 clearInterval(id)
             }
         }
-    }, [onStats, receivedTracks])
+    }, [onStats, peerConnection, receivedTracks])
 
     React.useEffect(() => {
-        if (ready.current) {
-            if(currentDescription && notify) {
-                handleDescription(currentDescription).catch((err) => {
+        if (stageDeviceId && notify && ready) {
+            const descriptionListener: DescriptionListener = (description) =>
+                handleDescription(description).catch((err) => {
                     notify({
                         kind: 'error',
                         message: err,
                     })
                     console.error(err)
                 })
+            broker.addDescriptionListener(stageDeviceId, descriptionListener)
+            return () => {
+                broker.removeDescriptionListener(stageDeviceId, descriptionListener)
             }
-        } else {
-            warn("Got description too early")
         }
-    }, [currentDescription, handleDescription, notify])
+    }, [broker, handleDescription, notify, ready, stageDeviceId])
 
     React.useEffect(() => {
-        if(ready.current) {
-            if (currentCandidate && notify) {
-                handleCandidate(currentCandidate).catch((err) => {
+        if (stageDeviceId && notify && ready) {
+            const iceCandidateListener: IceCandidateListener = (description) =>
+                handleCandidate(description).catch((err) => {
                     notify({
                         kind: 'error',
                         message: err,
                     })
                     console.error(err)
                 })
+            broker.addIceCandidateListener(stageDeviceId, iceCandidateListener)
+            return () => {
+                broker.removeIceCandidateListener(stageDeviceId, iceCandidateListener)
             }
-        } else {
-            warn("Got ICE candidate too early")
         }
-    }, [currentCandidate, handleCandidate, notify])
+    }, [broker, handleCandidate, handleDescription, notify, ready, stageDeviceId])
 
+    const videoTrack = useWebRTCLocalVideoTrack()
     React.useEffect(() => {
-        const senders = connection.current.getSenders()
-        senders.map((sender) => {
-            if (sender.track && !tracks.find((track) => track.id === sender.track.id)) {
-                connection.current.removeTrack(sender)
+        if (peerConnection) {
+            if (videoTrack) {
+                if (!videoSender.current || videoSender.current.track.id !== videoTrack.id) {
+                    if (videoSender.current) {
+                        peerConnection.removeTrack(videoSender.current)
+                    }
+                    videoSender.current = peerConnection.addTrack(videoTrack)
+                }
+            } else if (videoSender.current) {
+                peerConnection.removeTrack(videoSender.current)
             }
-        })
-        tracks.map((track) => {
-            if (!senders.find((sender) => sender.track && sender.track?.id === track.id)) {
-                trace('ADDING LOCAL TRACK ' + track.id)
-                const sender = connection.current.addTrack(track)
-                const endTrack = () => connection.current.removeTrack(sender)
-                track.onmute = endTrack
-                track.onended = endTrack
+        }
+    }, [peerConnection, videoTrack])
+
+    const audioTrack = useWebRTCLocalAudioTrack()
+    React.useEffect(() => {
+        if (peerConnection) {
+            if (audioTrack) {
+                if (!audioSender.current || audioSender.current.track.id !== audioTrack.id) {
+                    if (audioSender.current) {
+                        peerConnection.removeTrack(audioSender.current)
+                    }
+                    audioSender.current = peerConnection.addTrack(audioTrack)
+                }
+            } else if (audioSender.current) {
+                peerConnection.removeTrack(audioSender.current)
             }
-        })
-    }, [tracks])
+        }
+    }, [peerConnection, audioTrack])
 
     return null
 }

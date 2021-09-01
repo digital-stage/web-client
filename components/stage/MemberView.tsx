@@ -5,14 +5,17 @@ import { Avatar } from './Avatar'
 import {
     useStageSelector,
     useVideoConsumers,
-    useVideoProducers,
-    useWebRTCLocalVideoTracks,
+    useVideoProducer,
+    useWebRTCLocalVideoTrack,
     useWebRTCRemoteVideoTracks,
+    useWebRTCStats,
 } from '@digitalstage/api-client-react'
 import { ConductorButton } from './ConductorButton'
-import { useWebRTCStats } from '../../api/services/WebRTCService'
 
 const useStageMemberTracks = (stageMemberId: string) => {
+    const isLocal = useStageSelector<boolean>(
+        (state) => state.stageMembers.byId[stageMemberId].userId === state.globals.localUserId
+    )
     const videoTracks = useStageSelector(
         (state) =>
             state.videoTracks.byStageMember[stageMemberId]
@@ -23,27 +26,47 @@ const useStageMemberTracks = (stageMemberId: string) => {
                     trackId: track.trackId,
                 })) || []
     )
+    const stageDeviceIds = useStageSelector(
+        (state) => state.stageDevices.byStageMember[stageMemberId] || []
+    )
     const videoConsumers = useVideoConsumers()
-    const videoProducers = useVideoProducers()
-    const localVideoTracks = useWebRTCLocalVideoTracks()
+    const videoProducer = useVideoProducer()
+    const localVideoTrack = useWebRTCLocalVideoTrack()
     const remoteVideoTracks = useWebRTCRemoteVideoTracks()
 
     return React.useMemo(() => {
-        return videoTracks.reduce<MediaStreamTrack[]>((prev, videoTrack) => {
-            if (videoProducers[videoTrack._id]) {
-                return [...prev, videoProducers[videoTrack._id].track]
-            } else if (videoConsumers[videoTrack._id]) {
-                return [...prev, videoConsumers[videoTrack._id].track]
-            } else if (videoTrack.trackId) {
-                if (localVideoTracks[videoTrack.trackId]) {
-                    return [...prev, localVideoTracks[videoTrack.trackId]]
-                } else if (remoteVideoTracks[videoTrack.trackId]) {
-                    return [...prev, remoteVideoTracks[videoTrack.trackId]]
-                }
+        const tracks: MediaStreamTrack[] = []
+        if (isLocal) {
+            // Use only local tracks
+            if (localVideoTrack) {
+                tracks.push(localVideoTrack)
             }
-            return prev
-        }, [])
-    }, [localVideoTracks, remoteVideoTracks, videoConsumers, videoProducers, videoTracks])
+            if (videoProducer) {
+                tracks.push(videoProducer.track)
+            }
+        } else {
+            // Use remote tracks
+            videoTracks.forEach((videoTrack) => {
+                if (videoConsumers[videoTrack._id]) {
+                    tracks.push(videoConsumers[videoTrack._id].track)
+                }
+            })
+            stageDeviceIds.forEach((stageDeviceId) => {
+                if (remoteVideoTracks[stageDeviceId]) {
+                    tracks.push(remoteVideoTracks[stageDeviceId])
+                }
+            })
+        }
+        return tracks
+    }, [
+        isLocal,
+        localVideoTrack,
+        remoteVideoTracks,
+        stageDeviceIds,
+        videoConsumers,
+        videoProducer,
+        videoTracks,
+    ])
 }
 
 const MemoizedVideoView = React.memo(VideoView)
@@ -91,21 +114,10 @@ const VideoTrackView = ({
                 </div>
                 {stats ? (
                     <span className={styles.stats}>
-                        {stats.totalRoundTripTime ? (
-                            stats.roundTripTimeMeasurements ? (
-                                <span>{`RTT ${
-                                    (stats.totalRoundTripTime / stats.roundTripTimeMeasurements) *
-                                    1000
-                                }ms`}</span>
-                            ) : (
-                                <span>{`TRTT ${stats.totalRoundTripTime * 1000}ms`}</span>
-                            )
-                        ) : null}
-                        {stats.jitter ? <span>{`Jitter ${stats.jitter}/s`}</span> : null}
-                        {stats.jitterBufferDelay && stats.jitterBufferEmittedCount ? (
-                            <span>{`Jitterbuffer ${
-                                (stats.jitterBufferDelay / stats.jitterBufferEmittedCount) * 1000
-                            }ms`}</span>
+                        {stats.roundTripTime ? <span>{`RTT ${stats.roundTripTime}ms`}</span> : null}
+                        {stats.jitter ? <span>{`Jitter ${stats.jitter}%/s`}</span> : null}
+                        {stats.jitterBufferDelay ? (
+                            <span>{`Jitterbuffer ${stats.jitterBufferDelay}ms`}</span>
                         ) : null}
                     </span>
                 ) : null}

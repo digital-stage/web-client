@@ -4,50 +4,59 @@ import {
     ClientDeviceEvents,
     ClientDevicePayloads,
     ServerDeviceEvents,
-    ServerDevicePayloads,
 } from '@digitalstage/api-types'
 import { shallowEqual } from 'react-redux'
-import { getVideoTracks } from '../../utils/getVideoTracks'
+import { getVideoTrack } from '../../utils/getVideoTrack'
 
 import { useStageSelector } from 'api/redux/useStageSelector'
 import { useConnection } from '../ConnectionService'
 import { PeerConnection } from './PeerConnection'
-import { getAudioTracks } from '../../utils/getAudioTracks'
+import { getAudioTrack } from '../../utils/getAudioTrack'
 import omit from 'lodash/omit'
 import { logger } from '../../logger'
 import { useErrorReporting } from '@digitalstage/api-client-react'
+import { Broker } from './Broker'
+import round from 'lodash/round'
 
 const { trace } = logger('WebRTCService')
 
-type TrackMap = { [id: string]: MediaStreamTrack }
+type DispatchMediaStreamTrackContext = React.Dispatch<React.SetStateAction<MediaStreamTrack>>
+type TrackMap = { [stageMemberId: string]: MediaStreamTrack }
 type DispatchTrackMapContext = React.Dispatch<React.SetStateAction<TrackMap>>
-type TrackStatsMap = { [id: string]: RTCStatsReport }
+type TrackStatsMap = { [trackId: string]: RTCStatsReport }
 type DispatchTrackStatsMap = React.Dispatch<React.SetStateAction<TrackStatsMap>>
 
 const RemoteVideoTracksContext = React.createContext<TrackMap>(undefined)
 const DispatchRemoteVideoTracksContext = React.createContext<DispatchTrackMapContext>(undefined)
-const LocalVideoTracksContext = React.createContext<TrackMap>(undefined)
-const DispatchLocalVideoTracksContext = React.createContext<DispatchTrackMapContext>(undefined)
+
+const LocalVideoTrackContext = React.createContext<MediaStreamTrack>(undefined)
+const DispatchLocalVideoTrackContext =
+    React.createContext<DispatchMediaStreamTrackContext>(undefined)
+
 const RemoteAudioTracksContext = React.createContext<TrackMap>(undefined)
 const DispatchRemoteAudioTracksContext = React.createContext<DispatchTrackMapContext>(undefined)
-const LocalAudioTracksContext = React.createContext<TrackMap>(undefined)
-const DispatchLocalAudioTracksContext = React.createContext<DispatchTrackMapContext>(undefined)
+
+const LocalAudioTrackContext = React.createContext<MediaStreamTrack>(undefined)
+const DispatchLocalAudioTrackContext =
+    React.createContext<DispatchMediaStreamTrackContext>(undefined)
+
 const TrackStatsContext = React.createContext<TrackStatsMap>(undefined)
 const DispatchTrackStatsContext = React.createContext<DispatchTrackStatsMap>(undefined)
+
 const WebRTCProvider = ({ children }: { children: React.ReactNode }) => {
-    const [localVideoTracks, setLocalVideoTracks] = React.useState<TrackMap>({})
+    const [localVideoTracks, setLocalVideoTracks] = React.useState<MediaStreamTrack>(undefined)
     const [remoteVideoTracks, setRemoteVideoTracks] = React.useState<TrackMap>({})
-    const [localAudioTracks, setLocalAudioTracks] = React.useState<TrackMap>({})
+    const [localAudioTracks, setLocalAudioTracks] = React.useState<MediaStreamTrack>(undefined)
     const [remoteAudioTracks, setRemoteAudioTracks] = React.useState<TrackMap>({})
     const [trackStatistics, setTrackStatistics] = React.useState<TrackStatsMap>({})
 
     return (
-        <DispatchLocalVideoTracksContext.Provider value={setLocalVideoTracks}>
-            <LocalVideoTracksContext.Provider value={localVideoTracks}>
+        <DispatchLocalVideoTrackContext.Provider value={setLocalVideoTracks}>
+            <LocalVideoTrackContext.Provider value={localVideoTracks}>
                 <DispatchRemoteVideoTracksContext.Provider value={setRemoteVideoTracks}>
                     <RemoteVideoTracksContext.Provider value={remoteVideoTracks}>
-                        <DispatchLocalAudioTracksContext.Provider value={setLocalAudioTracks}>
-                            <LocalAudioTracksContext.Provider value={localAudioTracks}>
+                        <DispatchLocalAudioTrackContext.Provider value={setLocalAudioTracks}>
+                            <LocalAudioTrackContext.Provider value={localAudioTracks}>
                                 <DispatchRemoteAudioTracksContext.Provider
                                     value={setRemoteAudioTracks}
                                 >
@@ -61,77 +70,90 @@ const WebRTCProvider = ({ children }: { children: React.ReactNode }) => {
                                         </DispatchTrackStatsContext.Provider>
                                     </RemoteAudioTracksContext.Provider>
                                 </DispatchRemoteAudioTracksContext.Provider>
-                            </LocalAudioTracksContext.Provider>
-                        </DispatchLocalAudioTracksContext.Provider>
+                            </LocalAudioTrackContext.Provider>
+                        </DispatchLocalAudioTrackContext.Provider>
                     </RemoteVideoTracksContext.Provider>
                 </DispatchRemoteVideoTracksContext.Provider>
-            </LocalVideoTracksContext.Provider>
-        </DispatchLocalVideoTracksContext.Provider>
+            </LocalVideoTrackContext.Provider>
+        </DispatchLocalVideoTrackContext.Provider>
     )
 }
-const useWebRTCLocalVideoTracks = (): TrackMap => {
-    const state = React.useContext(LocalVideoTracksContext)
-    if (state === undefined)
-        throw new Error('useWebRTCLocalVideoTracks must be used within a WebRTCProvider')
-    return state
-}
+const useWebRTCLocalVideoTrack = (): MediaStreamTrack => React.useContext(LocalVideoTrackContext)
 const useWebRTCRemoteVideoTracks = (): TrackMap => {
     const state = React.useContext(RemoteVideoTracksContext)
     if (state === undefined)
         throw new Error('useWebRTCRemoteVideoTracks must be used within a WebRTCProvider')
     return state
 }
-const useWebRTCLocalAudioTracks = (): TrackMap => {
-    const state = React.useContext(LocalAudioTracksContext)
-    if (state === undefined)
-        throw new Error('useWebRTCLocalAudioTracks must be used within a WebRTCProvider')
-    return state
+const useWebRTCRemoteVideoTrack = (stageMemberId: string): MediaStreamTrack => {
+    const tracks = useWebRTCRemoteVideoTracks()
+    return React.useMemo(() => {
+        return tracks[stageMemberId]
+    }, [stageMemberId, tracks])
 }
+const useWebRTCLocalAudioTrack = (): MediaStreamTrack => React.useContext(LocalAudioTrackContext)
 const useWebRTCRemoteAudioTracks = (): TrackMap => {
     const state = React.useContext(RemoteAudioTracksContext)
     if (state === undefined)
         throw new Error('useWebRTCRemoteAudioTracks must be used within a WebRTCProvider')
     return state
 }
+const useWebRTCRemoteAudioTrack = (stageMemberId: string): MediaStreamTrack => {
+    const tracks = useWebRTCRemoteAudioTracks()
+    return React.useMemo(() => {
+        return tracks[stageMemberId]
+    }, [stageMemberId, tracks])
+}
 
 export interface WebRTCStatistics {
+    // Packet jitter in s
     jitter?: number
+    // Average jitter buffer delay in ms
     jitterBufferDelay?: number
-    jitterBufferEmittedCount?: number
+    // Avarage Round trip total in ms
     roundTripTime?: number
-    totalRoundTripTime?: number
-    roundTripTimeMeasurements?: number
 }
 
 const useWebRTCStats = (trackId: string): WebRTCStatistics => {
     const state = React.useContext(TrackStatsContext)
     if (state === undefined) throw new Error('useWebRTCStats must be used within a WebRTCProvider')
     const trackStats = state[trackId]
-    if (trackStats) {
-        let stats: WebRTCStatistics = {}
-        trackStats.forEach((value, key) => {
-            if (key.startsWith('RTCIceCandidatePair')) {
-                if (value.roundTripTime) {
-                    stats.roundTripTime = parseFloat(value.roundTripTime)
+    return React.useMemo(() => {
+        if (trackStats) {
+            let stats: WebRTCStatistics = {}
+            trackStats.forEach((value, key) => {
+                if (key.startsWith('RTCIceCandidatePair')) {
+                    if (value.currentRoundTripTime) {
+                        stats.roundTripTime = round(parseFloat(value.currentRoundTripTime) * 1000)
+                    } else if (value.roundTripTime) {
+                        stats.roundTripTime = round(parseFloat(value.roundTripTime) * 1000)
+                    } else if (value.totalRoundTripTime && value.roundTripTimeMeasurements) {
+                        stats.roundTripTime = round(
+                            (parseFloat(value.roundTripTime) /
+                                parseFloat(value.roundTripTimeMeasurements)) *
+                                1000
+                        )
+                    }
                 }
-                if (value.totalRoundTripTime) {
-                    stats.totalRoundTripTime = parseFloat(value.totalRoundTripTime)
+                if (key.startsWith('RTCInboundRTP') && value.jitter) {
+                    stats.jitter = round(parseFloat(value.jitter), 2)
                 }
-                if (value.roundTripTimeMeasurements) {
-                    stats.roundTripTimeMeasurements = parseFloat(value.roundTripTimeMeasurements)
+                if (
+                    key.startsWith('RTCMediaStreamTrack') &&
+                    value.jitterBufferDelay &&
+                    value.jitterBufferEmittedCount
+                ) {
+                    stats.jitterBufferDelay = round(
+                        (parseFloat(value.jitterBufferDelay) /
+                            parseInt(value.jitterBufferEmittedCount)) *
+                            1000
+                    )
                 }
-            }
-            if (key.startsWith('RTCInboundRTP') && value.jitter) {
-                stats.jitter = parseFloat(value.jitter)
-            }
-            if (key.startsWith('RTCMediaStreamTrack') && value.jitterBufferDelay) {
-                stats.jitterBufferDelay = parseFloat(value.jitterBufferDelay)
-                stats.jitterBufferEmittedCount = parseInt(value.jitterBufferEmittedCount)
-            }
-        })
-        return stats
-    }
-    return undefined
+            })
+            return stats
+        }
+        return undefined
+    }, [trackStats])
 }
 
 const WebRTCService = (): JSX.Element => {
@@ -142,6 +164,7 @@ const WebRTCService = (): JSX.Element => {
     const localStageDeviceId = useStageSelector<string | undefined>(
         (state) => state.globals.localStageDeviceId
     )
+    const broker = React.useRef<Broker>(new Broker())
     const {
         inputVideoDeviceId,
         sendVideo,
@@ -194,48 +217,21 @@ const WebRTCService = (): JSX.Element => {
               ) || []
             : []
     )
-
-    const [descriptions, setDescriptions] = React.useState<{
-        [from: string]: RTCSessionDescriptionInit
-    }>({})
-    const [candidates, setCandidates] = React.useState<{
-        [from: string]: RTCIceCandidate
-    }>({})
     React.useEffect(() => {
         if (connection) {
-            const handleOffer = ({ from, offer }: ServerDevicePayloads.P2POfferSent) => {
-                trace(`Received offer from ${from}`)
-                setDescriptions((prev) => ({
-                    ...prev,
-                    [from]: offer,
-                }))
-            }
-            const handleAnswer = ({ from, answer }: ServerDevicePayloads.P2PAnswerSent) => {
-                trace(`Received answer from ${from}`)
-                setDescriptions((prev) => ({
-                    ...prev,
-                    [from]: answer,
-                }))
-            }
-            const handleIceCandidate = ({
-                from,
-                iceCandidate,
-            }: ServerDevicePayloads.IceCandidateSent) => {
-                trace(`Received ice candidate from ${from}`)
-                setCandidates((prev) => ({
-                    ...prev,
-                    [from]: iceCandidate,
-                }))
-            }
-            connection.on(ServerDeviceEvents.P2POfferSent, handleOffer)
-            connection.on(ServerDeviceEvents.P2PAnswerSent, handleAnswer)
-            connection.on(ServerDeviceEvents.IceCandidateSent, handleIceCandidate)
+            const currentBroker = broker.current
+            connection.on(ServerDeviceEvents.P2POfferSent, currentBroker.handleOffer)
+            connection.on(ServerDeviceEvents.P2PAnswerSent, currentBroker.handleAnswer)
+            connection.on(ServerDeviceEvents.IceCandidateSent, currentBroker.handleIceCandidate)
             setReady(true)
             return () => {
                 setReady(false)
-                connection.off(ServerDeviceEvents.P2POfferSent, handleOffer)
-                connection.off(ServerDeviceEvents.P2PAnswerSent, handleAnswer)
-                connection.off(ServerDeviceEvents.IceCandidateSent, handleIceCandidate)
+                connection.off(ServerDeviceEvents.P2POfferSent, currentBroker.handleOffer)
+                connection.off(ServerDeviceEvents.P2PAnswerSent, currentBroker.handleAnswer)
+                connection.off(
+                    ServerDeviceEvents.IceCandidateSent,
+                    currentBroker.handleIceCandidate
+                )
             }
         }
     }, [connection])
@@ -243,57 +239,51 @@ const WebRTCService = (): JSX.Element => {
     /**
      * Capture local video track
      */
-    const setLocalVideoTracks = React.useContext(DispatchLocalVideoTracksContext)
+    const setLocalVideoTrack = React.useContext(DispatchLocalVideoTrackContext)
     React.useEffect(() => {
         if (
             stageId &&
             videoType === 'mediasoup' &&
-            setLocalVideoTracks &&
+            setLocalVideoTrack &&
             localStageDeviceId &&
             sendVideo &&
             useP2P
         ) {
             trace('Fetching video tracks')
             let abort = false
-            let addedTracks: MediaStreamTrack[] = undefined
-            let publishedIds: string[] = []
-            getVideoTracks(inputVideoDeviceId).then((tracks) => {
+            let addedTrack: MediaStreamTrack = undefined
+            let publishedId: string
+            getVideoTrack(inputVideoDeviceId).then((track) => {
                 if (abort) {
-                    tracks.forEach((track) => track.stop())
+                    track.stop()
                 } else {
-                    addedTracks = tracks
-                    trace(`Have ${tracks.length} tracks`)
-                    tracks.forEach((track) => {
-                        trace('Publishing video track by trackId', track.id)
-                        emit(
-                            ClientDeviceEvents.CreateVideoTrack,
-                            {
-                                stageId,
-                                trackId: track.id,
-                                type: 'browser',
-                            } as ClientDevicePayloads.CreateVideoTrack,
-                            (error: string | null, videoTrack) => {
-                                if (error) {
-                                    console.error(
-                                        `Could not publish local video track. Reason: ${error}`
-                                    )
-                                } else {
-                                    trace('Published local video track')
-                                    publishedIds.push(videoTrack._id)
-                                }
+                    addedTrack = track
+                    trace('Publishing video track by trackId', track.id)
+                    emit(
+                        ClientDeviceEvents.CreateVideoTrack,
+                        {
+                            stageId,
+                            trackId: track.id,
+                            type: 'browser',
+                        } as ClientDevicePayloads.CreateVideoTrack,
+                        (error: string | null, videoTrack) => {
+                            if (error) {
+                                console.error(
+                                    `Could not publish local video track. Reason: ${error}`
+                                )
+                            } else {
+                                trace('Published local video track')
+                                publishedId = videoTrack._id
                             }
-                        )
-                        setLocalVideoTracks((prev) => ({
-                            ...prev,
-                            [track.id]: track,
-                        }))
-                    })
+                        }
+                    )
+                    setLocalVideoTrack(track)
                 }
             })
             return () => {
                 trace('Cleaning up video tracks')
                 abort = true
-                publishedIds.map((publishedId) => {
+                if (publishedId) {
                     emit(
                         ClientDeviceEvents.RemoveVideoTrack,
                         publishedId as ClientDevicePayloads.RemoveVideoTrack,
@@ -307,13 +297,11 @@ const WebRTCService = (): JSX.Element => {
                             }
                         }
                     )
-                })
-                if (addedTracks) {
-                    addedTracks.map((track) => {
-                        setLocalVideoTracks((prev) => omit(prev, track.id))
-                        trace('Stopping track')
-                        track.stop()
-                    })
+                }
+                if (addedTrack) {
+                    setLocalVideoTrack(undefined)
+                    trace('Stopping track')
+                    addedTrack.stop()
                 }
             }
         }
@@ -325,71 +313,63 @@ const WebRTCService = (): JSX.Element => {
         localStageDeviceId,
         videoType,
         emit,
-        setLocalVideoTracks,
+        setLocalVideoTrack,
     ])
     /**
      * Capture local audio track
      */
-    const setLocalAudioTracks = React.useContext(DispatchLocalAudioTracksContext)
+    const setLocalAudioTrack = React.useContext(DispatchLocalAudioTrackContext)
     React.useEffect(() => {
         if (
             stageId &&
             audioType === 'mediasoup' &&
-            setLocalAudioTracks &&
+            setLocalAudioTrack &&
             localStageDeviceId &&
             sendAudio &&
             useP2P
         ) {
             trace('Fetching audio tracks')
             let abort = false
-            let addedTracks: MediaStreamTrack[] = undefined
-            let publishedIds: string[] = []
-            getAudioTracks({
+            let addedTrack: MediaStreamTrack = undefined
+            let publishedId: string = undefined
+            getAudioTrack({
                 inputAudioDeviceId,
                 autoGainControl,
                 echoCancellation,
                 noiseSuppression,
                 sampleRate,
-            }).then((tracks) => {
+            }).then((track) => {
                 if (abort) {
-                    tracks.forEach((track) => track.stop())
+                    track.stop()
                 } else {
-                    addedTracks = tracks
-                    trace(`Have ${tracks.length} tracks`)
-                    tracks.forEach((track) => {
-                        trace('Publishing audio track by trackId', track.id)
-                        emit(
-                            ClientDeviceEvents.CreateAudioTrack,
-                            {
-                                stageId,
-                                trackId: track.id,
-                                type: 'browser',
-                            } as ClientDevicePayloads.CreateAudioTrack,
-                            (error: string | null, videoTrack) => {
-                                if (error) {
-                                    console.error(
-                                        `Could not publish local audio track. Reason: ${error}`
-                                    )
-                                    reportError(
-                                        `Could not publish local audio track. Reason: ${error}`
-                                    )
-                                } else {
-                                    trace('Published local audio track')
-                                    publishedIds.push(videoTrack._id)
-                                }
+                    addedTrack = track
+                    trace('Publishing audio track by trackId', track.id)
+                    emit(
+                        ClientDeviceEvents.CreateAudioTrack,
+                        {
+                            stageId,
+                            trackId: track.id,
+                            type: 'browser',
+                        } as ClientDevicePayloads.CreateAudioTrack,
+                        (error: string | null, audioTrack) => {
+                            if (error) {
+                                console.error(
+                                    `Could not publish local audio track. Reason: ${error}`
+                                )
+                                reportError(`Could not publish local audio track. Reason: ${error}`)
+                            } else {
+                                trace('Published local audio track')
+                                publishedId = audioTrack._id
                             }
-                        )
-                        setLocalAudioTracks((prev) => ({
-                            ...prev,
-                            [track.id]: track,
-                        }))
-                    })
+                        }
+                    )
+                    setLocalAudioTrack(track)
                 }
             })
             return () => {
                 trace('Cleaning up audio tracks')
                 abort = true
-                publishedIds.map((publishedId) => {
+                if (publishedId) {
                     emit(
                         ClientDeviceEvents.RemoveAudioTrack,
                         publishedId as ClientDevicePayloads.RemoveAudioTrack,
@@ -406,13 +386,11 @@ const WebRTCService = (): JSX.Element => {
                             }
                         }
                     )
-                })
-                if (addedTracks) {
-                    addedTracks.map((track) => {
-                        setLocalAudioTracks((prev) => omit(prev, track.id))
-                        trace('Stopping track')
-                        track.stop()
-                    })
+                }
+                if (addedTrack) {
+                    setLocalAudioTrack(undefined)
+                    trace('Stopping track')
+                    addedTrack.stop()
                 }
             }
         }
@@ -427,8 +405,9 @@ const WebRTCService = (): JSX.Element => {
         localStageDeviceId,
         audioType,
         emit,
-        setLocalAudioTracks,
+        setLocalAudioTrack,
         sendAudio,
+        reportError,
     ])
 
     const setRemoteVideoTracks = React.useContext(DispatchRemoteVideoTracksContext)
@@ -439,10 +418,10 @@ const WebRTCService = (): JSX.Element => {
             const dispatch = track.kind === 'video' ? setRemoteVideoTracks : setRemoteAudioTracks
             dispatch((prev) => ({
                 ...prev,
-                [track.id]: track,
+                [stageDeviceId]: track,
             }))
             const endTrack = () => {
-                dispatch((prev) => omit(prev, track.id))
+                dispatch((prev) => omit(prev, stageDeviceId))
             }
             track.addEventListener('mute', endTrack)
             track.addEventListener('ended', endTrack)
@@ -450,8 +429,6 @@ const WebRTCService = (): JSX.Element => {
         [setRemoteAudioTracks, setRemoteVideoTracks]
     )
     const setWebRTCStats = React.useContext(DispatchTrackStatsContext)
-    const localVideoTracks = React.useContext(LocalVideoTracksContext)
-    const localAudioTracks = React.useContext(LocalAudioTracksContext)
     const onStats = React.useCallback(
         (trackId: string, stats: RTCStatsReport) => {
             setWebRTCStats((prev) => ({
@@ -461,9 +438,6 @@ const WebRTCService = (): JSX.Element => {
         },
         [setWebRTCStats]
     )
-    const tracks = React.useMemo(() => {
-        return [...Object.values(localVideoTracks), ...Object.values(localAudioTracks)]
-    }, [localVideoTracks, localAudioTracks])
     if (ready) {
         return (
             <>
@@ -472,10 +446,8 @@ const WebRTCService = (): JSX.Element => {
                         key={stageDeviceId}
                         stageDeviceId={stageDeviceId}
                         onRemoteTrack={onRemoteTrack}
-                        tracks={tracks}
                         onStats={onStats}
-                        currentDescription={descriptions[stageDeviceId]}
-                        currentCandidate={candidates[stageDeviceId]}
+                        broker={broker.current}
                     />
                 ))}
             </>
@@ -486,9 +458,11 @@ const WebRTCService = (): JSX.Element => {
 export {
     WebRTCService,
     WebRTCProvider,
-    useWebRTCLocalVideoTracks,
+    useWebRTCLocalVideoTrack,
+    useWebRTCLocalAudioTrack,
     useWebRTCRemoteVideoTracks,
-    useWebRTCLocalAudioTracks,
+    useWebRTCRemoteVideoTrack,
     useWebRTCRemoteAudioTracks,
+    useWebRTCRemoteAudioTrack,
     useWebRTCStats,
 }

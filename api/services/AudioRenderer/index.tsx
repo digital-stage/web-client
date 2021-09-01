@@ -26,9 +26,9 @@ import { useAudioContext } from './../../provider/AudioContextProvider'
 import { useAudioLevelDispatch } from '../../provider/AudioLevelProvider'
 import { shallowEqual } from 'react-redux'
 import { useStageSelector } from './../../redux/useStageSelector'
-import { useWebRTCLocalAudioTracks, useWebRTCRemoteAudioTracks } from '../WebRTCService'
+import { useWebRTCLocalAudioTrack, useWebRTCRemoteAudioTrack } from '../WebRTCService'
 import { logger } from '../../logger'
-import { useAudioConsumers, useAudioProducers } from '../MediasoupService'
+import { useAudioConsumers, useAudioProducer } from '../MediasoupService'
 
 const { trace } = logger('useAudioRenderer')
 
@@ -106,10 +106,11 @@ const AudioTrackRenderer = ({
                 : undefined,
         shallowEqual
     )
+    const localStageDeviceId = useStageSelector((state) => state.globals.localStageDeviceId)
     const mediasoupAudioConsumers = useAudioConsumers()
-    const mediasoupAudioProducers = useAudioProducers()
-    const localWebRTCTracks = useWebRTCLocalAudioTracks()
-    const remoteWebRTCTracks = useWebRTCRemoteAudioTracks()
+    const mediasoupAudioProducer = useAudioProducer()
+    const localWebRTCTrack = useWebRTCLocalAudioTrack()
+    const remoteWebRTCTrack = useWebRTCRemoteAudioTrack(audioTrack.stageDeviceId)
     const audioRef = useRef<HTMLAudioElement>(null)
     const [track, setTrack] = useState<MediaStreamTrack>()
     const [sourceNode, setSourceNode] = useState<IMediaStreamAudioSourceNode<IAudioContext>>()
@@ -134,27 +135,28 @@ const AudioTrackRenderer = ({
     useEffect(() => {
         setTrack((prev) => {
             if (!prev) {
-                if (mediasoupAudioProducers[audioTrack._id])
-                    return mediasoupAudioProducers[audioTrack._id].track
+                // Prefer local tracks
+                if (localStageDeviceId === audioTrack.stageDeviceId) {
+                    if (mediasoupAudioProducer) {
+                        return mediasoupAudioProducer.track
+                    }
+                    if (localWebRTCTrack) return localWebRTCTrack
+                }
                 if (mediasoupAudioConsumers[audioTrack._id])
                     return mediasoupAudioConsumers[audioTrack._id].track
-                if (audioTrack.trackId) {
-                    if (localWebRTCTracks[audioTrack.trackId])
-                        return localWebRTCTracks[audioTrack.trackId]
-                    if (remoteWebRTCTracks[audioTrack.trackId])
-                        return remoteWebRTCTracks[audioTrack.trackId]
-                }
+                if (remoteWebRTCTrack) return remoteWebRTCTrack
             }
             trace('NO TRACK FOUND')
             return prev
         })
     }, [
+        localStageDeviceId,
+        audioTrack.stageDeviceId,
         audioTrack._id,
-        audioTrack.trackId,
         mediasoupAudioConsumers,
-        mediasoupAudioProducers,
-        localWebRTCTracks,
-        remoteWebRTCTracks,
+        remoteWebRTCTrack,
+        mediasoupAudioProducer,
+        localWebRTCTrack,
     ])
 
     useEffect(() => {

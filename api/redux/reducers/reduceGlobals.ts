@@ -24,7 +24,6 @@ function reduceGlobals(
                 ready: false,
                 selectedDeviceId: undefined,
                 stageId: undefined,
-                stageMemberId: undefined,
                 groupId: undefined,
                 localDeviceId: undefined,
                 localStageDeviceId: undefined,
@@ -61,7 +60,7 @@ function reduceGlobals(
                 ready: true,
             }
         case ServerDeviceEvents.StageJoined: {
-            const { stageId, groupId, stageMemberId, stageDevices } =
+            const { stageId, groupId, stageDevices } =
                 action.payload as ServerDevicePayloads.StageJoined
             if (state.localDeviceId) {
                 const localStageDevice = stageDevices.find(
@@ -72,7 +71,6 @@ function reduceGlobals(
                         ...state,
                         stageId,
                         groupId,
-                        stageMemberId,
                         localStageDeviceId: localStageDevice._id,
                     }
                 }
@@ -88,7 +86,6 @@ function reduceGlobals(
                 ...state,
                 stageId: undefined,
                 groupId: undefined,
-                stageMemberId: undefined,
                 localStageDeviceId: undefined,
             }
         case ServerDeviceEvents.UserReady:

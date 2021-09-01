@@ -1,4 +1,4 @@
-const getVideoTracks = (inputVideoDeviceId?: string): Promise<MediaStreamTrack[]> =>
+const getVideoTrack = (inputVideoDeviceId?: string): Promise<MediaStreamTrack> =>
     navigator.mediaDevices
         .getUserMedia({
             audio: false,
@@ -13,5 +13,5 @@ const getVideoTracks = (inputVideoDeviceId?: string): Promise<MediaStreamTrack[]
                       height: { max: 640 },
                   },
         })
-        .then((stream) => stream.getVideoTracks())
-export { getVideoTracks }
+        .then((stream) => stream.getVideoTracks().pop())
+export { getVideoTrack }

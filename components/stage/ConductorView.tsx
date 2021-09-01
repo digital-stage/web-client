@@ -11,7 +11,7 @@ const ConductorView = () => {
         state.stageMembers.allIds.filter((id) => state.stageMembers.byId[id].isDirector)
     )
     const isAdmin = useStageSelector<boolean>((state) =>
-        state.globals.stageId && state.globals.stageMemberId
+        state.globals.stageId
             ? state.stages.byId[state.globals.stageId].admins.some(
                   (id) => id === state.globals.localStageDeviceId
               )
