@@ -28,7 +28,7 @@ import { shallowEqual } from 'react-redux'
 import { useStageSelector } from '../../redux/selectors/useStageSelector'
 import { useWebRTCLocalAudioTrack, useWebRTCRemoteAudioTrackByStageDevice } from '../WebRTCService'
 import { logger } from '../../logger'
-import { useAudioConsumer, useAudioProducer } from '../MediasoupService'
+import {useAudioConsumer, useAudioProducer} from '../MediasoupService'
 import { useSpatialAudioSelector } from '../../redux/selectors/useSpatialAudioSelector'
 
 const { trace } = logger('AudioRendererService')
@@ -152,7 +152,6 @@ const AudioTrackRenderer = ({
                 if (mediasoupAudioConsumer) return mediasoupAudioConsumer.track
                 if (remoteWebRTCTrack) return remoteWebRTCTrack
             }
-            trace('NO TRACK FOUND')
             return prev
         })
     }, [

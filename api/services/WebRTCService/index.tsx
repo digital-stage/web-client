@@ -334,7 +334,7 @@ const WebRTCService = (): JSX.Element => {
             let addedTrack: MediaStreamTrack = undefined
             let publishedId: string = undefined
             getAudioTrack({
-                inputAudioDeviceId,
+                deviceId: inputAudioDeviceId,
                 autoGainControl,
                 echoCancellation,
                 noiseSuppression,

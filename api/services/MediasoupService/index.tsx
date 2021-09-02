@@ -93,11 +93,11 @@ const useAudioConsumers = (): ConsumerList => {
         throw new Error('useAudioConsumers must be used within a MediasoupProvider')
     return state
 }
-const useAudioConsumer = (videoTrackId: string): Consumer => {
+const useAudioConsumer = (audioTrackId: string): Consumer => {
     const state = useAudioConsumers()
     return React.useMemo(() => {
-        return state[videoTrackId]
-    }, [videoTrackId, state])
+        return state[audioTrackId]
+    }, [audioTrackId, state])
 }
 
 const MediasoupService = () => {
@@ -167,9 +167,9 @@ const MediasoupService = () => {
                 reconnection: true,
             })
             const disconnect = () => {
-                receiveTransport.close()
-                sendTransport.close()
-                routerConnection.disconnect()
+                receiveTransport?.close()
+                sendTransport?.close()
+                routerConnection?.disconnect()
             }
             routerConnection.on('disconnect', () => {
                 trace(`Disconnected from router`)
@@ -373,7 +373,7 @@ const MediasoupService = () => {
             let producer: Producer
             let publishedId: string
             getAudioTrack({
-                inputAudioDeviceId,
+                deviceId: inputAudioDeviceId,
                 autoGainControl,
                 echoCancellation,
                 noiseSuppression,
