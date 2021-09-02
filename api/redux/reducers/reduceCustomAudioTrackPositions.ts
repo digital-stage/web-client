@@ -6,7 +6,7 @@ import {
     CustomAudioTrackPosition,
 } from '@digitalstage/api-types'
 import { upsert } from '../utils/upsert'
-import CustomAudioTrackPositions from '../state/CustomAudioTrackPositions'
+import { CustomAudioTrackPositions } from '../state/CustomAudioTrackPositions'
 import { InternalActionTypes } from '../actions/InternalActionTypes'
 
 const addCustomAudioTrackPosition = (
@@ -121,4 +121,4 @@ function reduceCustomAudioTrackPositions(
     }
 }
 
-export default reduceCustomAudioTrackPositions
+export { reduceCustomAudioTrackPositions }

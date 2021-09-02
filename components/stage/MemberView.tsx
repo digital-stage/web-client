@@ -1,146 +1,48 @@
-import React from 'react'
-import styles from './StageView.module.scss'
-import { VideoView } from './VideoView'
-import { Avatar } from './Avatar'
 import {
+    useCurrentStageAdminSelector,
     useStageSelector,
-    useVideoConsumers,
+    useVideoConsumer,
     useVideoProducer,
-    useWebRTCLocalVideoTrack,
-    useWebRTCRemoteVideoTracks,
+    useWebRTCLocalVideo,
+    useWebRTCRemoteVideoByStageDevice,
     useWebRTCStats,
 } from '@digitalstage/api-client-react'
+import React from 'react'
+import styles from './StageView.module.scss'
+import { Avatar } from './Avatar'
 import { ConductorButton } from './ConductorButton'
+import { VideoPlayer } from './VideoPlayer'
 
-const useStageMemberTracks = (stageMemberId: string) => {
-    const isLocal = useStageSelector<boolean>(
-        (state) => state.stageMembers.byId[stageMemberId].userId === state.globals.localUserId
-    )
-    const videoProducer = useVideoProducer()
-    const localVideoTrack = useWebRTCLocalVideoTrack()
-    const videoTracks = useStageSelector(
-        (state) =>
-            state.videoTracks.byStageMember[stageMemberId]
-                ?.map((id) => state.videoTracks.byId[id])
-                .map((track) => ({
-                    _id: track._id,
-                    stageDeviceId: track.stageDeviceId,
-                    trackId: track.trackId,
-                })) || []
-    )
-    const stageDeviceIds = useStageSelector(
-        (state) => state.stageDevices.byStageMember[stageMemberId] || []
-    )
-    const videoConsumers = useVideoConsumers()
-    const remoteVideoTracks = useWebRTCRemoteVideoTracks()
-
-    return React.useMemo(() => {
-        const tracks: MediaStreamTrack[] = []
-        if (isLocal) {
-            // Use only local tracks
-            if (localVideoTrack) {
-                tracks.push(localVideoTrack)
-            }
-            if (videoProducer) {
-                tracks.push(videoProducer.track)
-            }
-        } else {
-            // Use remote tracks
-            videoTracks.forEach((videoTrack) => {
-                if (videoConsumers[videoTrack._id]) {
-                    tracks.push(videoConsumers[videoTrack._id].track)
-                }
-            })
-            stageDeviceIds.forEach((stageDeviceId) => {
-                if (remoteVideoTracks[stageDeviceId]) {
-                    tracks.push(remoteVideoTracks[stageDeviceId])
-                }
-            })
-        }
-        return tracks
-    }, [
-        isLocal,
-        localVideoTrack,
-        remoteVideoTracks,
-        stageDeviceIds,
-        videoConsumers,
-        videoProducer,
-        videoTracks,
-    ])
+const TrackStatsView = ({ trackId }: { trackId: string }): JSX.Element => {
+    const stats = useWebRTCStats(trackId)
+    if (stats) {
+        return (
+            <span className={styles.stats}>
+                {stats.roundTripTime ? <span>{`RTT ${stats.roundTripTime}ms`}</span> : null}
+                {stats.jitter ? <span>{`Jitter ${stats.jitter}%/s`}</span> : null}
+                {stats.jitterBufferDelay ? (
+                    <span>{`Jitterbuffer ${stats.jitterBufferDelay}ms`}</span>
+                ) : null}
+            </span>
+        )
+    }
+    return null
 }
 
-const MemoizedVideoView = React.memo(VideoView)
-
-const VideoTrackView = ({
-    track,
+const StageMemberBox = ({
+    userName,
+    groupName,
     groupColor,
     active,
-    groupName,
-    stageMemberId,
-    userName,
-    hasCurrentUserAdminRights,
-}: {
-    track: MediaStreamTrack
-    stageMemberId: string
-    groupColor?: string
-    active?: boolean
-    groupName: string
-    userName: string
-    hasCurrentUserAdminRights: boolean
-}) => {
-    const stats = useWebRTCStats(track.id)
-    return (
-        <div
-            key={track.id}
-            className={styles.memberView}
-            style={{
-                borderWidth: !groupColor ? 0 : undefined,
-                borderColor: groupColor,
-            }}
-        >
-            <MemoizedVideoView track={track} className={styles.video} />
-            <div className={styles.info}>
-                <div className={`${styles.status} ${active ? styles.online : ''}`} />
-                <div className={styles.names}>
-                    <h6
-                        className={styles.groupName}
-                        style={{
-                            color: groupColor,
-                        }}
-                    >
-                        {groupName}
-                    </h6>
-                    <h5 className={styles.memberName}>{userName}</h5>
-                </div>
-                {stats ? (
-                    <span className={styles.stats}>
-                        {stats.roundTripTime ? <span>{`RTT ${stats.roundTripTime}ms`}</span> : null}
-                        {stats.jitter ? <span>{`Jitter ${stats.jitter}%/s`}</span> : null}
-                        {stats.jitterBufferDelay ? (
-                            <span>{`Jitterbuffer ${stats.jitterBufferDelay}ms`}</span>
-                        ) : null}
-                    </span>
-                ) : null}
-            </div>
-            {hasCurrentUserAdminRights ? <ConductorButton stageMemberId={stageMemberId} /> : null}
-        </div>
-    )
-}
-
-const MemberWithoutVideo = ({
-    userName,
-    stageMemberId,
-    isActive,
-    groupName,
-    groupColor,
-    hasCurrentUserAdminRights,
+    track,
+    conductorId,
 }: {
     userName: string
-    stageMemberId: string
-    isActive: boolean
     groupName: string
     groupColor: string
-    hasCurrentUserAdminRights: boolean
+    active: boolean
+    track?: MediaStreamTrack
+    conductorId: string
 }): JSX.Element => {
     return (
         <div
@@ -149,9 +51,9 @@ const MemberWithoutVideo = ({
                 borderColor: groupColor,
             }}
         >
-            <div className={`${styles.info} ${styles.centered}`}>
-                <Avatar name={userName} color={groupColor} />
-                <div className={`${styles.status} ${isActive ? styles.online : ''}`} />
+            {track ? <VideoPlayer track={track} /> : null}
+            <div className={`${styles.info} ${!track ? styles.centered : ''}`}>
+                <Avatar name={userName} color={groupColor} active={active} />
                 <div className={styles.names}>
                     <h6
                         className={styles.groupName}
@@ -163,66 +65,137 @@ const MemberWithoutVideo = ({
                     </h6>
                     <h5 className={styles.memberName}>{userName}</h5>
                 </div>
-                {hasCurrentUserAdminRights ? (
-                    <ConductorButton stageMemberId={stageMemberId} />
-                ) : null}
+                {track ? <TrackStatsView trackId={track.id} /> : null}
             </div>
+            {!!conductorId ? <ConductorButton stageMemberId={conductorId} /> : null}
         </div>
     )
 }
 
-const MemoizedVideoTrackView = React.memo(VideoTrackView)
-const MemoizedMemberWithoutVideo = React.memo(MemberWithoutVideo)
+const StageMemberVideoTrackView = ({
+    videoTrackId,
+    userName,
+    groupName,
+    groupColor,
+    active,
+    conductorId,
+}: {
+    videoTrackId: string
+    userName: string
+    groupName: string
+    groupColor: string
+    active: boolean
+    conductorId: string
+}): JSX.Element => {
+    // Fetch WebRTC video by stage device (only one video per stage device possible)
+    const stageDeviceId = useStageSelector(
+        (state) => state.videoTracks.byId[videoTrackId].stageDeviceId
+    )
+    const webRTCTrack = useWebRTCRemoteVideoByStageDevice(stageDeviceId)
+    // Fetch Mediasoup consumer by this videoTrackId
+    const mediasoupConsumer = useVideoConsumer(videoTrackId)
+
+    console.log('CONSUMER', videoTrackId, webRTCTrack, mediasoupConsumer)
+
+    // Determine which track to use
+    const track = React.useMemo(() => {
+        if (webRTCTrack) return webRTCTrack
+        if (mediasoupConsumer) return mediasoupConsumer.track
+        return undefined
+    }, [mediasoupConsumer, webRTCTrack])
+
+    console.log('track', track)
+    if (track) {
+        return (
+            <StageMemberBox
+                userName={userName}
+                active={active}
+                groupName={groupName}
+                groupColor={groupColor}
+                conductorId={conductorId}
+                track={track}
+            />
+        )
+    }
+    return null
+}
 
 const MemberView = ({
     stageMemberId,
-    groupColor,
     groupName,
-    hasCurrentUserAdminRights,
+    groupColor,
 }: {
     stageMemberId: string
     groupColor?: string
     groupName?: string
-    hasCurrentUserAdminRights?: boolean
 }) => {
-    const isLocal = useStageSelector<boolean>(
-        (state) => state.stageMembers.byId[stageMemberId].userId === state.globals.localUserId
-    )
-    const userName = useStageSelector(
+    const isStageAdmin = useCurrentStageAdminSelector()
+    const userName = useStageSelector<string>(
         (state) => state.users.byId[state.stageMembers.byId[stageMemberId].userId].name
     )
-    const isActive = useStageSelector((state) => state.stageMembers.byId[stageMemberId].active)
-    const videos = useStageMemberTracks(stageMemberId)
-
-    if (videos.length > 0) {
-        return (
-            <>
-                {videos.map((track) => (
-                    <MemoizedVideoTrackView
-                        key={track.id}
-                        stageMemberId={stageMemberId}
-                        userName={userName || stageMemberId}
-                        groupColor={groupColor}
-                        groupName={groupName}
-                        active={isActive}
-                        hasCurrentUserAdminRights={hasCurrentUserAdminRights}
-                        track={track}
-                    />
-                ))}
-            </>
-        )
-    }
+    const active = useStageSelector<boolean>(
+        (state) => state.stageMembers.byId[stageMemberId].active
+    )
+    const remoteVideoTrackIds = useStageSelector<string[]>(
+        (state) =>
+            state.videoTracks.byStageMember[stageMemberId]?.filter(
+                (id) =>
+                    state.videoTracks.byId[id].stageDeviceId !== state.globals.localStageDeviceId
+            ) || []
+    )
+    const isLocal = useStageSelector<boolean>(
+        (state) => state.globals.stageMemberId === stageMemberId
+    )
+    const localProducer = useVideoProducer()
+    const localWebRTCTrack = useWebRTCLocalVideo()
+    const localTrack = React.useMemo<MediaStreamTrack>(() => {
+        if (isLocal) {
+            if (localWebRTCTrack) {
+                return localWebRTCTrack
+            }
+            if (localProducer) {
+                return localProducer.track
+            }
+        }
+        return undefined
+    }, [isLocal, localProducer, localWebRTCTrack])
 
     return (
-        <MemoizedMemberWithoutVideo
-            stageMemberId={stageMemberId}
-            userName={userName}
-            isActive={isActive}
-            groupName={groupName}
-            groupColor={groupColor}
-            hasCurrentUserAdminRights={hasCurrentUserAdminRights}
-        />
+        <>
+            {!!localTrack || remoteVideoTrackIds.length > 0 ? (
+                <>
+                    {!!localTrack ? (
+                        <StageMemberBox
+                            userName={userName}
+                            active={active}
+                            groupName={groupName}
+                            groupColor={groupColor}
+                            conductorId={isStageAdmin ? stageMemberId : undefined}
+                            track={localTrack}
+                        />
+                    ) : null}
+                    {remoteVideoTrackIds.map((videoTrackId) => (
+                        <StageMemberVideoTrackView
+                            key={videoTrackId}
+                            videoTrackId={videoTrackId}
+                            userName={userName}
+                            active={active}
+                            groupName={groupName}
+                            groupColor={groupColor}
+                            conductorId={isStageAdmin ? stageMemberId : undefined}
+                        />
+                    ))}
+                </>
+            ) : (
+                <StageMemberBox
+                    userName={userName}
+                    active={active}
+                    groupName={groupName}
+                    groupColor={groupColor}
+                    conductorId={isStageAdmin ? stageMemberId : undefined}
+                />
+            )}
+        </>
     )
 }
-const MemoizedMemberView = React.memo(MemberView)
-export { MemoizedMemberView as MemberView }
+export { MemberView }

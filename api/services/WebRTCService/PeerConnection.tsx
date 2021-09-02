@@ -4,7 +4,7 @@ import { config } from './config'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
 import { logger } from '../../logger'
 import { Broker, DescriptionListener, IceCandidateListener } from './Broker'
-import { useWebRTCLocalAudioTrack, useWebRTCLocalVideoTrack } from './index'
+import { useWebRTCLocalAudioTrack, useWebRTCLocalVideo } from './index'
 
 const { trace, reportError } = logger('WebRTCService:PeerConnection')
 
@@ -111,10 +111,15 @@ const PeerConnection = ({
 
             peerConnection.onconnectionstatechange = () => {
                 trace(`with ${stageDeviceId}: connectionState`, peerConnection.connectionState)
+                if (peerConnection.connectionState === 'failed') {
+                    peerConnection.restartIce()
+                }
             }
             peerConnection.onsignalingstatechange = () => {
                 trace(`with ${stageDeviceId}: signalingState`, peerConnection.signalingState)
             }
+            // Initiate connection
+            peerConnection.restartIce()
             setReady(true)
         }
     }, [
@@ -239,7 +244,7 @@ const PeerConnection = ({
         }
     }, [broker, handleCandidate, handleDescription, notify, ready, stageDeviceId])
 
-    const videoTrack = useWebRTCLocalVideoTrack()
+    const videoTrack = useWebRTCLocalVideo()
     React.useEffect(() => {
         if (peerConnection) {
             if (videoTrack) {
@@ -251,6 +256,7 @@ const PeerConnection = ({
                 }
             } else if (videoSender.current) {
                 peerConnection.removeTrack(videoSender.current)
+                videoSender.current = undefined
             }
         }
     }, [peerConnection, videoTrack])
@@ -267,6 +273,7 @@ const PeerConnection = ({
                 }
             } else if (audioSender.current) {
                 peerConnection.removeTrack(audioSender.current)
+                audioSender.current = undefined
             }
         }
     }, [peerConnection, audioTrack])

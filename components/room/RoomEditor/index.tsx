@@ -5,8 +5,8 @@ import {
     selectMode,
     useStageSelector,
     ConnectionStateContext,
+    useCurrentStageAdminSelector,
 } from '@digitalstage/api-client-react'
-import { Stage } from '@digitalstage/api-types'
 import { ReactReduxContext, useDispatch } from 'react-redux'
 import { FACTOR } from './RoomElement'
 import RoomSelection from './RoomSelection'
@@ -17,16 +17,15 @@ import ResetPanel from './ResetPanel'
 const RoomEditor = ({ stageId }: { stageId: string }) => {
     const innerRef = React.useRef<HTMLDivElement>(null)
     const dispatch = useDispatch()
-    const stage = useStageSelector<Stage>((state) => state.stages.byId[stageId])
+
+    const height = useStageSelector<number>((state) => state.stages.byId[stageId].height)
+    const width = useStageSelector<number>((state) => state.stages.byId[stageId].width)
+
     const groupIds = useStageSelector<string[]>((state) => state.groups.byStage[stageId] || [])
     const [selection, setSelection] = React.useState<RoomSelection[]>([])
     const selectedDeviceId = useStageSelector((state) => state.globals.selectedDeviceId)
     const selectedMode = useStageSelector((state) => state.globals.selectedMode)
-    const localUserId = useStageSelector((state) => state.globals.localUserId)
-    const isStageAdmin = React.useMemo<boolean>(
-        () => (stage ? stage.admins.some((userId) => userId === localUserId) : false),
-        [stage, localUserId]
-    )
+    const isStageAdmin = useCurrentStageAdminSelector()
     const onStageClicked = React.useCallback((e) => {
         const clickedOnEmpty = e.target === e.target.getStage()
         if (clickedOnEmpty) {
@@ -35,82 +34,79 @@ const RoomEditor = ({ stageId }: { stageId: string }) => {
     }, [])
     /** Scroll into center of stage **/
     React.useEffect(() => {
-        if (innerRef.current && stage?.width && stage.height) {
-            innerRef.current.scrollLeft = (stage.width * FACTOR) / 2 - window.innerWidth / 2
-            innerRef.current.scrollTop = (stage.height * FACTOR) / 2 - window.innerHeight / 2
+        if (innerRef.current && width && height) {
+            innerRef.current.scrollLeft = (width * FACTOR) / 2 - window.innerWidth / 2
+            innerRef.current.scrollTop = (height * FACTOR) / 2 - window.innerHeight / 2
         }
-    }, [innerRef, stage?.width, stage?.height])
+    }, [innerRef, width, height])
 
-    if (stage) {
-        return (
-            <div className={styles.wrapper}>
-                <div className={styles.inner} ref={innerRef}>
-                    <ReactReduxContext.Consumer>
-                        {(store) => (
-                            <ConnectionStateContext.Consumer>
-                                {(connection) => (
-                                    <KonvaStage
-                                        width={stage.width * FACTOR}
-                                        height={stage.height * FACTOR}
-                                        onClick={onStageClicked}
-                                        onTap={onStageClicked}
-                                    >
-                                        <KonvaLayer>
-                                            <ReactReduxContext.Provider value={store}>
-                                                <ConnectionStateContext.Provider value={connection}>
-                                                    {groupIds.map((groupId) => (
-                                                        <GroupItem
-                                                            key={groupId}
-                                                            groupId={groupId}
-                                                            deviceId={
-                                                                selectedMode === 'global'
-                                                                    ? undefined
-                                                                    : selectedDeviceId
-                                                            }
-                                                            stageWidth={stage.width}
-                                                            stageHeight={stage.height}
-                                                            selection={selection}
-                                                            onSelected={(selection) =>
-                                                                setSelection((prev) => [
-                                                                    ...prev,
-                                                                    selection,
-                                                                ])
-                                                            }
-                                                        />
-                                                    ))}
-                                                </ConnectionStateContext.Provider>
-                                            </ReactReduxContext.Provider>
-                                        </KonvaLayer>
-                                    </KonvaStage>
-                                )}
-                            </ConnectionStateContext.Consumer>
-                        )}
-                    </ReactReduxContext.Consumer>
-                </div>
-
-                {isStageAdmin || selectedMode === 'personal' ? (
-                    <ResetPanel
-                        deviceId={selectedMode === 'global' ? undefined : selectedDeviceId}
-                        selection={selection}
-                    />
-                ) : null}
-
-                {isStageAdmin ? (
-                    <TextSwitch
-                        className={styles.switch}
-                        value={selectedMode}
-                        onSelect={(v) => {
-                            dispatch(selectMode(v === 'global' ? 'global' : 'personal'))
-                        }}
-                    >
-                        <span key="personal">Persönliche Einstellungen</span>
-                        <span key="global">Voreinstellungen</span>
-                    </TextSwitch>
-                ) : null}
+    return (
+        <div className={styles.wrapper}>
+            <div className={styles.inner} ref={innerRef}>
+                <ReactReduxContext.Consumer>
+                    {(store) => (
+                        <ConnectionStateContext.Consumer>
+                            {(connection) => (
+                                <KonvaStage
+                                    width={width * FACTOR}
+                                    height={height * FACTOR}
+                                    onClick={onStageClicked}
+                                    onTap={onStageClicked}
+                                >
+                                    <KonvaLayer>
+                                        <ReactReduxContext.Provider value={store}>
+                                            <ConnectionStateContext.Provider value={connection}>
+                                                {groupIds.map((groupId) => (
+                                                    <GroupItem
+                                                        key={groupId}
+                                                        groupId={groupId}
+                                                        deviceId={
+                                                            selectedMode === 'global'
+                                                                ? undefined
+                                                                : selectedDeviceId
+                                                        }
+                                                        stageWidth={width}
+                                                        stageHeight={height}
+                                                        selection={selection}
+                                                        onSelected={(selection) =>
+                                                            setSelection((prev) => [
+                                                                ...prev,
+                                                                selection,
+                                                            ])
+                                                        }
+                                                    />
+                                                ))}
+                                            </ConnectionStateContext.Provider>
+                                        </ReactReduxContext.Provider>
+                                    </KonvaLayer>
+                                </KonvaStage>
+                            )}
+                        </ConnectionStateContext.Consumer>
+                    )}
+                </ReactReduxContext.Consumer>
             </div>
-        )
-    }
-    return null
+
+            {isStageAdmin || selectedMode === 'personal' ? (
+                <ResetPanel
+                    deviceId={selectedMode === 'global' ? undefined : selectedDeviceId}
+                    selection={selection}
+                />
+            ) : null}
+
+            {isStageAdmin ? (
+                <TextSwitch
+                    className={styles.switch}
+                    value={selectedMode}
+                    onSelect={(v) => {
+                        dispatch(selectMode(v === 'global' ? 'global' : 'personal'))
+                    }}
+                >
+                    <span key="personal">Persönliche Einstellungen</span>
+                    <span key="global">Voreinstellungen</span>
+                </TextSwitch>
+            ) : null}
+        </div>
+    )
 }
 
 export default RoomEditor

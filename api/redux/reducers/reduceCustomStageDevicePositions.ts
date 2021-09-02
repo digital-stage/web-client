@@ -6,7 +6,7 @@ import {
     ServerDeviceEvents,
 } from '@digitalstage/api-types'
 import { upsert } from '../utils/upsert'
-import CustomStageDevicePositions from '../state/CustomStageDevicePositions'
+import { CustomStageDevicePositions } from '../state/CustomStageDevicePositions'
 import { InternalActionTypes } from '../actions/InternalActionTypes'
 
 const addCustomStageDevicePosition = (
@@ -126,4 +126,4 @@ function reduceCustomStageDevicePositions(
     }
 }
 
-export default reduceCustomStageDevicePositions
+export { reduceCustomStageDevicePositions }

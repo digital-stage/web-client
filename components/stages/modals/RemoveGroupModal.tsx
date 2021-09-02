@@ -16,8 +16,8 @@ const RemoveGroupModal = ({
     onClose: () => void
 }) => {
     const emit = useEmit()
-    const group = useStageSelector<Group | undefined>((state) =>
-        groupId ? state.groups.byId[groupId] : undefined
+    const name = useStageSelector((state) =>
+        groupId ? state.groups.byId[groupId].name : undefined
     )
     const [error, setError] = useState<string>()
     const [isDeleting, setDeleting] = useState<boolean>(false)
@@ -38,11 +38,11 @@ const RemoveGroupModal = ({
             )
         }
     }, [emit, onClose, groupId])
-    if (group) {
+    if (groupId) {
         return (
             <Modal open={open} onClose={onClose} size="small">
                 <ModalHeader>
-                    <h4>Gruppe {group.name || group._id} wirklich löschen?</h4>
+                    <h4>Gruppe {name || groupId} wirklich löschen?</h4>
                 </ModalHeader>
                 <Paragraph kind="micro">
                     Die Gruppen und deren Teilnehmer werden unwiderruflich gelöscht und sind nicht

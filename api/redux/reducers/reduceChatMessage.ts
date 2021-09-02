@@ -22,4 +22,4 @@ function reduceChatMessage(
     }
 }
 
-export default reduceChatMessage
+export { reduceChatMessage }

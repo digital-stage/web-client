@@ -18,4 +18,4 @@ interface CustomStageMemberPositions {
     allIds: string[]
 }
 
-export default CustomStageMemberPositions
+export type { CustomStageMemberPositions }

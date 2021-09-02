@@ -18,4 +18,4 @@ interface CustomStageDeviceVolumes {
     allIds: string[]
 }
 
-export default CustomStageDeviceVolumes
+export type { CustomStageDeviceVolumes }

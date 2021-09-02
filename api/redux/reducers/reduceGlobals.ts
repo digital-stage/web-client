@@ -1,5 +1,5 @@
 import { ServerDeviceEvents, ServerDevicePayloads } from '@digitalstage/api-types'
-import Globals from '../state/Globals'
+import { Globals } from '../state/Globals'
 import { InternalActionTypes } from '../actions/InternalActionTypes'
 import { BrowserDevice } from '@digitalstage/api-types/dist/model/browser'
 
@@ -24,6 +24,7 @@ function reduceGlobals(
                 ready: false,
                 selectedDeviceId: undefined,
                 stageId: undefined,
+                stageMemberId: undefined,
                 groupId: undefined,
                 localDeviceId: undefined,
                 localStageDeviceId: undefined,
@@ -60,7 +61,7 @@ function reduceGlobals(
                 ready: true,
             }
         case ServerDeviceEvents.StageJoined: {
-            const { stageId, groupId, stageDevices } =
+            const { stageId, groupId, stageDevices, stageMemberId } =
                 action.payload as ServerDevicePayloads.StageJoined
             if (state.localDeviceId) {
                 const localStageDevice = stageDevices.find(
@@ -71,6 +72,7 @@ function reduceGlobals(
                         ...state,
                         stageId,
                         groupId,
+                        stageMemberId,
                         localStageDeviceId: localStageDevice._id,
                     }
                 }
@@ -79,6 +81,7 @@ function reduceGlobals(
                 ...state,
                 stageId,
                 groupId,
+                stageMemberId,
             }
         }
         case ServerDeviceEvents.StageLeft:
@@ -86,6 +89,7 @@ function reduceGlobals(
                 ...state,
                 stageId: undefined,
                 groupId: undefined,
+                stageMemberId: undefined,
                 localStageDeviceId: undefined,
             }
         case ServerDeviceEvents.UserReady:
@@ -112,6 +116,17 @@ function reduceGlobals(
                 selectedDeviceId: state.selectedDeviceId ? state.selectedDeviceId : payload._id,
             }
         }
+        /*
+        case ServerDeviceEvents.StageMemberAdded: {
+            const payload = action.payload as ServerDevicePayloads.StageMemberAdded
+            if(payload.userId === state.localUserId) {
+                return {
+                    ...state,
+                    stageMemberId: payload._id
+                }
+            }
+            return state
+        },
         case ServerDeviceEvents.StageDeviceAdded: {
             if (state.localDeviceId) {
                 const { _id, deviceId } = action.payload as ServerDevicePayloads.StageDeviceAdded
@@ -122,11 +137,11 @@ function reduceGlobals(
                     }
             }
             return state
-        }
+        }*/
         default: {
             return state
         }
     }
 }
 
-export default reduceGlobals
+export { reduceGlobals }

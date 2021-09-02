@@ -18,4 +18,4 @@ interface CustomAudioTrackPositions {
     allIds: string[]
 }
 
-export default CustomAudioTrackPositions
+export type { CustomAudioTrackPositions }

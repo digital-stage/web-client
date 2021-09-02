@@ -8,7 +8,7 @@ import {
 import { shallowEqual } from 'react-redux'
 import { getVideoTrack } from '../../utils/getVideoTrack'
 
-import { useStageSelector } from 'api/redux/useStageSelector'
+import { useStageSelector } from 'api/redux/selectors/useStageSelector'
 import { useConnection } from '../ConnectionService'
 import { PeerConnection } from './PeerConnection'
 import { getAudioTrack } from '../../utils/getAudioTrack'
@@ -21,7 +21,7 @@ import round from 'lodash/round'
 const { trace } = logger('WebRTCService')
 
 type DispatchMediaStreamTrackContext = React.Dispatch<React.SetStateAction<MediaStreamTrack>>
-type TrackMap = { [stageMemberId: string]: MediaStreamTrack }
+type TrackMap = { [trackId: string]: MediaStreamTrack }
 type DispatchTrackMapContext = React.Dispatch<React.SetStateAction<TrackMap>>
 type TrackStatsMap = { [trackId: string]: RTCStatsReport }
 type DispatchTrackStatsMap = React.Dispatch<React.SetStateAction<TrackStatsMap>>
@@ -78,18 +78,18 @@ const WebRTCProvider = ({ children }: { children: React.ReactNode }) => {
         </DispatchLocalVideoTrackContext.Provider>
     )
 }
-const useWebRTCLocalVideoTrack = (): MediaStreamTrack => React.useContext(LocalVideoTrackContext)
-const useWebRTCRemoteVideoTracks = (): TrackMap => {
+const useWebRTCLocalVideo = (): MediaStreamTrack => React.useContext(LocalVideoTrackContext)
+const useWebRTCRemoteVideos = (): TrackMap => {
     const state = React.useContext(RemoteVideoTracksContext)
     if (state === undefined)
         throw new Error('useWebRTCRemoteVideoTracks must be used within a WebRTCProvider')
     return state
 }
-const useWebRTCRemoteVideoTrack = (stageMemberId: string): MediaStreamTrack => {
-    const tracks = useWebRTCRemoteVideoTracks()
+const useWebRTCRemoteVideoByStageDevice = (stageDeviceId: string): MediaStreamTrack => {
+    const tracks = useWebRTCRemoteVideos()
     return React.useMemo(() => {
-        return tracks[stageMemberId]
-    }, [stageMemberId, tracks])
+        return tracks[stageDeviceId]
+    }, [stageDeviceId, tracks])
 }
 const useWebRTCLocalAudioTrack = (): MediaStreamTrack => React.useContext(LocalAudioTrackContext)
 const useWebRTCRemoteAudioTracks = (): TrackMap => {
@@ -98,7 +98,7 @@ const useWebRTCRemoteAudioTracks = (): TrackMap => {
         throw new Error('useWebRTCRemoteAudioTracks must be used within a WebRTCProvider')
     return state
 }
-const useWebRTCRemoteAudioTrack = (stageMemberId: string): MediaStreamTrack => {
+const useWebRTCRemoteAudioTrackByStageDevice = (stageMemberId: string): MediaStreamTrack => {
     const tracks = useWebRTCRemoteAudioTracks()
     return React.useMemo(() => {
         return tracks[stageMemberId]
@@ -413,19 +413,24 @@ const WebRTCService = (): JSX.Element => {
 
     const setRemoteVideoTracks = React.useContext(DispatchRemoteVideoTracksContext)
     const setRemoteAudioTracks = React.useContext(DispatchRemoteAudioTracksContext)
+
     const onRemoteTrack = React.useCallback(
         (stageDeviceId: string, track: MediaStreamTrack) => {
             trace('Got track with trackId', track.id)
             const dispatch = track.kind === 'video' ? setRemoteVideoTracks : setRemoteAudioTracks
-            dispatch((prev) => ({
-                ...prev,
-                [stageDeviceId]: track,
-            }))
-            const endTrack = () => {
-                dispatch((prev) => omit(prev, stageDeviceId))
+            const onUnmute = () => {
+                trace('Adding track with trackId', track.id)
+                dispatch((prev) => ({
+                    ...prev,
+                    [stageDeviceId]: track,
+                }))
             }
-            track.addEventListener('mute', endTrack)
-            track.addEventListener('ended', endTrack)
+            const onEndTrack = () => {
+                dispatch((prev) => omit(prev, track.id))
+            }
+            track.addEventListener('unmute', onUnmute)
+            track.addEventListener('mute', onEndTrack)
+            track.addEventListener('ended', onEndTrack)
         },
         [setRemoteAudioTracks, setRemoteVideoTracks]
     )
@@ -459,11 +464,11 @@ const WebRTCService = (): JSX.Element => {
 export {
     WebRTCService,
     WebRTCProvider,
-    useWebRTCLocalVideoTrack,
+    useWebRTCLocalVideo,
     useWebRTCLocalAudioTrack,
-    useWebRTCRemoteVideoTracks,
-    useWebRTCRemoteVideoTrack,
+    useWebRTCRemoteVideos,
+    useWebRTCRemoteVideoByStageDevice,
     useWebRTCRemoteAudioTracks,
-    useWebRTCRemoteAudioTrack,
+    useWebRTCRemoteAudioTrackByStageDevice,
     useWebRTCStats,
 }

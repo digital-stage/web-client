@@ -36,4 +36,4 @@ const reduceAuth = (
             return state
     }
 }
-export default reduceAuth
+export { reduceAuth }

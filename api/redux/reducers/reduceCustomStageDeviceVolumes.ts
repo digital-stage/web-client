@@ -7,7 +7,7 @@ import {
 } from '@digitalstage/api-types'
 import { upsert } from '../utils/upsert'
 import { InternalActionTypes } from '../actions/InternalActionTypes'
-import CustomStageDeviceVolumes from '../state/CustomStageDeviceVolumes'
+import { CustomStageDeviceVolumes } from '../state/CustomStageDeviceVolumes'
 
 const addCustomStageDeviceVolume = (
     state: CustomStageDeviceVolumes,
@@ -122,4 +122,4 @@ function reduceCustomStageDeviceVolumes(
     }
 }
 
-export default reduceCustomStageDeviceVolumes
+export { reduceCustomStageDeviceVolumes }

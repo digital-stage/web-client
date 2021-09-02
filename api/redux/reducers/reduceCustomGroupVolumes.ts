@@ -6,7 +6,7 @@ import {
     ServerDeviceEvents,
 } from '@digitalstage/api-types'
 import { upsert } from '../utils/upsert'
-import CustomGroupVolumes from '../state/CustomGroupVolumes'
+import { CustomGroupVolumes } from '../state/CustomGroupVolumes'
 import { InternalActionTypes } from '../actions/InternalActionTypes'
 
 const addCustomGroupVolume = (
@@ -118,4 +118,4 @@ function reduceCustomGroupVolumes(
     }
 }
 
-export default reduceCustomGroupVolumes
+export { reduceCustomGroupVolumes }

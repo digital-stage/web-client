@@ -18,4 +18,4 @@ interface CustomAudioTrackVolumes {
     allIds: string[]
 }
 
-export default CustomAudioTrackVolumes
+export type { CustomAudioTrackVolumes }

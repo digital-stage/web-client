@@ -18,4 +18,4 @@ interface CustomGroupVolumes {
     allIds: string[]
 }
 
-export default CustomGroupVolumes
+export type { CustomGroupVolumes }

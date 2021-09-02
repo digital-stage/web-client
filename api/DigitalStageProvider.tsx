@@ -1,5 +1,5 @@
 import { Provider } from 'react-redux'
-import store from './redux/store'
+import { store } from './redux/store'
 import * as React from 'react'
 import { AudioContextProvider } from './provider/AudioContextProvider'
 import { ConnectionProvider } from './services/ConnectionService'

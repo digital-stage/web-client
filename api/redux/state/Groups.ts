@@ -10,4 +10,4 @@ interface Groups {
     allIds: string[]
 }
 
-export default Groups
+export type { Groups }

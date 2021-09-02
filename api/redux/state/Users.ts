@@ -7,4 +7,4 @@ interface Users {
     allIds: string[]
 }
 
-export default Users
+export type { Users }

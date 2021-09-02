@@ -60,4 +60,4 @@ const getInitialDevice = async (
         receiveAudio: true,
     }
 }
-export default getInitialDevice
+export { getInitialDevice }

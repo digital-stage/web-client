@@ -6,7 +6,7 @@ import styles from './Sidebar.module.scss'
 import Image from 'next/image'
 import logo from '../../public/logo.svg'
 import Link from 'next/link'
-import { useStageSelector } from '@digitalstage/api-client-react'
+import { useSpatialAudioSelector, useStageSelector } from '@digitalstage/api-client-react'
 import { GoBroadcast, GoListUnordered, GoSettings } from 'react-icons/go'
 import { BiChat, BiCube, BiDevices } from 'react-icons/bi'
 import { FaBug, FaTools } from 'react-icons/fa'
@@ -44,6 +44,7 @@ const Sidebar = () => {
     const hasNotifications = useStageSelector<boolean>(
         (state) => state.notifications.allIds.length > 0
     )
+    const renderSpatialAudio = useSpatialAudioSelector()
 
     return (
         <>
@@ -83,10 +84,12 @@ const Sidebar = () => {
                                     <GoSettings />
                                     <span>Mischpult</span>
                                 </SidebarItem>
-                                <SidebarItem onClick={() => setOpen(false)} href="/room">
-                                    <BiCube />
-                                    <span>3D Audio</span>
-                                </SidebarItem>
+                                {renderSpatialAudio ? (
+                                    <SidebarItem onClick={() => setOpen(false)} href="/room">
+                                        <BiCube />
+                                        <span>3D Audio</span>
+                                    </SidebarItem>
+                                ) : null}
                                 <SidebarItem onClick={() => setOpen(false)} href="/chat">
                                     <BiChat />
                                     <span>Chat</span>

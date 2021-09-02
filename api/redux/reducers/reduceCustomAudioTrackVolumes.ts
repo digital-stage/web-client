@@ -6,7 +6,7 @@ import {
     CustomAudioTrackVolume,
 } from '@digitalstage/api-types'
 import { upsert } from '../utils/upsert'
-import CustomAudioTrackVolumes from '../state/CustomAudioTrackVolumes'
+import { CustomAudioTrackVolumes } from '../state/CustomAudioTrackVolumes'
 import { InternalActionTypes } from '../actions/InternalActionTypes'
 
 const addCustomAudioTrackVolume = (
@@ -121,4 +121,4 @@ function reduceCustomAudioTrackVolumes(
     }
 }
 
-export default reduceCustomAudioTrackVolumes
+export { reduceCustomAudioTrackVolumes }

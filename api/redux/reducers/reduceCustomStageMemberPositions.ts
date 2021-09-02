@@ -7,7 +7,7 @@ import {
 } from '@digitalstage/api-types'
 import { upsert } from '../utils/upsert'
 import { InternalActionTypes } from '../actions/InternalActionTypes'
-import CustomStageMemberPositions from '../state/CustomStageMemberPositions'
+import { CustomStageMemberPositions } from '../state/CustomStageMemberPositions'
 
 const addCustomStageMemberPosition = (
     state: CustomStageMemberPositions,
@@ -126,4 +126,4 @@ function reduceCustomStageMemberPositions(
     }
 }
 
-export default reduceCustomStageMemberPositions
+export { reduceCustomStageMemberPositions }

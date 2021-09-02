@@ -16,4 +16,4 @@ interface Routers {
     allIds: string[]
 }
 
-export default Routers
+export type { Routers }

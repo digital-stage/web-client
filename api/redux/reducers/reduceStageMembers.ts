@@ -3,11 +3,11 @@ import without from 'lodash/without'
 
 import { StageMember, ServerDeviceEvents, ServerDevicePayloads } from '@digitalstage/api-types'
 import { upsert } from '../utils/upsert'
-import StageMembers from '../state/StageMembers'
+import { StageMembers } from '../state/StageMembers'
 import { InternalActionTypes } from '../actions/InternalActionTypes'
 import { logger } from '../../logger'
 
-const {reportError} = logger('reduceStageMembers')
+const { reportError } = logger('reduceStageMembers')
 
 const addStageMember = (prev: StageMembers, stageMember: StageMember): StageMembers => ({
     ...prev,
@@ -136,4 +136,4 @@ function reduceStageMembers(
     }
 }
 
-export default reduceStageMembers
+export { reduceStageMembers }

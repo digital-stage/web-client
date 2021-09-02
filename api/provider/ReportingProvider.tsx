@@ -1,11 +1,11 @@
 import React from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import {
-    Notification,
     addNotification as addNotificationAction,
     changeNotification as changeNotificationAction,
     removeNotification as removeNotificationAction,
-} from '@digitalstage/api-client-react'
+} from '../redux/actions/clientActions'
+import { Notification } from '../redux/state/Notifications'
 
 import { useDispatch } from 'react-redux'
 import { logger } from '../logger'

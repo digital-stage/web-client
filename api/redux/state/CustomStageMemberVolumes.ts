@@ -18,4 +18,4 @@ interface CustomStageMemberVolumes {
     allIds: string[]
 }
 
-export default CustomStageMemberVolumes
+export type { CustomStageMemberVolumes }

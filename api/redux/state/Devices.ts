@@ -7,4 +7,4 @@ interface Devices {
     allIds: string[]
 }
 
-export default Devices
+export type { Devices }

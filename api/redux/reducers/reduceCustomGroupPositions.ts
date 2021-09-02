@@ -6,7 +6,7 @@ import {
     CustomGroupPosition,
 } from '@digitalstage/api-types'
 import { upsert } from '../utils/upsert'
-import CustomGroupPositions from '../state/CustomGroupPositions'
+import { CustomGroupPositions } from '../state/CustomGroupPositions'
 import { InternalActionTypes } from '../actions/InternalActionTypes'
 
 const addCustomGroupPosition = (
@@ -118,4 +118,4 @@ function reduceCustomGroupPositions(
     }
 }
 
-export default reduceCustomGroupPositions
+export { reduceCustomGroupPositions }

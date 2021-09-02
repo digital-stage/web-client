@@ -6,7 +6,7 @@ import {
     CustomStageMemberVolume,
 } from '@digitalstage/api-types'
 import { upsert } from '../utils/upsert'
-import CustomStageMemberVolumes from '../state/CustomStageMemberVolumes'
+import { CustomStageMemberVolumes } from '../state/CustomStageMemberVolumes'
 import { InternalActionTypes } from '../actions/InternalActionTypes'
 
 const addCustomStageMemberVolume = (
@@ -122,4 +122,4 @@ function reduceCustomStageMemberVolumes(
     }
 }
 
-export default reduceCustomStageMemberVolumes
+export { reduceCustomStageMemberVolumes }

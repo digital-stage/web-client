@@ -7,4 +7,4 @@ interface Stages {
     allIds: string[]
 }
 
-export default Stages
+export type { Stages }

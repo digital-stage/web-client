@@ -2,7 +2,7 @@ import omit from 'lodash/omit'
 import without from 'lodash/without'
 import { User, ServerDeviceEvents, ServerDevicePayloads } from '@digitalstage/api-types'
 import { upsert } from '../utils/upsert'
-import Users from '../state/Users'
+import { Users } from '../state/Users'
 import { InternalActionTypes } from '../actions/InternalActionTypes'
 
 const addUser = (state: Users, user: User): Users => ({
@@ -70,4 +70,4 @@ function reduceUsers(
     }
 }
 
-export default reduceUsers
+export { reduceUsers }

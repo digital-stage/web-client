@@ -4,9 +4,9 @@ import {
     ServerDeviceEvents,
     ServerDevicePayloads,
 } from '@digitalstage/api-types'
-import actions from './actions'
-import { AppDispatch } from '@digitalstage/api-client-react'
+import { actions } from './actions'
 import { BrowserDevice } from '@digitalstage/api-types/dist/model/browser'
+import { AppDispatch } from './store'
 
 const registerSocketHandler = (dispatch: AppDispatch, socket: ITeckosClient): ITeckosClient => {
     socket.setMaxListeners(80)
@@ -375,4 +375,4 @@ const registerSocketHandler = (dispatch: AppDispatch, socket: ITeckosClient): IT
     return socket
 }
 
-export default registerSocketHandler
+export { registerSocketHandler }

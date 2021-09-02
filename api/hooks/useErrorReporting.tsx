@@ -1,6 +1,6 @@
 import { useDispatch } from 'react-redux'
-import { reportError } from '@digitalstage/api-client-react'
 import React from 'react'
+import { reportError } from '../redux/actions/clientActions'
 
 const useErrorReporting = () => {
     const dispatch = useDispatch()

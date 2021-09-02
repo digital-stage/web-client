@@ -1,7 +1,7 @@
 import omit from 'lodash/omit'
 import { SoundCard, ServerDevicePayloads, ServerDeviceEvents } from '@digitalstage/api-types'
 import without from 'lodash/without'
-import SoundCards from '../state/SoundCards'
+import { SoundCards } from '../state/SoundCards'
 import { upsert } from '../utils/upsert'
 
 function reduceSoundCards(
@@ -77,4 +77,4 @@ function reduceSoundCards(
     }
 }
 
-export default reduceSoundCards
+export { reduceSoundCards }

@@ -4,7 +4,7 @@ import without from 'lodash/without'
 import { ServerDeviceEvents, ServerDevicePayloads, StageDevice } from '@digitalstage/api-types'
 import { upsert } from '../utils/upsert'
 import { InternalActionTypes } from '../actions/InternalActionTypes'
-import StageDevices from '../state/StageDevices'
+import { StageDevices } from '../state/StageDevices'
 
 const addStageDevice = (prev: StageDevices, stageDevice: StageDevice): StageDevices => ({
     ...prev,
@@ -139,4 +139,4 @@ function reduceStageDevices(
     }
 }
 
-export default reduceStageDevices
+export { reduceStageDevices }

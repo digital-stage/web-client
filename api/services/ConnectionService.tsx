@@ -1,12 +1,13 @@
 import { ITeckosClient, TeckosClientWithJWT } from 'teckos-client'
 import React from 'react'
-import { useNotification, useStageSelector } from '@digitalstage/api-client-react'
 import { useDispatch } from 'react-redux'
-import getInitialDevice from '../utils/getInitialDevice'
-import registerSocketHandler from '../redux/registerSocketHandler'
+import { getInitialDevice } from '../utils/getInitialDevice'
+import { registerSocketHandler } from '../redux/registerSocketHandler'
 import Cookie from 'js-cookie'
 import { SocketEvent } from 'teckos-client/dist/types'
 import { logger } from '../logger'
+import { useStageSelector } from '../redux/selectors/useStageSelector'
+import { useNotification } from '../hooks/useNotification'
 
 const { trace } = logger('ConnectionService')
 

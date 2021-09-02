@@ -13,4 +13,4 @@ export * from './clientActions'
 
 export { InternalActionTypes }
 export type { AppThunk, ReducerAction }
-export default actions
+export { actions }

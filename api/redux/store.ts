@@ -1,27 +1,25 @@
-import reduceAuth from './reducers/reduceAuth'
-import reduceGlobals from './reducers/reduceGlobals'
-import reduceAudioTracks from './reducers/reduceAudioTracks'
-import reduceChatMessage from './reducers/reduceChatMessage'
-import reduceSoundCards from './reducers/reduceSoundCards'
-import reduceDevices from './reducers/reduceDevices'
-import reduceCustomGroupVolumes from './reducers/reduceCustomGroupVolumes'
-import reduceCustomStageMemberPositions from './reducers/reduceCustomStageMemberPositions'
-import reduceCustomGroupPositions from './reducers/reduceCustomGroupPositions'
-import reduceStageDevices from './reducers/reduceStageDevices'
-import reduceStageMembers from './reducers/reduceStageMembers'
-import reduceGroups from './reducers/reduceGroups'
-import reduceStages from './reducers/reduceStages'
-import reduceUsers from './reducers/reduceUsers'
-import reduceCustomStageDeviceVolumes from './reducers/reduceCustomStageDeviceVolumes'
-import reduceCustomAudioTrackVolumes from './reducers/reduceCustomAudioTrackVolumes'
-import reduceCustomAudioTrackPositions from './reducers/reduceCustomAudioTrackPositions'
-import reduceCustomStageDevicePositions from './reducers/reduceCustomStageDevicePositions'
-import reduceCustomStageMemberVolumes from './reducers/reduceCustomStageMemberVolumes'
-import reduceVideoTracks from './reducers/reduceVideoTracks'
-import reduceRouters from './reducers/reduceRouters'
-import reduceNotifications from './reducers/reduceNotifications'
-import reduceMediasoup from './reducers/reduceMediasoup'
-import reduceWebRTC from './reducers/reduceWebRTC'
+import { reduceAuth } from './reducers/reduceAuth'
+import { reduceGlobals } from './reducers/reduceGlobals'
+import { reduceAudioTracks } from './reducers/reduceAudioTracks'
+import { reduceChatMessage } from './reducers/reduceChatMessage'
+import { reduceSoundCards } from './reducers/reduceSoundCards'
+import { reduceDevices } from './reducers/reduceDevices'
+import { reduceCustomGroupVolumes } from './reducers/reduceCustomGroupVolumes'
+import { reduceCustomStageMemberPositions } from './reducers/reduceCustomStageMemberPositions'
+import { reduceCustomGroupPositions } from './reducers/reduceCustomGroupPositions'
+import { reduceStageDevices } from './reducers/reduceStageDevices'
+import { reduceStageMembers } from './reducers/reduceStageMembers'
+import { reduceGroups } from './reducers/reduceGroups'
+import { reduceStages } from './reducers/reduceStages'
+import { reduceUsers } from './reducers/reduceUsers'
+import { reduceCustomStageDeviceVolumes } from './reducers/reduceCustomStageDeviceVolumes'
+import { reduceCustomAudioTrackVolumes } from './reducers/reduceCustomAudioTrackVolumes'
+import { reduceCustomAudioTrackPositions } from './reducers/reduceCustomAudioTrackPositions'
+import { reduceCustomStageDevicePositions } from './reducers/reduceCustomStageDevicePositions'
+import { reduceCustomStageMemberVolumes } from './reducers/reduceCustomStageMemberVolumes'
+import { reduceVideoTracks } from './reducers/reduceVideoTracks'
+import { reduceRouters } from './reducers/reduceRouters'
+import { reduceNotifications } from './reducers/reduceNotifications'
 import { configureStore } from '@reduxjs/toolkit'
 import { authMiddleware } from './authMiddleware'
 import { notificationMiddleware } from './notificationMiddleware'
@@ -49,8 +47,6 @@ const reducer = {
     customAudioTrackVolumes: reduceCustomAudioTrackVolumes,
     customAudioTrackPositions: reduceCustomAudioTrackPositions,
     notifications: reduceNotifications,
-    mediasoup: reduceMediasoup,
-    webrtc: reduceWebRTC,
 }
 
 const store = configureStore({
@@ -63,4 +59,4 @@ const store = configureStore({
 //export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch
 
-export default store
+export { store }

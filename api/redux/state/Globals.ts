@@ -7,6 +7,7 @@ interface Globals {
 
     /* Information about the active stage */
     stageId?: string
+    stageMemberId?: string
     groupId?: string
     localStageDeviceId?: string
     // Request for joining (processed by react handlers)
@@ -21,4 +22,4 @@ interface Globals {
     selectedMode: 'global' | 'personal'
 }
 
-export default Globals
+export type { Globals }

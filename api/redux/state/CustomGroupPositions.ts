@@ -18,4 +18,4 @@ interface CustomGroupPositions {
     allIds: string[]
 }
 
-export default CustomGroupPositions
+export type { CustomGroupPositions }

@@ -24,4 +24,4 @@ interface StageDevices {
     allIds: string[]
 }
 
-export default StageDevices
+export type { StageDevices }

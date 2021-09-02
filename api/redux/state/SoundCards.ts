@@ -15,4 +15,4 @@ interface SoundCards {
     allIds: string[]
 }
 
-export default SoundCards
+export type { SoundCards }

@@ -1,6 +1,6 @@
-import { useStageSelector } from '@digitalstage/api-client-react'
 import { AuthUser } from '../redux/state/Auth'
 import { shallowEqual } from 'react-redux'
+import { useStageSelector } from '../redux/selectors/useStageSelector'
 
 interface AuthContextT {
     signedIn: boolean

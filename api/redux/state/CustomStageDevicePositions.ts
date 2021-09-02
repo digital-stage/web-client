@@ -18,4 +18,4 @@ interface CustomStageDevicePositions {
     allIds: string[]
 }
 
-export default CustomStageDevicePositions
+export type { CustomStageDevicePositions }

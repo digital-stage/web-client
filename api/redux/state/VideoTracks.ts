@@ -19,4 +19,4 @@ interface VideoTracks {
     allIds: string[]
 }
 
-export default VideoTracks
+export type { VideoTracks }

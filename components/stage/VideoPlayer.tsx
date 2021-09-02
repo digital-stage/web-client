@@ -2,7 +2,7 @@ import React from 'react'
 import { GoMirror } from 'react-icons/go'
 import styles from './StageView.module.scss'
 
-const VideoView = ({ track, className }: { track: MediaStreamTrack; className?: string }) => {
+const VideoPlayer = ({ track, className }: { track: MediaStreamTrack; className?: string }) => {
     const [mirrored, setMirrored] = React.useState<boolean>(false)
     const landscape = React.useMemo<boolean>(() => {
         const settings = track.getSettings()
@@ -35,4 +35,4 @@ const VideoView = ({ track, className }: { track: MediaStreamTrack; className?: 
     )
 }
 
-export { VideoView }
+export { VideoPlayer }

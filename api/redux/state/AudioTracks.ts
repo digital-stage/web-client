@@ -19,4 +19,4 @@ interface AudioTracks {
     allIds: string[]
 }
 
-export default AudioTracks
+export type { AudioTracks }

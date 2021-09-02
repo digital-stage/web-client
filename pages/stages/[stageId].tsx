@@ -1,6 +1,11 @@
 import React, { useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
-import { useEmit, useStageJoiner, useStageSelector } from '@digitalstage/api-client-react'
+import {
+    useEmit,
+    useStageAdminSelector,
+    useStageJoiner,
+    useStageSelector,
+} from '@digitalstage/api-client-react'
 import Link from 'next/link'
 import Loading from '../../components/global/Loading'
 import AltList, { AltListItem } from 'ui/AltList'
@@ -40,8 +45,7 @@ const StageView = () => {
             ? state.groups.byStage[stage._id].map((id) => state.groups.byId[id])
             : []
     )
-    const userId = useStageSelector((state) => state.globals.localUserId)
-    const isStageAdmin = stage?.admins.find((id) => id === userId)
+    const isStageAdmin = useStageAdminSelector(stageId)
     const { join } = useStageJoiner()
 
     // Internal state

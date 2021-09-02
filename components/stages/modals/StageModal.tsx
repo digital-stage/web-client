@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import { useEmit, useStageSelector } from '@digitalstage/api-client-react'
 import { ClientDeviceEvents, ClientDevicePayloads, Stage } from '@digitalstage/api-types'
-import React, { useCallback, useState } from 'react'
+import React from 'react'
 import { Field, Form, Formik } from 'formik'
 import * as Yup from 'yup'
 import Modal, { ModalButton, ModalFooter, ModalHeader } from 'ui/Modal'
@@ -9,6 +9,8 @@ import Notification from '../../../ui/Notification'
 import TextInput from '../../../ui/TextInput'
 import Collapse from 'ui/Collapse'
 import styles from './StageModal.module.scss'
+import { shallowEqual } from 'react-redux'
+import Switch from '../../../ui/Switch'
 
 const StageModal = ({
     open,
@@ -19,13 +21,14 @@ const StageModal = ({
     onClose: () => void
     stageId?: string
 }) => {
-    const [error, setError] = useState<string>()
+    const [error, setError] = React.useState<string>()
     const emit = useEmit()
-    const stage = useStageSelector<Stage | undefined>((state) =>
-        stageId ? state.stages.byId[stageId] : undefined
+    const stage = useStageSelector<Stage | undefined>(
+        (state) => (stageId ? state.stages.byId[stageId] : undefined),
+        shallowEqual
     )
 
-    const save = useCallback(
+    const save = React.useCallback(
         ({ _id, ...values }: Partial<Stage>) => {
             if (emit) {
                 return new Promise<void>((resolve, reject) => {
@@ -70,11 +73,13 @@ const StageModal = ({
                     {
                         name: (stage && stage.name) || '',
                         audioType: (stage && stage.audioType) || '',
+                        render3DAudio: !!stage && stage.render3DAudio,
                         description: (stage && stage.description) || '',
                         password: (stage && stage.password) || undefined,
                         width: (stage && stage.width) || 25,
                         height: (stage && stage.height) || 20,
                         length: (stage && stage.length) || 20,
+                        renderReverb: !!stage && stage.renderReverb,
                         absorption: (stage && stage.absorption) || 0.7,
                         reflection: (stage && stage.reflection) || 0.7,
                         videoType: 'mediasoup',
@@ -88,9 +93,11 @@ const StageModal = ({
                     description: Yup.string().max(255, 'zu lang'),
                     password: Yup.string().min(2, 'zu kurz'),
                     audioType: Yup.string().required('Bitte wähle eine Übertragungsart aus'),
+                    render3DAudio: Yup.boolean(),
                     width: Yup.number().min(1).max(100),
                     length: Yup.number().min(1).max(100),
                     height: Yup.number().min(1).max(100),
+                    renderReverb: Yup.boolean(),
                     absorption: Yup.number().min(0).max(1),
                     reflection: Yup.number().min(0).max(1),
                 })}
@@ -189,6 +196,30 @@ const StageModal = ({
                                 max={100}
                                 light
                             />
+                            <label className={styles.checkboxLabel}>
+                                Verwende 3D Audio
+                                <Field
+                                    as={Switch}
+                                    id="render3DAudio"
+                                    name="render3DAudio"
+                                    type="checkbox"
+                                    checked={values.render3DAudio}
+                                    error={touched.render3DAudio && errors.render3DAudio}
+                                    round
+                                />
+                            </label>
+                            <label className={styles.checkboxLabel}>
+                                Emuliere Raum-Hall
+                                <Field
+                                    as={Switch}
+                                    id="renderReverb"
+                                    name="renderReverb"
+                                    type="checkbox"
+                                    checked={values.renderReverb}
+                                    error={touched.renderReverb && errors.renderReverb}
+                                    round
+                                />
+                            </label>
                             <Field
                                 as={TextInput}
                                 label="Absorptionsgrad der Wände"

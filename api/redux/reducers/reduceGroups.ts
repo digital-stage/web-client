@@ -3,7 +3,7 @@ import without from 'lodash/without'
 import { ServerDeviceEvents, ServerDevicePayloads, Group } from '@digitalstage/api-types'
 import { upsert } from '../utils/upsert'
 import { InternalActionTypes } from '../actions/InternalActionTypes'
-import Groups from '../state/Groups'
+import { Groups } from '../state/Groups'
 
 const addGroup = (state: Groups, group: Group): Groups => ({
     ...state,
@@ -79,4 +79,4 @@ function reduceGroups(
     }
 }
 
-export default reduceGroups
+export { reduceGroups }

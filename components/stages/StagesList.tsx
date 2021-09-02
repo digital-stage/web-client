@@ -1,5 +1,4 @@
-import { useStageSelector } from '@digitalstage/api-client-react'
-import { shallowEqual } from 'react-redux'
+import { useStageAdminSelector, useStageSelector } from '@digitalstage/api-client-react'
 import React, { useState } from 'react'
 import List, { ListItem } from '../../ui/List'
 import styles from './StagesList.module.scss'
@@ -20,28 +19,15 @@ const Type = {
 
 const StageItem = ({ stageId }: { stageId: string }) => {
     const { push } = useRouter()
-    const { name, admins, password, videoType, audioType } = useStageSelector<{
-        name: string
-        admins: string[]
-        password?: string
-        videoType: string
-        audioType: string
-    }>((state) => {
-        const { name, admins, password, videoType, audioType } = state.stages.byId[stageId]
-        return {
-            name,
-            admins,
-            password,
-            videoType,
-            audioType,
-        }
-    }, shallowEqual)
-    const userId = useStageSelector((state) => state.globals.localUserId)
+    const name = useStageSelector((state) => state.stages.byId[stageId].name)
+    const password = useStageSelector((state) => state.stages.byId[stageId].password)
+    const videoType = useStageSelector((state) => state.stages.byId[stageId].videoType)
+    const audioType = useStageSelector((state) => state.stages.byId[stageId].audioType)
     const hasGroups = useStageSelector((state) => state.groups.byStage[stageId]?.length > 0)
     const isActive = useStageSelector(
         (state) => state.globals.stageId && state.globals.stageId === stageId
     )
-    const isStageAdmin = React.useMemo(() => admins.find((id) => id === userId), [admins, userId])
+    const isStageAdmin = useStageAdminSelector(stageId)
     const { join, leave } = useStageJoiner()
     const onListClicked = React.useCallback(() => {
         if (hasGroups) {

@@ -1,5 +1,5 @@
 import { InternalActionTypes } from '../actions/InternalActionTypes'
-import {Notifications} from '../state/Notifications'
+import { Notifications } from '../state/Notifications'
 import {
     AddNotificationPayload,
     ChangeNotificationPayload,
@@ -53,4 +53,4 @@ function reduceNotifications(
     }
 }
 
-export default reduceNotifications
+export { reduceNotifications }

@@ -3,7 +3,7 @@ import without from 'lodash/without'
 import { ServerDeviceEvents, ServerDevicePayloads } from '@digitalstage/api-types'
 import { upsert } from '../utils/upsert'
 import { InternalActionTypes } from '../actions/InternalActionTypes'
-import Devices from '../state/Devices'
+import { Devices } from '../state/Devices'
 
 function reduceDevices(
     state: Devices = {
@@ -60,4 +60,4 @@ function reduceDevices(
     }
 }
 
-export default reduceDevices
+export { reduceDevices }

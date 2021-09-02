@@ -16,4 +16,4 @@ interface StageMembers {
     allIds: string[]
 }
 
-export default StageMembers
+export type { StageMembers }
