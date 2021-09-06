@@ -1,11 +1,10 @@
 import { ChatMessage, ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import styles from './Chat.module.css'
 import React from 'react'
 import { useEmit, Users, useStageSelector } from '@digitalstage/api-client-react'
-import useForceUpdate from './useForceUpdate'
-import Notification from '../../../ui/Notification'
-import Panel from '../../../ui/Panel'
+import {useForceUpdate} from './useForceUpdate'
+import { Notification } from 'ui/Notification'
+import { Panel } from 'ui/Panel'
 import { AiOutlineSend } from 'react-icons/ai'
 
 const convertTime = (time: number): string => {
@@ -49,21 +48,21 @@ const MessagePane = ({
     }, [messagesEndRef, messages])
 
     return (
-        <div className={`${styles.messages} ${hasErrors ? styles.withErrors : ''}`}>
+        <div className={`messages ${hasErrors ? 'withErrors' : ''}`}>
             {messages.map((msg, index) => {
                 return (
                     <div
                         /* eslint-disable-next-line react/no-array-index-key */
                         key={`${msg.time}${index}`}
-                        className={`${styles.messageWrapper} ${
-                            localUserId === msg.userId && styles.self
+                        className={`messageWrapper ${
+                            localUserId === msg.userId && 'self'
                         }`}
                     >
                         {msg.userId !== localUserId && (
-                            <h5 className={styles.messageName}>{users.byId[msg.userId]?.name}</h5>
+                            <h5 className="messageName">{users.byId[msg.userId]?.name}</h5>
                         )}
-                        <div className={styles.message}>{msg.message}</div>
-                        <div className={styles.messageTime}>{convertTime(msg.time)}</div>
+                        <div className="message">{msg.message}</div>
+                        <div className="messageTime">{convertTime(msg.time)}</div>
                     </div>
                 )
             })}
@@ -95,7 +94,7 @@ const ChatPanel = () => {
     }, [messageRef, emit])
 
     return (
-        <Panel className={styles.panel}>
+        <Panel className="chatLayout">
             <MessagePane
                 users={users}
                 hasErrors={!!error}
@@ -103,30 +102,30 @@ const ChatPanel = () => {
                 localUserId={localUserId}
             />
             {error && (
-                <Notification className={styles.notification} kind="error">
+                <Notification className="notification" kind="error">
                     {error}
                 </Notification>
             )}
             <form
-                className={styles.messageForm}
+                className="messageForm"
                 onSubmit={(e) => {
                     e.preventDefault()
                     onSendClicked()
                 }}
             >
-                <input autoFocus ref={messageRef} type="text" className={styles.input} />
+                <input autoFocus ref={messageRef} type="text" className="input" />
                 <button
-                    className={`${styles.mobileButton} round small`}
+                    className={`mobileButton round small`}
                     type="submit"
                     onClick={onSendClicked}
                 >
                     <AiOutlineSend />
                 </button>
-                <button className={`${styles.button} small`} type="submit" onClick={onSendClicked}>
+                <button className={`button small`} type="submit" onClick={onSendClicked}>
                     Nachricht senden
                 </button>
             </form>
         </Panel>
     )
 }
-export default ChatPanel
+export {ChatPanel}

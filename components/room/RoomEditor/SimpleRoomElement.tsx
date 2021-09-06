@@ -105,4 +105,4 @@ const Element = ({
         </KonvaGroup>
     )
 }
-export default Element
+export { Element }

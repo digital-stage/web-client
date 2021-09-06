@@ -1,12 +1,11 @@
-import DeviceSettings from '../../components/devices/DeviceSettings'
+import {DeviceSettings} from '../../components/devices/DeviceSettings'
 import { useRouter } from 'next/router'
 import React from 'react'
 import Link from 'next/link'
-import styles from './Devices.module.scss'
 import { useStageSelector } from '@digitalstage/api-client-react'
-import Container from '../../ui/Container'
+import {Container} from '../../ui/Container'
 import { IoIosArrowDropleft } from 'react-icons/io'
-import Panel from 'ui/Panel'
+import {Panel} from 'ui/Panel'
 
 const DevicePage = () => {
     const { query } = useRouter()
@@ -15,7 +14,7 @@ const DevicePage = () => {
 
     return (
         <Container size="small">
-            <Panel className={styles.panel}>
+            <Panel className="devicePanel">
                 <Link href="/devices">
                     <a
                         style={{
@@ -27,7 +26,7 @@ const DevicePage = () => {
                         &nbsp;Zurück zur Übersicht
                     </a>
                 </Link>
-                <h3 className={styles.heading}>
+                <h3 className="heading">
                     Gerät bearbeiten {localDeviceId === deviceId ? ' (Dieser Webbrowser)' : ''}
                 </h3>
                 <DeviceSettings deviceId={deviceId} />

@@ -1,5 +1,5 @@
-import DevicesList from '../../components/devices/DevicesList'
-import Container from '../../ui/Container'
+import {DevicesList} from '../../components/devices/DevicesList'
+import {Container} from '../../ui/Container'
 
 const Index = () => {
     return (

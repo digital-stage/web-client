@@ -1,4 +1,4 @@
-import RoomSelection from './RoomSelection'
+import {RoomSelection} from './RoomSelection'
 import { useEmit, useStageSelector } from '@digitalstage/api-client-react'
 import {
     ClientDeviceEvents,
@@ -7,9 +7,9 @@ import {
     DefaultThreeDimensionalProperties,
     Group,
 } from '@digitalstage/api-types'
-import RoomElement from './RoomElement'
+import {RoomElement} from './RoomElement'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import StageMemberItem from './StageMemberItem'
+import {StageMemberItem} from './StageMemberItem'
 
 const GroupItem = ({
     groupId,
@@ -138,4 +138,4 @@ const GroupItem = ({
         </>
     )
 }
-export default GroupItem
+export { GroupItem }

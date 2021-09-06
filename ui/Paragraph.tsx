@@ -12,4 +12,4 @@ const Paragraph = ({
                    } & React.DetailedHTMLProps<React.HTMLAttributes<HTMLParagraphElement>, HTMLParagraphElement>
 ) => <p className={`${kind || ''} ${className || ''}`} {...props}/>
 
-export default Paragraph
+export { Paragraph }

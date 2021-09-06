@@ -32,4 +32,4 @@ const TextSwitch = ({
         </div>
     )
 }
-export default TextSwitch
+export { TextSwitch }

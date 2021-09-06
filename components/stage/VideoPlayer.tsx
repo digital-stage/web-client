@@ -1,8 +1,7 @@
 import React from 'react'
-import { GoMirror } from 'react-icons/go'
-import styles from './StageView.module.scss'
+import {GoMirror} from 'react-icons/go'
 
-const VideoPlayer = ({ track, className }: { track: MediaStreamTrack; className?: string }) => {
+const VideoPlayer = ({track, className}: { track: MediaStreamTrack; className?: string }) => {
     const [mirrored, setMirrored] = React.useState<boolean>(false)
     const landscape = React.useMemo<boolean>(() => {
         const settings = track.getSettings()
@@ -19,20 +18,20 @@ const VideoPlayer = ({ track, className }: { track: MediaStreamTrack; className?
 
     return (
         <div
-            className={`${styles.videoView} ${mirrored ? styles.mirrored : ''} ${
-                landscape ? styles.landscape : styles.portrait
+            className={`videoView ${mirrored ? 'mirrored' : ''} ${
+                landscape ? 'landscape' : 'portrait'
             } ${className || ''}`}
         >
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <video autoPlay muted playsInline controls={false} ref={videoRef} />
+            <video autoPlay muted playsInline controls={false} ref={videoRef}/>
             <button
                 onClick={() => setMirrored((prev) => !prev)}
-                className={`small round white ${styles.mirrorToggle}`}
+                className={`small round white mirrorToggle`}
             >
-                <GoMirror />
+                <GoMirror/>
             </button>
         </div>
     )
 }
 
-export { VideoPlayer }
+export {VideoPlayer}

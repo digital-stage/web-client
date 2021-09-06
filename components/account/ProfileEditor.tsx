@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
 import { ClientDeviceEvents, ClientDevicePayloads, User } from '@digitalstage/api-types'
-import Notification from '../../ui/Notification'
-import LiveInput from '../../ui/LiveInput'
+import { Notification } from 'ui/Notification'
+import { LiveInput } from 'ui/LiveInput'
 import { requestPasswordReset, useEmit, useStageSelector } from '@digitalstage/api-client-react'
-import Paragraph from '../../ui/Paragraph'
-import OptionsList, { OptionsListItem } from '../../ui/OptionsList'
+import { Paragraph } from 'ui/Paragraph'
+import { OptionsList, OptionsListItem  } from 'ui/OptionsList'
 
 const ProfileEditor = () => {
     const emit = useEmit()
@@ -50,4 +50,4 @@ const ProfileEditor = () => {
         </>
     )
 }
-export default ProfileEditor
+export {ProfileEditor}

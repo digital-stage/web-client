@@ -7,8 +7,8 @@ import {
     ErrorCodes,
     Group,
 } from '@digitalstage/api-types'
-import Modal, { ModalButton, ModalFooter } from '../../ui/Modal'
-import TextInput from '../../ui/TextInput'
+import   { Modal,ModalButton, ModalFooter } from 'ui/Modal'
+import { TextInput } from 'ui/TextInput'
 import { useStageJoiner } from '../../api/hooks/useStageJoiner'
 
 /**
@@ -158,4 +158,4 @@ const StageJoiner = (): JSX.Element | null => {
     return null
 }
 
-export default StageJoiner
+export { StageJoiner }

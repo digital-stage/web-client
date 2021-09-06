@@ -2,9 +2,9 @@ import * as React from 'react'
 import { Formik, Field, FormikHelpers, Form } from 'formik'
 import * as Yup from 'yup'
 import { AuthError, requestPasswordReset, useStageSelector } from '@digitalstage/api-client-react'
-import Notification, { KIND } from '../../ui/Notification'
-import TextInput from '../../ui/TextInput'
-import translateError from './translateError'
+import { Notification, KIND  } from 'ui/Notification'
+import { TextInput } from 'ui/TextInput'
+import {translateError} from './translateError'
 
 interface Values {
     email: string
@@ -87,4 +87,4 @@ const ForgetPasswordForm = (): JSX.Element => {
     )
 }
 
-export default ForgetPasswordForm
+export {ForgetPasswordForm}

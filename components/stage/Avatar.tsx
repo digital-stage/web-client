@@ -1,9 +1,8 @@
-import styles from './StageView.module.scss'
 import React from 'react'
 
 const Avatar = ({ name, color, active }: { name: string; color: string; active?: boolean }) => (
     <div
-        className={`${styles.avatar} ${active ? styles.active : ''}`}
+        className={`avatar ${active ? 'active' : ''}`}
         style={{
             backgroundColor: color,
         }}

@@ -1,4 +1,4 @@
-import RoomSelection from './RoomSelection'
+import {RoomSelection} from './RoomSelection'
 import { useEmit, useStageSelector } from '@digitalstage/api-client-react'
 import {
     ClientDeviceEvents,
@@ -7,9 +7,9 @@ import {
     DefaultThreeDimensionalProperties,
     StageDevice,
 } from '@digitalstage/api-types'
-import RoomElement from './RoomElement'
+import {RoomElement} from './RoomElement'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import AudioTrackItem from './AudioTrackItem'
+import {AudioTrackItem} from './AudioTrackItem'
 
 const StageDeviceItem = ({
     stageDeviceId,
@@ -182,4 +182,4 @@ const StageDeviceItem = ({
         </>
     )
 }
-export default StageDeviceItem
+export { StageDeviceItem }

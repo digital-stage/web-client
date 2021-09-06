@@ -21,8 +21,8 @@ const ListItem = ({
     />
 )
 
-const List = ({ children, kind }: { children: React.ReactNode; kind?: KIND[keyof KIND] }) => (
-    <ul className={`list ${kind || ''}`}>{children}</ul>
+const List = ({ kind, className, ...props }: { kind?: KIND[keyof KIND] } & React.DetailedHTMLProps<React.HTMLAttributes<HTMLUListElement>, HTMLUListElement>) => (
+    <ul className={`list ${kind || ''} ${className || ''}`} {...props}/>
 )
 export { ListItem }
-export default List
+export { List }

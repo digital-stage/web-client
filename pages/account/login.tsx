@@ -1,8 +1,8 @@
-import LoginForm from 'components/account/LoginForm'
+import {LoginForm} from 'components/account/LoginForm'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useEffect } from 'react'
-import AuthLayout from 'components/account/AuthLayout'
+import {AuthLayout} from 'components/account/AuthLayout'
 import { useStageSelector } from '@digitalstage/api-client-react'
 
 const Login = () => {

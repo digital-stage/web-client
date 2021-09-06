@@ -1,13 +1,12 @@
 import { selectDevice, useEmit, useStageSelector } from '@digitalstage/api-client-react'
-import styles from './DevicesList.module.scss'
 import { shallowEqual, useDispatch } from 'react-redux'
 import React, { useMemo, useState } from 'react'
 import Link from 'next/link'
-import DeleteModal from './DeleteModal'
+import {DeleteModal} from './DeleteModal'
 import { useRouter } from 'next/router'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
-import List, { ListItem } from '../../ui/List'
-import Switch from '../../ui/Switch'
+import { List, ListItem  } from 'ui/List'
+import { Switch } from 'ui/Switch'
 import { MdEdit, MdMic, MdMicOff, MdVideocam, MdVideocamOff } from 'react-icons/md'
 import { GoBrowser, GoDeviceDesktop } from 'react-icons/go'
 import { FaRaspberryPi, FaTrash } from 'react-icons/fa'
@@ -45,9 +44,9 @@ const DeviceEntry = ({
         <ListItem
             onSelect={onSelect}
             selected={selected}
-            className={deviceId === localDeviceId && styles.selected}
+            className={deviceId === localDeviceId && 'selected'}
         >
-            <div className={styles.caption}>
+            <div className="caption">
                 {TypeIcons[device.type]}
                 {device.name ||
                     (device.type === 'browser'
@@ -56,13 +55,13 @@ const DeviceEntry = ({
                 {localDeviceId === device._id ? '(Dieser Webbrowser)' : ''}
             </div>
             <div
-                className={styles.actions}
+                className="actions"
                 onClick={(e) => {
                     e.stopPropagation()
                 }}
             >
                 {device?.type === 'browser' ? (
-                    <label className={styles.label}>
+                    <label className="label">
                         P2P&nbsp;
                         <Switch
                             size="small"
@@ -127,7 +126,7 @@ const DevicesList = () => {
     const { push } = useRouter()
 
     return (
-        <List>
+        <List className="devicesList">
             {deviceIds.map((deviceId) => (
                 <DeviceEntry
                     key={deviceId}
@@ -147,4 +146,4 @@ const DevicesList = () => {
         </List>
     )
 }
-export default DevicesList
+export {DevicesList}

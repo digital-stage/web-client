@@ -93,4 +93,4 @@ TextInput.defaultProps = {
     error: undefined,
     light: undefined,
 }
-export default TextInput
+export { TextInput }

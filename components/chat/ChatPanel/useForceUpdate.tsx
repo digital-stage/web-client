@@ -5,4 +5,4 @@ function useForceUpdate() {
     return () => setValue((v) => v + 1) // update the state to force render
 }
 
-export default useForceUpdate
+export { useForceUpdate }

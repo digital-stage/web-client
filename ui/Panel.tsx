@@ -27,4 +27,4 @@ const Panel = ({
         </div>
     )
 }
-export default Panel
+export { Panel }

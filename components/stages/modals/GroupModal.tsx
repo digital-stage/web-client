@@ -3,10 +3,10 @@ import { ClientDeviceEvents, ClientDevicePayloads, Group } from '@digitalstage/a
 import React, { useCallback, useState } from 'react'
 import { Field, Form, Formik } from 'formik'
 import * as Yup from 'yup'
-import TextInput from '../../../ui/TextInput'
-import Modal, { ModalButton, ModalFooter, ModalHeader } from 'ui/Modal'
-import ColorPicker from 'ui/ColorPicker'
-import Notification from '../../../ui/Notification'
+import { TextInput } from 'ui/TextInput'
+import { Modal, ModalButton, ModalFooter, ModalHeader } from 'ui/Modal'
+import {ColorPicker} from 'ui/ColorPicker'
+import { Notification } from 'ui/Notification'
 import { shallowEqual } from 'react-redux'
 
 const GroupModal = ({
@@ -151,4 +151,4 @@ GroupModal.defaultProps = {
     stageId: undefined,
     groupId: undefined,
 }
-export default GroupModal
+export { GroupModal }

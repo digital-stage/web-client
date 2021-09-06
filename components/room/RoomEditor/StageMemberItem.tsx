@@ -1,4 +1,4 @@
-import RoomSelection from './RoomSelection'
+import {RoomSelection} from './RoomSelection'
 import { useEmit, useStageSelector } from '@digitalstage/api-client-react'
 import {
     ClientDeviceEvents,
@@ -7,9 +7,9 @@ import {
     DefaultThreeDimensionalProperties,
     StageMember,
 } from '@digitalstage/api-types'
-import RoomElement from './RoomElement'
+import {RoomElement} from './RoomElement'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import StageDeviceItem from './StageDeviceItem'
+import {StageDeviceItem} from './StageDeviceItem'
 import { shallowEqual } from 'react-redux'
 
 const StageMemberItem = ({
@@ -191,4 +191,4 @@ const StageMemberItem = ({
         </>
     )
 }
-export default StageMemberItem
+export { StageMemberItem }

@@ -78,4 +78,4 @@ const LoadingCube = () => (
         `}</style>
     </>
 )
-export default LoadingCube
+export { LoadingCube }

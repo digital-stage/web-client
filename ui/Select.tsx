@@ -27,4 +27,4 @@ const Select = ({
         </label>
     )
 }
-export default Select
+export { Select }

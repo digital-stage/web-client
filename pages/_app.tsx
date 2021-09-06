@@ -5,15 +5,15 @@ import './../styles/index.scss'
 import Head from 'next/head'
 import { AppProps, NextWebVitalsMetric } from 'next/app'
 import { DigitalStageProvider, useStageSelector } from '@digitalstage/api-client-react'
-import DeviceSelector from '../components/global/DeviceSelector'
-import Background from 'components/global/Background'
-import Sidebar from 'components/global/Sidebar'
-import ConnectionOverlay from '../components/global/ConnectionOverlay'
-import ProfileMenu from '../components/global/ProfileMenu'
-import PlaybackOverlay from '../components/global/PlaybackOverlay'
-import StageJoiner from '../components/global/StageJoiner'
+import {DeviceSelector} from '../components/global/DeviceSelector'
+import {Background} from 'components/global/Background'
+import {Sidebar} from 'components/global/Sidebar'
+import {ConnectionOverlay} from '../components/global/ConnectionOverlay'
+import {ProfileMenu} from '../components/global/ProfileMenu'
+import {PlaybackOverlay} from '../components/global/PlaybackOverlay'
+import {StageJoiner} from '../components/global/StageJoiner'
 import { useRouter } from 'next/router'
-import NotificationBar from '../components/global/NotifcationBar'
+import {NotificationBar} from '../components/global/NotifcationBar'
 import { logger } from '../api/logger'
 
 const CheckAuthWrapper = () => {
@@ -77,22 +77,6 @@ function MyApp({ Component, pageProps }: AppProps) {
                     </ConnectionOverlay>
                 </div>
             </DigitalStageProvider>
-            <style jsx>{`
-                .app {
-                    position: relative;
-                    display: flex;
-                    min-height: 100vh;
-                }
-                .inner {
-                    position: relative;
-                    display: flex;
-                    flex-direction: column;
-                    order: 2;
-                    flex-grow: 1;
-                    overflow: scroll;
-                    -webkit-overflow-scrolling: touch;
-                }
-            `}</style>
         </>
     )
 }

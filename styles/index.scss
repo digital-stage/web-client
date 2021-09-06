@@ -1,7 +1,7 @@
 @import "/fonts/fonts.css";
 @import "typography";
-@import "globals/app";
 @import "globals/backdrop";
+@import "globals/background";
 @import "globals/button";
 @import "globals/collapse";
 @import "globals/container";
@@ -18,6 +18,13 @@
 @import "globals/switch";
 @import "globals/tag";
 @import "globals/textswitch";
+@import "layout/app";
+@import "layout/auth";
+@import "layout/chat";
+@import "layout/devices";
+@import "layout/settings";
+@import "layout/stage";
+@import "layout/stages";
 
 html,
 body {

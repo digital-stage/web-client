@@ -2,9 +2,9 @@ import * as React from 'react'
 import { useRouter } from 'next/router'
 import { Formik, Field, FormikHelpers, Form } from 'formik'
 import * as Yup from 'yup'
-import Notification, { KIND } from '../../ui/Notification'
-import TextInput from '../../ui/TextInput'
-import translateError from './translateError'
+import { Notification, KIND  } from 'ui/Notification'
+import { TextInput } from 'ui/TextInput'
+import {translateError} from './translateError'
 import { AuthError, resetPassword } from '@digitalstage/api-client-react'
 
 interface Values {
@@ -93,4 +93,4 @@ function ResetPasswordForm({ resetToken }: Props): JSX.Element {
     )
 }
 
-export default ResetPasswordForm
+export {ResetPasswordForm}

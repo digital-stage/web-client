@@ -1,5 +1,5 @@
-import StagesList from '../../components/stages/StagesList'
-import Container from '../../ui/Container'
+import {StagesList} from '../../components/stages/StagesList'
+import {Container} from '../../ui/Container'
 
 const StagesPage = () => {
     return (

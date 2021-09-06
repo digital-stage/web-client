@@ -1,6 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react'
-import styles from './Background.module.css'
 import { useStageSelector } from '@digitalstage/api-client-react'
 
 const Background = (
@@ -10,11 +9,11 @@ const Background = (
     const { className, ...other } = props
     return (
         <div
-            className={`${styles.background} ${insideStage ? styles.active : ''} ${
+            className={`background ${insideStage ? 'active' : ''} ${
                 className || ''
             }`}
             {...other}
         />
     )
 }
-export default Background
+export { Background }

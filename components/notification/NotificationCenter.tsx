@@ -1,4 +1,4 @@
-import Notification from '../../ui/Notification'
+import { Notification } from 'ui/Notification'
 import { useStageSelector } from '@digitalstage/api-client-react'
 
 const NotificationCenter = () => {
@@ -15,4 +15,4 @@ const NotificationCenter = () => {
         </div>
     )
 }
-export default NotificationCenter
+export { NotificationCenter }

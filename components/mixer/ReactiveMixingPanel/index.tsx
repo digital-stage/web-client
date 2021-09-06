@@ -5,10 +5,9 @@ import {
     useStageSelector,
 } from '@digitalstage/api-client-react'
 import React from 'react'
-import styles from './ReactiveMixingPanel.module.scss'
-import VolumeSlider from './VolumeSlider'
+import {VolumeSlider} from './VolumeSlider'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
-import TextSwitch from 'ui/TextSwitch'
+import {TextSwitch} from 'ui/TextSwitch'
 import { DefaultVolumeProperties } from '@digitalstage/api-types'
 import { useDispatch } from 'react-redux'
 
@@ -87,7 +86,7 @@ const AudioTrackPanel = ({
         }
     }, [audioTrackId, emit, customAudioTrack])
     return (
-        <div className={styles.audioTrack}>
+        <div className="audioTrack">
             <VolumeSlider
                 id={audioTrackId}
                 volume={customAudioTrack?.volume || audioTrack.volume}
@@ -156,10 +155,10 @@ const StageDevicePanel = ({
         }
     }, [emit, customStageDevice, stageDeviceId])
     return (
-        <div className={styles.stageDevice}>
+        <div className="stageDevice">
             <div
-                className={`${styles.sliderRow} ${
-                    audioTrackIds.length > 0 ? styles.sliderRowExpandable : ''
+                className={`sliderRow ${
+                    audioTrackIds.length > 0 ? 'sliderRowExpandable' : ''
                 }`}
             >
                 <VolumeSlider
@@ -175,13 +174,13 @@ const StageDevicePanel = ({
                     onReset={resetVolume}
                 />
                 {audioTrackIds.length > 0 ? (
-                    <div className={styles.expander} onClick={() => setExpanded((prev) => !prev)}>
+                    <div className="expander" onClick={() => setExpanded((prev) => !prev)}>
                         {expanded ? <BiChevronUp /> : <BiChevronDown />}
                     </div>
                 ) : null}
             </div>
             {audioTrackIds.length > 0 ? (
-                <div className={`${styles.expandable} ${expanded ? styles.expanded : ''}`}>
+                <div className={`expandable ${expanded ? 'expanded' : ''}`}>
                     {audioTrackIds.map((audioTrackId) => (
                         <AudioTrackPanel
                             key={audioTrackId}
@@ -248,10 +247,10 @@ const StageMemberPanel = ({
         }
     }, [emit, customStageMember, stageMemberId])
     return (
-        <div className={styles.stageMember}>
+        <div className="stageMember">
             <div
-                className={`${styles.sliderRow} ${
-                    stageDeviceIds.length > 0 ? styles.sliderRowExpandable : ''
+                className={`sliderRow ${
+                    stageDeviceIds.length > 0 ? 'sliderRowExpandable' : ''
                 }`}
             >
                 <VolumeSlider
@@ -267,13 +266,13 @@ const StageMemberPanel = ({
                     onReset={resetVolume}
                 />
                 {stageDeviceIds.length > 0 ? (
-                    <div className={styles.expander} onClick={() => setExpanded((prev) => !prev)}>
+                    <div className="expander" onClick={() => setExpanded((prev) => !prev)}>
                         {expanded ? <BiChevronUp /> : <BiChevronDown />}
                     </div>
                 ) : null}
             </div>
             {stageDeviceIds.length > 0 && expanded ? (
-                <div className={styles.children}>
+                <div className="children">
                     {stageDeviceIds.map((stageDeviceId) => (
                         <StageDevicePanel
                             key={stageDeviceId}
@@ -332,13 +331,13 @@ const GroupPanel = ({ groupId, deviceId }: { groupId: string; deviceId?: string 
     }, [emit, customGroup, groupId])
     return (
         <div
-            className={styles.group}
+            className="group"
             style={{
                 borderColor: group.color,
                 color: group.color,
             }}
         >
-            <div className={`${styles.sliderRow} ${styles.sliderRowExpandable}`}>
+            <div className={`sliderRow sliderRowExpandable`}>
                 <VolumeSlider
                     id={groupId}
                     volume={customGroup?.volume || group.volume}
@@ -349,13 +348,13 @@ const GroupPanel = ({ groupId, deviceId }: { groupId: string; deviceId?: string 
                     onReset={resetVolume}
                 />
                 {stageMemberIds.length > 0 ? (
-                    <div className={styles.expander} onClick={() => setExpanded((prev) => !prev)}>
+                    <div className="expander" onClick={() => setExpanded((prev) => !prev)}>
                         {expanded ? <BiChevronUp /> : <BiChevronDown />}
                     </div>
                 ) : null}
             </div>
             {stageMemberIds.length > 0 && expanded ? (
-                <div className={styles.children}>
+                <div className="children">
                     {stageMemberIds.map((stageMemberId) => (
                         <StageMemberPanel
                             key={stageMemberId}
@@ -461,10 +460,10 @@ const StagePanel = ({ stageId }: { stageId: string }) => {
     const isStageAdmin = useCurrentStageAdminSelector()
     const groupIds = useStageSelector((state) => state.groups.byStage[stageId])
     return (
-        <div className={styles.stage}>
+        <div className="mixingLayout">
             {isStageAdmin ? (
                 <TextSwitch
-                    className={styles.switch}
+                    className="switch"
                     value={selectedMode}
                     onSelect={(v) => {
                         dispatch(selectMode(v === 'global' ? 'global' : 'personal'))
@@ -494,4 +493,4 @@ const ReactiveMixingPanel = () => {
     }
     return <div>Not inside any stage</div>
 }
-export default ReactiveMixingPanel
+export { ReactiveMixingPanel }

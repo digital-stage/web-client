@@ -2,9 +2,9 @@
 import React, {ReactNode, useEffect, useRef} from 'react'
 import {Portal} from 'react-portal'
 import {disableBodyScroll, enableBodyScroll} from 'body-scroll-lock'
-import Backdrop from './Backdrop'
-import useOpenState from './useOpenState'
-import Panel from './Panel'
+import {Backdrop} from './Backdrop'
+import {useOpenState} from './useOpenState'
+import {Panel} from './Panel'
 
 interface SIZE {
     Default: 'default'
@@ -106,5 +106,4 @@ Modal.defaultProps = {
     size: undefined,
 }
 export type {SIZE}
-export {ModalHeader, ModalFooter, ModalButton}
-export default Modal
+export {Modal, ModalHeader, ModalFooter, ModalButton}

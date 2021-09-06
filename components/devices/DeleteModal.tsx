@@ -1,9 +1,9 @@
 import React, { useCallback, useState } from 'react'
-import Modal, { ModalButton, ModalFooter, ModalHeader } from 'ui/Modal'
+import {Modal, ModalButton, ModalFooter, ModalHeader } from 'ui/Modal'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
 import { useEmit } from '@digitalstage/api-client-react'
-import Paragraph from '../../ui/Paragraph'
-import Notification from '../../ui/Notification'
+import { Paragraph } from 'ui/Paragraph'
+import { Notification } from 'ui/Notification'
 
 const DeleteModal = ({ deviceId, onClose }: { deviceId: string; onClose: () => void }) => {
     const emit = useEmit()
@@ -36,4 +36,4 @@ const DeleteModal = ({ deviceId, onClose }: { deviceId: string; onClose: () => v
         </Modal>
     )
 }
-export default DeleteModal
+export {DeleteModal}

@@ -19,4 +19,4 @@ const Backdrop = React.forwardRef(
     }
 )
 Backdrop.displayName = 'Backdrop'
-export default Backdrop
+export { Backdrop }

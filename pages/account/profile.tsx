@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react'
 import { useRouter } from 'next/router'
-import ProfileEditor from 'components/account/ProfileEditor'
+import {ProfileEditor} from 'components/account/ProfileEditor'
 import { useStageSelector } from '@digitalstage/api-client-react'
-import Container from 'ui/Container'
-import Panel from '../../ui/Panel'
+import {Container} from 'ui/Container'
+import {Panel} from '../../ui/Panel'
 
 const Profile = () => {
     const signedOut = useStageSelector((state) => state.auth.initialized && state.auth.token)

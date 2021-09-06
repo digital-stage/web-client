@@ -44,4 +44,4 @@ const useOpenState = (open: boolean): OpenState[keyof OpenState] => {
 
     return openState
 }
-export default useOpenState
+export { useOpenState }

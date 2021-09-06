@@ -28,21 +28,21 @@
   button {
     font-size: 24px;
   }
-}
 
-.deviceSelectorItem {
-  color: #f4f4f4;
-  padding-left: 4px;
-  padding-right: 4px;
-}
+  .deviceSelectorItem {
+    color: #f4f4f4;
+    padding-left: 4px;
+    padding-right: 4px;
+  }
 
-.label {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding: 0 10px;
-}
+  .label {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0 10px;
+  }
 
-.select {
-  flex-shrink: 1;
+  .select {
+    flex-shrink: 1;
+  }
 }

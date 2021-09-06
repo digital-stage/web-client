@@ -1,10 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useEmit } from '@digitalstage/api-client-react'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
-import Notification from '../../../ui/Notification'
-import Modal, { ModalButton, ModalFooter, ModalHeader } from 'ui/Modal'
-import TextInput from 'ui/TextInput'
-import styles from './InviteModal.module.scss'
+import { Notification } from 'ui/Notification'
+import  { Modal,ModalButton, ModalFooter, ModalHeader } from 'ui/Modal'
+import {TextInput} from 'ui/TextInput'
 import { BiReset } from 'react-icons/bi'
 
 const InviteModal = ({
@@ -70,11 +69,11 @@ const InviteModal = ({
     }, [open])
 
     return (
-        <Modal size="small" open={open} onClose={onClose}>
+        <Modal size="small" open={open} onClose={onClose} className="inviteModal">
             <ModalHeader>
                 <h3>Einladen</h3>
             </ModalHeader>
-            <div className={styles.codeWrapper}>
+            <div className="codeWrapper">
                 {code ? (
                     <TextInput type="text" readOnly value={code} label="Einladungscode" light />
                 ) : (
@@ -84,9 +83,9 @@ const InviteModal = ({
                     <BiReset />
                 </button>
             </div>
-            <div className={styles.actionWrapper}>
+            <div className="actionWrapper">
                 {code ? (
-                    <div className={styles.copy}>
+                    <div className="copy">
                         <button
                             onClick={() => {
                                 navigator.clipboard
@@ -146,4 +145,4 @@ const InviteModal = ({
         </Modal>
     )
 }
-export default InviteModal
+export { InviteModal }

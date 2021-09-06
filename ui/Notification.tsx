@@ -49,4 +49,4 @@ Notification.defaultProps = {
     closeable: undefined,
     onClose: undefined,
 }
-export default Notification
+export { Notification }

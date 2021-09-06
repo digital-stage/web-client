@@ -206,4 +206,4 @@ const RoomElement = ({
         </>
     )
 }
-export default RoomElement
+export { RoomElement }

@@ -1,10 +1,9 @@
-.panel {
-    flex-grow: 1;
-    padding: 12px;
-    margin-bottom: 24px;
-}
+.chatLayout {
+  flex-grow: 1;
+  padding: 12px;
+  margin-bottom: 24px;
 
-.messages {
+  .messages {
     position: relative;
     display: flex;
     flex-grow: 1;
@@ -14,12 +13,13 @@
     background-color: var(---grey-2);
     border-radius: 16px;
     overflow: hidden auto;
-}
-.withErrors {
-    border-radius: 18px 18px 0 0;
-}
+  }
 
-.messageWrapper {
+  .withErrors {
+    border-radius: 18px 18px 0 0;
+  }
+
+  .messageWrapper {
     display: flex;
     flex-direction: column;
     border-radius: 16px;
@@ -30,30 +30,32 @@
     text-align: left;
     color: var(---text-contrast);
     background-color: var(---tertiary);
-}
-.messageWrapper.self {
+  }
+
+  .messageWrapper.self {
     align-self: flex-end;
     text-align: right;
     background-color: var(---primary-active);
-}
-.messageTime {
-    font-size: 0.8rem;
-}
+  }
 
-.notification {
+  .messageTime {
+    font-size: 0.8rem;
+  }
+
+  .notification {
     flex-grow: 0;
     border-bottom-left-radius: 18px;
     border-bottom-right-radius: 18px;
-}
+  }
 
-.messageForm {
+  .messageForm {
     display: flex;
     flex-grow: 0;
     width: 100%;
     padding-top: 8px;
-}
+  }
 
-.input {
+  .input {
     box-sizing: border-box;
     margin: 0;
     display: block;
@@ -67,23 +69,27 @@
     color: inherit;
     flex-grow: 1;
     background-color: var(---grey-1);
-}
+  }
 
-.button {
+  .button {
     display: none;
     margin-left: 12px;
-}
-.mobileButton {
+  }
+
+  .mobileButton {
     display: inline-block;
     margin-left: 4px;
-}
-@media only screen and (min-width: 600px) and (min-height: 600px) {
+  }
+
+  @media only screen and (min-width: 600px) and (min-height: 600px) {
     .button {
-        display: inline-block;
+      display: inline-block;
     }
     .mobileButton {
-        display: none;
+      display: none;
 
     }
+  }
 }
+
 

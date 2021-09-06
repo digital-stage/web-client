@@ -65,4 +65,4 @@ const AltList = ({
     )
 }
 export { AltListItem }
-export default AltList
+export { AltList }

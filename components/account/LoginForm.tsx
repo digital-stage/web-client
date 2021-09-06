@@ -2,11 +2,11 @@ import React, { useCallback, useState } from 'react'
 import { Field, Form, Formik, FormikProps } from 'formik'
 import { getUserByToken, signInWithEmailAndPassword } from '@digitalstage/api-client-react'
 import * as Yup from 'yup'
-import TextInput from '../../ui/TextInput'
-import Notification from '../../ui/Notification'
+import { TextInput } from 'ui/TextInput'
+import { Notification } from 'ui/Notification'
 import { batch, useDispatch } from 'react-redux'
 import { InternalActionTypes } from '@digitalstage/api-client-react'
-import translateError from './translateError'
+import {translateError} from './translateError'
 
 const LoginForm = (): JSX.Element => {
     const [error, setError] = useState<string>()
@@ -94,4 +94,4 @@ const LoginForm = (): JSX.Element => {
         </>
     )
 }
-export default LoginForm
+export {LoginForm}

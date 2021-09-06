@@ -3,9 +3,9 @@ import { Field, Form, Formik, FormikHelpers } from 'formik'
 import * as Yup from 'yup'
 import { useRouter } from 'next/router'
 import { activate, AuthError } from '@digitalstage/api-client-react'
-import translateError from './translateError'
-import Notification from '../../ui/Notification'
-import TextInput from '../../ui/TextInput'
+import {translateError} from './translateError'
+import { Notification } from 'ui/Notification'
+import { TextInput } from 'ui/TextInput'
 
 export interface Values {
     code: string
@@ -92,4 +92,4 @@ const ActivationForm = (props: { initialCode?: string }): JSX.Element => {
 ActivationForm.defaultProps = {
     initialCode: undefined,
 }
-export default ActivationForm
+export {ActivationForm}

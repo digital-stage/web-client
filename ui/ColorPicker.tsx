@@ -17,4 +17,4 @@ const ColorPicker = ({ color, onChange }: { color: string; onChange: (color: str
         />
     )
 }
-export default ColorPicker
+export { ColorPicker }

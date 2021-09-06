@@ -1,8 +1,8 @@
 import Head from 'next/head'
-import Container, { SIZE } from '../ui/Container'
+import {Container, SIZE} from '../ui/Container'
 import { useStageSelector } from '@digitalstage/api-client-react'
 import React from 'react'
-import LoadingShaft from '../ui/LoadingShaft'
+import {LoadingShaft} from '../ui/LoadingShaft'
 import { useRouter } from 'next/router'
 
 const Index = () => {

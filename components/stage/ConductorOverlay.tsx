@@ -1,7 +1,6 @@
-import styles from './StageView.module.scss'
 import { useCurrentStageAdminSelector, useStageSelector } from '@digitalstage/api-client-react'
 import React from 'react'
-import Panel from '../../ui/Panel'
+import { Panel } from 'ui/Panel'
 import { MemberView } from './MemberView'
 
 const ConductorOverlayCompo = ({ stageId }: { stageId: string }) => {
@@ -12,9 +11,9 @@ const ConductorOverlayCompo = ({ stageId }: { stageId: string }) => {
 
     if (!isStageAdmin && conductorIds.length > 0) {
         return (
-            <div className={styles.conductorView}>
+            <div className="conductorView">
                 <Panel kind="black">
-                    <div className={styles.membersGrid}>
+                    <div className="membersGrid">
                         {conductorIds.map((conductorId) => (
                             <MemberView key={conductorId} stageMemberId={conductorId} />
                         ))}

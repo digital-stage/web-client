@@ -1,9 +1,9 @@
 import { useEmit, useStageSelector } from '@digitalstage/api-client-react'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
 import React, { useCallback, useEffect, useState } from 'react'
-import Modal, { ModalButton, ModalFooter, ModalHeader } from 'ui/Modal'
-import Notificaton from '../../../ui/Notification'
-import Paragraph from '../../../ui/Paragraph'
+import { Modal, ModalButton, ModalFooter, ModalHeader } from 'ui/Modal'
+import { Notification } from 'ui/Notification'
+import { Paragraph } from 'ui/Paragraph'
 
 const RemoveStageModal = ({
     stageId,
@@ -55,7 +55,7 @@ const RemoveStageModal = ({
                     Die Bühne und alle Gruppen sowie Teilnehmer werden unwiderruflich gelöscht und
                     sind nicht mehr verfügbar!
                 </Paragraph>
-                {error ? <Notificaton kind="error">{error}</Notificaton> : null}
+                {error ? <Notification kind="error">{error}</Notification> : null}
                 <ModalFooter>
                     <ModalButton onClick={onClose}>Nein</ModalButton>
                     <ModalButton disabled={isDeleting} className="danger" onClick={removeStage}>
@@ -67,4 +67,4 @@ const RemoveStageModal = ({
     }
     return null
 }
-export default RemoveStageModal
+export { RemoveStageModal }

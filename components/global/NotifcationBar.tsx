@@ -1,4 +1,4 @@
-import NotificationItem from '../../ui/Notification'
+import { Notification as NotificationItem } from 'ui/Notification'
 import { changeNotification, useStageSelector } from '@digitalstage/api-client-react'
 import { useDispatch } from 'react-redux'
 
@@ -31,4 +31,4 @@ const NotificationBar = () => {
         </div>
     )
 }
-export default NotificationBar
+export { NotificationBar }

@@ -68,4 +68,3 @@ const SecondaryHeadlineLink = (
 
 export { PrimaryHeadlineLink, SecondaryHeadlineLink }
 
-export default PrimaryHeadlineLink

@@ -2,12 +2,12 @@ import { useEmit, useStageSelector } from '@digitalstage/api-client-react'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
 import React from 'react'
 import { shallowEqual } from 'react-redux'
-import LiveInput from 'ui/LiveInput'
-import Switch from '../../ui/Switch'
-import Select from '../../ui/Select'
-import SoundCardSettings from './SoundCardSettings'
-import Paragraph from '../../ui/Paragraph'
-import OptionsList, { OptionsListItem } from '../../ui/OptionsList'
+import {LiveInput} from 'ui/LiveInput'
+import { Switch } from 'ui/Switch'
+import { Select } from 'ui/Select'
+import {SoundCardSettings} from './SoundCardSettings'
+import { Paragraph } from 'ui/Paragraph'
+import { OptionsList, OptionsListItem  } from 'ui/OptionsList'
 
 const DeviceSettings = ({ deviceId }: { deviceId: string }) => {
     const device = useStageSelector((state) => state.devices.byId[deviceId], shallowEqual)
@@ -236,4 +236,4 @@ const DeviceSettings = ({ deviceId }: { deviceId: string }) => {
         </>
     )
 }
-export default DeviceSettings
+export {DeviceSettings}

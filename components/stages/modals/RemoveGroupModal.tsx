@@ -1,10 +1,10 @@
 import { useEmit, useStageSelector } from '@digitalstage/api-client-react'
-import { ClientDeviceEvents, ClientDevicePayloads, Group } from '@digitalstage/api-types'
-import Modal, { ModalButton, ModalFooter, ModalHeader } from 'ui/Modal'
+import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
+import { Modal, ModalButton, ModalFooter, ModalHeader } from 'ui/Modal'
 import React, { useState } from 'react'
 import { useCallback } from 'react'
-import Notificaton from '../../../ui/Notification'
-import Paragraph from '../../../ui/Paragraph'
+import { Notification } from 'ui/Notification'
+import { Paragraph } from 'ui/Paragraph'
 
 const RemoveGroupModal = ({
     groupId,
@@ -48,7 +48,7 @@ const RemoveGroupModal = ({
                     Die Gruppen und deren Teilnehmer werden unwiderruflich gelöscht und sind nicht
                     mehr verfügbar!
                 </Paragraph>
-                {error ? <Notificaton kind="error">{error}</Notificaton> : null}
+                {error ? <Notification kind="error">{error}</Notification> : null}
                 <ModalFooter>
                     <ModalButton onClick={onClose}>Nein</ModalButton>
                     <ModalButton disabled={isDeleting} className="danger" onClick={removeStage}>
@@ -63,4 +63,4 @@ const RemoveGroupModal = ({
 RemoveGroupModal.defaultProps = {
     groupId: undefined,
 }
-export default RemoveGroupModal
+export { RemoveGroupModal }

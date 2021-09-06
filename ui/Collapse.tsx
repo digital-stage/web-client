@@ -87,4 +87,4 @@ Collapse.defaultProps = {
     collapsed: undefined,
     onChange: undefined,
 }
-export default Collapse
+export { Collapse }

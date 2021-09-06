@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useEffect, useState } from 'react'
-import TextInput from './TextInput'
+import {TextInput} from './TextInput'
 
 const LiveInput = (
     props: Omit<
@@ -51,4 +51,4 @@ const LiveInput = (
 LiveInput.defaultProps = {
     error: undefined,
 }
-export default LiveInput
+export { LiveInput }

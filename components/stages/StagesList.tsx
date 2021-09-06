@@ -1,11 +1,10 @@
 import { useStageAdminSelector, useStageSelector } from '@digitalstage/api-client-react'
 import React, { useState } from 'react'
-import List, { ListItem } from '../../ui/List'
-import styles from './StagesList.module.scss'
-import StageModal from './modals/StageModal'
-import Tag from '../../ui/Tag'
-import Paragraph from '../../ui/Paragraph'
-import EnterInviteCodeModal from './modals/EnterInviteCodeModal'
+import { List, ListItem  } from 'ui/List'
+import {StageModal} from './modals/StageModal'
+import { Tag } from 'ui/Tag'
+import { Paragraph } from 'ui/Paragraph'
+import {EnterInviteCodeModal} from './modals/EnterInviteCodeModal'
 import { useStageJoiner } from '../../api/hooks/useStageJoiner'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -40,8 +39,8 @@ const StageItem = ({ stageId }: { stageId: string }) => {
         push(`/stages/${stageId}`)
     }, [hasGroups, isActive, join, leave, password, push, stageId])
     return (
-        <ListItem className={isActive ? styles.active : ''} onSelect={onListClicked}>
-            <a className={styles.stageName}>
+        <ListItem className={isActive ? 'active' : ''} onSelect={onListClicked}>
+            <a className="stageName">
                 {name}
                 <Tag kind="success">{Type[videoType]}</Tag>
                 <Tag kind="warn">{Type[audioType]}</Tag>
@@ -52,12 +51,12 @@ const StageItem = ({ stageId }: { stageId: string }) => {
                         {isStageAdmin ? (
                             <>
                                 <MdEdit />
-                                <span className={styles.hideOnMobile}>&nbsp;Details</span>
+                                <span className="hideOnMobile">&nbsp;Details</span>
                             </>
                         ) : (
                             <>
                                 <MdMoreHoriz />
-                                <span className={styles.hideOnMobile}>&nbsp;Details</span>
+                                <span className="hideOnMobile">&nbsp;Details</span>
                             </>
                         )}
                     </button>
@@ -73,16 +72,16 @@ const StagesList = () => {
     const stageIds = useStageSelector((state) => state.stages.allIds)
 
     return (
-        <List>
+        <List className="stagesList">
             {stageIds.map((stageId) => (
                 <StageItem key={stageId} stageId={stageId} />
             ))}
-            <Paragraph kind="micro" className={styles.legend}>
+            <Paragraph kind="micro" className="legend">
                 Legende:
                 <Tag kind="success">Videoübertragung</Tag>
                 <Tag kind="warn">Audioübertragung</Tag>
             </Paragraph>
-            <div className={styles.actions}>
+            <div className="actions">
                 <button className="tertiary" onClick={() => requestStageCreation(true)}>
                     Neue Bühne erstellen
                 </button>
@@ -98,4 +97,4 @@ const StagesList = () => {
         </List>
     )
 }
-export default StagesList
+export { StagesList }

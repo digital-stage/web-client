@@ -1,4 +1,4 @@
-import RoomSelection from './RoomSelection'
+import {RoomSelection} from './RoomSelection'
 import { useEmit, useStageSelector } from '@digitalstage/api-client-react'
 import {
     ClientDeviceEvents,
@@ -7,7 +7,7 @@ import {
     DefaultThreeDimensionalProperties,
     AudioTrack,
 } from '@digitalstage/api-types'
-import RoomElement from './RoomElement'
+import {RoomElement} from './RoomElement'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
 const AudioTrackItem = ({
@@ -148,4 +148,4 @@ const AudioTrackItem = ({
     }
     return null
 }
-export default AudioTrackItem
+export { AudioTrackItem }

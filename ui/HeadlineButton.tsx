@@ -47,4 +47,3 @@ SecondaryHeadlineButton.defaultProps = {
 
 export { PrimaryHeadlineButton, SecondaryHeadlineButton }
 
-export default PrimaryHeadlineButton

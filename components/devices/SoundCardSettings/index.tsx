@@ -1,8 +1,8 @@
 import { ClientDeviceEvents, Device, SoundCard } from '@digitalstage/api-types'
 import { useEmit, useStageSelector } from '@digitalstage/api-client-react'
 import { shallowEqual } from 'react-redux'
-import Switch from '../../../ui/Switch'
-import Select from '../../../ui/Select'
+import { Switch } from 'ui/Switch'
+import { Select } from 'ui/Select'
 
 const ChannelSelector = ({ soundCardId }: { soundCardId: string }) => {
     const soundCard = useStageSelector<SoundCard>(
@@ -99,4 +99,4 @@ const SoundCardSettings = ({ deviceId }: { deviceId: string }) => {
         </>
     )
 }
-export default SoundCardSettings
+export {SoundCardSettings}

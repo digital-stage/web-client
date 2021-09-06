@@ -1,6 +1,6 @@
 import React from 'react'
-import ChatPanel from '../components/chat/ChatPanel'
-import Container from '../ui/Container'
+import {ChatPanel} from '../components/chat/ChatPanel'
+import {Container} from '../ui/Container'
 
 const Chat = () => {
     return (

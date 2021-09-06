@@ -1,5 +1,5 @@
-import Container from '../ui/Container'
-import NotificationCenter from '../components/notification/NotificationCenter'
+import {Container} from '../ui/Container'
+import {NotificationCenter} from '../components/notification/NotificationCenter'
 
 const NotificationsPage = () => (
     <Container size="small">

@@ -1,8 +1,7 @@
-import styles from './VolumeSlider.module.scss'
 import { useDebounceCallback } from '@react-hook/debounce'
 import { useThrottleCallback } from '@react-hook/throttle'
 import React from 'react'
-import LevelMeter from './LevelMeter'
+import {LevelMeter} from './LevelMeter'
 import { useAudioLevel } from '@digitalstage/api-client-react'
 import { BiReset } from 'react-icons/bi'
 
@@ -156,19 +155,19 @@ const VolumeSlider = ({
     }, [muted, publish, value])
 
     return (
-        <div className={`${styles.volumeSlider} ${modified ? styles.modified : ''}`}>
+        <div className={`volumeSlider ${modified ? 'modified' : ''}`}>
             <button
                 onClick={handleInternalMuteToggle}
-                className={`${styles.muteButton} ${muted ? styles.active : ''}`}
+                className={`muteButton ${muted ? 'active' : ''}`}
             >
                 {muted ? <MuteIcon /> : <UnMuteIcon />}
             </button>
-            <div className={styles.slider}>
+            <div className="slider">
                 {levels[id] ? (
-                    <LevelMeter className={styles.levelMeter} buffer={levels[id]} vertical={true} />
+                    <LevelMeter className="levelMeter" buffer={levels[id]} vertical={true} />
                 ) : null}
                 {name ? <label>{name}</label> : null}
-                <div className={styles.value}>{dbValue} db</div>
+                <div className="value">{dbValue} db</div>
                 <input
                     type="range"
                     name={name}
@@ -180,11 +179,11 @@ const VolumeSlider = ({
                 />
             </div>
             {modified ? (
-                <button onClick={onReset} className={styles.resetButton}>
+                <button onClick={onReset} className="resetButton">
                     <BiReset />
                 </button>
             ) : null}
         </div>
     )
 }
-export default VolumeSlider
+export { VolumeSlider }

@@ -81,4 +81,4 @@ const LevelMeter = ({
     // eslint-disable-next-line react/jsx-props-no-spreading
     return <canvas {...other} ref={canvasRef} />
 }
-export default LevelMeter
+export { LevelMeter }

@@ -35,4 +35,4 @@ const translateError = (error: AuthError): string => {
     }
     return `Unbekannter Fehler: ${error.message} - bitte kontaktiere den technischen Support`
 }
-export default translateError
+export {translateError}

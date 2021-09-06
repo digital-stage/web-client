@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
-import useOpenState from '../../ui/useOpenState'
-import Backdrop from '../../ui/Backdrop'
+import { useOpenState } from 'ui/useOpenState'
+import { Backdrop } from 'ui/Backdrop'
 import styles from './Sidebar.module.scss'
 import Image from 'next/image'
 import logo from '../../public/logo.svg'
@@ -132,4 +132,4 @@ const Sidebar = () => {
     )
 }
 
-export default Sidebar
+export { Sidebar }

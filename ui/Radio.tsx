@@ -5,4 +5,4 @@ const Radio = (props: DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, H
         <input type="radio" {...props} />
     )
 }
-export default Radio
+export { Radio }

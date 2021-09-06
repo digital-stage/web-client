@@ -4,13 +4,12 @@ import { ClientDeviceEvents, ClientDevicePayloads, Stage } from '@digitalstage/a
 import React from 'react'
 import { Field, Form, Formik } from 'formik'
 import * as Yup from 'yup'
-import Modal, { ModalButton, ModalFooter, ModalHeader } from 'ui/Modal'
-import Notification from '../../../ui/Notification'
-import TextInput from '../../../ui/TextInput'
-import Collapse from 'ui/Collapse'
-import styles from './StageModal.module.scss'
+import { Modal, ModalButton, ModalFooter, ModalHeader } from 'ui/Modal'
+import { Notification } from 'ui/Notification'
+import { TextInput } from 'ui/TextInput'
+import {Collapse} from 'ui/Collapse'
 import { shallowEqual } from 'react-redux'
-import Switch from '../../../ui/Switch'
+import { Switch } from 'ui/Switch'
 
 const StageModal = ({
     open,
@@ -64,7 +63,7 @@ const StageModal = ({
     )
 
     return (
-        <Modal open={open} onClose={onClose}>
+        <Modal open={open} onClose={onClose} className="stageModal">
             <ModalHeader>
                 <h3>{stage ? 'Bühne bearbeiten' : 'Neue Bühne erstellen'}</h3>
             </ModalHeader>
@@ -135,7 +134,7 @@ const StageModal = ({
                             <Notification kind="error">{errors.audioType}</Notification>
                         )}
                         {values.audioType && (
-                            <div className={styles.audioTypeDescription}>
+                            <div className="audioTypeDescription">
                                 <p>
                                     {values.audioType === 'mediasoup' && 'Web only'}
                                     {values.audioType === 'jammer' &&
@@ -196,7 +195,7 @@ const StageModal = ({
                                 max={100}
                                 light
                             />
-                            <label className={styles.checkboxLabel}>
+                            <label className="checkboxLabel">
                                 Verwende 3D Audio
                                 <Field
                                     as={Switch}
@@ -208,7 +207,7 @@ const StageModal = ({
                                     round
                                 />
                             </label>
-                            <label className={styles.checkboxLabel}>
+                            <label className="checkboxLabel">
                                 Emuliere Raum-Hall
                                 <Field
                                     as={Switch}
@@ -263,4 +262,4 @@ const StageModal = ({
 StageModal.defaultProps = {
     stageId: undefined,
 }
-export default StageModal
+export { StageModal }

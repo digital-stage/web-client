@@ -1,8 +1,7 @@
 import { useEmit, useStageSelector } from '@digitalstage/api-client-react'
 import React, { useCallback } from 'react'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
-import styles from './RoomEditor.module.scss'
-import RoomSelection from './RoomSelection'
+import {RoomSelection} from './RoomSelection'
 
 const SelectionToGlobal = {
     group: ClientDeviceEvents.ChangeGroup,
@@ -115,7 +114,7 @@ const ResetPanel = ({ deviceId, selection }: { deviceId?: string; selection: Roo
     }, [deviceId, emit, selection])
 
     return (
-        <div className={styles.resetPanel}>
+        <div className="">
             {selection.length > 0 ? (
                 <button className="small" onClick={resetSelection}>
                     Auswahl löschen
@@ -127,4 +126,4 @@ const ResetPanel = ({ deviceId, selection }: { deviceId?: string; selection: Roo
         </div>
     )
 }
-export default ResetPanel
+export { ResetPanel }

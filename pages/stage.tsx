@@ -1,6 +1,6 @@
 import { useStageSelector } from '@digitalstage/api-client-react'
 import React, { useEffect } from 'react'
-import StageView from 'components/stage/StageView'
+import {StageView} from 'components/stage/StageView'
 import { useRouter } from 'next/router'
 
 const Stage = () => {

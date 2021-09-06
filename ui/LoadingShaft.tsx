@@ -75,4 +75,4 @@ const LoadingShaft = () => (
         `}</style>
     </>
 )
-export default LoadingShaft
+export { LoadingShaft }

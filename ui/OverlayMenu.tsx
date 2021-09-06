@@ -1,7 +1,8 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react'
-import useOpenState from './useOpenState'
-import Backdrop from './Backdrop'
+import {useOpenState} from './useOpenState'
+import {Backdrop} from './Backdrop'
+
 
 const OverlayMenu = ({
     menu,
@@ -27,4 +28,4 @@ const OverlayMenu = ({
     )
 }
 
-export default OverlayMenu
+export { OverlayMenu }

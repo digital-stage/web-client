@@ -19,4 +19,4 @@ const OptionsList = ({
 export {
   OptionsListItem
 }
-export default OptionsList
+export { OptionsList }

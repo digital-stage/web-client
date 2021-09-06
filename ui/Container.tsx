@@ -24,4 +24,4 @@ const Container = ({
         </div>
     )
 }
-export default Container
+export { Container }

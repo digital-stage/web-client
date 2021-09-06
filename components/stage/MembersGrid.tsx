@@ -1,5 +1,4 @@
 import React from 'react'
-import styles from './StageView.module.scss'
 import { useStageSelector } from '@digitalstage/api-client-react'
 import { MemberView } from './MemberView'
 import { ConductorOverlay } from './ConductorOverlay'
@@ -29,7 +28,7 @@ const MembersGrid = ({ stageId, showLanes }: { stageId: string; showLanes: boole
     const groupIds = useStageSelector<string[]>((state) => state.groups.byStage[stageId] || [])
 
     return (
-        <div className={`${styles.membersGrid} ${showLanes ? styles.lanes : ''}`}>
+        <div className={`membersGrid ${showLanes ? 'lanes' : ''}`}>
             {groupIds.map((groupId) => (
                 <MemoizedGroupView key={groupId} groupId={groupId} />
             ))}

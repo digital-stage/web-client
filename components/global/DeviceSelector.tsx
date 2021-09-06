@@ -1,6 +1,6 @@
 import React from 'react'
 import styles from './DeviceSelector.module.scss'
-import Select from '../../ui/Select'
+import { Select } from 'ui/Select'
 import { useEmit, useStageSelector, selectDevice } from '@digitalstage/api-client-react'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
 import { useDispatch } from 'react-redux'
@@ -99,4 +99,4 @@ const DeviceSelector = ({
     }
     return null
 }
-export default DeviceSelector
+export { DeviceSelector }

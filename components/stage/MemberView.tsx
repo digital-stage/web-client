@@ -8,7 +8,6 @@ import {
     useWebRTCStats,
 } from '@digitalstage/api-client-react'
 import React from 'react'
-import styles from './StageView.module.scss'
 import { Avatar } from './Avatar'
 import { ConductorButton } from './ConductorButton'
 import { VideoPlayer } from './VideoPlayer'
@@ -17,7 +16,7 @@ const TrackStatsView = ({ trackId }: { trackId: string }): JSX.Element => {
     const stats = useWebRTCStats(trackId)
     if (stats) {
         return (
-            <span className={styles.stats}>
+            <span className="stats">
                 {stats.roundTripTime ? <span>{`RTT ${stats.roundTripTime}ms`}</span> : null}
                 {stats.jitter ? <span>{`Jitter ${stats.jitter}%/s`}</span> : null}
                 {stats.jitterBufferDelay ? (
@@ -46,24 +45,24 @@ const StageMemberBox = ({
 }): JSX.Element => {
     return (
         <div
-            className={styles.memberView}
+            className="memberView"
             style={{
                 borderColor: groupColor,
             }}
         >
             {track ? <VideoPlayer track={track} /> : null}
-            <div className={`${styles.info} ${!track ? styles.centered : ''}`}>
+            <div className={`info ${!track ? 'centered' : ''}`}>
                 <Avatar name={userName} color={groupColor} active={active} />
-                <div className={styles.names}>
+                <div className="names">
                     <h6
-                        className={styles.groupName}
+                        className="groupName"
                         style={{
                             color: groupColor,
                         }}
                     >
                         {groupName}
                     </h6>
-                    <h5 className={styles.memberName}>{userName}</h5>
+                    <h5 className="memberName">{userName}</h5>
                 </div>
                 {track ? <TrackStatsView trackId={track.id} /> : null}
             </div>

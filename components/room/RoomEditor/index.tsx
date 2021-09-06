@@ -1,6 +1,5 @@
 import React from 'react'
 import { Layer as KonvaLayer, Stage as KonvaStage } from 'react-konva/es/ReactKonvaCore'
-import styles from './RoomEditor.module.scss'
 import {
     selectMode,
     useStageSelector,
@@ -9,10 +8,10 @@ import {
 } from '@digitalstage/api-client-react'
 import { ReactReduxContext, useDispatch } from 'react-redux'
 import { FACTOR } from './RoomElement'
-import RoomSelection from './RoomSelection'
-import GroupItem from './GroupItem'
-import TextSwitch from 'ui/TextSwitch'
-import ResetPanel from './ResetPanel'
+import {RoomSelection} from './RoomSelection'
+import {GroupItem} from './GroupItem'
+import {TextSwitch} from 'ui/TextSwitch'
+import {ResetPanel} from './ResetPanel'
 
 const RoomEditor = ({ stageId }: { stageId: string }) => {
     const innerRef = React.useRef<HTMLDivElement>(null)
@@ -41,8 +40,8 @@ const RoomEditor = ({ stageId }: { stageId: string }) => {
     }, [innerRef, width, height])
 
     return (
-        <div className={styles.wrapper}>
-            <div className={styles.inner} ref={innerRef}>
+        <div className="roomEditor">
+            <div className="inner" ref={innerRef}>
                 <ReactReduxContext.Consumer>
                     {(store) => (
                         <ConnectionStateContext.Consumer>
@@ -95,7 +94,7 @@ const RoomEditor = ({ stageId }: { stageId: string }) => {
 
             {isStageAdmin ? (
                 <TextSwitch
-                    className={styles.switch}
+                    className="switch"
                     value={selectedMode}
                     onSelect={(v) => {
                         dispatch(selectMode(v === 'global' ? 'global' : 'personal'))
@@ -109,4 +108,4 @@ const RoomEditor = ({ stageId }: { stageId: string }) => {
     )
 }
 
-export default RoomEditor
+export { RoomEditor }

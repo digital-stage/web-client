@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import Modal, { ModalButton, ModalFooter, ModalHeader } from 'ui/Modal'
-import Notificaton from '../../../ui/Notification'
-import Paragraph from '../../../ui/Paragraph'
+import {Modal, ModalButton, ModalFooter, ModalHeader } from 'ui/Modal'
+import { Notification } from 'ui/Notification'
+import { Paragraph } from 'ui/Paragraph'
 import dynamic from 'next/dynamic'
 import { requestJoin, useEmit } from '@digitalstage/api-client-react'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
@@ -64,11 +64,11 @@ const EnterInviteCodeModal = ({ open, onClose }: { open: boolean; onClose: () =>
                     }}
                 />
             </Paragraph>
-            {error ? <Notificaton kind="error">{error}</Notificaton> : null}
+            {error ? <Notification kind="error">{error}</Notification> : null}
             <ModalFooter>
                 <ModalButton onClick={onClose}>Abbrechen</ModalButton>
             </ModalFooter>
         </Modal>
     )
 }
-export default EnterInviteCodeModal
+export { EnterInviteCodeModal }

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import OverlayMenu from '../../ui/OverlayMenu'
+import { OverlayMenu } from 'ui/OverlayMenu'
 import styles from './ProfileMenu.module.css'
 import { useStageSelector } from '@digitalstage/api-client-react'
 import { useRouter } from 'next/router'
@@ -51,4 +51,4 @@ const ProfileMenu = () => {
     }
     return null
 }
-export default ProfileMenu
+export { ProfileMenu }

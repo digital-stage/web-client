@@ -27,4 +27,4 @@ const PlaybackOverlay = (): JSX.Element | null => {
     }
     return null
 }
-export default PlaybackOverlay
+export { PlaybackOverlay }

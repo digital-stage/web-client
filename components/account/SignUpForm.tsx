@@ -2,9 +2,9 @@ import React, { useCallback, useState } from 'react'
 import { Field, Form, Formik, FormikProps } from 'formik'
 import { useRouter } from 'next/router'
 import * as Yup from 'yup'
-import Notification from '../../ui/Notification'
-import TextInput from '../../ui/TextInput'
-import translateError from './translateError'
+import { Notification } from 'ui/Notification'
+import { TextInput } from 'ui/TextInput'
+import {translateError} from './translateError'
 import {
     AuthError,
     createUserWithEmailAndPassword,
@@ -114,4 +114,4 @@ const SignUpForm = () => {
         </Formik>
     )
 }
-export default SignUpForm
+export {SignUpForm}
