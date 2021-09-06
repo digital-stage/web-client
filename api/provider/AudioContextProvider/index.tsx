@@ -89,11 +89,11 @@ const AudioContextProvider = ({ children }: { children: React.ReactNode }): JSX.
     const [state, dispatch] = React.useReducer(audioContextReducer, {})
 
     return (
-      <AudioContextDispatchContext.Provider value={dispatch}>
-          <AudioContextStateContext.Provider value={state}>
-              {children}
-          </AudioContextStateContext.Provider>
-      </AudioContextDispatchContext.Provider>
+        <AudioContextDispatchContext.Provider value={dispatch}>
+            <AudioContextStateContext.Provider value={state}>
+                {children}
+            </AudioContextStateContext.Provider>
+        </AudioContextDispatchContext.Provider>
     )
 }
 
@@ -112,6 +112,5 @@ const useAudioContextDispatch = () => {
     }
     return dispatch
 }
-
 
 export { useAudioContext, useAudioContextDispatch, AudioContextProvider }

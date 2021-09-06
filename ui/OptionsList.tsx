@@ -7,9 +7,8 @@ export interface KIND {
 
 const OptionsListItem = ({as: is, children, kind, ...props}: { kind: KIND[keyof KIND], as?: React.DetailedReactHTMLElement<any, HTMLElement>, children: React.ReactNode } & any) => is ? React.cloneElement(is, {
   className: `${is.props?.className ||''} optionsListItem ${kind || ''}`,
-  children: children,
   ...props
-}) : <div className={`optionsListItem ${kind || ''}`} children={children} {...props}/>
+}) : <div className={`optionsListItem ${kind || ''}`} {...props}/>
 
 const OptionsList = ({
                        className,
