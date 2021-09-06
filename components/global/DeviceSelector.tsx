@@ -1,5 +1,4 @@
 import React from 'react'
-import styles from './DeviceSelector.module.scss'
 import { Select } from 'ui/Select'
 import { useEmit, useStageSelector, selectDevice } from '@digitalstage/api-client-react'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
@@ -31,13 +30,13 @@ const DeviceSelector = ({
     if (ready) {
         return (
             <div
-                className={`${styles.deviceSelector} ${styles.large} ${className || ''}`}
+                className={`deviceSelector large ${className || ''}`}
                 {...props}
             >
                 {devices.length > 1 && (
-                    <div className={styles.deviceSelectorItem}>
+                    <div className="deviceSelectorItem">
                         <Select
-                            className={styles.select}
+                            className="select"
                             value={selectedDevice?._id}
                             onChange={(event) => {
                                 dispatch(selectDevice(event.currentTarget.value))
