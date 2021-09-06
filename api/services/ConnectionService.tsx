@@ -18,7 +18,7 @@ const ConnectionDispatchContext = React.createContext<ConnectionDispatch>(undefi
 const ConnectionStateContext = React.createContext<ConnectionState>(undefined)
 
 const ConnectionProvider = ({ children }: { children: React.ReactNode }): JSX.Element => {
-    const [connection, setConnection] = React.useState<ConnectionState>(null)
+    const [connection, setConnection] = React.useState<ConnectionState>()
     return (
         <ConnectionDispatchContext.Provider value={setConnection}>
             <ConnectionStateContext.Provider value={connection}>
@@ -27,13 +27,7 @@ const ConnectionProvider = ({ children }: { children: React.ReactNode }): JSX.El
         </ConnectionDispatchContext.Provider>
     )
 }
-const useConnection = (): ITeckosClient => {
-    const state = React.useContext(ConnectionStateContext)
-    if (state === undefined) {
-        throw new Error('useConnection must be used within a ConnectionProvider')
-    }
-    return React.useMemo(() => state, [state])
-}
+const useConnection = (): ITeckosClient => React.useContext(ConnectionStateContext)
 const useEmit = (): ((event: SocketEvent, ...args: any[]) => boolean) => {
     const connection = useConnection()
     return connection?.emit

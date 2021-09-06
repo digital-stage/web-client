@@ -34,7 +34,7 @@ const notificationMiddleware: Middleware<
                                 featured: false,
                             })
                         )
-                    }, 2000),
+                    }, notification.featureTimeout || 3000),
                 }
             }
             break
@@ -55,6 +55,7 @@ const notificationMiddleware: Middleware<
                 prevState.globals.localStageDeviceId === chatMessage.stageMemberId
             const userId = prevState.stageMembers.byId[chatMessage.stageMemberId]?.userId
             const user = userId ? prevState.users.byId[userId] : undefined
+            const timeout = (3000 + (chatMessage.message.split(" ").length * 400))
             dispatch(
                 addNotificationAction({
                     id: uuid4(),
@@ -64,6 +65,7 @@ const notificationMiddleware: Middleware<
                     link: '/chat',
                     permanent: false,
                     featured: true,
+                    featureTimeout: 3000
                 })
             )
             break

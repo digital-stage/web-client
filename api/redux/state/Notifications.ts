@@ -12,6 +12,7 @@ export interface Notification {
     message: string
     link?: string
     featured: boolean
+    featureTimeout?: number
     permanent: boolean
 }
 
