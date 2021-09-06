@@ -53,21 +53,22 @@ const notificationMiddleware: Middleware<
             const isSelf =
                 prevState.globals.localStageDeviceId &&
                 prevState.globals.localStageDeviceId === chatMessage.stageMemberId
-            const userId = prevState.stageMembers.byId[chatMessage.stageMemberId]?.userId
-            const user = userId ? prevState.users.byId[userId] : undefined
-            const timeout = (3000 + (chatMessage.message.split(" ").length * 400))
-            dispatch(
-                addNotificationAction({
-                    id: uuid4(),
-                    date: new Date().getTime(),
-                    kind: 'info',
-                    message: `${user?.name || chatMessage.stageMemberId}: ${chatMessage.message}`,
-                    link: '/chat',
-                    permanent: false,
-                    featured: true,
-                    featureTimeout: 3000
-                })
-            )
+            if(!isSelf) {
+                const userId = prevState.stageMembers.byId[chatMessage.stageMemberId]?.userId
+                const user = userId ? prevState.users.byId[userId] : undefined
+                dispatch(
+                  addNotificationAction({
+                      id: uuid4(),
+                      date: new Date().getTime(),
+                      kind: 'info',
+                      message: `${user?.name || chatMessage.stageMemberId}: ${chatMessage.message}`,
+                      link: '/chat',
+                      permanent: false,
+                      featured: true,
+                      featureTimeout: (3000 + (chatMessage.message.split(" ").length * 400))
+                  })
+                )
+            }
             break
         }
     }
