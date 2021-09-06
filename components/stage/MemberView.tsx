@@ -129,7 +129,7 @@ const MemberView = ({
 }) => {
     const isStageAdmin = useCurrentStageAdminSelector()
     const userName = useStageSelector<string>(
-        (state) => state.users.byId[state.stageMembers.byId[stageMemberId].userId].name
+        (state) => state.users.byId[state.stageMembers.byId[stageMemberId].userId]?.name
     )
     const active = useStageSelector<boolean>(
         (state) => state.stageMembers.byId[stageMemberId].active

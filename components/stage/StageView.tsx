@@ -5,6 +5,9 @@ import landscapeIcon from '../../public/icons/landscape.svg'
 import portraitIcon from '../../public/icons/portrait.svg'
 import { MembersGrid } from './MembersGrid'
 
+// TODO: TypeError: Cannot read property 'name' of undefined
+// return e.users.byId[e.stageMembers.byId[r].userId].name
+
 const StageView = ({ stageId }: { stageId: string }) => {
     const [showLanes, setShowLanes] = React.useState<boolean>(false)
     return (
