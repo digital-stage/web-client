@@ -137,7 +137,8 @@ const PeerConnection = ({
         async (description: RTCSessionDescriptionInit) => {
             if (description.type == 'offer') {
                 // Detect collision
-                ignoreOffer.current = !isPolite && makingOffer.current
+                const offerCollision = makingOffer.current || peerConnection.signalingState != 'stable'
+                ignoreOffer.current = !isPolite && offerCollision
                 if (ignoreOffer.current) {
                     trace(
                         `from ${stageDeviceId}: Ignoring offer`,
