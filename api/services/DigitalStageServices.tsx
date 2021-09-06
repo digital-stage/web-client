@@ -10,6 +10,7 @@ import {AudioContextService} from "./AudioContextService";
 
 
 const DigitalStageServices = () => {
+  console.log("RERENDER SERVICES")
   return (
     <>
       <ConnectionService/>

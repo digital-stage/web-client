@@ -100,6 +100,7 @@ const useWebRTCRemoteAudioTracks = (): TrackMap => {
 }
 const useWebRTCRemoteAudioTrackByStageDevice = (stageMemberId: string): MediaStreamTrack => {
     const tracks = useWebRTCRemoteAudioTracks()
+    console.log(tracks)
     return React.useMemo(() => {
         return tracks[stageMemberId]
     }, [stageMemberId, tracks])
