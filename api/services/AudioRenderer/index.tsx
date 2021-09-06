@@ -144,13 +144,18 @@ const AudioTrackRenderer = ({
     useEffect(() => {
         setTrack((prev) => {
             if (!prev) {
+                trace("Did not have a track before")
                 // Prefer local tracks
                 if (localStageDeviceId === audioTrack.stageDeviceId) {
                     if (mediasoupAudioProducer) return mediasoupAudioProducer.track
                     if (localWebRTCTrack) return localWebRTCTrack
                 }
+                trace(mediasoupAudioConsumer)
+                trace(remoteWebRTCTrack)
                 if (mediasoupAudioConsumer) return mediasoupAudioConsumer.track
                 if (remoteWebRTCTrack) return remoteWebRTCTrack
+            } else {
+                trace("SKIPPING")
             }
             return prev
         })
