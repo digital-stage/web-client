@@ -1,0 +1,72 @@
+.stageModal {
+  .audioTypeDescription {
+    padding-bottom: 32px;
+  }
+  .checkboxLabel {
+    display: inline-flex;
+    flex-direction: column;
+    font-size: smaller;
+    padding: 16px;
+    color: var(---muted);
+
+    & > div {
+      margin-top: 8px;
+      margin-bottom: 8px;
+    }
+
+    width: 100%;
+    @media only screen and (min-width: 600px) and (min-height: 600px) {
+      width: 50%;
+    }
+  }
+}
+.inviteModal {
+  .codeWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .actionWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 2px;
+
+    .copy {
+      padding-right: 8px;
+    }
+  }
+}
+
+.stagesList {
+  .active {
+    border: 1px solid var(---warn)
+  }
+  .stageName {
+    flex-grow: 1;
+    padding: 8px;
+    align-items: center;
+    display: inline-flex;
+  }
+  .legend {
+    width: 100%;
+    text-align: right;
+  }
+  .actions {
+    display: inline-flex;
+    flex-wrap: wrap;
+    width: 100%;
+    justify-content: space-between;
+
+    button {
+      margin: 8px 0;
+    }
+  }
+  .hideOnMobile {
+    display: none;
+    @media only screen and (min-width: 600px) and (min-height: 600px) {
+      display: inline;
+    }
+  }
+}

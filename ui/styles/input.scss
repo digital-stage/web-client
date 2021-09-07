@@ -1,0 +1,172 @@
+div.text-input {
+  display: block;
+  position: relative;
+
+  .wrapper {
+    box-sizing: border-box;
+    margin: 0;
+    min-width: 0;
+    position: relative;
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+
+    &:hover {
+      box-shadow: inset 0 0 0 rgba(40, 40, 40, 0.2);
+    }
+
+    span.label {
+      position: absolute;
+      margin: 0;
+      min-width: 0;
+      top: 16px;
+      left: 16px;
+      width: auto;
+      font-size: smaller;
+    }
+
+    input {
+      position: relative;
+      box-sizing: border-box;
+      margin: 0;
+      min-width: 0;
+      display: block;
+      appearance: none;
+      background-color: transparent;
+      width: 100%;
+      padding: 40px 16px 16px 16px;
+      border-width: 1px 1px 0;
+      border-top-style: solid;
+      border-right-style: solid;
+      border-left-style: solid;
+      border-top-color: transparent;
+      border-right-color: transparent;
+      border-left-color: transparent;
+      font-size: 16px;
+
+      &.no-label {
+        padding: 16px;
+      }
+
+      &.password {
+        padding-right: 40px;
+      }
+
+      &:-webkit-autofill,
+      &:-webkit-autofill:hover,
+      &:-webkit-autofill:focus {
+        border-bottom-color: transparent;
+        box-shadow: inset 0 0 0 1000px #505050;
+      }
+
+      &:focus {
+        outline: 0;
+      }
+
+      &:active {
+        border-bottom: transparent;
+        outline: 0;
+      }
+    }
+
+    .toggle {
+      position: absolute;
+      right: 2px;
+      bottom: 8px;
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+    }
+  }
+
+  .note {
+    box-sizing: border-box;
+    margin: 0;
+    min-height: 2rem;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    text-align: right;
+    font-size: xx-small;
+  }
+
+  /** Dark mode (default) */
+  &:not(.light) {
+    .wrapper {
+      background-color: var(---level-3, #292929);
+      border-bottom-color: var(---muted, #808080);
+
+      &:hover {
+        background-color: var(---level-2, #1f1f1f);
+        border-bottom-color: var(---primary, #5779d9);
+      }
+
+      &.error {
+        background-color: var(---input-error, #9d131366);
+        border-bottom-color: var(---input-error-border, #a41318);
+      }
+
+      .label {
+        color: var(---muted, #808080);
+      }
+
+      input {
+        color: var(---text, #f4f4f4);
+
+        &:-webkit-autofill,
+        &:-webkit-autofill:hover,
+        &:-webkit-autofill:focus {
+          -webkit-text-fill-color: var(---text, #f4f4f4);
+        }
+      }
+
+      .toggle {
+        color: var(---text, #f4f4f4);
+      }
+    }
+
+    .note {
+      color: var(---muted, rgba(244, 244, 244, 0.5));
+    }
+  }
+
+  /** Light mode */
+  &.light {
+    .wrapper {
+
+      background-color: var(---level-5, #f4f4f4);
+      border-bottom-color: var(---muted, #808080);
+
+      &:hover {
+        background-color: var(---input-hover-light, #12121226);
+        border-bottom-color: var(---primary, #5779d9);
+      }
+
+      &.error {
+        background-color: var(---input-error, #9d131366);
+        border-bottom-color: var(---input-error-border, #a41318);
+      }
+
+      .label {
+        color: var(---muted, #29292999);
+      }
+
+      input {
+        color: var(---text-contrast, #292929);
+      }
+
+      &:-webkit-autofill,
+      &:-webkit-autofill:hover,
+      &:-webkit-autofill:focus {
+        -webkit-text-fill-color: var(---text, #f4f4f4);
+      }
+
+      .toggle {
+        color: var(---text, #f4f4f4);
+      }
+    }
+
+    .note {
+      color: var(---muted, rgba(244, 244, 244, 0.5));
+    }
+  }
+
+}

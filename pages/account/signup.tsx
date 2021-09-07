@@ -1,29 +1,23 @@
-import {useRouter} from 'next/router'
-import React, {useEffect} from 'react'
-
-import {useAuth} from '@digitalstage/api-client-react'
-import AuthNavigation from '../../components/account/AuthNavigation'
-import SignUpForm from '../../components/account/forms/SignUpForm'
-import AuthContainer from "../../ui/new/auth/AuthContainer";
+import React, { useEffect } from 'react'
+import { useStageSelector } from '@digitalstage/api-client-react'
+import { useRouter } from 'next/router'
+import {SignUpForm} from 'components/account/SignUpForm'
+import {AuthLayout} from 'components/account/AuthLayout'
 
 const SignUp = () => {
-  const {loading, user} = useAuth()
-  const {push, prefetch} = useRouter()
-  useEffect(() => {
-    if (prefetch) {
-      prefetch('/account/login')
-    }
-  }, [prefetch])
-  useEffect(() => {
-    if (push && !loading && user) {
-      push('/')
-    }
-  }, [user, loading, push])
-  return (
-    <AuthContainer>
-      <AuthNavigation/>
-      <SignUpForm/>
-    </AuthContainer>
-  )
+    const signedIn = useStageSelector((state) => state.auth.initialized && !!state.auth.token)
+    const { push } = useRouter()
+
+    useEffect(() => {
+        if (push && signedIn) {
+            push('/')
+        }
+    }, [push, signedIn])
+
+    return (
+        <AuthLayout showMenu>
+            <SignUpForm />
+        </AuthLayout>
+    )
 }
 export default SignUp

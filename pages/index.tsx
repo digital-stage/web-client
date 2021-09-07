@@ -1,34 +1,38 @@
-import {useEffect, useState} from 'react'
-import {useRouter} from 'next/router'
-import {useAuth, useStageSelector} from '@digitalstage/api-client-react'
-import LoadingOverlay from '../components/LoadingOverlay'
+import Head from 'next/head'
+import {Container, SIZE} from '../ui/Container'
+import { useStageSelector } from '@digitalstage/api-client-react'
+import React from 'react'
+import {LoadingShaft} from '../ui/LoadingShaft'
+import { useRouter } from 'next/router'
 
-export default function Home() {
-  const {loading, user} = useAuth()
-  const {push} = useRouter()
-  const ready = useStageSelector<boolean>((state) => state.globals.ready)
-  const stageId = useStageSelector<string>((state) => state.globals.stageId)
-  const [state, setState] = useState<string>("Anmeldeinfos");
+const Index = () => {
+    const { replace } = useRouter()
+    const insideStage = useStageSelector<boolean>((state) =>
+        state.globals.ready ? !!state.globals.stageId : undefined
+    )
 
-  useEffect(() => {
-    if (push && !loading) {
-      if (!user) {
-        setState("Anmeldeformular")
-        push('/account/login')
-      } else if (ready) {
-        setState("Bühneninfos")
-        if (stageId) {
-          push('/stage')
-        } else {
-          push('/stages')
+    React.useEffect(() => {
+        if (insideStage !== undefined) {
+            if (insideStage) {
+                replace('/stage')
+            } else {
+                replace('/stages')
+            }
         }
-      } else {
-        setState("Nutzerinfos")
-      }
-    }
-  }, [user, loading, push, ready, stageId])
+    }, [insideStage, replace])
 
-  return (<LoadingOverlay>
-    <h1>Lade {state}...</h1>
-  </LoadingOverlay>)
+    return (
+        <Container size={SIZE.small}>
+            <Head>
+                <title>Welcome to Digital Stage</title>
+                <meta name="description" content="Digital Stage" />
+                <link rel="icon" href="/favicon.ico" />
+            </Head>
+            <div className="overlay">
+                <LoadingShaft />
+                <h2>Stimme die Instrumente...</h2>
+            </div>
+        </Container>
+    )
 }
+export default Index

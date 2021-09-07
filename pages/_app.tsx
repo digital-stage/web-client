@@ -1,54 +1,82 @@
-import '../styles/reset.css'
-import '../styles/globals.css'
-import '../styles/dark.css'
-import '../styles/index.scss'
-import { DigitalStageProvider } from '@digitalstage/api-client-react'
-import { useRouter } from 'next/router'
-import { IntlProvider } from 'react-intl'
-import React from 'react'
+import '../scripts/wdyr'
+import React, { useEffect } from 'react'
+import './../styles/root.css'
+import './../styles/index.scss'
 import Head from 'next/head'
-import * as locales from '../content/locale'
-import { SelectedDeviceProvider } from '../hooks/useSelectedDevice'
-import PageWrapper from '../components/PageWrapper'
-import { ColorProvider } from '../hooks/useColors'
-import { NotificationProvider } from '../hooks/useNotification'
+import { AppProps, NextWebVitalsMetric } from 'next/app'
+import { DigitalStageProvider, useStageSelector } from '@digitalstage/api-client-react'
+import {DeviceSelector} from '../components/global/DeviceSelector'
+import {Background} from 'components/global/Background'
+import {Sidebar} from 'components/global/Sidebar'
+import {ConnectionOverlay} from '../components/global/ConnectionOverlay'
+import {ProfileMenu} from '../components/global/ProfileMenu'
+import {PlaybackOverlay} from '../components/global/PlaybackOverlay'
+import {StageJoiner} from '../components/global/StageJoiner'
+import { useRouter } from 'next/router'
+import {NotificationBar} from '../components/global/NotifcationBar'
+import { logger } from '../api/logger'
 
-// eslint-disable-next-line react/prop-types
-function MyApp({ Component, pageProps }) {
-    const router = useRouter()
-    const { locale, defaultLocale } = router
-    const localeCopy = locales[locale]
-    const messages = localeCopy.default
+const CheckAuthWrapper = () => {
+    const { push, pathname } = useRouter()
+    const signedOut = useStageSelector<boolean>(
+        (state) => state.auth.initialized && !state.auth.user
+    )
+    useEffect(() => {
+        if (push && signedOut && !pathname.startsWith('/account')) {
+            push('/account/login')
+        }
+    }, [pathname, push, signedOut])
+    return null
+}
 
+export function reportWebVitals(metric: NextWebVitalsMetric) {
+    logger('Analytics').trace(metric)
+}
+
+const TitleProvider = (): JSX.Element => {
+    const name = useStageSelector((state) =>
+        state.globals.stageId ? state.stages.byId[state.globals.stageId].name : undefined
+    )
+    return (
+        <Head>
+            <title>{name || 'Digital Stage'}</title>
+        </Head>
+    )
+}
+
+const MemorizedSidebar = React.memo(Sidebar)
+
+function MyApp({ Component, pageProps }: AppProps) {
     return (
         <>
             <Head>
-                <title>Digital Stage</title>
-                <link href="/static/fonts/fonts.css" rel="stylesheet" />
                 <meta
                     name="viewport"
-                    content="initial-scale=1.0, width=device-width, shrink-to-fit=no"
+                    content="width=device-width, initial-scale=1.0, shrink-to-fit=no, user-scalable=no"
                 />
+                <link rel="icon" href="/favicon.ico" />
+                <meta name="Apple-mobile-web-app-capable" content="yes" />
+                <meta name="Apple-mobile-web-app-status-bar-style" content="black" />
+                <meta name="description" content="Digital Stage" />
             </Head>
-            <IntlProvider locale={locale} defaultLocale={defaultLocale} messages={messages}>
-                <NotificationProvider>
-                    <ColorProvider>
-                        <SelectedDeviceProvider>
-                            <DigitalStageProvider
-                                apiUrl={process.env.NEXT_PUBLIC_API_URL}
-                                authUrl={process.env.NEXT_PUBLIC_AUTH_URL}
-                            >
-                                <SelectedDeviceProvider>
-                                    <PageWrapper>
-                                        {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-                                        <Component {...pageProps} />
-                                    </PageWrapper>
-                                </SelectedDeviceProvider>
-                            </DigitalStageProvider>
-                        </SelectedDeviceProvider>
-                    </ColorProvider>
-                </NotificationProvider>
-            </IntlProvider>
+            <DigitalStageProvider>
+                <TitleProvider />
+                <div className="app">
+                    <Background />
+                    <ConnectionOverlay>
+                        <div className="inner">
+                            <NotificationBar />
+                            <Component {...pageProps} />
+                        </div>
+                        <DeviceSelector />
+                        <MemorizedSidebar />
+                        <StageJoiner />
+                        <ProfileMenu />
+                        <PlaybackOverlay />
+                        <CheckAuthWrapper />
+                    </ConnectionOverlay>
+                </div>
+            </DigitalStageProvider>
         </>
     )
 }

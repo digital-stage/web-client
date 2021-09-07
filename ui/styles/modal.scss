@@ -1,0 +1,87 @@
+.modal {
+  display: block;
+  align-self: flex-start;
+  position: relative;
+  max-width: 800px;
+  transition-duration: 200ms;
+  transition-property: transform, opacity;
+  transition-timing-function: cubic-bezier(0, 0, 1, 1);
+  margin: 0 auto;
+  padding: 24px 24px 64px;
+
+  .inner {
+
+    & > .panel {
+      margin: 0 !important;
+    }
+  }
+
+  header {
+    padding-bottom: 24px;
+  }
+
+  footer {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 24px;
+  }
+
+  &.opening {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  &.open {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  &.closing {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  &.full {
+    width: 100%
+  }
+
+  &.small {
+    width: 100%;
+    max-width: 400px;
+
+    header {
+      padding-bottom: 4px;
+    }
+    footer {
+      padding-top: 4px;
+    }
+  }
+
+  &.default {
+    width: 100%;
+    max-width: 800px;
+  }
+
+  &.auto {
+    width: auto
+  }
+
+  .modal-button {
+    padding-left: 8px;
+
+    &:first-of-type {
+      padding-left: 0 !important;
+    }
+  }
+
+  button.close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    stroke: currentColor;
+  }
+}
+
+
+

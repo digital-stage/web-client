@@ -1,52 +1,33 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
-import React, {useEffect} from 'react'
-import {useAuth} from '@digitalstage/api-client-react'
-import {useRouter} from 'next/router'
-import {useIntl} from 'react-intl'
+import {LoginForm} from 'components/account/LoginForm'
 import Link from 'next/link'
-import LoginForm from '../../components/account/forms/LoginForm'
-import styles from "../../styles/Auth.module.scss"
+import { useRouter } from 'next/router'
+import React, { useEffect } from 'react'
+import {AuthLayout} from 'components/account/AuthLayout'
+import { useStageSelector } from '@digitalstage/api-client-react'
 
 const Login = () => {
-  const {loading, user} = useAuth()
-  const {push, prefetch} = useRouter()
-  const {formatMessage} = useIntl()
-  const f = (id) => formatMessage({id})
+    const signedIn = useStageSelector((state) => state.auth.initialized && !!state.auth.token)
+    const { push } = useRouter()
 
-  useEffect(() => {
-    if (prefetch) {
-      prefetch('/account/signup')
-    }
-  }, [prefetch])
+    useEffect(() => {
+        if (signedIn) {
+            push('/')
+        }
+    }, [push, signedIn])
 
-  useEffect(() => {
-    if (push && !loading && user) {
-      push('/')
-    }
-  }, [user, loading, push])
-
-  return (
-    <div className={styles.container}>
-      <header>
-        <Link href="/account/login" passHref>
-          <a>
-            {f('login')}
-          </a>
-        </Link>
-        <Link href="/account/signup" passHref>
-          <a>
-            {f('signUp')}
-          </a>
-        </Link>
-      </header>
-      <LoginForm/>
-      <Link href="/account/forgot" passHref>
-        <a>{f('forgotPassword')}</a>
-      </Link>
-      <Link href="/account/reactivate" passHref>
-        <a>{f('resendActivationLink')}</a>
-      </Link>
-    </div>
-  )
+    return (
+        <AuthLayout showMenu>
+            <LoginForm />
+            <Link href="/account/forgot" passHref>
+                <a className="text">Passwort vergessen?</a>
+            </Link>
+            <Link href="/account/activate" passHref>
+                <a className="text">Konto aktivieren</a>
+            </Link>
+            <Link href="/account/reactivate" passHref>
+                <a className="text">Kein Aktivierungscode erhalten?</a>
+            </Link>
+        </AuthLayout>
+    )
 }
 export default Login

@@ -1,37 +1,32 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
-import React, {useEffect} from 'react'
-import {useAuth} from '@digitalstage/api-client-react'
-import {useRouter} from 'next/router'
-import {useIntl} from 'react-intl'
+import React, { useEffect } from 'react'
+import { useRouter } from 'next/router'
+import { useStageSelector } from '@digitalstage/api-client-react'
 import Link from 'next/link'
-import ResendActivationForm from "../../components/account/forms/ResendActivationForm";
-import AuthContainer from "../../ui/new/auth/AuthContainer";
-import AuthFormHeader from "../../ui/new/auth/AuthForm/AuthFormHeader";
-import AuthFormLink from "../../ui/new/auth/AuthForm/AuthFormLink";
+import {ResendActivationForm} from 'components/account/ResendActivationForm'
+import {AuthLayout} from 'components/account/AuthLayout'
+import {Paragraph} from '../../ui/Paragraph'
 
-const Login = () => {
-  const {loading, user} = useAuth()
-  const {push} = useRouter()
-  const {formatMessage} = useIntl()
-  const f = (id) => formatMessage({id})
+const ReActivate = () => {
+    const signedIn = useStageSelector((state) => state.auth.initialized && !!state.auth.token)
+    const { push } = useRouter()
 
-  useEffect(() => {
-    if (push && !loading && user) {
-      push('/')
-    }
-  }, [user, loading, push])
+    useEffect(() => {
+        if (signedIn) {
+            push('/')
+        }
+    }, [push, signedIn])
 
-  return (
-    <AuthContainer>
-      <AuthFormHeader>
-        <h3>{f('sendActivationLink')}</h3>
-        <p className="micro">{f('enterEmailToActivate')}</p>
-      </AuthFormHeader>
-      <ResendActivationForm/>
-      <Link href="/account/login" passHref>
-        <AuthFormLink>{f('cancel')}</AuthFormLink>
-      </Link>
-    </AuthContainer>
-  )
+    return (
+        <AuthLayout>
+            <h4>Aktivierungscode erneut senden</h4>
+            <Paragraph kind="micro">
+                Gibt Deine E-Mail-Adresse ein, um erneut einen Aktivierungscode zu beantragen
+            </Paragraph>
+            <ResendActivationForm />
+            <Link href="/account/login" passHref>
+                <a className="text">Zurück</a>
+            </Link>
+        </AuthLayout>
+    )
 }
-export default Login
+export default ReActivate

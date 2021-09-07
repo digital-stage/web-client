@@ -1,0 +1,30 @@
+.panel {
+  position: relative;
+  width: 100%;
+  box-shadow: 0 16px 20px #00000040;
+  padding: 24px;
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  color: var(---text, #F4F4F4);
+  background-color: var(---level-4, #393939);
+  flex-grow: 1;
+
+  @media only screen and (min-width: 600px) and (min-height: 600px) {
+    padding: 24px 16px;
+  }
+
+  &.fixed {
+    height: 100%;
+  }
+
+  &.black {
+    color: var(---text, #F4F4F4);
+    background-color: var(---level-1, #121212);
+  }
+
+  &.white {
+    color: var(---text-contrast, #292929);
+    background-color: var(---level-5, #F4F4F4);
+  }
+}

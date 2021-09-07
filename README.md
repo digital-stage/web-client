@@ -6,18 +6,18 @@ React and next.js based webclient for the Digital Stage platform.
 To setup the whole server architecture including the web frontend, you have to install or use a working MongoDB and SMTP instance first.
 Then checkout the necessary services:
 ```
-git clone https://github.com/digital-stage/auth-server.git
-git clone https://github.com/digital-stage/api-server.git
-git clone https://github.com/digital-stage/router.git
+git clone https://github.com/digital-stage/auth-server.git &&
+git clone https://github.com/digital-stage/api-server.git &&
+git clone https://github.com/digital-stage/router.git &&
 git clone https://github.com/digital-stage/web-client.git
 ```
 
 For each repository you have to install the dependencies and build using your favorite package manager (npm, yarn, etc.):
 ```
-yarn install --cwd auth-server && yarn build --cwd auth-server
-yarn install --cwd api-server && yarn build --cwd api-server
-yarn install --cwd router && yarn build --cwd router
-yarn install --cwd web-client && yarn build --cwd web-client
+yarn --cwd auth-server install && yarn --cwd auth-server build
+yarn --cwd api-server install && yarn --cwd api-server build
+yarn --cwd router install && yarn --cwd router build
+yarn --cwd web-client install && yarn --cwd web-client build
 ```
 Feel free to specify the environment variables inside the single projects - or just use our preconfigured environment settings.
 For these your *Mongo DB server* has to respond on port *27017*.

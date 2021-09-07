@@ -1,120 +1,111 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {Stage, Layer, Image} from 'react-konva';
-import RoomElement from './RoomElement';
-import CustomShape from './CustomShape';
-import useImage from "../../../hooks/useImage";
-import styles from './RoomEditor.module.css'
+import React from 'react'
+import { Layer as KonvaLayer, Stage as KonvaStage } from 'react-konva/es/ReactKonvaCore'
+import {
+    selectMode,
+    useStageSelector,
+    ConnectionStateContext,
+    useCurrentStageAdminSelector,
+} from '@digitalstage/api-client-react'
+import { ReactReduxContext, useDispatch } from 'react-redux'
+import { FACTOR } from './RoomElement'
+import {RoomSelection} from './RoomSelection'
+import {GroupItem} from './GroupItem'
+import {TextSwitch} from 'ui/TextSwitch'
+import {ResetPanel} from './ResetPanel'
 
-const FACTOR = 100.0;
-const BOUNDING_BUFFER = 42;
+const RoomEditor = ({ stageId }: { stageId: string }) => {
+    const innerRef = React.useRef<HTMLDivElement>(null)
+    const dispatch = useDispatch()
 
-const RoomEditor = (props: {
-  width: number;
-  height: number;
-  elements: RoomElement[];
-  onChange?: (element: RoomElement) => void;
-  onSelected?: (element: RoomElement) => void;
-  onDeselected?: () => void;
-  className?: string
-}): JSX.Element => {
-  const {className, elements, width, height, onChange, onSelected, onDeselected} = props;
-  const [selected, setSelected] = useState<RoomElement>(undefined);
-  const fullWidth: number = width * FACTOR;
-  const fullHeight: number = height * FACTOR;
-  const centerX: number = fullWidth / 2;
-  const centerY: number = fullHeight / 2;
-  const centerImage = useImage('/static/icons/room-center.svg', 96, 96);
-  const wrapperRef = useRef<HTMLDivElement>();
-  const stageRef = useRef();
+    const height = useStageSelector<number>((state) => state.stages.byId[stageId].height)
+    const width = useStageSelector<number>((state) => state.stages.byId[stageId].width)
 
-  const deselect = (e) => {
-    const clickedOnEmpty = e.target === e.target.getStage();
+    const groupIds = useStageSelector<string[]>((state) => state.groups.byStage[stageId] || [])
+    const [selection, setSelection] = React.useState<RoomSelection[]>([])
+    const selectedDeviceId = useStageSelector((state) => state.globals.selectedDeviceId)
+    const selectedMode = useStageSelector((state) => state.globals.selectedMode)
+    const isStageAdmin = useCurrentStageAdminSelector()
+    const onStageClicked = React.useCallback((e) => {
+        const clickedOnEmpty = e.target === e.target.getStage()
+        if (clickedOnEmpty) {
+            setSelection([])
+        }
+    }, [])
+    /** Scroll into center of stage **/
+    React.useEffect(() => {
+        if (innerRef.current && width && height) {
+            innerRef.current.scrollLeft = (width * FACTOR) / 2 - window.innerWidth / 2
+            innerRef.current.scrollTop = (height * FACTOR) / 2 - window.innerHeight / 2
+        }
+    }, [innerRef, width, height])
 
-    if (clickedOnEmpty) {
-      setSelected(undefined);
-      if (onDeselected) onDeselected();
-    }
-  };
+    return (
+        <div className="roomEditor">
+            <div className="inner" ref={innerRef}>
+                <ReactReduxContext.Consumer>
+                    {(store) => (
+                        <ConnectionStateContext.Consumer>
+                            {(connection) => (
+                                <KonvaStage
+                                    width={width * FACTOR}
+                                    height={height * FACTOR}
+                                    onClick={onStageClicked}
+                                    onTap={onStageClicked}
+                                >
+                                    <KonvaLayer>
+                                        <ReactReduxContext.Provider value={store}>
+                                            <ConnectionStateContext.Provider value={connection}>
+                                                {groupIds.map((groupId) => (
+                                                    <GroupItem
+                                                        key={groupId}
+                                                        groupId={groupId}
+                                                        deviceId={
+                                                            selectedMode === 'global'
+                                                                ? undefined
+                                                                : selectedDeviceId
+                                                        }
+                                                        stageWidth={width}
+                                                        stageHeight={height}
+                                                        selection={selection}
+                                                        onSelected={(selection) =>
+                                                            setSelection((prev) => [
+                                                                ...prev,
+                                                                selection,
+                                                            ])
+                                                        }
+                                                    />
+                                                ))}
+                                            </ConnectionStateContext.Provider>
+                                        </ReactReduxContext.Provider>
+                                    </KonvaLayer>
+                                </KonvaStage>
+                            )}
+                        </ConnectionStateContext.Consumer>
+                    )}
+                </ReactReduxContext.Consumer>
+            </div>
 
-  /**
-   * Scroll to center when component loaded
-   */
-  useEffect(() => {
-    if (wrapperRef.current) {
-      wrapperRef.current.scrollLeft = fullWidth / 2 - window.innerWidth / 2;
-      wrapperRef.current.scrollTop = fullHeight / 2 - window.innerHeight / 2;
-    }
-  }, [wrapperRef, fullWidth, fullHeight]);
-
-  return (
-    <div className={`${styles.wrapper} ${className}`} ref={wrapperRef}>
-      <div className={styles.inner}>
-        <Stage
-          ref={stageRef}
-          width={fullWidth}
-          height={fullHeight}
-          x={0}
-          y={0}
-          onMouseDown={deselect}
-          onTouchStart={deselect}
-        >
-          <Layer>
-            <Image
-              x={fullWidth / 2}
-              y={fullHeight / 2}
-              width={128}
-              height={128}
-              offsetX={64}
-              offsetY={64}
-              image={centerImage}
-            />
-            {elements.map((element) => {
-              const x: number = element.x * FACTOR + centerX;
-              const y: number = element.y * FACTOR + centerY;
-              return (
-                <CustomShape
-                  key={element._id}
-                  selected={selected && selected._id === element._id}
-                  element={{
-                    ...element,
-                    x: x,
-                    y: y,
-                  }}
-                  onFinalChange={(x, y, rZ) => {
-                    const nX = Math.max(
-                      BOUNDING_BUFFER,
-                      Math.min(Math.round(x), fullWidth - BOUNDING_BUFFER)
-                    );
-                    const nY = Math.max(
-                      BOUNDING_BUFFER,
-                      Math.min(Math.round(y), fullHeight - BOUNDING_BUFFER)
-                    );
-
-                    const dX = (nX - fullWidth / 2) / FACTOR;
-                    const dY = (nY - fullHeight / 2) / FACTOR;
-                    const dRZ = Math.round(rZ);
-
-                    onChange({
-                      ...element,
-                      x: dX,
-                      y: dY,
-                      rZ: dRZ,
-                    });
-                  }}
-                  onClick={() => {
-                    setSelected(element);
-                    if (onSelected) onSelected(element);
-                  }}
+            {isStageAdmin || selectedMode === 'personal' ? (
+                <ResetPanel
+                    deviceId={selectedMode === 'global' ? undefined : selectedDeviceId}
+                    selection={selection}
                 />
-              );
-            })}
-          </Layer>
-        </Stage>
-      </div>
-    </div>
-  );
-};
+            ) : null}
 
-export {CustomShape};
-export type {RoomElement};
-export default RoomEditor;
+            {isStageAdmin ? (
+                <TextSwitch
+                    className="switch"
+                    value={selectedMode}
+                    onSelect={(v) => {
+                        dispatch(selectMode(v === 'global' ? 'global' : 'personal'))
+                    }}
+                >
+                    <span key="personal">Persönliche Einstellungen</span>
+                    <span key="global">Voreinstellungen</span>
+                </TextSwitch>
+            ) : null}
+        </div>
+    )
+}
+
+export { RoomEditor }

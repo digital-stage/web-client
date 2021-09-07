@@ -1,0 +1,67 @@
+.title {
+    display: inline-flex;
+    width: 100%;
+    align-items: center;
+}
+.title button {
+    margin-left: 8px;
+}
+.row {
+    display: block;
+    width: 100%;
+    text-align: center;
+    padding-top: 16px;
+    padding-bottom: 16px;
+}
+
+.groupRow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.groupName {
+    flex-grow: 1;
+    padding-right: 8px;
+    display: inline-flex;
+    align-items: center;
+}
+.groupColor {
+    flex-grow: 0;
+    flex-shrink: 0;
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+.groupActions {
+    flex-grow: 0;
+    display: inline-flex;
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+.groupAssignment {
+    padding-right: 8px;
+}
+.groupManagement {
+    padding-left: 8px;
+}
+.groupManagement button {
+    text-align: right;
+    margin-left: 8px;
+}
+
+.stageActions {
+    display: flex;
+    justify-content: space-between;
+}
+
+.dangerZone {
+    display: block;
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 32px;
+    width: 100%;
+    color: var(---text, #f4f4f4);
+    background-color: var(---danger-active, #FA406B)
+}

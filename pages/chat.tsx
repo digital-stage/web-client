@@ -1,18 +1,12 @@
-import { useAuth } from '@digitalstage/api-client-react'
-import { useRouter } from 'next/router'
-import { useEffect } from 'react'
-import StageChat from '../components/chat/StageChat'
+import React from 'react'
+import {ChatPanel} from '../components/chat/ChatPanel'
+import {Container} from '../ui/Container'
 
 const Chat = () => {
-    const { push } = useRouter()
-    const { loading, user } = useAuth()
-
-    useEffect(() => {
-        if (!loading && !user && push) {
-            push('/account/login')
-        }
-    }, [loading, user, push])
-
-    return <StageChat />
+    return (
+        <Container size="small" flex>
+            <ChatPanel />
+        </Container>
+    )
 }
 export default Chat

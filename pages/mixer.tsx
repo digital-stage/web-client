@@ -1,18 +1,18 @@
-import {useAuth} from "@digitalstage/api-client-react";
-import {useRouter} from "next/router";
-import {useEffect} from "react";
-import MixingPanel from "../components/mixer/MixingPanel";
+import {ReactiveMixingPanel} from '../components/mixer/ReactiveMixingPanel'
+import Head from 'next/head'
+import React from 'react'
+import {Container} from 'ui/Container'
 
 const Mixer = () => {
-  const {push} = useRouter();
-  const {loading, user} = useAuth()
-
-  useEffect(() => {
-    if (!loading && !user && push) {
-      push("/account/login")
-    }
-  }, [loading, user, push])
-
-  return <MixingPanel/>
+    return (
+        <>
+            <Head>
+                <title>Mischpult</title>
+            </Head>
+            <Container size="small">
+                <ReactiveMixingPanel />
+            </Container>
+        </>
+    )
 }
-export default Mixer;
+export default Mixer
