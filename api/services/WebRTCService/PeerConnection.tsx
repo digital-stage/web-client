@@ -58,7 +58,7 @@ const PeerConnection = ({
       trace('Closing peer connection ' + stageDeviceId)
       connection.close()
     }
-  }, [stageDeviceId])
+  }, [stageDeviceId, turnServers, turnUsername, turnCredential])
 
   React.useEffect(() => {
     if (
