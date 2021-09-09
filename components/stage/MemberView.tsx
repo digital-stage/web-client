@@ -163,7 +163,7 @@ const MemberView = ({
                 <>
                     {!!localTrack ? (
                         <StageMemberBox
-                            userName={userName}
+                            userName={userName || stageMemberId}
                             active={active}
                             groupName={groupName}
                             groupColor={groupColor}
@@ -175,7 +175,7 @@ const MemberView = ({
                         <StageMemberVideoTrackView
                             key={videoTrackId}
                             videoTrackId={videoTrackId}
-                            userName={userName}
+                            userName={userName || stageMemberId}
                             active={active}
                             groupName={groupName}
                             groupColor={groupColor}
@@ -185,7 +185,7 @@ const MemberView = ({
                 </>
             ) : (
                 <StageMemberBox
-                    userName={userName}
+                    userName={userName || stageMemberId}
                     active={active}
                     groupName={groupName}
                     groupColor={groupColor}
