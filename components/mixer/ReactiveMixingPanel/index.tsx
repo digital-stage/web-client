@@ -91,7 +91,7 @@ const AudioTrackPanel = ({
                 id={audioTrackId}
                 volume={customAudioTrack?.volume || audioTrack.volume}
                 muted={customAudioTrack ? customAudioTrack.muted : audioTrack.muted}
-                name={audioTrack.name}
+                name={audioTrackId}
                 modified={
                     (!deviceId && (audioTrack.volume !== 1 || audioTrack.muted)) ||
                     !!customAudioTrack

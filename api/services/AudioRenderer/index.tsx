@@ -31,7 +31,7 @@ import {logger} from '../../logger'
 import {useAudioConsumer, useAudioProducer} from '../MediasoupService'
 import {useSpatialAudioSelector} from '../../redux/selectors/useSpatialAudioSelector'
 
-const {trace} = logger('AudioRendererService')
+const {trace, warn} = logger('AudioRendererService')
 
 const yRotationToVector = (degrees: number): [number, number, number] => {
   // convert degrees to radians and offset the angle so 0 points towards the listener
@@ -141,43 +141,30 @@ const AudioTrackRenderer = ({
   )
   const position = useAudioTrackPosition({audioTrack, deviceId})
 
-
-  useEffect(() => {
-    trace("localWebRTCTrack")
-  }, [localWebRTCTrack])
-
-  useEffect(() => {
-    trace("mediasoupAudioProducer")
-  }, [mediasoupAudioProducer])
-
-  useEffect(() => {
-    trace("mediasoupAudioConsumer")
-  }, [mediasoupAudioConsumer])
-
-  useEffect(() => {
-    trace("remoteWebRTCTrack")
-  }, [remoteWebRTCTrack])
-
-  useEffect(() => {
-    trace("localStageDeviceId")
-  }, [localStageDeviceId])
-
-  useEffect(() => {
-    trace("audioTrack.stageDeviceId")
-  }, [audioTrack.stageDeviceId])
-
   useEffect(() => {
     setTrack((prev) => {
-      trace("Did not have a track before")
       // Prefer local tracks
       if (localStageDeviceId === audioTrack.stageDeviceId) {
-        if (mediasoupAudioProducer) return mediasoupAudioProducer.track
-        if (localWebRTCTrack) return localWebRTCTrack
+        if (mediasoupAudioProducer) {
+          trace("Using local audio producer")
+          return mediasoupAudioProducer.track
+        }
+        if (localWebRTCTrack) {
+          trace("Using local audio webrtc track")
+          return localWebRTCTrack
+        }
       }
       trace(mediasoupAudioConsumer)
       trace(remoteWebRTCTrack)
-      if (mediasoupAudioConsumer) return mediasoupAudioConsumer.track
-      if (remoteWebRTCTrack) return remoteWebRTCTrack
+      if (mediasoupAudioConsumer) {
+        trace("Using remote audio consumer")
+        return mediasoupAudioConsumer.track
+      }
+      if (remoteWebRTCTrack) {
+        trace("Using remote webrtc audio track")
+        return remoteWebRTCTrack
+      }
+      warn("Could not find any audio track")
     })
   }, [
     localStageDeviceId,
@@ -187,10 +174,6 @@ const AudioTrackRenderer = ({
     mediasoupAudioProducer,
     localWebRTCTrack,
   ])
-
-  useEffect(() => {
-    console.log("TRACK CHANGED")
-  }, [track])
 
   useEffect(() => {
     if (audioRef.current && audioContext && track) {
