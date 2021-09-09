@@ -15,8 +15,8 @@ const registerSocketHandler = (dispatch: AppDispatch, socket: ITeckosClient): IT
         dispatch(actions.client.reset())
     })
 
-    socket.on(ServerDeviceEvents.Ready, () => {
-        dispatch(actions.server.ready())
+    socket.on(ServerDeviceEvents.Ready, (payload: ServerDevicePayloads.Ready) => {
+        dispatch(actions.server.ready(payload))
     })
 
     socket.on(

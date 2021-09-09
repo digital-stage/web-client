@@ -25,7 +25,7 @@ interface Globals {
     turn?: {
         urls: string[],
         username: string,
-        credentials: string
+        credential: string
     }
 }
 

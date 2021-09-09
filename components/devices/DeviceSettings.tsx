@@ -35,7 +35,7 @@ const DeviceSettings = ({ deviceId }: { deviceId: string }) => {
                             Direktverbindungen verwenden (schneller)
                             <Switch
                                 round={true}
-                                checked={device.useP2P}
+                                checked={!!device.useP2P}
                                 onChange={(e) =>
                                     emit(ClientDeviceEvents.ChangeDevice, {
                                         _id: deviceId,

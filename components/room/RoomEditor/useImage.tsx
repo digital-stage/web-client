@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { useEffect, useState } from 'react'
+import React from 'react'
 import { useErrorReporting } from '@digitalstage/api-client-react'
 
 export const useSvgImage = (

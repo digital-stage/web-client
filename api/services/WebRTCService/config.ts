@@ -8,11 +8,6 @@ export const config: RTCConfiguration = {
                 'stun:stun3.l.google.com:19302',
                 'stun:stun4.l.google.com:19302',
             ],
-        },
-        {
-            urls: 'turn:18.185.72.86:3478?transport=tcp',
-            credential: '2021',
-            username: 'digitalstage',
-        },
+        }
     ],
 }

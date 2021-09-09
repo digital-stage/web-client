@@ -256,8 +256,9 @@ const userReady = (user: ServerDevicePayloads.UserReady): ReducerAction => ({
     type: ServerDeviceEvents.UserReady,
     payload: user,
 })
-const ready = (): ReducerAction => ({
+const ready = (payload: ServerDevicePayloads.Ready): ReducerAction => ({
     type: ServerDeviceEvents.Ready,
+    payload
 })
 
 const stageJoined = (payload: ServerDevicePayloads.StageJoined): ReducerAction => ({

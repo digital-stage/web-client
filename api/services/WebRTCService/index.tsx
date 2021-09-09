@@ -159,10 +159,11 @@ const useWebRTCStats = (trackId: string): WebRTCStatistics => {
 }
 
 const WebRTCService = (): JSX.Element => {
+    const initialized = useStageSelector(state => state.globals.ready)
     const connection = useConnection()
     const emit = connection ? connection.emit : undefined
     const reportError = useErrorReporting()
-    const [ready, setReady] = React.useState<boolean>(false)
+    const [connected, setConnected] = React.useState<boolean>(false)
     const localStageDeviceId = useStageSelector<string | undefined>(
         (state) => state.globals.localStageDeviceId
     )
@@ -225,9 +226,9 @@ const WebRTCService = (): JSX.Element => {
             connection.on(ServerDeviceEvents.P2POfferSent, currentBroker.handleOffer)
             connection.on(ServerDeviceEvents.P2PAnswerSent, currentBroker.handleAnswer)
             connection.on(ServerDeviceEvents.IceCandidateSent, currentBroker.handleIceCandidate)
-            setReady(true)
+            setConnected(true)
             return () => {
-                setReady(false)
+                setConnected(false)
                 connection.off(ServerDeviceEvents.P2POfferSent, currentBroker.handleOffer)
                 connection.off(ServerDeviceEvents.P2PAnswerSent, currentBroker.handleAnswer)
                 connection.off(
@@ -419,17 +420,22 @@ const WebRTCService = (): JSX.Element => {
         (stageDeviceId: string, track: MediaStreamTrack) => {
             trace('Got track with trackId', track.id)
             const dispatch = track.kind === 'video' ? setRemoteVideoTracks : setRemoteAudioTracks
-            const onUnmute = () => {
+            /*const onUnmute = () => {
                 trace('Adding track with trackId', track.id)
                 dispatch((prev) => ({
                     ...prev,
                     [stageDeviceId]: track,
                 }))
-            }
+            }*/
+            trace('Adding track with trackId', track.id)
+            dispatch((prev) => ({
+                ...prev,
+                [stageDeviceId]: track,
+            }))
             const onEndTrack = () => {
                 dispatch((prev) => omit(prev, track.id))
             }
-            track.addEventListener('unmute', onUnmute)
+            //track.addEventListener('unmute', onUnmute)
             track.addEventListener('mute', onEndTrack)
             track.addEventListener('ended', onEndTrack)
         },
@@ -445,7 +451,7 @@ const WebRTCService = (): JSX.Element => {
         },
         [setWebRTCStats]
     )
-    if (ready) {
+    if (initialized && connected) {
         return (
             <>
                 {stageDeviceIds.map((stageDeviceId) => (
