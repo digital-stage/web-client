@@ -145,7 +145,7 @@ const MediasoupService = () => {
     const routerUrl = useStageSelector<string>((state) => {
         if (state.globals.stageId) {
             const { audioType, videoType, mediasoup } = state.stages.byId[state.globals.stageId]
-            if (videoType === 'mediasoup' || audioType === 'mediasoup') {
+            if ((videoType === 'mediasoup' || audioType === 'mediasoup') && mediasoup?.url && mediasoup?.port) {
                 return `${mediasoup.url}:${mediasoup.port}`
             }
         }
