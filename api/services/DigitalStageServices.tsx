@@ -7,10 +7,10 @@ import {WebRTCService} from './WebRTCService'
 
 import {ConnectionService} from './ConnectionService'
 import {AudioContextService} from "./AudioContextService";
+import {TemporaryLogger} from "./TemporaryLogger";
 
 
 const DigitalStageServices = () => {
-  console.log("RERENDER SERVICES")
   return (
     <>
       <ConnectionService/>
@@ -20,6 +20,7 @@ const DigitalStageServices = () => {
       <AudioRenderService/>
       <MediasoupService/>
       <WebRTCService/>
+      <TemporaryLogger/>
     </>
   )
 }

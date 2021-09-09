@@ -94,7 +94,6 @@ const StageMemberVideoTrackView = ({
     // Fetch Mediasoup consumer by this videoTrackId
     const mediasoupConsumer = useVideoConsumer(videoTrackId)
 
-
     // Determine which track to use
     const track = React.useMemo(() => {
         if (webRTCTrack) return webRTCTrack
