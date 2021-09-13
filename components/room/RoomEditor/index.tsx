@@ -41,7 +41,7 @@ const RoomEditor = ({ stageId }: { stageId: string }) => {
 
     return (
         <div className="roomEditor">
-            <div className="inner" ref={innerRef}>
+            <div className="roomInner" ref={innerRef}>
                 <ReactReduxContext.Consumer>
                     {(store) => (
                         <ConnectionStateContext.Consumer>
@@ -94,7 +94,7 @@ const RoomEditor = ({ stageId }: { stageId: string }) => {
 
             {isStageAdmin ? (
                 <TextSwitch
-                    className="switch"
+                    className="roomModeSwitch"
                     value={selectedMode}
                     onSelect={(v) => {
                         dispatch(selectMode(v === 'global' ? 'global' : 'personal'))

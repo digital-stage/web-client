@@ -14,13 +14,13 @@ const AuthLayout = ({ children, showMenu }: { children: React.ReactNode; showMen
     }, [prefetch, showMenu])
     return (
         <Container className="authLayout" size="tiny">
-            <div className="logo">
+            <div className="authLogo">
                 <Image alt="Digital Stage" src="/logo-full.svg" width={180} height={93} />
             </div>
             <Panel kind="black">
                 {showMenu && (
-                    <nav className="nav">
-                        <SecondaryHeadlineLink className="navItem" href="/account/login">
+                    <nav className="authNav">
+                        <SecondaryHeadlineLink className="authNavItem" href="/account/login">
                             <h4>Login</h4>
                         </SecondaryHeadlineLink>
                         <SecondaryHeadlineLink className="navItem" href="/account/signup">

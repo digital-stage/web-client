@@ -2,19 +2,19 @@
     padding-bottom: 64px;
     margin-bottom: 24px;
   }
-  .nav {
+  .settingsNav {
     display: flex;
     flex-direction: row;
     padding-bottom: 24px;
 
-    .navItem {
+    .settingsNavItem {
       display: inline-flex;
       width: 50%;
       align-items: center;
       justify-content: center;
       margin-top: 0;
 
-      .heading {
+      .settingHeading {
         margin: 8px 0;
       }
     }

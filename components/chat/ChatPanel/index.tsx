@@ -48,21 +48,21 @@ const MessagePane = ({
     }, [messagesEndRef, messages])
 
     return (
-        <div className={`messages ${hasErrors ? 'withErrors' : ''}`}>
+        <div className={`chatMessages ${hasErrors ? 'chatMessagesWithError' : ''}`}>
             {messages.map((msg, index) => {
                 return (
                     <div
                         /* eslint-disable-next-line react/no-array-index-key */
                         key={`${msg.time}${index}`}
-                        className={`messageWrapper ${
-                            localUserId === msg.userId && 'self'
+                        className={`chatMessageWrapper ${
+                            localUserId === msg.userId && 'chatMessageWrapperSelf'
                         }`}
                     >
                         {msg.userId !== localUserId && (
-                            <h5 className="messageName">{users.byId[msg.userId]?.name}</h5>
+                            <h5 className="chatMessageName">{users.byId[msg.userId]?.name}</h5>
                         )}
-                        <div className="message">{msg.message}</div>
-                        <div className="messageTime">{convertTime(msg.time)}</div>
+                        <div className="chatMessage">{msg.message}</div>
+                        <div className="chatMessageTime">{convertTime(msg.time)}</div>
                     </div>
                 )
             })}
@@ -102,26 +102,26 @@ const ChatPanel = () => {
                 localUserId={localUserId}
             />
             {error && (
-                <Notification className="notification" kind="error">
+                <Notification className="chatNotification" kind="error">
                     {error}
                 </Notification>
             )}
             <form
-                className="messageForm"
+                className="chatMessageForm"
                 onSubmit={(e) => {
                     e.preventDefault()
                     onSendClicked()
                 }}
             >
-                <input autoFocus ref={messageRef} type="text" className="input" />
+                <input autoFocus ref={messageRef} type="text" className="chatInput" />
                 <button
-                    className={`mobileButton round small`}
+                    className={`chatMobileSendButton round small`}
                     type="submit"
                     onClick={onSendClicked}
                 >
                     <AiOutlineSend />
                 </button>
-                <button className={`button small`} type="submit" onClick={onSendClicked}>
+                <button className={`chatSendButton small`} type="submit" onClick={onSendClicked}>
                     Nachricht senden
                 </button>
             </form>

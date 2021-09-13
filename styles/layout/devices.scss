@@ -1,5 +1,5 @@
 .devicesList {
-  .selected {
+  .deviceSelected {
     border: 1px solid var(---warn)
   }
 
@@ -8,12 +8,12 @@
     padding: 4px;
   }
 
-  .actions {
+  .deviceActions {
     display: inline-flex;
     align-items: center;
   }
 
-  .caption {
+  .deviceCaption {
     display: flex;
     align-items: center;
     flex-grow: 1;
@@ -24,7 +24,7 @@
     }
   }
 
-  .label {
+  .deviceLabel {
     display: flex;
     flex-direction: row;
     align-items: center;

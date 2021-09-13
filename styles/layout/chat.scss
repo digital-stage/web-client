@@ -3,7 +3,7 @@
   padding: 12px;
   margin-bottom: 24px;
 
-  .messages {
+  .chatMessages {
     position: relative;
     display: flex;
     flex-grow: 1;
@@ -13,49 +13,51 @@
     background-color: var(---grey-2);
     border-radius: 16px;
     overflow: hidden auto;
+
+    &.chatMessagesWithError {
+      border-radius: 18px 18px 0 0;
+    }
+
+    .chatMessageWrapper {
+      display: flex;
+      flex-direction: column;
+      border-radius: 16px;
+      padding: 8px;
+      margin: 4px;
+      align-self: flex-start;
+
+      text-align: left;
+      color: var(---text-contrast);
+      background-color: var(---tertiary);
+
+      .chatMessageTime {
+        font-size: 0.8rem;
+      }
+
+      &.chatMessageWrapperSelf {
+        align-self: flex-end;
+        text-align: right;
+        background-color: var(---primary-active);
+      }
+    }
   }
 
-  .withErrors {
-    border-radius: 18px 18px 0 0;
-  }
 
-  .messageWrapper {
-    display: flex;
-    flex-direction: column;
-    border-radius: 16px;
-    padding: 8px;
-    margin: 4px;
-    align-self: flex-start;
 
-    text-align: left;
-    color: var(---text-contrast);
-    background-color: var(---tertiary);
-  }
-
-  .messageWrapper.self {
-    align-self: flex-end;
-    text-align: right;
-    background-color: var(---primary-active);
-  }
-
-  .messageTime {
-    font-size: 0.8rem;
-  }
-
-  .notification {
+  .chatNotification {
     flex-grow: 0;
     border-bottom-left-radius: 18px;
     border-bottom-right-radius: 18px;
   }
 
-  .messageForm {
+  .chatMessageForm {
     display: flex;
     flex-grow: 0;
     width: 100%;
     padding-top: 8px;
   }
 
-  .input {
+  .chatInput {
     box-sizing: border-box;
     margin: 0;
     display: block;
@@ -71,21 +73,21 @@
     background-color: var(---grey-1);
   }
 
-  .button {
+  .chatSendButton {
     display: none;
     margin-left: 12px;
   }
 
-  .mobileButton {
+  .chatMobileSendButton {
     display: inline-block;
     margin-left: 4px;
   }
 
   @media only screen and (min-width: 600px) and (min-height: 600px) {
-    .button {
+    .chatSendButton {
       display: inline-block;
     }
-    .mobileButton {
+    .chatMobileSendButton {
       display: none;
 
     }

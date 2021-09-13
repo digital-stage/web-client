@@ -1,16 +1,16 @@
 .authLayout {
-  .logoWrapper {
+  .authLogo {
     display: flex;
     justify-content: center;
     padding-bottom: 16px;
   }
 
-  .nav {
+  .authNav {
     display: flex;
     flex-direction: row;
     padding-bottom: 24px;
 
-    .navItem {
+    .authNavItem {
       display: inline-flex;
       width: 50%;
       align-items: center;

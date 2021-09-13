@@ -64,7 +64,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                 <div className="app">
                     <Background />
                     <ConnectionOverlay>
-                        <div className="inner">
+                        <div className="appInner">
                             <NotificationBar />
                             <Component {...pageProps} />
                         </div>

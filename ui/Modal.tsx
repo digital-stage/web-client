@@ -74,7 +74,7 @@ const Modal = (
                     <div
                         className={`modal ${size} ${openState}`}
                     >
-                        <div className="inner"
+                        <div className="roomInner"
                              onTouchStart={(e) => {
                                  e.stopPropagation()
                              }}
