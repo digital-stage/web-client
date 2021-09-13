@@ -74,7 +74,7 @@ const InviteModal = ({
             <ModalHeader>
                 <h3>Einladen</h3>
             </ModalHeader>
-            <div className="codeWrapper">
+            <div className="inviteCodeWrapper">
                 {code ? (
                     <TextInput type="text" readOnly value={code} label="Einladungscode" light />
                 ) : (
@@ -84,9 +84,9 @@ const InviteModal = ({
                     <BiReset />
                 </button>
             </div>
-            <div className="actionWrapper">
+            <div className="inviteModalActions">
                 {code ? (
-                    <div className="copy">
+                    <div className="inviteModalCopy">
                         <button
                             onClick={() => {
                                 navigator.clipboard

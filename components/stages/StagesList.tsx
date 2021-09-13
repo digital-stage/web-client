@@ -39,8 +39,8 @@ const StageItem = ({ stageId }: { stageId: string }) => {
         push(`/stages/${stageId}`)
     }, [hasGroups, isActive, join, leave, password, push, stageId])
     return (
-        <ListItem className={isActive ? 'active' : ''} onSelect={onListClicked}>
-            <a className="stageName">
+        <ListItem className={isActive ? 'stageItemActive' : ''} onSelect={onListClicked}>
+            <a className="stageItemName">
                 {name}
                 <Tag kind="success">{Type[videoType]}</Tag>
                 <Tag kind="warn">{Type[audioType]}</Tag>
@@ -51,12 +51,12 @@ const StageItem = ({ stageId }: { stageId: string }) => {
                         {isStageAdmin ? (
                             <>
                                 <MdEdit />
-                                <span className="hideOnMobile">&nbsp;Details</span>
+                                <span className="stageItemHideOnMobile">&nbsp;Details</span>
                             </>
                         ) : (
                             <>
                                 <MdMoreHoriz />
-                                <span className="hideOnMobile">&nbsp;Details</span>
+                                <span className="stageItemHideOnMobile">&nbsp;Details</span>
                             </>
                         )}
                     </button>
@@ -76,12 +76,12 @@ const StagesList = () => {
             {stageIds.map((stageId) => (
                 <StageItem key={stageId} stageId={stageId} />
             ))}
-            <Paragraph kind="micro" className="legend">
+            <Paragraph kind="micro" className="stagesListLabel">
                 Legende:
                 <Tag kind="success">Videoübertragung</Tag>
                 <Tag kind="warn">Audioübertragung</Tag>
             </Paragraph>
-            <div className="actions">
+            <div className="stagesListActions">
                 <button className="tertiary" onClick={() => requestStageCreation(true)}>
                     Neue Bühne erstellen
                 </button>

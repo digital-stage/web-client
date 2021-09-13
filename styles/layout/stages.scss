@@ -1,8 +1,8 @@
 .stageModal {
-  .audioTypeDescription {
+  .stageModalAudioTypeDescription {
     padding-bottom: 32px;
   }
-  .checkboxLabel {
+  .stageModalCheckboxLabel {
     display: inline-flex;
     flex-direction: column;
     font-size: smaller;
@@ -21,39 +21,26 @@
   }
 }
 .inviteModal {
-  .codeWrapper {
+  .inviteCodeWrapper {
     display: flex;
     align-items: center;
     justify-content: center;
   }
 
-  .actionWrapper {
+  .inviteModalActions {
     display: flex;
     align-items: center;
     justify-content: center;
     padding-bottom: 2px;
 
-    .copy {
+    .inviteModalCopy {
       padding-right: 8px;
     }
   }
 }
 
 .stagesList {
-  .active {
-    border: 1px solid var(---warn)
-  }
-  .stageName {
-    flex-grow: 1;
-    padding: 8px;
-    align-items: center;
-    display: inline-flex;
-  }
-  .legend {
-    width: 100%;
-    text-align: right;
-  }
-  .actions {
+  .stagesListActions {
     display: inline-flex;
     flex-wrap: wrap;
     width: 100%;
@@ -63,7 +50,20 @@
       margin: 8px 0;
     }
   }
-  .hideOnMobile {
+  .stageItemActive {
+    border: 1px solid var(---warn)
+  }
+  .stageItemName {
+    flex-grow: 1;
+    padding: 8px;
+    align-items: center;
+    display: inline-flex;
+  }
+  .stagesListLabel {
+    width: 100%;
+    text-align: right;
+  }
+  .stageItemHideOnMobile {
     display: none;
     @media only screen and (min-width: 600px) and (min-height: 600px) {
       display: inline;

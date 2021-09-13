@@ -134,7 +134,7 @@ const StageModal = ({
                             <Notification kind="error">{errors.audioType}</Notification>
                         )}
                         {values.audioType && (
-                            <div className="audioTypeDescription">
+                            <div className="stageModalAudioTypeDescription">
                                 <p>
                                     {values.audioType === 'mediasoup' && 'Web only'}
                                     {values.audioType === 'jammer' &&
@@ -195,7 +195,7 @@ const StageModal = ({
                                 max={100}
                                 light
                             />
-                            <label className="checkboxLabel">
+                            <label className="stageModalCheckboxLabel">
                                 Verwende 3D Audio
                                 <Field
                                     as={Switch}
@@ -207,7 +207,7 @@ const StageModal = ({
                                     round
                                 />
                             </label>
-                            <label className="checkboxLabel">
+                            <label className="stageModalCheckboxLabel">
                                 Emuliere Raum-Hall
                                 <Field
                                     as={Switch}
