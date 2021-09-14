@@ -17,6 +17,7 @@ import { logger } from '../../logger'
 import { useErrorReporting } from '@digitalstage/api-client-react'
 import { Broker } from './Broker'
 import round from 'lodash/round'
+import {USE_STAGEDEVICE_IDS} from "./config";
 
 const { trace } = logger('WebRTCService')
 
@@ -223,12 +224,14 @@ const WebRTCService = (): JSX.Element => {
     React.useEffect(() => {
         if (connection) {
             const currentBroker = broker.current
+            connection.on(ServerDeviceEvents.P2PRestart, currentBroker.handleRestart)
             connection.on(ServerDeviceEvents.P2POfferSent, currentBroker.handleOffer)
             connection.on(ServerDeviceEvents.P2PAnswerSent, currentBroker.handleAnswer)
             connection.on(ServerDeviceEvents.IceCandidateSent, currentBroker.handleIceCandidate)
             setConnected(true)
             return () => {
                 setConnected(false)
+                connection.on(ServerDeviceEvents.P2PRestart, currentBroker.handleRestart)
                 connection.off(ServerDeviceEvents.P2POfferSent, currentBroker.handleOffer)
                 connection.off(ServerDeviceEvents.P2PAnswerSent, currentBroker.handleAnswer)
                 connection.off(
@@ -423,10 +426,10 @@ const WebRTCService = (): JSX.Element => {
             trace('Adding track with trackId', track.id)
             dispatch((prev) => ({
                 ...prev,
-                [stageDeviceId]: track,
+                [USE_STAGEDEVICE_IDS ? stageDeviceId : track.id]: track,
             }))
             const onEndTrack = () => {
-                dispatch((prev) => omit(prev, stageDeviceId))
+                dispatch((prev) => omit(prev, USE_STAGEDEVICE_IDS ? stageDeviceId : track.id))
                 track.removeEventListener('mute', onEndTrack)
                 track.removeEventListener('ended', onEndTrack)
             }

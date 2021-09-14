@@ -29,6 +29,7 @@ import { logger } from './logger'
 import { useCurrentStageAdminSelector } from './redux/selectors/useCurrentStageAdminSelector'
 import { useStageAdminSelector } from './redux/selectors/useStageAdminSelector'
 import { useSpatialAudioSelector } from './redux/selectors/useSpatialAudioSelector'
+import { USE_STAGEDEVICE_IDS } from './services/WebRTCService/config'
 
 export * from './redux/actions'
 export * from './redux/state'
@@ -62,4 +63,5 @@ export {
     useSpatialAudioSelector,
     ConnectionStateContext,
     logger,
+    USE_STAGEDEVICE_IDS
 }
