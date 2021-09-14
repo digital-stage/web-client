@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import {Modal, ModalButton, ModalFooter, ModalHeader } from 'ui/Modal'
-import { Notification } from 'ui/Notification'
+import { Notification } from 'ui/NotificationItem'
 import { Paragraph } from 'ui/Paragraph'
 import dynamic from 'next/dynamic'
 import { requestJoin, useEmit } from '@digitalstage/api-client-react'

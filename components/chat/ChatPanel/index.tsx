@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import React from 'react'
 import { useEmit, Users, useStageSelector } from '@digitalstage/api-client-react'
 import {useForceUpdate} from './useForceUpdate'
-import { Notification } from 'ui/Notification'
+import { Notification } from 'ui/NotificationItem'
 import { Panel } from 'ui/Panel'
 import { AiOutlineSend } from 'react-icons/ai'
 

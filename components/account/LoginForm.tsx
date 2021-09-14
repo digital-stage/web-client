@@ -1,9 +1,9 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback } from 'react'
 import { Field, Form, Formik, FormikProps } from 'formik'
 import { getUserByToken, signInWithEmailAndPassword } from '@digitalstage/api-client-react'
 import * as Yup from 'yup'
 import { TextInput } from 'ui/TextInput'
-import { Notification } from 'ui/Notification'
+import { NotificationItem } from 'ui/NotificationItem'
 import { batch, useDispatch } from 'react-redux'
 import { InternalActionTypes } from '@digitalstage/api-client-react'
 import {translateError} from './translateError'
@@ -79,7 +79,7 @@ const LoginForm = (): JSX.Element => {
                             <Field type="checkbox" name="staySignedIn" />
                             Angemeldet bleiben
                         </label>
-                        {error && <Notification kind="error">{error}</Notification>}
+                        {error && <NotificationItem kind="error">{error}</NotificationItem>}
                         <div className="center">
                             <button
                                 disabled={!props.dirty || Object.keys(props.errors).length > 0}

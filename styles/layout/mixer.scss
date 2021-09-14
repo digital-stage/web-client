@@ -3,7 +3,7 @@
   flex-direction: column;
   align-items: center;
 
-  @media only screen and (min-width: 600px) and (min-height: 600px) {
+  @include tablet {
     align-items: flex-start;
   }
 
@@ -114,7 +114,7 @@
   .switch {
     font-size: 10px;
 
-    @media only screen and (min-width: 600px) and (min-height: 600px) {
+    @include tablet {
       font-size: 12px;
     }
   }
@@ -234,7 +234,7 @@
     font-size: 18px;
   }
 
-  @media only screen and (min-width: 600px) and (min-height: 600px) {
+  @include tablet {
     font-size: 12px;
   }
 

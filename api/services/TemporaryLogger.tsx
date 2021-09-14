@@ -1,10 +1,8 @@
-import {
-  logger, useAudioConsumers,
-  useStageSelector, useVideoConsumers,
-  useWebRTCRemoteAudioTracks,
-  useWebRTCRemoteVideos
-} from "@digitalstage/api-client-react";
+import { logger } from "../logger";
+import { useStageSelector } from "../redux/selectors/useStageSelector";
 import React from "react";
+import {useAudioConsumers, useVideoConsumers } from "./MediasoupService";
+import {useWebRTCRemoteAudioTracks, useWebRTCRemoteVideos } from "./WebRTCService";
 
 const { trace } = logger('Temporary')
 

@@ -11,6 +11,7 @@ export interface Notification {
     kind: KIND[keyof KIND]
     message: string
     link?: string
+    stack?: string
     featured: boolean
     featureTimeout?: number
     permanent: boolean

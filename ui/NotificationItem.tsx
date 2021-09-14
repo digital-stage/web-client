@@ -21,7 +21,7 @@ export interface KIND {
     error: 'error'
 }
 
-const Notification = ({
+const NotificationItem = ({
     children,
     kind,
     className,
@@ -44,9 +44,9 @@ const Notification = ({
         )}
     </div>
 )
-Notification.defaultProps = {
+NotificationItem.defaultProps = {
     kind: undefined,
     closeable: undefined,
     onClose: undefined,
 }
-export { Notification }
+export { NotificationItem }

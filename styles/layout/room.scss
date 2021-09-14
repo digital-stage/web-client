@@ -39,7 +39,7 @@
       margin-top: 8px
     }
 
-    @media only screen and (min-width: 700px) and (min-height: 600px) {
+    @include tablet {
       right: 24px;
       bottom: 24px;
       margin-left: 0;
@@ -56,7 +56,7 @@
     font-size: 10px;
     transform: translateX(-50%);
 
-    @media only screen and (min-width: 600px) and (min-height: 600px) {
+    @include tablet {
       font-size: 12px;
       left: 24px;
       transform: none;

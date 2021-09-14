@@ -6,7 +6,7 @@ import * as Yup from 'yup'
 import { TextInput } from 'ui/TextInput'
 import { Modal, ModalButton, ModalFooter, ModalHeader } from 'ui/Modal'
 import {ColorPicker} from 'ui/ColorPicker'
-import { Notification } from 'ui/Notification'
+import { Notification } from 'ui/NotificationItem'
 import { shallowEqual } from 'react-redux'
 
 const GroupModal = ({

@@ -2,7 +2,7 @@ import * as React from 'react'
 import { Formik, Field, FormikHelpers, Form } from 'formik'
 import * as Yup from 'yup'
 import { AuthError, requestPasswordReset, useStageSelector } from '@digitalstage/api-client-react'
-import { Notification, KIND  } from 'ui/Notification'
+import { NotificationItem, KIND  } from 'ui/NotificationItem'
 import { TextInput } from 'ui/TextInput'
 import {translateError} from './translateError'
 
@@ -55,7 +55,7 @@ const ForgetPasswordForm = (): JSX.Element => {
         >
             {({ errors, touched, handleReset, handleSubmit, dirty }) => (
                 <Form onReset={handleReset} onSubmit={handleSubmit}>
-                    {msg ? <Notification kind={msg.kind}>{msg.label}</Notification> : null}
+                    {msg ? <NotificationItem kind={msg.kind}>{msg.label}</NotificationItem> : null}
                     <Field
                         as={TextInput}
                         id="email"

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { ClientDeviceEvents, ClientDevicePayloads, User } from '@digitalstage/api-types'
-import { Notification } from 'ui/Notification'
+import { Notification } from 'ui/NotificationItem'
 import { LiveInput } from 'ui/LiveInput'
 import { requestPasswordReset, useEmit, useStageSelector } from '@digitalstage/api-client-react'
 import { Paragraph } from 'ui/Paragraph'

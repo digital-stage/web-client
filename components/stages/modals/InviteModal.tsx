@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useEmit } from '@digitalstage/api-client-react'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
-import { Notification } from 'ui/Notification'
+import { Notification } from 'ui/NotificationItem'
 import  { Modal,ModalButton, ModalFooter, ModalHeader } from 'ui/Modal'
 import {TextInput} from 'ui/TextInput'
 import { BiReset } from 'react-icons/bi'

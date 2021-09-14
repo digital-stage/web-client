@@ -5,6 +5,7 @@ import { AuthUser } from '../state/Auth'
 import { ReducerAction } from './ReducerAction'
 import { InternalActionTypes } from './InternalActionTypes'
 import { uuid4 } from '@sentry/utils'
+import React from "react";
 
 export const init = (): ReducerAction => ({
     type: InternalActionTypes.INIT,
@@ -133,12 +134,13 @@ export const removeNotification = (id: RemoveNotificationPayload): ReducerAction
     payload: id,
 })
 
-export const reportError = (error: Error): ReducerAction =>
+export const reportError = (error: Error, stack?: string): ReducerAction =>
     addNotification({
         id: uuid4(),
         date: new Date().getTime(),
         kind: 'error',
-        message: error.message,
+        message: `${error.name}: ${error.message}`,
+        stack: stack,
         permanent: true,
         featured: true,
     })

@@ -3,7 +3,7 @@ import {Modal, ModalButton, ModalFooter, ModalHeader } from 'ui/Modal'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
 import { useEmit } from '@digitalstage/api-client-react'
 import { Paragraph } from 'ui/Paragraph'
-import { Notification } from 'ui/Notification'
+import { Notification } from 'ui/NotificationItem'
 
 const DeleteModal = ({ deviceId, onClose }: { deviceId: string; onClose: () => void }) => {
     const emit = useEmit()

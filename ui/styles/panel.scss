@@ -10,7 +10,7 @@
   background-color: var(---level-4, #393939);
   flex-grow: 1;
 
-  @media only screen and (min-width: 600px) and (min-height: 600px) {
+  @include tablet {
     padding: 24px 16px;
   }
 

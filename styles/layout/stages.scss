@@ -15,7 +15,7 @@
     }
 
     width: 100%;
-    @media only screen and (min-width: 600px) and (min-height: 600px) {
+    @include tablet {
       width: 50%;
     }
   }
@@ -65,7 +65,7 @@
   }
   .stageItemHideOnMobile {
     display: none;
-    @media only screen and (min-width: 600px) and (min-height: 600px) {
+    @include tablet {
       display: inline;
     }
   }

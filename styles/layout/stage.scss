@@ -13,7 +13,7 @@ $portraitAspectRatio: math.div($width, $height);
   flex-direction: column;
   padding-bottom: 64px;
 
-  @media only screen and (min-width: 600px) and (min-height: 600px) {
+  @include tablet {
     padding-bottom: 80px;
   }
 
@@ -111,7 +111,7 @@ $portraitAspectRatio: math.div($width, $height);
       border-width: 4px;
       width: 50%;
 
-      @media only screen and (min-width: 1024px) and (min-height: 768px) {
+      @include desktop {
         width: 25%;
       }
 
@@ -238,7 +238,7 @@ $portraitAspectRatio: math.div($width, $height);
         object-fit: contain;
       }
 
-      @media only screen and (min-width: 600px) and (min-height: 600px) {
+      @include tablet {
         max-height: calc(100vh - 80px);
       }
     }
@@ -254,7 +254,7 @@ $portraitAspectRatio: math.div($width, $height);
       @media (orientation: landscape) {
         width: 50%;
       }
-      @media only screen and (min-width: 600px) and (min-height: 600px) {
+      @include tablet {
         max-height: calc(100vh - 80px);
       }
     }
@@ -270,7 +270,7 @@ $portraitAspectRatio: math.div($width, $height);
       .memberView {
         width: 33.333333333%;
 
-        @media only screen and (min-width: 1024px) and (min-height: 768px) {
+        @include desktop {
           width: 16.6666666667%;
         }
 

@@ -1,11 +1,11 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback} from 'react'
 import { Field, Form, Formik, FormikHelpers } from 'formik'
 import * as Yup from 'yup'
 import { useRouter } from 'next/router'
 import { activate, AuthError } from '@digitalstage/api-client-react'
 import {translateError} from './translateError'
-import { Notification } from 'ui/Notification'
 import { TextInput } from 'ui/TextInput'
+import { NotificationItem } from 'ui/NotificationItem'
 
 export interface Values {
     code: string
@@ -46,7 +46,7 @@ const ActivationForm = (props: { initialCode?: string }): JSX.Element => {
         if (initialCode) handleActivation(initialCode)
     }, [initialCode, handleActivation])
 
-    const notification = message ? <Notification>{message.content}</Notification> : null
+    const notification = message ? <NotificationItem>{message.content}</NotificationItem> : null
 
     return (
         <>

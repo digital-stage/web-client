@@ -3,7 +3,7 @@ import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-type
 import { Modal, ModalButton, ModalFooter, ModalHeader } from 'ui/Modal'
 import React, { useState } from 'react'
 import { useCallback } from 'react'
-import { Notification } from 'ui/Notification'
+import { Notification } from 'ui/NotificationItem'
 import { Paragraph } from 'ui/Paragraph'
 
 const RemoveGroupModal = ({

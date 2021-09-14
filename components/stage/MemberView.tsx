@@ -90,6 +90,7 @@ const StageMemberVideoTrackView = ({
     const stageDeviceId = useStageSelector(
         (state) => state.videoTracks.byId[videoTrackId].stageDeviceId
     )
+    //TODO: Not working, mediasoup consumers are not displayed, but there
     const webRTCTrack = useWebRTCRemoteVideoByStageDevice(stageDeviceId)
     // Fetch Mediasoup consumer by this videoTrackId
     const mediasoupConsumer = useVideoConsumer(videoTrackId)

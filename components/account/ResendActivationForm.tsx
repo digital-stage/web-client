@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Field, Form, Formik, FormikHelpers } from 'formik'
 import * as Yup from 'yup'
-import { Notification } from 'ui/Notification'
+import { Notification } from 'ui/NotificationItem'
 import { TextInput } from 'ui/TextInput'
 import {translateError} from './translateError'
 import { AuthError, resendActivationLink } from '@digitalstage/api-client-react'

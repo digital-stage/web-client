@@ -2,7 +2,7 @@ import { useEmit, useStageSelector } from '@digitalstage/api-client-react'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Modal, ModalButton, ModalFooter, ModalHeader } from 'ui/Modal'
-import { Notification } from 'ui/Notification'
+import { Notification } from 'ui/NotificationItem'
 import { Paragraph } from 'ui/Paragraph'
 
 const RemoveStageModal = ({

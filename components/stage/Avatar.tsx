@@ -6,6 +6,9 @@ const Avatar = ({ name, color, active }: { name: string; color: string; active?:
         style={{
             backgroundColor: color,
         }}
+        onClick={() => {
+            throw new Error("TEST")
+        }}
     >
         {name
             .split(' ')
