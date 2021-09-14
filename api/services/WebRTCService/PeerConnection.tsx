@@ -200,9 +200,7 @@ const PeerConnection = ({
 
   const handleCandidate = React.useCallback(
     (candidate: RTCIceCandidate | null) => {
-      if (candidate === null) {
-        console.log('We have an null candidate')
-      }
+      console.log('Processing candidate')
       return peerConnection.addIceCandidate(candidate).catch((err) => {
         if (!ignoreOffer.current) {
           throw err

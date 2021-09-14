@@ -1,7 +1,7 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React from 'react'
 import { useEmit } from '@digitalstage/api-client-react'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
-import { Notification } from 'ui/NotificationItem'
+import { NotificationItem } from 'ui/NotificationItem'
 import  { Modal,ModalButton, ModalFooter, ModalHeader } from 'ui/Modal'
 import {TextInput} from 'ui/TextInput'
 import { BiReset } from 'react-icons/bi'
@@ -120,8 +120,8 @@ const InviteModal = ({
                     Link kopieren
                 </button>
             </div>
-            {info && <Notification kind="success">{info}</Notification>}
-            {error && <Notification kind="error">{error}</Notification>}
+            {info && <NotificationItem kind="success">{info}</NotificationItem>}
+            {error && <NotificationItem kind="error">{error}</NotificationItem>}
             <ModalFooter>
                 <ModalButton onClick={onClose}>Schließen</ModalButton>
             </ModalFooter>

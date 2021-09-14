@@ -1,8 +1,8 @@
-import React, { useCallback, useState } from 'react'
+import React  from 'react'
 import { Field, Form, Formik, FormikProps } from 'formik'
 import { useRouter } from 'next/router'
 import * as Yup from 'yup'
-import { Notification } from 'ui/NotificationItem'
+import { NotificationItem } from 'ui/NotificationItem'
 import { TextInput } from 'ui/TextInput'
 import {translateError} from './translateError'
 import {
@@ -16,7 +16,7 @@ const SignUpForm = () => {
     const { push } = useRouter()
     const notify = useNotification()
 
-    const handleSubmit = useCallback(
+    const handleSubmit = React.useCallback(
         (values) => {
             createUserWithEmailAndPassword(values.email, values.password, values.name)
                 .then(() =>
@@ -100,7 +100,7 @@ const SignUpForm = () => {
                         error={props.touched.name && props.errors.name}
                         maxLength={30}
                     />
-                    {error && <Notification kind="error">{error}</Notification>}
+                    {error && <NotificationItem kind="error">{error}</NotificationItem>}
                     <div className="center">
                         <button
                             type="submit"

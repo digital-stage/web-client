@@ -1,9 +1,9 @@
-import React, { useCallback, useState } from 'react'
+import React from 'react'
 import {Modal, ModalButton, ModalFooter, ModalHeader } from 'ui/Modal'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
 import { useEmit } from '@digitalstage/api-client-react'
 import { Paragraph } from 'ui/Paragraph'
-import { Notification } from 'ui/NotificationItem'
+import { NotificationItem } from 'ui/NotificationItem'
 
 const DeleteModal = ({ deviceId, onClose }: { deviceId: string; onClose: () => void }) => {
     const emit = useEmit()
@@ -28,7 +28,7 @@ const DeleteModal = ({ deviceId, onClose }: { deviceId: string; onClose: () => v
                 Das inaktive Gerät wird gelöscht. Du kannst es dann wieder erneut anmelden - jedoch
                 verlierst Du alle Einstellungen, die das Gerät betreffen.
             </Paragraph>
-            {error ? <Notification kind="error">{error}</Notification> : null}
+            {error ? <NotificationItem kind="error">{error}</NotificationItem> : null}
             <ModalFooter>
                 <ModalButton onClick={onClose}>Abbrechen</ModalButton>
                 <ModalButton className="danger" onClick={deleteDevice}>Löschen</ModalButton>

@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
+import React  from 'react'
 import { Field, Form, Formik, FormikHelpers } from 'formik'
 import * as Yup from 'yup'
-import { Notification } from 'ui/NotificationItem'
+import { NotificationItem } from 'ui/NotificationItem'
 import { TextInput } from 'ui/TextInput'
 import {translateError} from './translateError'
 import { AuthError, resendActivationLink } from '@digitalstage/api-client-react'
@@ -44,7 +44,7 @@ const ResendActivationForm = (): JSX.Element => {
                         autoComplete="email"
                         error={touched.email && errors.email}
                     />
-                    {message && <Notification kind="error">{message}</Notification>}
+                    {message && <NotificationItem kind="error">{message}</NotificationItem>}
                     <div className="center">
                         <button type="submit" disabled={!dirty || Object.keys(errors).length > 0}>
                             Erneut senden

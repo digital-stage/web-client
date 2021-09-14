@@ -1,9 +1,8 @@
 import { ChatMessage, ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
-import { useCallback, useEffect, useRef, useState } from 'react'
 import React from 'react'
 import { useEmit, Users, useStageSelector } from '@digitalstage/api-client-react'
 import {useForceUpdate} from './useForceUpdate'
-import { Notification } from 'ui/NotificationItem'
+import { NotificationItem } from 'ui/NotificationItem'
 import { Panel } from 'ui/Panel'
 import { AiOutlineSend } from 'react-icons/ai'
 
@@ -102,9 +101,9 @@ const ChatPanel = () => {
                 localUserId={localUserId}
             />
             {error && (
-                <Notification className="chatNotification" kind="error">
+                <NotificationItem className="chatNotification" kind="error">
                     {error}
-                </Notification>
+                </NotificationItem>
             )}
             <form
                 className="chatMessageForm"

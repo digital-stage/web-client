@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React  from 'react'
 import { ClientDeviceEvents, ClientDevicePayloads, User } from '@digitalstage/api-types'
-import { Notification } from 'ui/NotificationItem'
+import { NotificationItem } from 'ui/NotificationItem'
 import { LiveInput } from 'ui/LiveInput'
 import { requestPasswordReset, useEmit, useStageSelector } from '@digitalstage/api-client-react'
 import { Paragraph } from 'ui/Paragraph'
@@ -44,8 +44,8 @@ const ProfileEditor = () => {
                         Passwort ändern
                     </button>
                 </OptionsListItem>
-                {message && <Notification kind="success">{message}</Notification>}
-                {error && <Notification kind="error">{error}</Notification>}
+                {message && <NotificationItem kind="success">{message}</NotificationItem>}
+                {error && <NotificationItem kind="error">{error}</NotificationItem>}
             </OptionsList>
         </>
     )

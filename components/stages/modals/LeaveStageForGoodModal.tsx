@@ -1,8 +1,8 @@
 import { useEmit, useStageSelector } from '@digitalstage/api-client-react'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
-import React, { useCallback, useEffect, useState } from 'react'
+import React from 'react'
 import  { Modal,ModalButton, ModalFooter, ModalHeader } from 'ui/Modal'
-import { Notification } from 'ui/NotificationItem'
+import { NotificationItem } from 'ui/NotificationItem'
 import { Paragraph } from 'ui/Paragraph'
 
 const LeaveStageForGoodModal = ({
@@ -52,7 +52,7 @@ const LeaveStageForGoodModal = ({
                     Die Bühne bleibt bestehen, jedoch bist Du kein Teil mehr davon. Du kannst nur
                     mit einer erneuten Einladung beitreten.
                 </Paragraph>
-                {error ? <Notification kind="error">{error}</Notification> : null}
+                {error ? <NotificationItem kind="error">{error}</NotificationItem> : null}
                 <ModalFooter>
                     <ModalButton onClick={onClose}>Nein</ModalButton>
                     <ModalButton

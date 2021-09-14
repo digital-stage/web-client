@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import {Modal, ModalButton, ModalFooter, ModalHeader } from 'ui/Modal'
-import { Notification } from 'ui/NotificationItem'
+import { NotificationItem } from 'ui/NotificationItem'
 import { Paragraph } from 'ui/Paragraph'
 import dynamic from 'next/dynamic'
 import { requestJoin, useEmit } from '@digitalstage/api-client-react'
@@ -63,7 +63,7 @@ const EnterInviteCodeModal = ({ open, onClose }: { open: boolean; onClose: () =>
                     }}
                 />
             </Paragraph>
-            {error ? <Notification kind="error">{error}</Notification> : null}
+            {error ? <NotificationItem kind="error">{error}</NotificationItem> : null}
             <ModalFooter>
                 <ModalButton onClick={onClose}>Abbrechen</ModalButton>
             </ModalFooter>

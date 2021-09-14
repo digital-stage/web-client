@@ -5,7 +5,7 @@ import React from 'react'
 import { Field, Form, Formik } from 'formik'
 import * as Yup from 'yup'
 import { Modal, ModalButton, ModalFooter, ModalHeader } from 'ui/Modal'
-import { Notification } from 'ui/NotificationItem'
+import { NotificationItem } from 'ui/NotificationItem'
 import { TextInput } from 'ui/TextInput'
 import {Collapse} from 'ui/Collapse'
 import { shallowEqual } from 'react-redux'
@@ -131,7 +131,7 @@ const StageModal = ({
                             </label>
                         </div>
                         {errors.audioType && touched.audioType && (
-                            <Notification kind="error">{errors.audioType}</Notification>
+                            <NotificationItem kind="error">{errors.audioType}</NotificationItem>
                         )}
                         {values.audioType && (
                             <div className="stageModalAudioTypeDescription">
@@ -242,7 +242,7 @@ const StageModal = ({
                                 light
                             />
                         </Collapse>
-                        {error && <Notification kind="error">{error}</Notification>}
+                        {error && <NotificationItem kind="error">{error}</NotificationItem>}
                         <ModalFooter>
                             <ModalButton onClick={onClose}>Abbrechen</ModalButton>
                             <ModalButton

@@ -433,12 +433,12 @@ const WebRTCService = (): JSX.Element => {
                 [stageDeviceId]: track,
             }))
             const onEndTrack = () => {
+                console.log("TRACK ENDED")
                 dispatch((prev) => omit(prev, track.id))
             }
             //track.addEventListener('unmute', onUnmute)
             track.addEventListener('mute', onEndTrack)
             track.addEventListener('ended', onEndTrack)
-            throw new Error("TEST")
         },
         [setRemoteAudioTracks, setRemoteVideoTracks]
     )

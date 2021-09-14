@@ -2,7 +2,7 @@ import * as React from 'react'
 import { useRouter } from 'next/router'
 import { Formik, Field, FormikHelpers, Form } from 'formik'
 import * as Yup from 'yup'
-import { Notification, KIND  } from 'ui/NotificationItem'
+import { NotificationItem, KIND  } from 'ui/NotificationItem'
 import { TextInput } from 'ui/TextInput'
 import {translateError} from './translateError'
 import { AuthError, resetPassword } from '@digitalstage/api-client-react'
@@ -63,7 +63,7 @@ function ResetPasswordForm({ resetToken }: Props): JSX.Element {
         >
             {({ errors, touched, handleReset, handleSubmit, dirty }) => (
                 <Form onReset={handleReset} onSubmit={handleSubmit} autoComplete="off">
-                    {msg ? <Notification kind={msg.kind}>{msg.label}</Notification> : null}
+                    {msg ? <NotificationItem kind={msg.kind}>{msg.label}</NotificationItem> : null}
                     <Field
                         as={TextInput}
                         id="password"
