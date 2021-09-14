@@ -12,6 +12,7 @@ import {
 } from "@digitalstage/api-client-react";
 import {StageMemberBox} from "./StageMemberBox";
 import {StageMember} from '@digitalstage/api-types'
+import {HiFilter, HiOutlineFilter} from "react-icons/hi";
 
 const sorting = (a: StageMember, b: StageMember): number => {
   if (a.active === b.active) {
@@ -157,11 +158,13 @@ const StageView = ({stageId}: { stageId: string }) => {
           })}
       </div>
       <div className="control">
-        <button className="round" onClick={() => setShowLanes(false)}>
-          <Image src={landscapeIcon} alt="Auf Breitbilddarstellung umschalten"/>
+        <button className="round" onClick={() => setShowOffline(prev => !prev)}>
+          {showOffline ? <HiOutlineFilter/> : <HiFilter/>}
         </button>
-        <button className="round" onClick={() => setShowLanes(true)}>
-          <Image src={portraitIcon} alt="Auf Hochkantdarstellung umschalten"/>
+        <button className="round" onClick={() => setShowLanes(prev => !prev)}>
+          {showLanes
+            ? (<Image src={portraitIcon} alt="Auf Hochkantdarstellung umschalten"/>)
+            : (<Image src={landscapeIcon} alt="Auf Breitbilddarstellung umschalten"/>)}
         </button>
       </div>
     </div>
