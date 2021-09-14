@@ -420,23 +420,16 @@ const WebRTCService = (): JSX.Element => {
         (stageDeviceId: string, track: MediaStreamTrack) => {
             trace('Got track with trackId', track.id)
             const dispatch = track.kind === 'video' ? setRemoteVideoTracks : setRemoteAudioTracks
-            /*const onUnmute = () => {
-                trace('Adding track with trackId', track.id)
-                dispatch((prev) => ({
-                    ...prev,
-                    [stageDeviceId]: track,
-                }))
-            }*/
             trace('Adding track with trackId', track.id)
             dispatch((prev) => ({
                 ...prev,
                 [stageDeviceId]: track,
             }))
             const onEndTrack = () => {
-                console.log("TRACK ENDED")
-                dispatch((prev) => omit(prev, track.id))
+                dispatch((prev) => omit(prev, stageDeviceId))
+                track.removeEventListener('mute', onEndTrack)
+                track.removeEventListener('ended', onEndTrack)
             }
-            //track.addEventListener('unmute', onUnmute)
             track.addEventListener('mute', onEndTrack)
             track.addEventListener('ended', onEndTrack)
         },

@@ -36,6 +36,20 @@ const StageMemberBox = ({
   track?: MediaStreamTrack
   conductorId?: string
 }): JSX.Element => {
+  const [muted, setMuted] = React.useState<boolean>(track?.muted)
+  React.useEffect(() => {
+    if(track) {
+      const onMute = () => setMuted(true)
+      const onUnmute = () => setMuted(false)
+      track.addEventListener("mute", onMute)
+      track.addEventListener("unmute", onUnmute)
+      return () => {
+        track.removeEventListener("mute", onMute)
+        track.removeEventListener("unmute", onUnmute)
+      }
+    }
+  }, [track])
+
   return (
     <div
       className="memberView"
@@ -58,7 +72,7 @@ const StageMemberBox = ({
             </h6>
           )}
           <h5 className="memberName">{userName}</h5>
-          {!!track && track.muted && <span style={{fontSize: "0.6rem", color: "var(---danger)"}}>(muted)</span>}
+          {muted && <span style={{fontSize: "0.6rem", color: "var(---danger)"}}>(muted)</span>}
         </div>
         {track ? <TrackStatsView trackId={track.id}/> : null}
       </div>
