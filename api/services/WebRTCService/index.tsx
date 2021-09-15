@@ -5,21 +5,20 @@ import {
     ClientDevicePayloads,
     ServerDeviceEvents,
 } from '@digitalstage/api-types'
-import { shallowEqual } from 'react-redux'
-import { getVideoTrack } from '../../utils/getVideoTrack'
+import {shallowEqual} from 'react-redux'
+import {getVideoTrack} from '../../utils/getVideoTrack'
 
-import { useStageSelector } from 'api/redux/selectors/useStageSelector'
-import { useConnection } from '../ConnectionService'
-import { PeerConnection } from './PeerConnection'
-import { getAudioTrack } from '../../utils/getAudioTrack'
+import {useStageSelector} from 'api/redux/selectors/useStageSelector'
+import {useConnection} from '../ConnectionService'
+import {PeerConnection} from './PeerConnection'
+import {getAudioTrack} from '../../utils/getAudioTrack'
 import omit from 'lodash/omit'
-import { logger } from '../../logger'
-import { useErrorReporting } from '@digitalstage/api-client-react'
-import { Broker } from './Broker'
+import {logger} from '../../logger'
+import {useErrorReporting} from '@digitalstage/api-client-react'
+import {Broker} from './Broker'
 import round from 'lodash/round'
-import {USE_STAGEDEVICE_IDS} from "./config";
 
-const { trace } = logger('WebRTCService')
+const {trace} = logger('WebRTCService')
 
 type DispatchMediaStreamTrackContext = React.Dispatch<React.SetStateAction<MediaStreamTrack>>
 type TrackMap = { [trackId: string]: MediaStreamTrack }
@@ -44,7 +43,7 @@ const DispatchLocalAudioTrackContext =
 const TrackStatsContext = React.createContext<TrackStatsMap>(undefined)
 const DispatchTrackStatsContext = React.createContext<DispatchTrackStatsMap>(undefined)
 
-const WebRTCProvider = ({ children }: { children: React.ReactNode }) => {
+const WebRTCProvider = ({children}: { children: React.ReactNode }) => {
     const [localVideoTracks, setLocalVideoTracks] = React.useState<MediaStreamTrack>(undefined)
     const [remoteVideoTracks, setRemoteVideoTracks] = React.useState<TrackMap>({})
     const [localAudioTracks, setLocalAudioTracks] = React.useState<MediaStreamTrack>(undefined)
@@ -133,7 +132,7 @@ const useWebRTCStats = (trackId: string): WebRTCStatistics => {
                         stats.roundTripTime = round(
                             (parseFloat(value.roundTripTime) /
                                 parseFloat(value.roundTripTimeMeasurements)) *
-                                1000
+                            1000
                         )
                     }
                 }
@@ -148,7 +147,7 @@ const useWebRTCStats = (trackId: string): WebRTCStatistics => {
                     stats.jitterBufferDelay = round(
                         (parseFloat(value.jitterBufferDelay) /
                             parseInt(value.jitterBufferEmittedCount)) *
-                            1000
+                        1000
                     )
                 }
             })
@@ -216,9 +215,9 @@ const WebRTCService = (): JSX.Element => {
     const stageDeviceIds = useStageSelector<string[]>((state) =>
         state.globals.localStageDeviceId
             ? state.stageDevices.byStage[stageId]?.filter(
-                  (id) =>
-                      id !== state.globals.localStageDeviceId && state.stageDevices.byId[id].active
-              ) || []
+            (id) =>
+                id !== state.globals.localStageDeviceId && state.stageDevices.byId[id].active
+        ) || []
             : []
     )
     React.useEffect(() => {
@@ -426,10 +425,10 @@ const WebRTCService = (): JSX.Element => {
             trace('Adding track with trackId', track.id)
             dispatch((prev) => ({
                 ...prev,
-                [USE_STAGEDEVICE_IDS ? stageDeviceId : track.id]: track,
+                [stageDeviceId]: track,
             }))
             const onEndTrack = () => {
-                dispatch((prev) => omit(prev, USE_STAGEDEVICE_IDS ? stageDeviceId : track.id))
+                dispatch((prev) => omit(prev, stageDeviceId))
                 track.removeEventListener('mute', onEndTrack)
                 track.removeEventListener('ended', onEndTrack)
             }

@@ -189,6 +189,16 @@ class PeerNegotiation {
         this.makingOffer = false
         this.isSettingRemoteAnswerPending = false
         this.candidates = []
+        if(this.peerConnection) {
+            if(this.videoSender) {
+                this.peerConnection.removeTrack(this.videoSender)
+                this.videoSender = undefined
+            }
+            if(this.audioSender) {
+                this.peerConnection.removeTrack(this.audioSender)
+                this.audioSender = undefined
+            }
+        }
         this.teardownPeerConnection()
     }
 

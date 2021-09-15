@@ -11,5 +11,3 @@ export const config: RTCConfiguration = {
         }
     ],
 }
-
-export const USE_STAGEDEVICE_IDS = false

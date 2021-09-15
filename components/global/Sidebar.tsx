@@ -109,6 +109,12 @@ const Sidebar = () => {
                             <GoListUnordered />
                             <span>Bühnen</span>
                         </SidebarItem>
+                        {process.env.NODE_ENV !== "production" && (
+                            <SidebarItem onClick={() => setOpen(false)} href="/test">
+                                T
+                                <span>TEST</span>
+                            </SidebarItem>
+                        )}
                     </div>
                     <div className="sidebarSpacer" />
                     <div className="sidebarFooter">

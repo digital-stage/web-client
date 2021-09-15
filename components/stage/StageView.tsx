@@ -3,7 +3,6 @@ import Image from 'next/image'
 import landscapeIcon from '../../public/icons/landscape.svg'
 import portraitIcon from '../../public/icons/portrait.svg'
 import {
-    USE_STAGEDEVICE_IDS,
     useCurrentStageAdminSelector,
     useStageSelector,
     useVideoConsumers,
@@ -28,40 +27,42 @@ const sorting = (a: StageMember, b: StageMember): number => {
     }
 }
 
+const useLocalTracks = (): MediaStreamTrack[] => {
+    const mediasoupVideoProducer = useVideoProducer()
+    const localVideo = useWebRTCLocalVideo()
+    return React.useMemo(() => {
+        let videos = []
+        if (mediasoupVideoProducer) {
+            videos = [mediasoupVideoProducer.track]
+        }
+        if (localVideo) {
+            videos = [...videos, localVideo]
+        }
+        return videos
+    }, [localVideo, mediasoupVideoProducer])
+}
+
 const useRemoteTracks = (stageMemberId: string): MediaStreamTrack[] => {
-    const videoTracks = useStageSelector(state => state.videoTracks.byStageMember[stageMemberId] ? state.videoTracks.byStageMember[stageMemberId].map(id => state.videoTracks.byId[id]) : [])
-    const consumers = useVideoConsumers()
-    const mediasoupTracks = React.useMemo<MediaStreamTrack[]>(() =>
-            videoTracks.reduce((prev, videoTrack) => {
-                if (consumers[videoTrack._id]) {
-                    return [...prev, consumers[videoTrack._id].track]
+    const webRTCVideos = useWebRTCRemoteVideos()
+    const stageDeviceIds = useStageSelector(state => state.stageDevices.byStageMember[stageMemberId] || [])
+    const videoTrackIds = useStageSelector(state => state.videoTracks.byStageMember[stageMemberId] || [])
+    const mediasoupVideoConsumers = useVideoConsumers()
+    return React.useMemo<MediaStreamTrack[]>(() => {
+        return [
+            ...stageDeviceIds.reduce((prev, stageDeviceId) => {
+                if (webRTCVideos[stageDeviceId]) {
+                    return [...prev, webRTCVideos[stageDeviceId]]
+                }
+                return prev
+            }, []),
+            ...videoTrackIds.reduce((prev, videoTrackId) => {
+                if (mediasoupVideoConsumers[videoTrackId]) {
+                    return [...prev, mediasoupVideoConsumers[videoTrackId]]
                 }
                 return prev
             }, [])
-        , [videoTracks, consumers])
-    const stageDeviceIds = useStageSelector(state => state.stageDevices.byStageMember[stageMemberId] || [])
-    const allWebRTCTracks = useWebRTCRemoteVideos()
-    const webRTCTracks = React.useMemo<MediaStreamTrack[]>(() => {
-            if (USE_STAGEDEVICE_IDS) {
-                return stageDeviceIds.reduce((prev, stageDeviceId) => {
-                    if (allWebRTCTracks[stageDeviceId]) {
-                        return [...prev, allWebRTCTracks[stageDeviceId]]
-                    }
-                    return prev
-                }, [])
-            } else {
-                return videoTracks.reduce((prev, videoTrack) => {
-                    if (allWebRTCTracks[videoTrack.trackId]) {
-                        return [...prev, allWebRTCTracks[videoTrack.trackId]]
-                    }
-                    return prev
-                }, [])
-            }
-        }
-        , [allWebRTCTracks, stageDeviceIds, videoTracks])
-    return React.useMemo(() => {
-        return [...webRTCTracks, ...mediasoupTracks]
-    }, [webRTCTracks, mediasoupTracks])
+        ]
+    }, [mediasoupVideoConsumers, stageDeviceIds, videoTrackIds, webRTCVideos])
 }
 
 const LocalView = ({hasAdminRights}: { hasAdminRights: boolean }) => {
@@ -72,28 +73,33 @@ const LocalView = ({hasAdminRights}: { hasAdminRights: boolean }) => {
 
     // Gather all tracks together
     const remoteTracks = useRemoteTracks(localStageMemberId)
-    const localProducer = useVideoProducer()
-    const localWebRTCTrack = useWebRTCLocalVideo()
+    const localTracks = useLocalTracks()
+
+    const tracks = [...remoteTracks, ...localTracks]
 
     return (
         <>
-            <StageMemberBox
-                userName={userName}
-                groupName={groupName}
-                groupColor={groupColor}
-                active={true}
-                conductorId={hasAdminRights ? localStageMemberId : undefined}
-                track={localWebRTCTrack || localProducer?.track}
-            />
-            {remoteTracks.map(track => <StageMemberBox
-                key={track.id}
-                userName={userName}
-                groupName={groupName}
-                groupColor={groupColor}
-                active={true}
-                conductorId={hasAdminRights ? localStageMemberId : undefined}
-                track={track}
-            />)}
+            {tracks.length > 0 ? (
+                <>
+                    {tracks.map(track => <StageMemberBox
+                        key={track.id}
+                        userName={userName}
+                        groupName={groupName}
+                        groupColor={groupColor}
+                        active={true}
+                        conductorId={hasAdminRights ? localStageMemberId : undefined}
+                        track={track}
+                    />)}
+                </>
+            ) : (
+                <StageMemberBox
+                    userName={userName}
+                    groupName={groupName}
+                    groupColor={groupColor}
+                    active={true}
+                    conductorId={hasAdminRights ? localStageMemberId : undefined}
+                />
+            )}
         </>
     )
 }
