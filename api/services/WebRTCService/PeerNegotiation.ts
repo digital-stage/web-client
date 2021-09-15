@@ -5,6 +5,7 @@ const RETRY_LIMIT = 10
 const {trace, reportError} = logger('WebRTCService:PeerNegotiation')
 
 class PeerNegotiation {
+    private readonly remoteId: string
     private readonly configuration?: RTCConfiguration
     private readonly onTrack: (track: MediaStreamTrack, stats?: RTCStatsReport) => void
     private readonly onDescription: (description: RTCSessionDescriptionInit) => void
@@ -16,6 +17,8 @@ class PeerNegotiation {
     private retryCount: number = 0
     private peerConnection: RTCPeerConnection
     private candidates: RTCIceCandidate[] = []
+    private videoSender?: RTCRtpSender
+    private audioSender?: RTCRtpSender
 
     private _onnegotiationneeded: (this: RTCPeerConnection, ev: RTCPeerConnectionEventMap["negotiationneeded"]) => any
     private _onicecandidate: (this: RTCPeerConnection, ev: RTCPeerConnectionEventMap["icecandidate"]) => any
@@ -23,6 +26,7 @@ class PeerNegotiation {
     private _ontrack: (this: RTCPeerConnection, ev: RTCPeerConnectionEventMap["track"]) => any
 
     constructor({
+                    remoteId,
                     configuration,
                     onTrack,
                     onDescription,
@@ -30,6 +34,7 @@ class PeerNegotiation {
                     onRestart,
                     polite,
                 }: {
+        remoteId: string
         configuration?: RTCConfiguration,
         onTrack: (track: MediaStreamTrack, stats?: RTCStatsReport) => void,
         onDescription: (description: RTCSessionDescriptionInit) => void,
@@ -37,6 +42,7 @@ class PeerNegotiation {
         onRestart: () => void,
         polite: boolean,
     }) {
+        this.remoteId = remoteId
         this.configuration = configuration
         this.onDescription = onDescription
         this.onCandidate = onCandidate
@@ -48,14 +54,22 @@ class PeerNegotiation {
     }
 
     public setVideoTrack(track?: MediaStreamTrack) {
+        trace(`${this.remoteId} setVideoTrack(${track?.id})`)
+        if(this.videoSender) {
+            this.peerConnection.removeTrack(this.videoSender)
+        }
         if (track) {
-            this.peerConnection.addTrack(track)
+            this.videoSender = this.peerConnection.addTrack(track)
         }
     }
 
     public setAudioTrack(track: MediaStreamTrack) {
+        trace(`${this.remoteId} setAudioTrack(${track?.id})`)
+        if(this.audioSender) {
+            this.peerConnection.removeTrack(this.audioSender)
+        }
         if (track) {
-            this.peerConnection.addTrack(track)
+            this.audioSender = this.peerConnection.addTrack(track)
         }
     }
 
@@ -64,12 +78,18 @@ class PeerNegotiation {
     }
 
     public async setDescription(description: RTCSessionDescriptionInit) {
+        trace(`${this.remoteId} setDescription(${description.type})`)
         try {
-            if (this.ignore(description)) return
+            if (this.ignore(description)) {
+                trace(this.remoteId + " Ignoring incoming description")
+                return
+            }
 
+            trace(this.remoteId + " Set remote description")
             await this.setRemoteDescription(description)
 
             if (description.type === 'offer') {
+                trace(this.remoteId + " Set local descriptions, since this is an offer")
                 await this.setLocalDescription(await this.peerConnection.createAnswer())
             }
         } catch (error) {
@@ -83,11 +103,13 @@ class PeerNegotiation {
     }
 
     public addCandidate(candidate: RTCIceCandidate) {
+        trace(`${this.remoteId} addCandidate()`)
         this.candidates.push(candidate)
         this.addCandidates()
     }
 
     public async createOffer() {
+        trace(this.remoteId + " createOffer()")
         if (!this.readyToMakeOffer) return
 
         try {
@@ -112,11 +134,11 @@ class PeerNegotiation {
         this.isSettingRemoteAnswerPending = false
     }
 
-    // TODO try/catch and ignore failures if necessary?
     private addCandidates() {
         if (this.peerConnection.remoteDescription) {
             while (this.candidates.length) {
                 this.peerConnection.addIceCandidate(this.candidates.shift())
+                    .catch(err => reportError(err))
                 this.addCandidates()
             }
         }
@@ -145,23 +167,25 @@ class PeerNegotiation {
     }
 
     private initiateManualRollback() {
+        trace(this.remoteId + " initiateManualRollback()")
         this.restart()
 
         this.onRestart()
     }
 
     public restart() {
-        trace("Restarting")
+        trace(this.remoteId + " restart()")
         this.stop()
         this.start()
     }
 
     private start() {
-        trace("Starting")
+        trace(this.remoteId + " start()")
         this.setupPeerConnection()
     }
 
     public stop() {
+        trace(this.remoteId + " stop()")
         this.makingOffer = false
         this.isSettingRemoteAnswerPending = false
         this.candidates = []
@@ -169,19 +193,26 @@ class PeerNegotiation {
     }
 
     private setupPeerConnection() {
+        trace(this.remoteId + " setupPeerConnection()")
+
         this.peerConnection = new RTCPeerConnection(this.configuration)
 
-        this._onnegotiationneeded = () => this.createOffer()
+        this._onnegotiationneeded = () => {
+            trace(this.remoteId + " _onnegotiationneeded()")
+            this.createOffer()
+        }
 
         this._onicecandidate = ({candidate}) => this.onCandidate(candidate)
 
         this._onconnectionstatechange = (event) => {
+            trace(this.remoteId + " _onconnectionstatechange(" + this.peerConnection.connectionState + ")")
             if (this.peerConnection.connectionState === 'connected') {
                 this.retryCount = 0
             }
         }
 
         this._ontrack = (event) => {
+            trace(this.remoteId + " _ontrack(" + event.track.id + ")")
             this.peerConnection.getStats(event.track)
                 .then(stats => this.onTrack(event.track, stats))
                 .catch(error => {

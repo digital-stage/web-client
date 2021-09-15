@@ -131,7 +131,7 @@ const MediasoupService = () => {
                 inputVideoDeviceId: localDevice.inputVideoDeviceId,
                 sendVideo: localDevice.sendVideo,
                 sendAudio: localDevice.sendAudio,
-                useP2P: localDevice.useP2P,
+                useP2P: localDevice.useP2P ? localDevice.useP2P : false,
                 inputAudioDeviceId: localDevice.inputAudioDeviceId,
                 autoGainControl: localDevice.autoGainControl,
                 echoCancellation: localDevice.echoCancellation,

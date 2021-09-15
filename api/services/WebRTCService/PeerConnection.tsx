@@ -36,6 +36,7 @@ const PeerConnection = ({
             trace(turnServers.length > 0 ? 'Using TURN servers' : 'Fallback to public STUN servers')
 
             const onDescription = (description: RTCSessionDescriptionInit) => {
+                trace("Sending " + description.type)
                 if (description.type === "offer") {
                     emit(ClientDeviceEvents.SendP2POffer, {
                         from: localStageDeviceId,
@@ -51,6 +52,7 @@ const PeerConnection = ({
                 }
             }
             const onCandidate = (iceCandidate: RTCIceCandidate) => {
+                trace("Sending candidate")
                 emit(ClientDeviceEvents.SendIceCandidate, {
                     from: localStageDeviceId,
                     to: stageDeviceId,
@@ -58,12 +60,14 @@ const PeerConnection = ({
                 } as ClientDevicePayloads.SendIceCandidate)
             }
             const onRestart = () => {
+                trace("Sending restart request")
                 emit(ClientDeviceEvents.SendP2PRestart, {
                     from: localStageDeviceId,
                     to: stageDeviceId,
                 } as ClientDevicePayloads.SendP2PRestart)
             }
             const onTrack = (track: MediaStreamTrack, stats?: RTCStatsReport) => {
+                trace("Got new remote track")
                 onRemoteTrack(stageDeviceId, track)
                 setReceivedTracks((prev) => [...prev, track])
                 if (stats) {
@@ -89,6 +93,7 @@ const PeerConnection = ({
                 sdpSemantics: 'unified-plan'
             } : config
             const peerConnection = new PeerNegotiation({
+                remoteId: stageDeviceId,
                 configuration,
                 onTrack,
                 onDescription,
@@ -104,14 +109,21 @@ const PeerConnection = ({
                         message: err,
                     }))
             }
-            const handleDescription = description => peerConnection.setDescription(description)
-            const handleCandidate = candidate => peerConnection.addCandidate(candidate)
+            const handleDescription = description => {
+                trace("Forwarding remote " + description.type)
+                peerConnection.setDescription(description)
+            }
+            const handleCandidate = candidate => {
+                trace("Forwarding remote candidate")
+                peerConnection.addCandidate(candidate)
+            }
             broker.addRestartListener(stageDeviceId, handleRestart)
             broker.addDescriptionListener(stageDeviceId, handleDescription)
             broker.addIceCandidateListener(stageDeviceId, handleCandidate)
             setConnection(peerConnection)
             return () => {
                 trace('Closing peer connection ' + stageDeviceId)
+                broker.removeRestartListener(stageDeviceId, handleRestart)
                 broker.removeDescriptionListener(stageDeviceId, handleDescription)
                 broker.removeIceCandidateListener(stageDeviceId, handleCandidate)
                 peerConnection.stop()
@@ -138,6 +150,7 @@ const PeerConnection = ({
     const videoTrack = useWebRTCLocalVideo()
     React.useEffect(() => {
         if (connection) {
+            trace("videoTrack effect")
             connection.setVideoTrack(videoTrack)
         }
     }, [connection, videoTrack])
