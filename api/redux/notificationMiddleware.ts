@@ -1,10 +1,11 @@
 import { Middleware } from 'redux'
 import { ServerDeviceEvents, ServerDevicePayloads } from '@digitalstage/api-types'
-import { nanoid } from 'nanoid'
+import { v4 as uuidv4 } from 'uuid'
 import omit from 'lodash/omit'
 import { RootState } from './state'
 import { InternalActionTypes } from './actions/InternalActionTypes'
 import { AddNotificationPayload, changeNotification, RemoveNotificationPayload } from './actions/clientActions'
+import {uuid4} from "@sentry/utils";
 
 let timeouts: {
     [id: string]: any
@@ -53,7 +54,7 @@ const notificationMiddleware: Middleware<
                 const user = userId ? prevState.users.byId[userId] : undefined
                 dispatch(
                   addNotificationAction({
-                      id: nanoid(),
+                      id: uuid4(),
                       date: new Date().getTime(),
                       kind: 'info',
                       message: `${user?.name || chatMessage.stageMemberId}: ${chatMessage.message}`,

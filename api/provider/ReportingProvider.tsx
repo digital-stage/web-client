@@ -1,5 +1,5 @@
 import React from 'react'
-import { nanoid } from 'nanoid'
+import { v4 as uuidv4 } from 'uuid'
 import {
     addNotification as addNotificationAction,
     changeNotification as changeNotificationAction,
@@ -57,7 +57,7 @@ const ReportingProvider = ({ children }: { children: React.ReactNode }) => {
     const addNotification = React.useCallback(
         (notification: Omit<Notification, 'id'>) => {
             trace('addNotification')
-            const id = nanoid()
+            const id = uuidv4()
             dispatch(
                 addNotificationAction({
                     id,

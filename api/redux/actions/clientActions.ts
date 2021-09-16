@@ -4,7 +4,7 @@ import {Notification} from '../state/Notifications'
 import {AuthUser} from '../state/Auth'
 import {ReducerAction} from './ReducerAction'
 import {InternalActionTypes} from './InternalActionTypes'
-import { nanoid } from 'nanoid'
+import { v4 as uuidv4 } from 'uuid'
 
 export const init = (): ReducerAction => ({
     type: InternalActionTypes.INIT,
@@ -145,7 +145,7 @@ export const removeNotification = (id: RemoveNotificationPayload): ReducerAction
 
 export const reportError = (error: Error, stack?: string): ReducerAction =>
     addNotification({
-        id: nanoid(),
+        id: uuidv4(),
         date: new Date().getTime(),
         kind: 'error',
         message: `${error.name}: ${error.message}`,
