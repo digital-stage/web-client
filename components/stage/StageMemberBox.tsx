@@ -57,7 +57,7 @@ const StageMemberBox = ({
         borderColor: groupColor,
       }}
     >
-      {track ? <VideoPlayer track={track}/> : null}
+      {track && <VideoPlayer track={track}/>}
       <div className={`info ${!track ? 'centered' : ''}`}>
         <Avatar name={userName} color={groupColor} active={active}/>
         <div className="names">
@@ -74,7 +74,7 @@ const StageMemberBox = ({
           <h5 className="memberName">{userName}</h5>
           {muted && <span style={{fontSize: "0.6rem", color: "var(---danger)"}}>(muted)</span>}
         </div>
-        {track ? <TrackStatsView trackId={track.id}/> : null}
+        {track && <TrackStatsView trackId={track.id}/>}
       </div>
       {!!conductorId ? <ConductorButton stageMemberId={conductorId}/> : null}
     </div>

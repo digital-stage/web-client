@@ -7,26 +7,29 @@ import {AudioLevelProvider} from './provider/AudioLevelProvider'
 import {DigitalStageServices} from './services/DigitalStageServices'
 import {MediasoupProvider} from './services/MediasoupService'
 import {WebRTCProvider} from './services/WebRTCService'
-import {ErrorBoundary} from './services/ErrorBoundary'
+import {WebcamProvider} from "./provider/WebcamProvider";
+import {MicrophoneProvider} from "./provider/MicrophoneProvider";
 
 const MemoizedDigitalStageServices = React.memo(DigitalStageServices)
 
 const DigitalStageProvider = ({children}: { children: React.ReactNode }) => (
     <Provider store={store}>
-        <ErrorBoundary>
-            <ConnectionProvider>
-                <MediasoupProvider>
-                    <WebRTCProvider>
-                        <AudioContextProvider>
-                            <AudioLevelProvider>
-                                <MemoizedDigitalStageServices/>
-                                {children}
-                            </AudioLevelProvider>
-                        </AudioContextProvider>
-                    </WebRTCProvider>
-                </MediasoupProvider>
-            </ConnectionProvider>
-        </ErrorBoundary>
+        <ConnectionProvider>
+            <WebcamProvider>
+                <MicrophoneProvider>
+                    <MediasoupProvider>
+                        <WebRTCProvider>
+                            <AudioContextProvider>
+                                <AudioLevelProvider>
+                                    <MemoizedDigitalStageServices/>
+                                    {children}
+                                </AudioLevelProvider>
+                            </AudioContextProvider>
+                        </WebRTCProvider>
+                    </MediasoupProvider>
+                </MicrophoneProvider>
+            </WebcamProvider>
+        </ConnectionProvider>
     </Provider>
 )
 export {DigitalStageProvider}

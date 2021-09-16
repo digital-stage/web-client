@@ -6,8 +6,8 @@ import Cookie from 'js-cookie'
 import { getUserByToken } from './actions'
 
 import { batch } from 'react-redux'
-import { RootState } from '@digitalstage/api-client-react'
 import { logger } from '../logger'
+import { RootState } from './state'
 
 const { trace } = logger('authMiddleware')
 

@@ -11,6 +11,8 @@ function reduceGlobals(
         groupId: undefined,
         localDeviceId: undefined,
         localUserId: undefined,
+        showLanes: false,
+        showOffline: false
     },
     action: {
         type: string
@@ -30,6 +32,14 @@ function reduceGlobals(
                 localStageDeviceId: undefined,
                 localUserId: undefined,
                 turn: undefined
+            }
+        }
+        case ServerDeviceEvents.Ready: {
+            const payload = action.payload as ServerDevicePayloads.Ready
+            return {
+                ...state,
+                ...payload,
+                ready: true,
             }
         }
         case InternalActionTypes.REQUEST_JOIN: {
@@ -56,12 +66,16 @@ function reduceGlobals(
                 selectedMode: action.payload,
             }
         }
-        case ServerDeviceEvents.Ready: {
-            const payload = action.payload as ServerDevicePayloads.Ready
+        case InternalActionTypes.SHOW_LANES: {
             return {
                 ...state,
-                ...payload,
-                ready: true,
+                showLanes: action.payload,
+            }
+        }
+        case InternalActionTypes.SHOW_OFFLINE: {
+            return {
+                ...state,
+                showOffline: action.payload,
             }
         }
         case ServerDeviceEvents.TurnServersChanged:{

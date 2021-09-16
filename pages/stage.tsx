@@ -1,22 +1,13 @@
-import { useStageSelector } from '@digitalstage/api-client-react'
-import React, { useEffect } from 'react'
+import React from 'react'
 import {StageView} from 'components/stage/StageView'
-import { useRouter } from 'next/router'
+import {Loading} from "../components/global/Loading";
+import {useStageAvailable} from "../components/global/useStageAvailable";
 
 const Stage = () => {
-    const { replace } = useRouter()
-    const ready = useStageSelector((state) => state.globals.ready)
-    const stageId = useStageSelector((state) => state.globals.stageId)
-
-    useEffect(() => {
-        if (ready && !stageId) {
-            replace('/stages')
-        }
-    }, [replace, ready, stageId])
-
-    if (stageId) {
-        return <StageView stageId={stageId} />
+    const stageAvailable = useStageAvailable()
+    if (stageAvailable) {
+        return <StageView/>
     }
-    return null
+    return <Loading/>
 }
 export default Stage

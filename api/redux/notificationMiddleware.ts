@@ -1,15 +1,10 @@
 import { Middleware } from 'redux'
-import {
-    addNotification as addNotificationAction,
-    AddNotificationPayload,
-    changeNotification,
-    InternalActionTypes,
-    RemoveNotificationPayload,
-    RootState,
-} from '@digitalstage/api-client-react'
 import { ServerDeviceEvents, ServerDevicePayloads } from '@digitalstage/api-types'
-import { v4 as uuid4 } from 'uuid'
+import { nanoid } from 'nanoid'
 import omit from 'lodash/omit'
+import { RootState } from './state'
+import { InternalActionTypes } from './actions/InternalActionTypes'
+import { AddNotificationPayload, changeNotification, RemoveNotificationPayload } from './actions/clientActions'
 
 let timeouts: {
     [id: string]: any
@@ -58,7 +53,7 @@ const notificationMiddleware: Middleware<
                 const user = userId ? prevState.users.byId[userId] : undefined
                 dispatch(
                   addNotificationAction({
-                      id: uuid4(),
+                      id: nanoid(),
                       date: new Date().getTime(),
                       kind: 'info',
                       message: `${user?.name || chatMessage.stageMemberId}: ${chatMessage.message}`,
@@ -76,3 +71,7 @@ const notificationMiddleware: Middleware<
 }
 
 export { notificationMiddleware }
+function addNotificationAction(arg0: { id: any; date: number; kind: string; message: string; link: string; permanent: boolean; featured: boolean; featureTimeout: number }): any {
+    throw new Error('Function not implemented.')
+}
+

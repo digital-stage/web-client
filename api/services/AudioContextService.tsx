@@ -1,9 +1,8 @@
-import {
-    useAudioContext,
-    useAudioContextDispatch,
-    useStageSelector,
-} from '@digitalstage/api-client-react'
-import { logger } from 'api/logger'
+
+import { logger } from '../logger'
+import { useAudioContextDispatch } from '../provider/AudioContextProvider'
+import { useAudioContext } from '../provider/AudioContextProvider'
+import { useStageSelector } from '../redux/selectors/useStageSelector'
 import React from 'react'
 import { startAudioContext } from '../provider/AudioContextProvider/utils'
 

@@ -1,21 +1,26 @@
 import React from 'react'
-import {useEmit, useNotification, useStageSelector} from '@digitalstage/api-client-react'
 import {config} from './config'
-import {logger} from '../../logger'
+import {logger} from 'api/logger'
 import {Broker} from './Broker'
 import {ClientDeviceEvents, ClientDevicePayloads} from "@digitalstage/api-types";
 import {PeerNegotiation} from "./PeerNegotiation";
-import {useWebRTCLocalAudioTrack, useWebRTCLocalVideo} from './index'
+import {useStageSelector} from 'api/redux/selectors/useStageSelector';
+import {useEmit} from '../ConnectionService';
+import {useNotification} from 'api/hooks/useNotification';
 
 const {trace} = logger('WebRTCService:PeerConnection')
 
 const PeerConnection = ({
                             stageDeviceId,
+                            videoTrack,
+                            audioTrack,
                             onRemoteTrack,
                             onStats,
                             broker,
                         }: {
     stageDeviceId: string
+    videoTrack?: MediaStreamTrack,
+    audioTrack?: MediaStreamTrack,
     onRemoteTrack: (stageDeviceId: string, track: MediaStreamTrack) => void
     onStats: (trackId: string, stats: RTCStatsReport) => void
     broker: Broker
@@ -147,15 +152,12 @@ const PeerConnection = ({
         }
     }, [connection, onStats, receivedTracks])
 
-    const videoTrack = useWebRTCLocalVideo()
     React.useEffect(() => {
         if (connection) {
-            trace("videoTrack effect")
             connection.setVideoTrack(videoTrack)
         }
     }, [connection, videoTrack])
 
-    const audioTrack = useWebRTCLocalAudioTrack()
     React.useEffect(() => {
         if (connection) {
             connection.setAudioTrack(audioTrack)

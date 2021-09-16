@@ -7,6 +7,12 @@
     align-items: flex-start;
   }
 
+  .mixingLayoutActions {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+
   .group {
     position: relative;
     display: block;

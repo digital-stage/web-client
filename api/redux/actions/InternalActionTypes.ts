@@ -6,6 +6,10 @@ enum InternalActionTypes {
     SELECT_DEVICE = 'select-device',
     SELECT_MODE = 'select-mode',
 
+    // Video display
+    SHOW_OFFLINE = 'show-offline',
+    SHOW_LANES = 'show-lanes',
+
     // Auth management
     SET_INITIALIZED = 'set-initialized',
     SET_USER = 'set-user',

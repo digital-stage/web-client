@@ -1,7 +1,7 @@
 import { batch, useDispatch } from 'react-redux'
 import React from 'react'
-import { setInitialized, setToken, setUser, signInWithToken } from '@digitalstage/api-client-react'
 import cookie from 'js-cookie'
+import {setInitialized, setToken, setUser, signInWithToken } from '../redux/actions'
 
 
 const AutoLoginService = () => {

@@ -1,7 +1,8 @@
 import {
-    selectMode,
+    clientActions,
+    selectMode, sortStageMembers,
     useCurrentStageAdminSelector,
-    useEmit,
+    useEmit, useFilteredStageMembers,
     useStageSelector,
 } from '@digitalstage/api-client-react'
 import React from 'react'
@@ -289,7 +290,12 @@ const StageMemberPanel = ({
 const GroupPanel = ({ groupId, deviceId }: { groupId: string; deviceId?: string }) => {
     const emit = useEmit()
     const [expanded, setExpanded] = React.useState<boolean>(true)
-    const stageMemberIds = useStageSelector((state) => state.stageMembers.byGroup[groupId] || [])
+    const stageMemberIds = useStageSelector(state => {
+            if (state.globals.showOffline) {
+                return [...state.stageMembers.byGroup[groupId]].sort((a, b) => sortStageMembers(state.stageMembers.byId[a], state.stageMembers.byId[b]))
+            }
+            return state.stageMembers.byGroup[groupId].filter(id => state.stageMembers.byId[id].active).sort((a, b) => sortStageMembers(state.stageMembers.byId[a], state.stageMembers.byId[b]))
+    })
     const group = useStageSelector((state) => state.groups.byId[groupId])
     const customGroup = useStageSelector((state) =>
         deviceId &&
@@ -459,6 +465,10 @@ const StagePanel = ({ stageId }: { stageId: string }) => {
     const selectedMode = useStageSelector((state) => state.globals.selectedMode)
     const isStageAdmin = useCurrentStageAdminSelector()
     const groupIds = useStageSelector((state) => state.groups.byStage[stageId])
+    const showOffline = useStageSelector(state => state.globals.showOffline)
+    const onOfflineToggle = React.useCallback(() => {
+        dispatch(clientActions.showOffline(!showOffline))
+    }, [dispatch, showOffline])
     return (
         <div className="mixingLayout">
             {isStageAdmin ? (
@@ -480,7 +490,12 @@ const StagePanel = ({ stageId }: { stageId: string }) => {
                     groupId={groupId}
                 />
             ))}
-            <ResetAllButton deviceId={selectedMode === 'global' ? undefined : selectedDeviceId} />
+            <div className="mixingLayoutActions">
+                <ResetAllButton deviceId={selectedMode === 'global' ? undefined : selectedDeviceId} />
+                <button className="" onClick={onOfflineToggle}>
+                    {showOffline ? 'Inaktive ausblenden' : 'Inaktive einblenden'}
+                </button>
+            </div>
         </div>
     )
 }

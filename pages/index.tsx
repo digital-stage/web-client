@@ -2,8 +2,9 @@ import Head from 'next/head'
 import {Container, SIZE} from '../ui/Container'
 import { useStageSelector } from '@digitalstage/api-client-react'
 import React from 'react'
-import {LoadingShaft} from '../ui/LoadingShaft'
 import { useRouter } from 'next/router'
+import { Loading } from 'components/global/Loading'
+
 
 const Index = () => {
     const { replace } = useRouter()
@@ -28,10 +29,7 @@ const Index = () => {
                 <meta name="description" content="Digital Stage" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <div className="overlay">
-                <LoadingShaft />
-                <h2>Stimme die Instrumente...</h2>
-            </div>
+            <Loading />
         </Container>
     )
 }

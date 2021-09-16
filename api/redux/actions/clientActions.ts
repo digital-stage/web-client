@@ -1,11 +1,10 @@
-import { Producer } from 'mediasoup-client/lib/Producer'
-import { Consumer } from 'mediasoup-client/lib/Consumer'
-import { Notification } from '../state/Notifications'
-import { AuthUser } from '../state/Auth'
-import { ReducerAction } from './ReducerAction'
-import { InternalActionTypes } from './InternalActionTypes'
-import { uuid4 } from '@sentry/utils'
-import React from "react";
+import {Producer} from 'mediasoup-client/lib/Producer'
+import {Consumer} from 'mediasoup-client/lib/Consumer'
+import {Notification} from '../state/Notifications'
+import {AuthUser} from '../state/Auth'
+import {ReducerAction} from './ReducerAction'
+import {InternalActionTypes} from './InternalActionTypes'
+import { nanoid } from 'nanoid'
 
 export const init = (): ReducerAction => ({
     type: InternalActionTypes.INIT,
@@ -13,6 +12,16 @@ export const init = (): ReducerAction => ({
 
 export const reset = (): ReducerAction => ({
     type: InternalActionTypes.RESET,
+})
+
+export const showOffline = (value: boolean): ReducerAction => ({
+    type: InternalActionTypes.SHOW_OFFLINE,
+    payload: value,
+})
+
+export const showLanes = (value: boolean): ReducerAction => ({
+    type: InternalActionTypes.SHOW_LANES,
+    payload: value,
 })
 
 export const selectMode = (mode: 'global' | 'personal'): ReducerAction => ({
@@ -136,7 +145,7 @@ export const removeNotification = (id: RemoveNotificationPayload): ReducerAction
 
 export const reportError = (error: Error, stack?: string): ReducerAction =>
     addNotification({
-        id: uuid4(),
+        id: nanoid(),
         date: new Date().getTime(),
         kind: 'error',
         message: `${error.name}: ${error.message}`,
@@ -163,7 +172,7 @@ export const setToken = (token?: string, staySignedIn?: boolean): ReducerAction 
     },
 })
 
-export type { AddNotificationPayload, ChangeNotificationPayload, RemoveNotificationPayload }
+export type {AddNotificationPayload, ChangeNotificationPayload, RemoveNotificationPayload}
 const clientActions = {
     init,
     reset,
@@ -179,6 +188,10 @@ const clientActions = {
     /* Selection of mode and device */
     selectMode,
     selectDevice,
+
+    /* Video display */
+    showLanes,
+    showOffline,
 
     /* Mediasoup related */
     addMediasoupAudioConsumer,
@@ -204,4 +217,4 @@ const clientActions = {
     removeNotification,
 }
 
-export { clientActions }
+export {clientActions}

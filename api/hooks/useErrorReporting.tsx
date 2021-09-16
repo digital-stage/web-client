@@ -7,9 +7,12 @@ const useErrorReporting = () => {
     return React.useCallback(
         (err: any) => {
             if (err instanceof Error) {
+                console.error(err)
                 dispatch(reportError(err))
             } else {
-                dispatch(reportError(new Error(err)))
+                const error = new Error(err)
+                console.error(error)
+                dispatch(reportError(error))
             }
         },
         [dispatch]

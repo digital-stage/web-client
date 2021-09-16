@@ -1,7 +1,8 @@
 import { useDispatch } from 'react-redux'
 import { useCallback } from 'react'
-import { requestJoin, useEmit } from '@digitalstage/api-client-react'
 import { ClientDeviceEvents } from '@digitalstage/api-types'
+import { useEmit } from 'api/services/ConnectionService'
+import { requestJoin } from 'api/redux/actions/clientActions'
 
 const useStageJoiner = (): {
     join: (payload: { stageId: string; groupId?: string; password?: string }) => void

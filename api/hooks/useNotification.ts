@@ -2,7 +2,7 @@ import { useCallback } from 'react'
 import { KIND } from '../redux/state/Notifications'
 import { useDispatch } from 'react-redux'
 import { addNotification } from '../redux/actions/clientActions'
-import { v4 as uuid4 } from 'uuid'
+import { nanoid } from 'nanoid'
 
 type NotificationContextT = (report: {
     kind?: KIND[keyof KIND]
@@ -29,7 +29,7 @@ const useNotification = (): NotificationContextT => {
             if (typeof message === 'string') {
                 dispatch(
                     addNotification({
-                        id: uuid4(),
+                        id: nanoid(),
                         date: new Date().getTime(),
                         kind: kind,
                         link: link,
@@ -41,7 +41,7 @@ const useNotification = (): NotificationContextT => {
             } else if ((message as unknown).toString) {
                 dispatch(
                     addNotification({
-                        id: uuid4(),
+                        id: nanoid(),
                         date: new Date().getTime(),
                         kind: kind,
                         link: link,

@@ -8,33 +8,29 @@ import { useAudioContext, useAudioContextDispatch } from './provider/AudioContex
 import { useAudioLevel } from './provider/AudioLevelProvider'
 import { useStageJoiner } from './hooks/useStageJoiner'
 import {
-    useWebRTCLocalAudioTrack,
-    useWebRTCRemoteAudioTrackByStageDevice,
-    useWebRTCRemoteAudioTracks,
-    useWebRTCRemoteVideoByStageDevice,
-    useWebRTCRemoteVideos,
     useWebRTCStats,
 } from './services/WebRTCService'
-import { useWebRTCLocalVideo } from './services/WebRTCService'
-import {
-    useAudioConsumer,
-    useAudioConsumers,
-    useVideoConsumer,
-    useVideoConsumers,
-} from './services/MediasoupService'
-import { useVideoProducer } from './services/MediasoupService'
 import { useEmit, useConnection, ConnectionStateContext } from './services/ConnectionService'
 import { useErrorReporting } from './hooks/useErrorReporting'
 import { logger } from './logger'
 import { useCurrentStageAdminSelector } from './redux/selectors/useCurrentStageAdminSelector'
 import { useStageAdminSelector } from './redux/selectors/useStageAdminSelector'
 import { useSpatialAudioSelector } from './redux/selectors/useSpatialAudioSelector'
+import { useRemoteVideos } from './hooks/useRemoteVideos'
+import { useRemoteAudioTracks } from './hooks/useRemoteAudioTracks'
+import { useReady } from './hooks/useReady'
+import { useWebcam } from './provider/WebcamProvider'
+import { useMicrophone } from './provider/MicrophoneProvider'
+import {sortStageMembers, useFilteredStageMembers } from './hooks/useFilteredStageMembers'
 
 export * from './redux/actions'
 export * from './redux/state'
 export type { RootState, AppDispatch }
 export {
+    useReady,
     useStageJoiner,
+    useFilteredStageMembers,
+    sortStageMembers,
     useAudioContext,
     useAudioContextDispatch,
     useAudioLevel,
@@ -46,18 +42,11 @@ export {
     useEmit,
     useConnection,
     useAuth,
-    useWebRTCLocalVideo,
-    useWebRTCRemoteVideos,
-    useWebRTCRemoteVideoByStageDevice,
-    useWebRTCLocalAudioTrack,
-    useWebRTCRemoteAudioTracks,
-    useWebRTCRemoteAudioTrackByStageDevice,
     useWebRTCStats,
-    useVideoProducer,
-    useVideoConsumers,
-    useVideoConsumer,
-    useAudioConsumers,
-    useAudioConsumer,
+    useWebcam,
+    useMicrophone,
+    useRemoteVideos,
+    useRemoteAudioTracks,
     useErrorReporting,
     useSpatialAudioSelector,
     ConnectionStateContext,
