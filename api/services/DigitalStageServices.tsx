@@ -1,5 +1,5 @@
 import React from 'react'
-import {AudioRenderService} from './AudioRenderer'
+import {AudioRenderService} from './AudioRenderer/old'
 import {AutoLoginService} from './AutoLoginService'
 import {MediasoupService} from './MediasoupService'
 import {WebRTCService} from './WebRTCService'

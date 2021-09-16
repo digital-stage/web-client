@@ -18,13 +18,15 @@ const getAudioTrack = ({
       video: false,
       audio: {
         deviceId: deviceId,
-        sampleRate: sampleRate,
+        //sampleRate: sampleRate,
         autoGainControl: autoGainControl,
         echoCancellation: echoCancellation,
         noiseSuppression: noiseSuppression,
+        latency: 0,
       } as any,
     })
     .then((stream) => stream.getAudioTracks().pop())
+    /*
     .then(async track => {
       const capabilities = track.getCapabilities()
       if (capabilities.latency && capabilities.latency.min) {
@@ -33,6 +35,6 @@ const getAudioTrack = ({
         })
       }
       return track
-    })
+    })*/
 }
 export {getAudioTrack}

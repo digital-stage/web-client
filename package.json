@@ -45,7 +45,6 @@
     "react-redux": "^7.2.5",
     "redux": "^4.1.1",
     "redux-devtools-extension": "^2.13.9",
-    "standardized-audio-context": "^25.3.9",
     "teckos-client": "^0.2.0",
     "use-animation-frame": "^0.1.1",
     "uuid": "^8.3.2",

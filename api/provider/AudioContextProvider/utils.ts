@@ -1,12 +1,13 @@
-import { AudioContext as StandardizedAudioContext, IAudioContext } from 'standardized-audio-context'
 
 /**
  * Create audio buffer with fallback for safari
  */
-const createBuffer = (sampleRate?: number): IAudioContext => {
-    let context = new StandardizedAudioContext({
-        latencyHint: 'interactive',
+const createBuffer = (sampleRate?: number): AudioContext => {
+    return new AudioContext({
+        latencyHint: 0, //'interactive',
+        sampleRate
     })
+    /*
     if (/(iPhone|iPad)/i.test(navigator.userAgent)) {
         const desiredSampleRate: number =
             sampleRate && typeof sampleRate === 'number' ? sampleRate : 44100
@@ -20,15 +21,15 @@ const createBuffer = (sampleRate?: number): IAudioContext => {
 
             context.close() // dispose old context
             context = new StandardizedAudioContext({
-                latencyHint: 'interactive',
+                latencyHint: 0// 'interactive',
             })
         }
     }
-    return context
+    return context*/
 }
 
 const startAudioContext = async (
-    audioContext: IAudioContext,
+    audioContext: AudioContext,
     audio: HTMLAudioElement
 ): Promise<void> => {
     if (audioContext.state === 'suspended') {

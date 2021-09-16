@@ -1,5 +1,3 @@
-import { IAudioContext, IMediaStreamAudioDestinationNode } from 'standardized-audio-context'
-
 import React from 'react'
 import { createBuffer, startAudioContext } from './utils'
 import { logger } from '../../logger'
@@ -12,8 +10,8 @@ type Action =
     | { type: 'setRunning'; running: boolean }
 type State = {
     running?: boolean
-    audioContext?: IAudioContext
-    destination?: IMediaStreamAudioDestinationNode<IAudioContext>
+    audioContext?: AudioContext
+    destination?: MediaStreamAudioDestinationNode
     player?: HTMLAudioElement
 }
 type Dispatch = (action: Action) => void
@@ -24,7 +22,7 @@ const AudioContextDispatchContext = React.createContext<Dispatch>(undefined)
 function audioContextReducer(prevState: State, action: Action): State {
     switch (action.type) {
         case 'start': {
-            trace('Starting audio context')
+            trace('Starting audio context with sample rate of ' + action.sampleRate)
             let audioContext = prevState.audioContext
             let destination = prevState.destination
             let player = prevState.player || new Audio()
