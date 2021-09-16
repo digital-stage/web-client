@@ -1,6 +1,5 @@
 import React from 'react'
 import {
-    AudioTrack,
     ClientDeviceEvents,
     ClientDevicePayloads,
     ServerDeviceEvents, WebRTCAudioTrack, WebRTCVideoTrack,
@@ -34,9 +33,7 @@ const TrackStatsContext = React.createContext<TrackStatsMap>(undefined)
 const DispatchTrackStatsContext = React.createContext<DispatchTrackStatsMap>(undefined)
 
 const WebRTCProvider = ({children}: { children: React.ReactNode }) => {
-    const [localVideoTracks, setLocalVideoTracks] = React.useState<MediaStreamTrack>(undefined)
     const [remoteVideoTracks, setRemoteVideoTracks] = React.useState<TrackMap>({})
-    const [localAudioTracks, setLocalAudioTracks] = React.useState<MediaStreamTrack>(undefined)
     const [remoteAudioTracks, setRemoteAudioTracks] = React.useState<TrackMap>({})
     const [trackStatistics, setTrackStatistics] = React.useState<TrackStatsMap>({})
 
@@ -71,13 +68,6 @@ const useWebRTCRemoteAudioTracks = (): TrackMap => {
     if (state === undefined)
         throw new Error('useWebRTCRemoteAudioTracks must be used within a WebRTCProvider')
     return state
-}
-const useWebRTCRemoteAudioTrackByStageDevice = (stageMemberId: string): MediaStreamTrack => {
-    const tracks = useWebRTCRemoteAudioTracks()
-    console.log(tracks)
-    return React.useMemo(() => {
-        return tracks[stageMemberId]
-    }, [stageMemberId, tracks])
 }
 
 export interface WebRTCStatistics {
@@ -125,7 +115,6 @@ const useWebRTCStats = (trackId: string): WebRTCStatistics => {
                     )
                 }
             })
-            console.log(stats)
             return stats
         }
         return undefined
@@ -344,6 +333,5 @@ export {
     WebRTCProvider,
     useWebRTCRemoteVideos,
     useWebRTCRemoteAudioTracks,
-    useWebRTCRemoteAudioTrackByStageDevice,
     useWebRTCStats,
 }

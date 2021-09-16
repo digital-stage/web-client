@@ -361,14 +361,9 @@ const StageDeviceRenderer = ({
 
     useLevelPublishing(stageDeviceId, audioContext, gainNode, Object.keys(audioTracks).length > 0)
 
-    React.useEffect(() => {
-        console.log("AudioTracks for " + stageDeviceId, audioTracks)
-    }, [audioTracks, stageDeviceId])
-
     return (
         <>
             {Object.keys(audioTracks).map((audioTrackId) => {
-                console.log("Building up renderer for " + audioTrackId, audioTracks)
                 return (
                     <AudioTrackRenderer
                         key={audioTrackId}

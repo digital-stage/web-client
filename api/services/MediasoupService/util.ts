@@ -83,7 +83,7 @@ export const createWebRTCTransport = (
                 transport.on('connectionstatechange', async (state) => {
                     if (state === 'closed' || state === 'failed' || state === 'disconnected') {
                         reportError(
-                            `createWebRTCTransport:transport:${direction}:connectionstatechange - Disconnect by server side`
+                            `createWebRTCTransport:transport:${direction}:connectionstatechange - Disconnect by server side. Reason ${state}`
                         )
                     }
                 })

@@ -14,13 +14,18 @@ const RandomSentence = [
 const Loading = ({message}: {
     message?: string
 }) => {
-    const randomSentence = RandomSentence[Math.floor(Math.random() * RandomSentence.length)]
+    const [sentence, setSentence] = React.useState<string>(message)
+    React.useEffect(() => {
+        if(!message) {
+            setSentence(RandomSentence[Math.floor(Math.random() * RandomSentence.length)])
+        }
+    }, [message])
 
     return (
         <div className="topoverlay">
             <LoadingShaft/>
             <h2>
-                {message || randomSentence}
+                {sentence}
             </h2>
         </div>
     )
