@@ -4,8 +4,7 @@ import { v4 as uuidv4 } from 'uuid'
 import omit from 'lodash/omit'
 import { RootState } from './state'
 import { InternalActionTypes } from './actions/InternalActionTypes'
-import { AddNotificationPayload, changeNotification, RemoveNotificationPayload } from './actions/clientActions'
-import {uuid4} from "@sentry/utils";
+import {addNotification, AddNotificationPayload, changeNotification, RemoveNotificationPayload } from './actions/clientActions'
 
 let timeouts: {
     [id: string]: any
@@ -53,8 +52,8 @@ const notificationMiddleware: Middleware<
                 const userId = prevState.stageMembers.byId[chatMessage.stageMemberId]?.userId
                 const user = userId ? prevState.users.byId[userId] : undefined
                 dispatch(
-                  addNotificationAction({
-                      id: uuid4(),
+                  addNotification({
+                      id: uuidv4(),
                       date: new Date().getTime(),
                       kind: 'info',
                       message: `${user?.name || chatMessage.stageMemberId}: ${chatMessage.message}`,
@@ -72,7 +71,4 @@ const notificationMiddleware: Middleware<
 }
 
 export { notificationMiddleware }
-function addNotificationAction(arg0: { id: any; date: number; kind: string; message: string; link: string; permanent: boolean; featured: boolean; featureTimeout: number }): any {
-    throw new Error('Function not implemented.')
-}
 

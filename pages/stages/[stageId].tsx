@@ -233,6 +233,7 @@ const StageView = () => {
                 <LeaveStageForGoodModal
                     stageId={stageId}
                     onClose={() => requestLeaveStageForGood(false)}
+                    onLeave={() => replace('/stages')}
                     open={!!leaveStageForGoodRequested}
                 />
                 <RemoveGroupModal
