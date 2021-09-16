@@ -333,7 +333,7 @@ const MediasoupService = () => {
                 }
             })
         }
-    }, [audioTracks, device, receiveTransport, routerConnection, setAudioConsumers])
+    }, [audioTracks, device, receiveTransport, reportError, routerConnection, setAudioConsumers])
 
     const localAudioTrack = useMicrophone()
     React.useEffect(() => {
@@ -391,7 +391,7 @@ const MediasoupService = () => {
                 }
             }
         }
-    }, [emit, stageId, reportError, useP2P, audioType, localAudioTrack, sendTransport, routerConnection])
+    }, [emit, stageId, reportError, useP2P, audioType, localAudioTrack, sendTransport, routerConnection, reportError])
 
     return null
 }
