@@ -391,7 +391,7 @@ const MediasoupService = () => {
                 }
             }
         }
-    }, [emit, stageId, reportError, useP2P, audioType, localAudioTrack, sendTransport, routerConnection, reportError])
+    }, [emit, stageId, useP2P, audioType, localAudioTrack, sendTransport, routerConnection, reportError])
 
     return null
 }
