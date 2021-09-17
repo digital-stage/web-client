@@ -212,7 +212,7 @@ const MediasoupService = () => {
                             device,
                             track.producerId
                         ).then((consumer) => {
-                                trace(`Consuming now video ${track.id} with producer ${track.producerId}`)
+                                trace(`Consuming now video ${track._id} with producer ${track.producerId}`)
                                 setVideoConsumers((prev) => ({...prev, [track._id]: consumer}))
                             }
                         ).catch(err => reportError(err))
