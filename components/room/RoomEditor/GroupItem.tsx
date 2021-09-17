@@ -1,5 +1,5 @@
 import {RoomSelection} from './RoomSelection'
-import { useEmit, useStageSelector } from '@digitalstage/api-client-react'
+import {useEmit, useStageSelector} from '@digitalstage/api-client-react'
 import {
     ClientDeviceEvents,
     ClientDevicePayloads,
@@ -8,17 +8,17 @@ import {
     Group,
 } from '@digitalstage/api-types'
 import {RoomElement} from './RoomElement'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, {useCallback, useEffect, useMemo, useState} from 'react'
 import {StageMemberItem} from './StageMemberItem'
 
 const GroupItem = ({
-    groupId,
-    deviceId,
-    stageWidth,
-    stageHeight,
-    selection,
-    onSelected,
-}: {
+                       groupId,
+                       deviceId,
+                       stageWidth,
+                       stageHeight,
+                       selection,
+                       onSelected,
+                   }: {
     groupId: string
     deviceId: string
     stageWidth: number
@@ -28,7 +28,15 @@ const GroupItem = ({
 }) => {
     const emit = useEmit()
     const stageMemberIds = useStageSelector<string[]>(
-        (state) => state.stageMembers.byGroup[groupId] || []
+        (state) => {
+            if (state.stageMembers.byGroup[groupId]) {
+                if (state.globals.showOffline) {
+                    return state.stageMembers.byGroup[groupId]
+                }
+                return state.stageMembers.byGroup[groupId].filter(id => state.stageMembers.byId[id].active)
+            }
+            return []
+        }
     )
     const group = useStageSelector<Group>((state) => state.groups.byId[groupId])
     const customGroupPosition = useStageSelector<CustomGroupPosition>((state) =>
@@ -36,24 +44,24 @@ const GroupItem = ({
         state.customGroupPositions.byDeviceAndGroup[deviceId] &&
         state.customGroupPositions.byDeviceAndGroup[deviceId][groupId]
             ? state.customGroupPositions.byId[
-                  state.customGroupPositions.byDeviceAndGroup[deviceId][groupId]
-              ]
+                state.customGroupPositions.byDeviceAndGroup[deviceId][groupId]
+                ]
             : undefined
     )
     const modified = useMemo(() => {
         return deviceId
             ? !!customGroupPosition
             : !!group?.x &&
-                  (group?.x !== DefaultThreeDimensionalProperties.x ||
-                      group?.y !== DefaultThreeDimensionalProperties.y ||
-                      group?.rZ !== DefaultThreeDimensionalProperties.rZ)
+            (group?.x !== DefaultThreeDimensionalProperties.x ||
+                group?.y !== DefaultThreeDimensionalProperties.y ||
+                group?.rZ !== DefaultThreeDimensionalProperties.rZ)
     }, [customGroupPosition, deviceId, group?.rZ, group?.x, group?.y])
     const [position, setPosition] = React.useState<{ x: number; y: number; rZ: number }>({
         x: customGroupPosition?.x || group?.x || DefaultThreeDimensionalProperties.x,
         y: customGroupPosition?.y || group?.y || DefaultThreeDimensionalProperties.y,
         rZ: customGroupPosition?.rZ || group?.rZ || DefaultThreeDimensionalProperties.rZ,
     })
-   React.useEffect(() => {
+    React.useEffect(() => {
         if (deviceId) {
             setPosition({
                 x: customGroupPosition?.x || group?.x || DefaultThreeDimensionalProperties.x,
@@ -138,4 +146,4 @@ const GroupItem = ({
         </>
     )
 }
-export { GroupItem }
+export {GroupItem}

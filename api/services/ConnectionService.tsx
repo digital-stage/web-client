@@ -8,6 +8,7 @@ import { SocketEvent } from 'teckos-client/dist/types'
 import { logger } from '../logger'
 import { useStageSelector } from '../redux/selectors/useStageSelector'
 import { useNotification } from '../hooks/useNotification'
+import { clientActions } from '../redux/actions'
 
 const { trace } = logger('ConnectionService')
 
@@ -102,6 +103,7 @@ const ConnectionService = (): JSX.Element => {
                     conn.disconnect()
                 }
                 setConnection(undefined)
+                dispatch(clientActions.reset())
             }
         }
     }, [dispatch, notify, setConnection, token, userId])

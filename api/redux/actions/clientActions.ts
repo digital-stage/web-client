@@ -4,7 +4,7 @@ import {Notification} from '../state/Notifications'
 import {AuthUser} from '../state/Auth'
 import {ReducerAction} from './ReducerAction'
 import {InternalActionTypes} from './InternalActionTypes'
-import { v4 as uuidv4 } from 'uuid'
+import {v4 as uuidv4} from 'uuid'
 
 export const init = (): ReducerAction => ({
     type: InternalActionTypes.INIT,

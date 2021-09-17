@@ -1,10 +1,11 @@
-import React from 'react'
+import React, {useCallback} from 'react'
 import { Layer as KonvaLayer, Stage as KonvaStage } from 'react-konva/es/ReactKonvaCore'
 import {
     selectMode,
     useStageSelector,
     ConnectionStateContext,
     useCurrentStageAdminSelector,
+    clientActions,
 } from '@digitalstage/api-client-react'
 import { ReactReduxContext, useDispatch } from 'react-redux'
 import { FACTOR } from './RoomElement'
@@ -12,6 +13,7 @@ import {RoomSelection} from './RoomSelection'
 import {GroupItem} from './GroupItem'
 import {TextSwitch} from 'ui/TextSwitch'
 import {ResetPanel} from './ResetPanel'
+import {HiFilter, HiOutlineFilter} from "react-icons/hi";
 
 const RoomEditor = ({ stageId }: { stageId: string }) => {
     const innerRef = React.useRef<HTMLDivElement>(null)
@@ -38,6 +40,10 @@ const RoomEditor = ({ stageId }: { stageId: string }) => {
             innerRef.current.scrollTop = (height * FACTOR) / 2 - window.innerHeight / 2
         }
     }, [innerRef, width, height])
+    const showOffline = useStageSelector(state => state.globals.showOffline)
+    const onOfflineToggle = useCallback(() => {
+        dispatch(clientActions.showOffline(!showOffline))
+    }, [dispatch, showOffline])
 
     return (
         <div className="roomEditor">
@@ -91,6 +97,10 @@ const RoomEditor = ({ stageId }: { stageId: string }) => {
                     selection={selection}
                 />
             ) : null}
+
+            <button className="round offlineToggle" onClick={onOfflineToggle}>
+                {showOffline ? <HiOutlineFilter/> : <HiFilter/>}
+            </button>
 
             {isStageAdmin ? (
                 <TextSwitch

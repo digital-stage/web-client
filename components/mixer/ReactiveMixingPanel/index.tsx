@@ -205,7 +205,15 @@ const StageMemberPanel = ({
     const emit = useEmit()
     const [expanded, setExpanded] = React.useState<boolean>(false)
     const stageDeviceIds = useStageSelector(
-        (state) => state.stageDevices.byStageMember[stageMemberId] || []
+        state => {
+            if(state.stageDevices.byStage[stageMemberId]) {
+                if(state.globals.showOffline) {
+                    return state.stageDevices.byStage[stageMemberId]
+                }
+                return state.stageDevices.byStage[stageMemberId].filter(id => state.stageDevices.byId[id].active)
+            }
+            return []
+        }
     )
     const stageMember = useStageSelector((state) => state.stageMembers.byId[stageMemberId])
     const user = useStageSelector((state) => state.users.byId[stageMember.userId])
@@ -501,11 +509,11 @@ const StagePanel = ({ stageId }: { stageId: string }) => {
 }
 
 const ReactiveMixingPanel = () => {
-    const stageId = useStageSelector((state) => state.globals.stageId)
+    const stageId = useStageSelector((state) => state.globals.ready ? state.globals.stageId : undefined)
 
     if (stageId) {
         return <StagePanel stageId={stageId} />
     }
-    return <div>Not inside any stage</div>
+    return null
 }
 export { ReactiveMixingPanel }

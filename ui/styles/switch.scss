@@ -45,7 +45,6 @@ div.switch {
       }
     }
   }
-
   input:checked + .slider {
     background-color: var(---primary);
   }
@@ -53,6 +52,19 @@ div.switch {
   input:focus + .slider {
     box-shadow: 0 0 1px var(---primary);
     border-color: var(---focus);
+  }
+
+  input:disabled + .slider {
+    cursor: default;
+  }
+
+  input:disabled:checked + .slider {
+    background-color: var(---grey-4) !important;
+  }
+
+  input:disabled:focus + .slider {
+    box-shadow: 0 0 1px var(---grey-5) !important;
+    border-color: var(---grey-4) !important;
   }
 
   input:checked + .slider:before {

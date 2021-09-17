@@ -1,11 +1,11 @@
 import * as React from 'react'
-import { useEffect } from 'react'
-import { useRouter } from 'next/router'
-import { logout, useStageSelector, InternalActionTypes } from '@digitalstage/api-client-react'
-import { useDispatch } from 'react-redux'
+import {useEffect} from 'react'
+import {useRouter} from 'next/router'
+import {logout, useStageSelector, InternalActionTypes} from '@digitalstage/api-client-react'
+import {batch, useDispatch} from 'react-redux'
 
 const Logout = (): JSX.Element => {
-    const { replace } = useRouter()
+    const {replace} = useRouter()
     const dispatch = useDispatch()
     const initialized = useStageSelector((state) => state.auth.initialized)
     const token = useStageSelector((state) => state.auth.token)
@@ -13,11 +13,17 @@ const Logout = (): JSX.Element => {
 
     useEffect(() => {
         if (initialized && token) {
-            logout(token).then(() =>
-                dispatch({
-                    type: InternalActionTypes.LOGOUT,
-                })
-            )
+            logout(token)
+                .then(() =>
+                    batch(() => {
+                        dispatch({
+                            type: InternalActionTypes.LOGOUT,
+                        })
+                        dispatch({
+                            type: InternalActionTypes.RESET,
+                        })
+                    })
+                )
         }
     }, [dispatch, initialized, token])
 

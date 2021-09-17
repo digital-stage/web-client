@@ -114,7 +114,7 @@ const ResetPanel = ({ deviceId, selection }: { deviceId?: string; selection: Roo
     }, [deviceId, emit, selection])
 
     return (
-        <div className="">
+        <div className="roomResetPanel">
             {selection.length > 0 ? (
                 <button className="small" onClick={resetSelection}>
                     Auswahl löschen

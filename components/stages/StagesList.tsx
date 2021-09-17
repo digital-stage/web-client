@@ -51,7 +51,7 @@ const StageItem = ({ stageId }: { stageId: string }) => {
                         {isStageAdmin ? (
                             <>
                                 <MdEdit />
-                                <span className="stageItemHideOnMobile">&nbsp;Details</span>
+                                <span className="stageItemHideOnMobile">&nbsp;Editieren</span>
                             </>
                         ) : (
                             <>

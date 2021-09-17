@@ -25,7 +25,7 @@ const Loading = ({message}: {
         <div className="topoverlay">
             <LoadingShaft/>
             <h2>
-                {sentence}
+                {sentence || null}
             </h2>
         </div>
     )

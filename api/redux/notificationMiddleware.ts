@@ -45,10 +45,7 @@ const notificationMiddleware: Middleware<
         case ServerDeviceEvents.ChatMessageSend: {
             // Resolve username
             const chatMessage = action.payload as ServerDevicePayloads.ChatMessageSend
-            const isSelf =
-                prevState.globals.localStageDeviceId &&
-                prevState.globals.localStageDeviceId === chatMessage.stageMemberId
-            if(!isSelf) {
+            if(prevState.globals.stageMemberId !== chatMessage.stageMemberId) {
                 const userId = prevState.stageMembers.byId[chatMessage.stageMemberId]?.userId
                 const user = userId ? prevState.users.byId[userId] : undefined
                 dispatch(
