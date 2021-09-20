@@ -10,7 +10,7 @@ const NotificationBar = () => {
             .filter((notification) => notification.featured || notification.permanent)
     )
     return (
-        <div>
+        <>
             {featuredNotifications.map((notification) => (
                 <NotificationItem
                     closeable={!notification.permanent}
@@ -28,7 +28,7 @@ const NotificationBar = () => {
                     {notification.message}
                 </NotificationItem>
             ))}
-        </div>
+        </>
     )
 }
 export { NotificationBar }

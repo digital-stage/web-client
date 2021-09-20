@@ -540,11 +540,21 @@ const ListenerRenderer = ({
   const position = useStageDevicePosition({stageDeviceId, deviceId})
 
   useEffect(() => {
-    if (audioContext) {
+    const orientation = yRotationToVector(position.rZ)
+    if(!audioContext.listener.positionX) {
+      // Fallback for firefox
+      audioContext.listener.setOrientation(
+        position.x,
+        position.z,
+        position.y,
+        orientation[0],
+        orientation[1],
+        orientation[2],
+      )
+    } else {
       audioContext.listener.positionX.setValueAtTime(position.x, audioContext.currentTime)
       audioContext.listener.positionY.setValueAtTime(position.z, audioContext.currentTime)
       audioContext.listener.positionZ.setValueAtTime(position.y, audioContext.currentTime)
-      const orientation = yRotationToVector(position.rZ)
       audioContext.listener.forwardX.setValueAtTime(orientation[0], audioContext.currentTime)
       audioContext.listener.forwardY.setValueAtTime(orientation[1], audioContext.currentTime)
       audioContext.listener.forwardZ.setValueAtTime(orientation[2], audioContext.currentTime)
