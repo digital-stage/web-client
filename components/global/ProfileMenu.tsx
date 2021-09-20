@@ -1,6 +1,5 @@
-import React, { useState } from 'react'
+import React  from 'react'
 import { OverlayMenu } from 'ui/OverlayMenu'
-import styles from './ProfileMenu.module.css'
 import { useStageSelector } from '@digitalstage/api-client-react'
 import { useRouter } from 'next/router'
 
@@ -15,7 +14,7 @@ const ProfileMenu = () => {
     if (signedIn) {
         return (
             <OverlayMenu
-                className={styles.menu}
+                className="profileMenu"
                 menu={
                     <>
                         {user ? <h5>{user.name}</h5> : null}
