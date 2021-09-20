@@ -48,7 +48,7 @@ const MediaCaptureService = () => {
   }, [outputAudioDevices])
 
   const refreshMediaDevices = React.useCallback(() => {
-    if (emit && localDeviceId) {
+    if (emit && localDeviceId && reportError) {
       return refreshMediaDevicesSync(
         localDeviceId,
         lastInputAudioDevices.current,
@@ -59,7 +59,7 @@ const MediaCaptureService = () => {
         .catch(err => reportError("Could not access media devices, reason: " + err))
     }
     return undefined
-  }, [emit, localDeviceId])
+  }, [emit, localDeviceId, reportError])
 
   React.useEffect(() => {
     if (ready && dispatchWebcam && sendVideo && refreshMediaDevices) {
@@ -88,7 +88,7 @@ const MediaCaptureService = () => {
         dispatchWebcam(undefined)
       }
     }
-  }, [dispatchWebcam, inputVideoDeviceId, ready, sendVideo, refreshMediaDevices])
+  }, [dispatchWebcam, inputVideoDeviceId, ready, sendVideo, refreshMediaDevices, reportError])
 
   React.useEffect(() => {
     if (ready && reportError && dispatchMicrophone && sendAudio && refreshMediaDevices) {
@@ -122,7 +122,7 @@ const MediaCaptureService = () => {
         dispatchMicrophone(undefined)
       }
     }
-  }, [autoGainControl, dispatchMicrophone, echoCancellation, inputAudioDeviceId, noiseSuppression, ready, sampleRate, sendAudio, refreshMediaDevices])
+  }, [autoGainControl, dispatchMicrophone, echoCancellation, inputAudioDeviceId, noiseSuppression, ready, sampleRate, sendAudio, refreshMediaDevices, reportError])
 
 
   React.useEffect(() => {
