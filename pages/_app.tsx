@@ -44,7 +44,6 @@ const TitleProvider = (): JSX.Element => {
   )
 }
 
-const MemorizedSidebar = React.memo(Sidebar)
 
 function MyApp({Component, pageProps}: AppProps) {
   return (
@@ -69,8 +68,8 @@ function MyApp({Component, pageProps}: AppProps) {
               <NotificationBar/>
               <Component {...pageProps} />
             </div>
+            <Sidebar/>
           </div>
-          <MemorizedSidebar/>
           <DeviceSelector/>
           <ProfileMenu/>
           <StageJoiner/>

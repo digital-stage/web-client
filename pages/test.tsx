@@ -9,7 +9,8 @@ import React from "react";
 
 const AudioLatencyTest = () => {
   const [running, setRunning] = React.useState<boolean>(false)
-  const [cloneStream, setCloneStream] = React.useState<boolean>(false)
+  const [cloneStream, setCloneStream] = React.useState<boolean>(true)
+  const [manyNodes, setManyNodes] = React.useState<boolean>(true)
   const [useWebAudio, setUseWebAudio] = React.useState<boolean>(true)
   const audioRef = React.useRef<HTMLAudioElement>(null)
   const [stream, setStream] = React.useState<MediaStream>()
@@ -58,12 +59,38 @@ const AudioLatencyTest = () => {
       if (useWebAudio) {
         console.log("Using web audio")
         const source = audioContext.createMediaStreamSource(selectedStream)
-        source.connect(audioContext.destination)
+        let gainNodes: AudioNode[]
+        if(manyNodes) {
+          gainNodes = Array.from(Array(10)).map(() => audioContext.createGain())
+          gainNodes.forEach((gainNode, index, arr) => {
+            if(index === 0) {
+              gainNode.connect(audioContext.destination)
+            } else {
+              gainNode.connect(arr[index - 1])
+            }
+          })
+          const lastGainNode = gainNodes[gainNodes.length - 1]
+          console.log(lastGainNode)
+          source.connect(lastGainNode)
+        } else {
+          source.connect(audioContext.destination)
+        }
         const audioElement = audioRef.current
         audioElement.srcObject = selectedStream
         audioElement.muted = true
         return () => {
-          source.disconnect(audioContext.destination)
+          if(gainNodes) {
+            source.connect(gainNodes[gainNodes.length - 1])
+            gainNodes.forEach((gainNode, index, arr) => {
+              if(index === 0) {
+                gainNode.disconnect(audioContext.destination)
+              } else {
+                gainNode.disconnect(arr[index - 1])
+              }
+            })
+          } else {
+            source.disconnect(audioContext.destination)
+          }
           audioElement.srcObject = undefined
         }
       } else {
@@ -78,7 +105,7 @@ const AudioLatencyTest = () => {
         }
       }
     }
-  }, [stream, audioContext, useWebAudio, cloneStream])
+  }, [stream, audioContext, useWebAudio, cloneStream, manyNodes])
 
   return (
     <>
@@ -90,6 +117,11 @@ const AudioLatencyTest = () => {
       <label>
         <input type="checkbox" checked={useWebAudio} onChange={(e) => setUseWebAudio(e.currentTarget.checked)}/>
         WebAudio API
+      </label>
+      {` `}
+      <label>
+        <input type="checkbox" checked={manyNodes} onChange={(e) => setManyNodes(e.currentTarget.checked)}/>
+        Many nodes
       </label>
       {` `}
       <button onClick={() => setRunning(prev => !prev)}>

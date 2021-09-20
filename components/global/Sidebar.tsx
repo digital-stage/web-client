@@ -137,4 +137,6 @@ const Sidebar = () => {
     )
 }
 
-export { Sidebar }
+const MemoizedSidebar = React.memo(Sidebar)
+
+export { MemoizedSidebar as Sidebar }
