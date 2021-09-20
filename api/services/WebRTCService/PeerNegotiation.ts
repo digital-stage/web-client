@@ -1,4 +1,6 @@
 import {logger} from "api/logger"
+import {ClientLogEvents} from "@digitalstage/api-types";
+import {LogServerReportFn} from "../../hooks/useLogServer";
 
 const RETRY_LIMIT = 10
 
@@ -7,7 +9,7 @@ const {trace, reportError} = logger('WebRTCService:PeerNegotiation')
 class PeerNegotiation {
     private readonly remoteId: string
     private readonly configuration?: RTCConfiguration
-    private readonly onTrack: (track: MediaStreamTrack, stats?: RTCStatsReport) => void
+    private readonly onTrack: (track: MediaStreamTrack) => void
     private readonly onDescription: (description: RTCSessionDescriptionInit) => void
     private readonly onCandidate: (iceCandidate: RTCIceCandidate) => void
     private readonly onRestart: () => void
@@ -19,6 +21,7 @@ class PeerNegotiation {
     private candidates: RTCIceCandidate[] = []
     private videoSender?: RTCRtpSender
     private audioSender?: RTCRtpSender
+    private report?: LogServerReportFn
 
     private _onnegotiationneeded: (this: RTCPeerConnection, ev: RTCPeerConnectionEventMap["negotiationneeded"]) => any
     private _onicecandidate: (this: RTCPeerConnection, ev: RTCPeerConnectionEventMap["icecandidate"]) => any
@@ -33,6 +36,7 @@ class PeerNegotiation {
                     onCandidate,
                     onRestart,
                     polite,
+        report
                 }: {
         remoteId: string
         configuration?: RTCConfiguration,
@@ -41,6 +45,7 @@ class PeerNegotiation {
         onCandidate: (iceCandidate: RTCIceCandidate) => void,
         onRestart: () => void,
         polite: boolean,
+        report?: LogServerReportFn
     }) {
         this.remoteId = remoteId
         this.configuration = configuration
@@ -49,6 +54,7 @@ class PeerNegotiation {
         this.onRestart = onRestart
         this.onTrack = onTrack
         this.polite = polite
+        this.report = report
 
         this.start()
     }
@@ -206,6 +212,9 @@ class PeerNegotiation {
         trace(this.remoteId + " setupPeerConnection()")
 
         this.peerConnection = new RTCPeerConnection(this.configuration)
+        this.report(ClientLogEvents.PeerConnecting, {
+            targetDeviceId: this.remoteId
+        })
 
         this._onnegotiationneeded = () => {
             trace(this.remoteId + " _onnegotiationneeded()")
@@ -223,12 +232,7 @@ class PeerNegotiation {
 
         this._ontrack = (event) => {
             trace(this.remoteId + " _ontrack(" + event.track.id + ")")
-            this.peerConnection.getStats(event.track)
-                .then(stats => this.onTrack(event.track, stats))
-                .catch(error => {
-                    reportError(error)
-                    this.onTrack(event.track)
-                })
+            this.onTrack(event.track)
         }
 
         this.peerConnection.addEventListener('negotiationneeded', this._onnegotiationneeded)

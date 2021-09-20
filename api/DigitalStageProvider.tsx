@@ -9,8 +9,8 @@ import {MediasoupProvider} from './services/MediasoupService'
 import {WebRTCProvider} from './services/WebRTCService'
 import {WebcamProvider} from "./provider/WebcamProvider";
 import {MicrophoneProvider} from "./provider/MicrophoneProvider";
+import {AudioNodeProvider} from "./provider/AudioNodeProvider";
 
-const MemoizedDigitalStageServices = React.memo(DigitalStageServices)
 
 const DigitalStageProvider = ({children}: { children: React.ReactNode }) => (
     <Provider store={store}>
@@ -20,10 +20,12 @@ const DigitalStageProvider = ({children}: { children: React.ReactNode }) => (
                     <MediasoupProvider>
                         <WebRTCProvider>
                             <AudioContextProvider>
-                                <AudioLevelProvider>
-                                    <MemoizedDigitalStageServices/>
-                                    {children}
-                                </AudioLevelProvider>
+                                <AudioNodeProvider>
+                                    <AudioLevelProvider>
+                                        <DigitalStageServices/>
+                                        {children}
+                                    </AudioLevelProvider>
+                                </AudioNodeProvider>
                             </AudioContextProvider>
                         </WebRTCProvider>
                     </MediasoupProvider>

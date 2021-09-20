@@ -9,7 +9,6 @@ import {AudioContextService} from "./AudioContextService";
 import {TemporaryLogger} from "./TemporaryLogger";
 import {MediaCaptureService} from "./MediaCaptureService";
 
-
 const DigitalStageServices = () => {
     return (
         <>
@@ -24,4 +23,7 @@ const DigitalStageServices = () => {
         </>
     )
 }
-export {DigitalStageServices}
+
+const MemoizedDigitalStageServices = React.memo(DigitalStageServices)
+
+export {MemoizedDigitalStageServices as DigitalStageServices}

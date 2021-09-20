@@ -7,6 +7,7 @@ import {PeerNegotiation} from "./PeerNegotiation";
 import {useStageSelector} from 'api/redux/selectors/useStageSelector';
 import {useEmit} from '../ConnectionService';
 import {useNotification} from 'api/hooks/useNotification';
+import {useLogServer} from "../../hooks/useLogServer";
 
 const {trace} = logger('WebRTCService:PeerConnection')
 
@@ -25,10 +26,12 @@ const PeerConnection = ({
     onStats: (trackId: string, stats: RTCStatsReport) => void
     broker: Broker
 }): JSX.Element => {
+    const report = useLogServer()
     const ready = useStageSelector(state => state.globals.ready)
     const notify = useNotification()
     const emit = useEmit()
     const localStageDeviceId = useStageSelector((state) => state.globals.localStageDeviceId)
+    const targetDeviceId = useStageSelector(state => state.stageDevices.byId[stageDeviceId].deviceId)
     const [receivedTracks, setReceivedTracks] = React.useState<MediaStreamTrack[]>([])
     const turnServers = useStageSelector(state => state.globals.turn?.urls || [])
     const turnUsername = useStageSelector(state => state.globals.turn?.username)
@@ -36,7 +39,7 @@ const PeerConnection = ({
     const [connection, setConnection] = React.useState<PeerNegotiation>()
 
     React.useEffect(() => {
-        if (ready && notify && emit && localStageDeviceId && stageDeviceId && onRemoteTrack && broker && onStats) {
+        if (ready && notify && emit && localStageDeviceId && targetDeviceId && stageDeviceId && onRemoteTrack && broker && onStats) {
             trace('Created new peer connection ' + stageDeviceId)
             trace(turnServers.length > 0 ? 'Using TURN servers' : 'Fallback to public STUN servers')
 
@@ -98,13 +101,14 @@ const PeerConnection = ({
                 sdpSemantics: 'unified-plan'
             } : config
             const peerConnection = new PeerNegotiation({
-                remoteId: stageDeviceId,
+                remoteId: targetDeviceId,
                 configuration,
                 onTrack,
                 onDescription,
                 onCandidate,
                 onRestart,
-                polite
+                polite,
+                report: report
             })
             const handleRestart = () => {
                 peerConnection.restart()
@@ -135,7 +139,7 @@ const PeerConnection = ({
                 setConnection(undefined)
             }
         }
-    }, [stageDeviceId, turnServers, turnUsername, turnCredential, localStageDeviceId, emit, onRemoteTrack, onStats, broker, notify, ready])
+    }, [stageDeviceId, turnServers, turnUsername, turnCredential, localStageDeviceId, emit, onRemoteTrack, onStats, broker, notify, ready, targetDeviceId, report])
 
     React.useEffect(() => {
         if (process.env.NODE_ENV !== 'production') {

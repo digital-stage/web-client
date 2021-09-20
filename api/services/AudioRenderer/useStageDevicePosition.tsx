@@ -18,7 +18,7 @@ const useStageDevicePosition = ({
 }: {
     stageDeviceId: string
     deviceId: string
-}) => {
+}): ThreeDimensionalProperties => {
     const [position, setPosition] = useState<ThreeDimensionalProperties>(
         DefaultThreeDimensionalProperties
     )
