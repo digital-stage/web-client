@@ -2,7 +2,7 @@ import React from 'react'
 import {config} from './config'
 import {logger} from 'api/logger'
 import {Broker} from './Broker'
-import {ClientDeviceEvents, ClientDevicePayloads} from "@digitalstage/api-types";
+import {ClientDeviceEvents, ClientDevicePayloads, ClientLogEvents} from "@digitalstage/api-types";
 import {PeerNegotiation} from "./PeerNegotiation";
 import {useStageSelector} from 'api/redux/selectors/useStageSelector';
 import {useEmit} from '../ConnectionService';
@@ -39,7 +39,7 @@ const PeerConnection = ({
     const [connection, setConnection] = React.useState<PeerNegotiation>()
 
     React.useEffect(() => {
-        if (ready && notify && emit && localStageDeviceId && targetDeviceId && stageDeviceId && onRemoteTrack && broker && onStats) {
+        if (ready && notify && emit && localStageDeviceId && targetDeviceId && stageDeviceId && onRemoteTrack && broker && onStats && report) {
             trace('Created new peer connection ' + stageDeviceId)
             trace(turnServers.length > 0 ? 'Using TURN servers' : 'Fallback to public STUN servers')
 
@@ -142,19 +142,24 @@ const PeerConnection = ({
     }, [stageDeviceId, turnServers, turnUsername, turnCredential, localStageDeviceId, emit, onRemoteTrack, onStats, broker, notify, ready, targetDeviceId, report])
 
     React.useEffect(() => {
-        if (process.env.NODE_ENV !== 'production') {
+        //if (process.env.NODE_ENV !== 'production') {
             const id = setInterval(() => {
                 if (connection) {
                     receivedTracks.map((track) =>
                         connection.getStats(track).then((stats) => onStats(track.id, stats))
                     )
+                    connection.getStats(null)
+                        .then((stats) => report(ClientLogEvents.PeerStats, {
+                            targetDeviceId: targetDeviceId,
+                            ...stats
+                        }))
                 }
             }, 5000)
             return () => {
                 clearInterval(id)
             }
-        }
-    }, [connection, onStats, receivedTracks])
+        //}
+    }, [connection, onStats, receivedTracks, report, targetDeviceId])
 
     React.useEffect(() => {
         if (connection) {
