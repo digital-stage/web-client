@@ -20,7 +20,7 @@
     "test": "jest --watch"
   },
   "dependencies": {
-    "@digitalstage/api-types": "^0.5.5",
+    "@digitalstage/api-types": "^0.5.6",
     "@react-hook/debounce": "^4.0.0",
     "@react-hook/throttle": "^2.2.0",
     "@reduxjs/toolkit": "^1.6.1",

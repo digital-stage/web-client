@@ -11,9 +11,11 @@ const useLogServer = (): LogServerReportFn => {
 
     return React.useCallback((event: string, payload: any) => {
         if (process.env.NEXT_PUBLIC_LOG_URL) {
+            console.log("SENDING LOG")
             if (userId && deviceId && email && stageId) {
-                fetch(process.env.LOG_SERVER_URL + "/" + event,
+                fetch(process.env.NEXT_PUBLIC_LOG_URL + "/" + event,
                     {
+                        method: "POST",
                         body: JSON.stringify({
                             ...payload,
                             userId: userId,
@@ -28,6 +30,8 @@ const useLogServer = (): LogServerReportFn => {
                         console.error(err)
                     })
             }
+        } else {
+            console.log("Missing log server")
         }
     }, [deviceId, email, stageId, userId])
 }

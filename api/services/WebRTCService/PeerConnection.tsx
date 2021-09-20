@@ -143,21 +143,30 @@ const PeerConnection = ({
 
     React.useEffect(() => {
         //if (process.env.NODE_ENV !== 'production') {
-            const id = setInterval(() => {
-                if (connection) {
-                    receivedTracks.map((track) =>
-                        connection.getStats(track).then((stats) => onStats(track.id, stats))
-                    )
-                    connection.getStats(null)
-                        .then((stats) => report(ClientLogEvents.PeerStats, {
+        const id = setInterval(() => {
+            if (connection) {
+                receivedTracks.map((track) =>
+                    connection.getStats(track).then((stats) => onStats(track.id, stats))
+                )
+                connection.getStats(null)
+                    .then((stats) => {
+                        let formattedStats = {}
+                        stats.forEach((v,k) => {
+                            formattedStats = {
+                                ...formattedStats,
+                                [k]: v
+                            }
+                        })
+                        report(ClientLogEvents.PeerStats, {
                             targetDeviceId: targetDeviceId,
-                            ...stats
-                        }))
-                }
-            }, 5000)
-            return () => {
-                clearInterval(id)
+                            stats: formattedStats
+                        })
+                    })
             }
+        }, 5000)
+        return () => {
+            clearInterval(id)
+        }
         //}
     }, [connection, onStats, receivedTracks, report, targetDeviceId])
 
