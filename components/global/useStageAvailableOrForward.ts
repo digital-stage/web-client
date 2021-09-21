@@ -20,25 +20,22 @@
  * SOFTWARE.
  */
 
-import { AudioTrack } from '@digitalstage/api-types'
+import {useRouter} from "next/router";
+import {useStageSelector} from "@digitalstage/api-client-react";
+import React from "react";
 
-interface AudioTracks {
-    byId: {
-        [id: string]: AudioTrack
+const useStageAvailableOrForward = (): boolean => {
+  const {isReady, replace} = useRouter()
+  const insideStage = useStageSelector<boolean>((state) =>
+    state.globals.ready ? !!state.globals.stageId : undefined
+  )
+
+  React.useEffect(() => {
+    if (isReady && insideStage === false) {
+      replace('/stages')
     }
-    byStage: {
-        [stageId: string]: string[]
-    }
-    byStageMember: {
-        [stageMemberId: string]: string[]
-    }
-    byStageDevice: {
-        [stageDeviceId: string]: string[]
-    }
-    byUser: {
-        [userId: string]: string[]
-    }
-    allIds: string[]
+  }, [isReady, insideStage, replace])
+
+  return insideStage
 }
-
-export type { AudioTracks }
+export {useStageAvailableOrForward}
