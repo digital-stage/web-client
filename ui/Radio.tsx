@@ -23,8 +23,12 @@
 import React, {DetailedHTMLProps, InputHTMLAttributes} from 'react'
 
 const Radio = (props: DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>) => {
-    return (
-        <input type="radio" {...props} />
-    )
+  return (
+    <div className="radio">
+      <input type="radio" {...props} />
+      <span className="radioCheckmark"/>
+      <span className="radioFocus"/>
+    </div>
+  )
 }
-export { Radio }
+export {Radio}

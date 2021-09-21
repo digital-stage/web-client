@@ -32,6 +32,7 @@ import { TextInput } from 'ui/TextInput'
 import {Collapse} from 'ui/Collapse'
 import { shallowEqual } from 'react-redux'
 import { Switch } from 'ui/Switch'
+import {Radio} from "../../../ui/Radio";
 
 const StageModal = ({
     open,
@@ -142,14 +143,14 @@ const StageModal = ({
                         />
                         <h5 className="muted">Audioübertragung</h5>
                         <div>
-                            <label>
-                                <Field type="radio" name="audioType" value="mediasoup" /> Browser
+                            <label className="radioLabel">
+                                <Field as={Radio} type="radio" name="audioType" value="mediasoup" /> Browser
                             </label>
-                            <label>
-                                <Field type="radio" name="audioType" value="jammer" /> Jammer
+                            <label className="radioLabel">
+                                <Field as={Radio} type="radio" name="audioType" value="jammer" /> Jammer
                             </label>
-                            <label>
-                                <Field type="radio" name="audioType" value="ov" /> OV
+                            <label className="radioLabel">
+                                <Field as={Radio} type="radio" name="audioType" value="ov" /> OV
                             </label>
                         </div>
                         {errors.audioType && touched.audioType && (
@@ -271,6 +272,7 @@ const StageModal = ({
                                 disabled={isSubmitting || !!error}
                                 className="danger"
                                 type="submit"
+                                autoFocus={true}
                             >
                                 {stage ? 'Speichern' : 'Neue Bühne erstellen'}
                             </ModalButton>

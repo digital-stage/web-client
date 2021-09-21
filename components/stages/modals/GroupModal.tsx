@@ -157,6 +157,7 @@ const GroupModal = ({
                         <ModalFooter>
                             <ModalButton onClick={onClose}>Abbrechen</ModalButton>
                             <ModalButton
+                              autoFocus={true}
                                 disabled={isSubmitting || !!error || !isValid}
                                 className="danger"
                                 type="submit"

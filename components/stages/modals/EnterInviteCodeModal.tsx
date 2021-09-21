@@ -75,6 +75,7 @@ const EnterInviteCodeModal = ({ open, onClose }: { open: boolean; onClose: () =>
             </ModalHeader>
             <Paragraph kind="micro" className="center">
                 <ReactCodeInput
+                  autoFocus={true}
                     disabled={working}
                     name="Code"
                     inputMode="latin"

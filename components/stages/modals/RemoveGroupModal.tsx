@@ -71,7 +71,7 @@ const RemoveGroupModal = ({
                 </Paragraph>
                 {error ? <NotificationItem kind="error">{error}</NotificationItem> : null}
                 <ModalFooter>
-                    <ModalButton onClick={onClose}>Nein</ModalButton>
+                    <ModalButton onClick={onClose} autoFocus={true}>Nein</ModalButton>
                     <ModalButton disabled={isDeleting} className="danger" onClick={removeStage}>
                         Ja, Gruppe wirklich löschen
                     </ModalButton>

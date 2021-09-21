@@ -79,7 +79,7 @@ const LeaveStageForGoodModal = ({
         </Paragraph>
         {error ? <NotificationItem kind="error">{error}</NotificationItem> : null}
         <ModalFooter>
-          <ModalButton onClick={onClose}>Nein</ModalButton>
+          <ModalButton autoFocus={true} onClick={onClose}>Nein</ModalButton>
           <ModalButton
             disabled={isLeaving}
             className="danger"

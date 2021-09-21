@@ -21,6 +21,12 @@
  */
 
 .stageModal {
+  .radioLabel {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+  }
+
   .stageModalAudioTypeDescription {
     padding-bottom: 32px;
   }
