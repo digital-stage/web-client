@@ -21,37 +21,44 @@
  */
 
 import * as React from 'react'
-import {useEffect} from 'react'
 import {logout, useStageSelector, InternalActionTypes} from '@digitalstage/api-client-react'
 import {batch, useDispatch} from 'react-redux'
-import {useForwardToLoginWhenSignedOut} from "../../lib/useForwardToLoginWhenSignedOut";
 import {Loading} from 'components/global/Loading';
+import {useRouter} from "next/router";
 
 const Logout = (): JSX.Element => {
-  useForwardToLoginWhenSignedOut()
-  const dispatch = useDispatch()
-  const initialized = useStageSelector((state) => state.auth.initialized)
-  const token = useStageSelector((state) => state.auth.token)
+    const dispatch = useDispatch()
+    const initialized = useStageSelector((state) => state.auth.initialized)
+    const token = useStageSelector((state) => state.auth.token)
+    const {isReady, replace} = useRouter()
+    const signedOut = useStageSelector<boolean>(
+        (state) => state.auth.initialized && !state.auth.user
+    )
+    React.useEffect(() => {
+        if (isReady && signedOut) {
+            replace('/account/login')
+        }
+    }, [isReady, replace, signedOut])
 
-  useEffect(() => {
-    if (initialized && token) {
-      logout(token)
-        .then(() =>
-          batch(() => {
-            dispatch({
-              type: InternalActionTypes.LOGOUT,
-            })
-            dispatch({
-              type: InternalActionTypes.RESET,
-            })
-          })
-        )
-    }
-  }, [dispatch, initialized, token])
+    React.useEffect(() => {
+        if (initialized && token) {
+            logout(token)
+                .then(() =>
+                    batch(() => {
+                        dispatch({
+                            type: InternalActionTypes.LOGOUT,
+                        })
+                        dispatch({
+                            type: InternalActionTypes.RESET,
+                        })
+                    })
+                )
+        }
+    }, [dispatch, initialized, token])
 
-  return (
-    <Loading message="Melde Dich ab..."/>
-  )
+    return (
+        <Loading message="Melde Dich ab..."/>
+    )
 }
 
 export default Logout
