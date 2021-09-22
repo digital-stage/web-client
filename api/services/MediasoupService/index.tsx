@@ -328,6 +328,16 @@ const MediasoupService = () => {
       })
     }
   }, [videoTracks, routerConnection, receiveTransport, device, log, reportError, setVideoConsumers])
+  React.useEffect(() => {
+    if(receiveTransport && setVideoConsumers) {
+      return () => {
+        setVideoConsumers(prevState => {
+          Object.values(prevState).map(consumer => consumer.close())
+          return {}
+        })
+      }
+    }
+  }, [receiveTransport, setVideoConsumers])
 
   const localVideoTrack = useWebcam()
   React.useEffect(() => {
