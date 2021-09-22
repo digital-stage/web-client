@@ -375,13 +375,6 @@ export const consume = (
   return createConsumer(routerConnection, device, receiveTransport, producerId).then(
     async (localConsumer) => {
       trace(`Created consumer ${localConsumer.id} to consume ${producerId}`)
-      if (localConsumer.paused) {
-        trace(`Consumer ${localConsumer.id} is paused, try to resume it`)
-        await resumeConsumer(routerConnection, localConsumer)
-      }
-      if (localConsumer.paused) {
-        reportError(`Consumer ${localConsumer.id} is still paused after resume`)
-      }
       return localConsumer
     }
   )

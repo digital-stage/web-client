@@ -72,7 +72,7 @@ const authMiddleware: Middleware<
             if (!token) {
                 Cookie.remove('token')
             } else {
-                Cookie.set('token', token, { expires: staySignedIn ? 7 : undefined })
+                Cookie.set('token', token, { expires: staySignedIn ? 7 : undefined, sameSite: 'strict' })
             }
             break
         }
@@ -80,7 +80,7 @@ const authMiddleware: Middleware<
             const payload = action.payload as ServerDevicePayloads.LocalDeviceReady
             if (prevState.auth.user) {
                 // Will be read by getInitialDevice() in next session
-                Cookie.set(prevState.auth.user._id, payload.uuid, { expires: 365 })
+                Cookie.set(prevState.auth.user._id, payload.uuid, { expires: 365, sameSite: 'strict' })
             }
             break
         }

@@ -27,13 +27,13 @@ import {
   createProducer,
   createWebRTCTransport,
   getRTPCapabilities,
-  publishProducer, resumeConsumer,
+  publishProducer,
   stopProducer,
   unpublishProducer,
 } from './util'
 
 import React from 'react'
-import {ClientLogEvents, ClientLogPayloads, MediasoupAudioTrack, MediasoupVideoTrack} from '@digitalstage/api-types'
+import {MediasoupAudioTrack, MediasoupVideoTrack} from '@digitalstage/api-types'
 import {Transport} from 'mediasoup-client/lib/Transport'
 import {Producer} from 'mediasoup-client/lib/Producer'
 import {Consumer} from 'mediasoup-client/lib/Consumer'
@@ -43,8 +43,6 @@ import {useErrorReporting} from '../../hooks/useErrorReporting'
 import {useStageSelector} from '../../redux/selectors/useStageSelector'
 import {useWebcam} from '../../provider/WebcamProvider'
 import {useMicrophone} from '../../provider/MicrophoneProvider'
-import {useLogServer} from "../../hooks/useLogServer";
-import {Client} from "@sentry/types";
 
 const {trace} = logger('MediasoupService')
 
@@ -86,10 +84,9 @@ const useAudioConsumers = (): ConsumerList => {
 
 const MediasoupService = () => {
   const emit = useEmit()
-  const logToServer = useLogServer()
   const reportError = useErrorReporting()
   const localStageDeviceId = useStageSelector<string>((state) => state.globals.localStageDeviceId)
-  const useP2P = useStageSelector<boolean>(state => state.globals.localDeviceId ? state.devices.byId[state.globals.localDeviceId].useP2P : undefined)
+  const useP2P = useStageSelector<boolean>(state => state.globals.localDeviceId ? state.devices.byId[state.globals.localDeviceId].useP2P : false)
   const stageId = useStageSelector<string>((state) => state.globals.stageId)
   const routerUrl = useStageSelector<string>((state) => {
     if (state.globals.stageId) {
@@ -108,17 +105,60 @@ const MediasoupService = () => {
   )
   const [routerConnection, setRouterConnection] = React.useState<ITeckosClient>()
   const [device, setDevice] = React.useState<MediasoupDevice>()
+  const [sendTransport, setSendTransport] = React.useState<Transport>()
+  const [receiveTransport, setReceiveTransport] = React.useState<Transport>()
 
-  const log = React.useCallback((event: string, payload?: any) => {
-    if(routerUrl) {
-      logToServer(event, {
-        ...payload,
-        routerUrl: routerUrl
-      })
+  React.useEffect(() => {
+    if (routerConnection && device && reportError) {
+      let abort = false
+      let createdSendTransport
+      createWebRTCTransport(routerConnection, device, 'send')
+        .then(transport => {
+          createdSendTransport = transport
+          transport.on('connectionstatechange', async (state) => {
+            if (state === 'closed' || state === 'failed' || state === 'disconnected') {
+              reportError(`Send transport has been ${state} by router`)
+              setSendTransport(undefined)
+            }
+          })
+          if (!abort) {
+            setSendTransport(transport)
+          }
+        })
+      return () => {
+        abort = true
+        setSendTransport(undefined)
+        trace("Closing send transport")
+        createdSendTransport?.close()
+      }
     }
-  }, [routerUrl, logToServer])
+  }, [device, routerConnection, reportError])
 
-  // Creating connection to router
+  React.useEffect(() => {
+    if (routerConnection && device && reportError) {
+      let abort = false
+      let createdReceiveTransport
+      createWebRTCTransport(routerConnection, device, 'receive')
+        .then(transport => {
+          createdReceiveTransport = transport
+          transport.on('connectionstatechange', async (state) => {
+            if (state === 'closed' || state === 'failed' || state === 'disconnected') {
+              reportError(`Receive transport has been ${state} by router`)
+              setReceiveTransport(undefined)
+            }
+          })
+          if (!abort) {
+            setReceiveTransport(transport)
+          }
+        })
+      return () => {
+        abort = true
+        setReceiveTransport(undefined)
+        createdReceiveTransport?.close()
+      }
+    }
+  }, [device, reportError, routerConnection])
+
   React.useEffect(() => {
     if (routerUrl && reportError) {
       let abort = false
@@ -138,15 +178,11 @@ const MediasoupService = () => {
       createdRouterConnection.on('connect', async () => {
         trace(`Connected to router ${routerUrl}`)
         setRouterConnection(createdRouterConnection)
-        log(ClientLogEvents.MediasoupConnected)
         createdDevice = new MediasoupDevice()
         return getRTPCapabilities(createdRouterConnection)
           .then(async (routerRtpCapabilities) => {
             if (!abort) {
               await createdDevice.load({routerRtpCapabilities: routerRtpCapabilities})
-              log(ClientLogEvents.MediasoupGotRtpCapabilities, {
-                routerUrl
-              })
               setDevice(createdDevice)
             }
           })
@@ -154,7 +190,6 @@ const MediasoupService = () => {
             reportError(err)
           })
       })
-      log(ClientLogEvents.MediasoupConnecting)
       createdRouterConnection.connect()
       return () => {
         abort = true
@@ -163,79 +198,7 @@ const MediasoupService = () => {
         disconnect()
       }
     }
-  }, [routerUrl, reportError, log])
-
-  const [sendTransport, setSendTransport] = React.useState<Transport>()
-  // Assure, that send transport will be established
-  React.useEffect(() => {
-    if (routerConnection && device) {
-      // Avoiding deadlock by checking send transport but assure that it will be always established
-      if (!sendTransport) {
-        let abort = false
-        trace("Creating send transport")
-        createWebRTCTransport(routerConnection, device, 'send')
-          .then(transport => {
-            transport.on('connectionstatechange', async (state) => {
-              if (state === 'closed' || state === 'failed' || state === 'disconnected') {
-                reportError(`Send transport has been ${state} by router`)
-                setSendTransport(undefined)
-                log(ClientLogEvents.MediasoupSendTransportDisconnected)
-              }
-            })
-            if (!abort) {
-              trace("Created send transport")
-              setSendTransport(transport)
-              log(ClientLogEvents.MediasoupSendTransportConnected)
-            } else {
-              transport.close()
-            }
-          })
-      }
-    }
-  }, [routerConnection, device, sendTransport, reportError, log])
-  // Clean up existing send transport
-  React.useEffect(() => {
-    if (routerConnection && device && sendTransport) {
-      return () => {
-        trace("Closing send transport")
-        sendTransport.close()
-      }
-    }
-  }, [routerConnection, device, sendTransport])
-
-  const [receiveTransport, setReceiveTransport] = React.useState<Transport>()
-  // Assure, that receive transport will be established
-  React.useEffect(() => {
-    if (routerConnection && device) {
-      // Avoiding deadlock by checking receive transport but assure that it will be always established
-      if (!receiveTransport) {
-        trace("Creating receive transport")
-        createWebRTCTransport(routerConnection, device, 'receive')
-          .then(transport => {
-            transport.on('connectionstatechange', async (state) => {
-              if (state === 'closed' || state === 'failed' || state === 'disconnected') {
-                reportError(`Receive transport has been ${state} by router`)
-                setReceiveTransport(undefined)
-                log(ClientLogEvents.MediasoupSendTransportDisconnected)
-              }
-            })
-            trace("Created receive transport")
-            setReceiveTransport(transport)
-            log(ClientLogEvents.MediasoupReceiveTransportConnected)
-          })
-      }
-    }
-  }, [routerConnection, device, receiveTransport, log, reportError])
-  // Clean up existing send transport
-  React.useEffect(() => {
-    if (routerConnection && device && receiveTransport) {
-      return () => {
-        trace("Closing receive transport")
-        receiveTransport.close()
-      }
-    }
-  }, [routerConnection, device, receiveTransport])
-
+  }, [routerUrl, reportError])
 
   const videoTracks = useStageSelector<MediasoupVideoTrack[]>((state) =>
     state.globals.stageId && state.videoTracks.byStage[state.globals.stageId]
@@ -249,85 +212,38 @@ const MediasoupService = () => {
   )
   const setVideoConsumers = React.useContext(DispatchVideoConsumerContext)
   React.useEffect(() => {
-    if (routerConnection && device && receiveTransport && setVideoConsumers) {
-      trace("Syncing video track list with current video consumer list")
-      setVideoConsumers(prevState => {
-        // Clean up by excluding obsolete consumers
-        const existing: ConsumerList = Object.keys(prevState)
-          .reduce<ConsumerList>((prev, trackId) => {
-            if (videoTracks.find((track) => track._id === trackId)) {
-              return {
-                ...prev,
-                [trackId]: prevState[trackId],
-              }
-            } else {
-              trace(`Removed obsolete consumer ${prevState[trackId].id} for track ${trackId}`)
-              prevState[trackId].close()
-              log(ClientLogEvents.MediasoupConsumerRemoved, {
-                consumerId: prevState[trackId].id,
-                producerId: prevState[trackId].producerId,
-                trackId: trackId,
-                kind: 'video',
-              } as Partial<ClientLogPayloads.MediasoupConsumerRemoved>)
+    if (setVideoConsumers && routerConnection && device && receiveTransport && reportError) {
+      trace('Sync video tracks', videoTracks)
+      setVideoConsumers((prevState) => {
+        // Clean up
+        const existing: ConsumerList = Object.keys(prevState).reduce((prev, trackId) => {
+          if (videoTracks.find((track) => track._id === trackId)) {
+            return {
+              ...prev,
+              [trackId]: prevState[trackId],
             }
-            return prev
-          }, {})
-
+          }
+          return prev
+        }, {})
         // Add new async (and add them later)
         videoTracks.map((track) => {
-          if (!existing[track._id]) {
-            // Create new consumer for this video track
+          if (!prevState[track._id]) {
             consume(
               routerConnection,
               receiveTransport,
               device,
               track.producerId
-            )
-              .then((consumer) => {
-                if (consumer.paused) {
-                  trace(`Consumer ${consumer.id} is paused, try to resume it`)
-                  return resumeConsumer(routerConnection, consumer)
-                }
-              })
-              .then((consumer) => {
-                  trace(`Consuming now video ${track._id} with producer ${track.producerId}`)
-                  setVideoConsumers((prev) => ({...prev, [track._id]: consumer}))
-                  log(ClientLogEvents.MediasoupConsumerCreated, {
-                    consumerId: consumer.id,
-                    producerId: consumer.producerId,
-                    trackId: track._id,
-                    kind: 'video',
-                  } as Partial<ClientLogPayloads.MediasoupConsumerCreated>)
-                  consumer.track.addEventListener("mute", () => {
-                    trace(`Track of consumer ${consumer.id} for video ${track._id} is muted`)
-                    log(ClientLogEvents.MediasoupConsumerMuteChanged, {
-                      consumerId: consumer.id,
-                      producerId: consumer.producerId,
-                      trackId: track._id,
-                      kind: 'video',
-                      muted: true
-                    } as Partial<ClientLogPayloads.MediasoupConsumerChanged>)
-                  })
-                  consumer.track.addEventListener("unmute", () => {
-                      trace(`Track of consumer ${consumer.id} for video ${track._id} is unmuted`)
-                      log(ClientLogEvents.MediasoupConsumerMuteChanged, {
-                        consumerId: consumer.id,
-                        producerId: consumer.producerId,
-                        trackId: track._id,
-                        kind: 'video',
-                        muted: false
-                      } as Partial<ClientLogPayloads.MediasoupConsumerChanged>)
-                    }
-                  )
-                }
-              ).catch(err => reportError(err))
+            ).then((consumer) => {
+                trace(`Consuming now video ${track._id} with producer ${track.producerId}`)
+                setVideoConsumers((prev) => ({...prev, [track._id]: consumer}))
+              }
+            ).catch(err => reportError(err))
           }
         })
-
         return existing
       })
     }
-  }, [videoTracks, routerConnection, receiveTransport, device, log, reportError, setVideoConsumers])
+  }, [device, receiveTransport, reportError, routerConnection, setVideoConsumers, videoTracks])
 
   const localVideoTrack = useWebcam()
   React.useEffect(() => {
@@ -360,10 +276,6 @@ const MediasoupService = () => {
             const {_id} = await publishProducer(emit, stageId, producer.id, 'video')
             publishedId = _id
             trace(`Published local video track ${track.id}/producer ${producer.id} as video ${publishedId}`)
-            log(ClientLogEvents.MediasoupProducerCreated, {
-              producerId: producer.id,
-              trackId: publishedId
-            } as Partial<ClientLogPayloads.MediasoupProducerCreated>)
           }
         } catch (err) {
           reportError(`Could not produce or publish local video track ${track.id}. Reason: ${err}`)
@@ -373,12 +285,6 @@ const MediasoupService = () => {
         abort = true
         if (timeout) {
           clearTimeout(timeout)
-        }
-        if (publishedId && producer) {
-          log(ClientLogEvents.MediasoupProducerRemoved, {
-            producerId: producer.id,
-            trackId: publishedId
-          } as Partial<ClientLogPayloads.MediasoupProducerRemoved>)
         }
         if (emit && publishedId) {
           unpublishProducer(emit, publishedId, 'video')
@@ -399,7 +305,113 @@ const MediasoupService = () => {
         }
       }
     }
-  }, [emit, stageId, reportError, useP2P, videoType, localVideoTrack, routerConnection, sendTransport, log])
+  }, [emit, stageId, reportError, useP2P, videoType, localVideoTrack, routerConnection, sendTransport])
+
+  const audioTracks = useStageSelector<MediasoupAudioTrack[]>((state) =>
+    state.globals.stageId && state.audioTracks.byStage[state.globals.stageId]
+      ? (state.audioTracks.byStage[state.globals.stageId]
+        .map((id) => state.audioTracks.byId[id])
+        .filter(
+          (track) =>
+            track.type === 'mediasoup' && track.stageDeviceId !== localStageDeviceId
+        ) as MediasoupAudioTrack[])
+      : []
+  )
+
+  const setAudioConsumers = React.useContext(DispatchAudioConsumerContext)
+  React.useEffect(() => {
+    if (setAudioConsumers && device && routerConnection && receiveTransport && reportError) {
+      trace('Sync audio tracks', audioTracks)
+      setAudioConsumers((prevState) => {
+        // Clean up
+        const existing: ConsumerList = Object.keys(prevState).reduce((prev, trackId) => {
+          if (audioTracks.find((track) => track._id === trackId)) {
+            return {
+              ...prev,
+              [trackId]: prevState[trackId],
+            }
+          }
+          return prev
+        }, {})
+        // Add new async (and add them later)
+        audioTracks.map((track) => {
+          if (!prevState[track._id]) {
+            consume(
+              routerConnection,
+              receiveTransport,
+              device,
+              track.producerId
+            ).then((consumer) => {
+                trace(`Consuming now audio ${track.id} with producer ${track.producerId}`)
+                setAudioConsumers((prev) => ({...prev, [track._id]: consumer}))
+              }
+            ).catch(err => reportError(err))
+          }
+        })
+        return {
+          ...existing,
+        }
+      })
+    }
+  }, [audioTracks, device, receiveTransport, reportError, routerConnection, setAudioConsumers])
+
+  const localAudioTrack = useMicrophone()
+  React.useEffect(() => {
+    if (
+      emit &&
+      reportError &&
+      routerConnection &&
+      sendTransport &&
+      stageId &&
+      audioType === 'mediasoup' &&
+      !useP2P &&
+      localAudioTrack
+    ) {
+      let abort: boolean = false
+      let producer: Producer
+      let publishedId: string
+      const track = localAudioTrack.clone()
+      trace(`Publishing local audio`)
+      ;(async () => {
+        try {
+          if (!abort) {
+            producer = await createProducer(sendTransport, track)
+          }
+          if (!abort && producer.paused) {
+            trace(`Audio producer ${producer.id} is paused`)
+            producer.resume()
+          }
+          if (!abort) {
+            const {_id} = await publishProducer(emit, stageId, producer.id, 'audio')
+            publishedId = _id
+            trace(`Published local audio track ${track.id}/producer ${producer.id} as audio ${publishedId}`)
+          }
+        } catch (err) {
+          reportError(`Could not produce or publish local audio track ${track.id}. Reason: ${err}`)
+        }
+      })()
+      return () => {
+        abort = true
+        if (emit && publishedId) {
+          unpublishProducer(emit, publishedId, 'audio')
+            .then(() => trace(`Un-published local audio track ${track.id}, published as audio ${publishedId}`))
+            .catch((err) => reportError(
+              `Could not un-publish local audio track ${track?.id} published as audio ${publishedId}. Reason: ${err}`
+            ))
+        }
+        if (routerConnection && producer) {
+          stopProducer(routerConnection, producer).catch((err) =>
+            reportError(
+              `Could not stop producer ${producer.id} of local audio track ${track?.id} published as audio ${publishedId}. Reason: ${err}`
+            )
+          )
+        }
+        if (track) {
+          track.stop()
+        }
+      }
+    }
+  }, [emit, stageId, useP2P, audioType, localAudioTrack, sendTransport, routerConnection, reportError])
 
   return null
 }
