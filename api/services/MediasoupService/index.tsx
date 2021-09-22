@@ -109,9 +109,12 @@ const MediasoupService = () => {
   const [routerConnection, setRouterConnection] = React.useState<ITeckosClient>()
   const [device, setDevice] = React.useState<MediasoupDevice>()
 
-  const log = React.useCallback((event: string, payload?: any) => {
-    if(routerUrl) {
-      logToServer(event, {
+  const log = React.useRef<(event: string, payload?: any) => void>((_e: string, _p?: any) => {
+  })
+
+  React.useEffect(() => {
+    if (routerUrl && logToServer) {
+      log.current = (event: string, payload?: any) => logToServer(event, {
         ...payload,
         routerUrl: routerUrl
       })
@@ -138,13 +141,13 @@ const MediasoupService = () => {
       createdRouterConnection.on('connect', async () => {
         trace(`Connected to router ${routerUrl}`)
         setRouterConnection(createdRouterConnection)
-        log(ClientLogEvents.MediasoupConnected)
+        log.current(ClientLogEvents.MediasoupConnected)
         createdDevice = new MediasoupDevice()
         return getRTPCapabilities(createdRouterConnection)
           .then(async (routerRtpCapabilities) => {
             if (!abort) {
               await createdDevice.load({routerRtpCapabilities: routerRtpCapabilities})
-              log(ClientLogEvents.MediasoupGotRtpCapabilities, {
+              log.current(ClientLogEvents.MediasoupGotRtpCapabilities, {
                 routerUrl
               })
               setDevice(createdDevice)
@@ -154,7 +157,8 @@ const MediasoupService = () => {
             reportError(err)
           })
       })
-      log(ClientLogEvents.MediasoupConnecting)
+      log.current(ClientLogEvents.MediasoupConnecting)
+      trace(`Connecting to router ${routerUrl}`)
       createdRouterConnection.connect()
       return () => {
         abort = true
@@ -163,7 +167,7 @@ const MediasoupService = () => {
         disconnect()
       }
     }
-  }, [routerUrl, reportError, log])
+  }, [routerUrl, reportError])
 
   const [sendTransport, setSendTransport] = React.useState<Transport>()
   // Assure, that send transport will be established
@@ -179,20 +183,20 @@ const MediasoupService = () => {
               if (state === 'closed' || state === 'failed' || state === 'disconnected') {
                 reportError(`Send transport has been ${state} by router`)
                 setSendTransport(undefined)
-                log(ClientLogEvents.MediasoupSendTransportDisconnected)
+                log.current(ClientLogEvents.MediasoupSendTransportDisconnected)
               }
             })
             if (!abort) {
               trace("Created send transport")
               setSendTransport(transport)
-              log(ClientLogEvents.MediasoupSendTransportConnected)
+              log.current(ClientLogEvents.MediasoupSendTransportConnected)
             } else {
               transport.close()
             }
           })
       }
     }
-  }, [routerConnection, device, sendTransport, reportError, log])
+  }, [routerConnection, device, sendTransport, reportError])
   // Clean up existing send transport
   React.useEffect(() => {
     if (routerConnection && device && sendTransport) {
@@ -216,16 +220,16 @@ const MediasoupService = () => {
               if (state === 'closed' || state === 'failed' || state === 'disconnected') {
                 reportError(`Receive transport has been ${state} by router`)
                 setReceiveTransport(undefined)
-                log(ClientLogEvents.MediasoupSendTransportDisconnected)
+                log.current(ClientLogEvents.MediasoupSendTransportDisconnected)
               }
             })
             trace("Created receive transport")
             setReceiveTransport(transport)
-            log(ClientLogEvents.MediasoupReceiveTransportConnected)
+            log.current(ClientLogEvents.MediasoupReceiveTransportConnected)
           })
       }
     }
-  }, [routerConnection, device, receiveTransport, log, reportError])
+  }, [routerConnection, device, receiveTransport, reportError])
   // Clean up existing send transport
   React.useEffect(() => {
     if (routerConnection && device && receiveTransport) {
@@ -263,7 +267,7 @@ const MediasoupService = () => {
             } else {
               trace(`Removed obsolete consumer ${prevState[trackId].id} for track ${trackId}`)
               prevState[trackId].close()
-              log(ClientLogEvents.MediasoupConsumerRemoved, {
+              log.current(ClientLogEvents.MediasoupConsumerRemoved, {
                 consumerId: prevState[trackId].id,
                 producerId: prevState[trackId].producerId,
                 trackId: trackId,
@@ -292,7 +296,7 @@ const MediasoupService = () => {
               .then((consumer) => {
                   trace(`Consuming now video ${track._id} with producer ${track.producerId}`)
                   setVideoConsumers((prev) => ({...prev, [track._id]: consumer}))
-                  log(ClientLogEvents.MediasoupConsumerCreated, {
+                  log.current(ClientLogEvents.MediasoupConsumerCreated, {
                     consumerId: consumer.id,
                     producerId: consumer.producerId,
                     trackId: track._id,
@@ -300,7 +304,7 @@ const MediasoupService = () => {
                   } as Partial<ClientLogPayloads.MediasoupConsumerCreated>)
                   consumer.track.addEventListener("mute", () => {
                     trace(`Track of consumer ${consumer.id} for video ${track._id} is muted`)
-                    log(ClientLogEvents.MediasoupConsumerMuteChanged, {
+                    log.current(ClientLogEvents.MediasoupConsumerMuteChanged, {
                       consumerId: consumer.id,
                       producerId: consumer.producerId,
                       trackId: track._id,
@@ -310,7 +314,7 @@ const MediasoupService = () => {
                   })
                   consumer.track.addEventListener("unmute", () => {
                       trace(`Track of consumer ${consumer.id} for video ${track._id} is unmuted`)
-                      log(ClientLogEvents.MediasoupConsumerMuteChanged, {
+                      log.current(ClientLogEvents.MediasoupConsumerMuteChanged, {
                         consumerId: consumer.id,
                         producerId: consumer.producerId,
                         trackId: track._id,
@@ -327,9 +331,9 @@ const MediasoupService = () => {
         return existing
       })
     }
-  }, [videoTracks, routerConnection, receiveTransport, device, log, reportError, setVideoConsumers])
+  }, [videoTracks, routerConnection, receiveTransport, device, reportError, setVideoConsumers])
   React.useEffect(() => {
-    if(receiveTransport && setVideoConsumers) {
+    if (receiveTransport && setVideoConsumers) {
       return () => {
         setVideoConsumers(prevState => {
           Object.values(prevState).map(consumer => consumer.close())
@@ -370,7 +374,7 @@ const MediasoupService = () => {
             const {_id} = await publishProducer(emit, stageId, producer.id, 'video')
             publishedId = _id
             trace(`Published local video track ${track.id}/producer ${producer.id} as video ${publishedId}`)
-            log(ClientLogEvents.MediasoupProducerCreated, {
+            log.current(ClientLogEvents.MediasoupProducerCreated, {
               producerId: producer.id,
               trackId: publishedId
             } as Partial<ClientLogPayloads.MediasoupProducerCreated>)
@@ -385,7 +389,7 @@ const MediasoupService = () => {
           clearTimeout(timeout)
         }
         if (publishedId && producer) {
-          log(ClientLogEvents.MediasoupProducerRemoved, {
+          log.current(ClientLogEvents.MediasoupProducerRemoved, {
             producerId: producer.id,
             trackId: publishedId
           } as Partial<ClientLogPayloads.MediasoupProducerRemoved>)
@@ -409,7 +413,7 @@ const MediasoupService = () => {
         }
       }
     }
-  }, [emit, stageId, reportError, useP2P, videoType, localVideoTrack, routerConnection, sendTransport, log])
+  }, [emit, stageId, reportError, useP2P, videoType, localVideoTrack, routerConnection, sendTransport])
 
   return null
 }
