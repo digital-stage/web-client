@@ -95,7 +95,7 @@ const StageMemberBox = ({
           )}
           <h5 className="memberName">{userName}</h5>
           {muted && <span style={{fontSize: "0.6rem", color: "var(---danger)"}}>(muted)</span>}
-          {track && <span style={{fontSize: "0.6rem", color: "var(---danger)"}}>(track.id)</span>}
+          {track && <span style={{fontSize: "0.6rem", color: "var(---danger)"}}>{track.id}</span>}
         </div>
         {track && <TrackStatsView trackId={track.id}/>}
       </div>
