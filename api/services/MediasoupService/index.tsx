@@ -44,12 +44,12 @@ import {useStageSelector} from '../../redux/selectors/useStageSelector'
 import {useWebcam} from '../../provider/WebcamProvider'
 import {useMicrophone} from '../../provider/MicrophoneProvider'
 import {useLogServer} from "../../hooks/useLogServer";
-import {Client} from "@sentry/types";
 
 const {trace} = logger('MediasoupService')
 
 type ConsumerList = { [trackId: string]: Consumer }
 type DispatchConsumersList = React.Dispatch<React.SetStateAction<ConsumerList>>
+type CleanupFunction = () => void
 
 const VideoConsumerContext = React.createContext<ConsumerList>(undefined)
 const DispatchVideoConsumerContext = React.createContext<DispatchConsumersList>(undefined)
@@ -241,25 +241,14 @@ const MediasoupService = () => {
   }, [routerConnection, device, receiveTransport])
 
 
-  const videoTracks = useStageSelector<MediasoupVideoTrack[]>((state) =>
-    state.globals.stageId && state.videoTracks.byStage[state.globals.stageId]
-      ? (state.videoTracks.byStage[state.globals.stageId]
-        .map((id) => state.videoTracks.byId[id])
-        .filter(
-          (track) =>
-            track.type === 'mediasoup' && track.stageDeviceId !== localStageDeviceId
-        ) as MediasoupVideoTrack[])
-      : []
-  )
-  const setVideoConsumers = React.useContext(DispatchVideoConsumerContext)
-  React.useEffect(() => {
-    if (routerConnection && device && receiveTransport && setVideoConsumers) {
+  const syncTracks = React.useCallback((tracks: MediasoupVideoTrack[] | MediasoupAudioTrack[], dispatch: DispatchConsumersList) => {
+    if (routerConnection && device && receiveTransport) {
       trace("Syncing video track list with current video consumer list")
-      setVideoConsumers(prevState => {
+      dispatch(prevState => {
         // Clean up by excluding obsolete consumers
         const existing: ConsumerList = Object.keys(prevState)
           .reduce<ConsumerList>((prev, trackId) => {
-            if (videoTracks.find((track) => track._id === trackId)) {
+            if (tracks.find((track) => track._id === trackId)) {
               return {
                 ...prev,
                 [trackId]: prevState[trackId],
@@ -271,14 +260,14 @@ const MediasoupService = () => {
                 consumerId: prevState[trackId].id,
                 producerId: prevState[trackId].producerId,
                 trackId: trackId,
-                kind: 'video',
+                kind: prevState[trackId].kind,
               } as Partial<ClientLogPayloads.MediasoupConsumerRemoved>)
             }
             return prev
           }, {})
 
         // Add new async (and add them later)
-        videoTracks.map((track) => {
+        tracks.map((track) => {
           if (!existing[track._id]) {
             // Create new consumer for this video track
             consume(
@@ -294,31 +283,31 @@ const MediasoupService = () => {
                 }
               })
               .then((consumer) => {
-                  trace(`Consuming now video ${track._id} with producer ${track.producerId}`)
+                  trace(`Consuming now ${track.kind} ${track._id} with producer ${track.producerId}`)
                   setVideoConsumers((prev) => ({...prev, [track._id]: consumer}))
                   log.current(ClientLogEvents.MediasoupConsumerCreated, {
                     consumerId: consumer.id,
                     producerId: consumer.producerId,
                     trackId: track._id,
-                    kind: 'video',
+                    kind: track.kind,
                   } as Partial<ClientLogPayloads.MediasoupConsumerCreated>)
                   consumer.track.addEventListener("mute", () => {
-                    trace(`Track of consumer ${consumer.id} for video ${track._id} is muted`)
+                    trace(`Track of consumer ${consumer.id} for ${track.kind} ${track._id} is muted`)
                     log.current(ClientLogEvents.MediasoupConsumerMuteChanged, {
                       consumerId: consumer.id,
                       producerId: consumer.producerId,
                       trackId: track._id,
-                      kind: 'video',
+                      kind: track.kind,
                       muted: true
                     } as Partial<ClientLogPayloads.MediasoupConsumerChanged>)
                   })
                   consumer.track.addEventListener("unmute", () => {
-                      trace(`Track of consumer ${consumer.id} for video ${track._id} is unmuted`)
+                      trace(`Track of consumer ${consumer.id} for ${track.kind} ${track._id} is unmuted`)
                       log.current(ClientLogEvents.MediasoupConsumerMuteChanged, {
                         consumerId: consumer.id,
                         producerId: consumer.producerId,
                         trackId: track._id,
-                        kind: 'video',
+                        kind: track.kind,
                         muted: false
                       } as Partial<ClientLogPayloads.MediasoupConsumerChanged>)
                     }
@@ -331,7 +320,24 @@ const MediasoupService = () => {
         return existing
       })
     }
-  }, [videoTracks, routerConnection, receiveTransport, device, reportError, setVideoConsumers])
+  }, [routerConnection, device, receiveTransport])
+
+  const videoTracks = useStageSelector<MediasoupVideoTrack[]>((state) =>
+    state.globals.stageId && state.videoTracks.byStage[state.globals.stageId]
+      ? (state.videoTracks.byStage[state.globals.stageId]
+        .map((id) => state.videoTracks.byId[id])
+        .filter(
+          (track) =>
+            track.type === 'mediasoup' && track.stageDeviceId !== localStageDeviceId
+        ) as MediasoupVideoTrack[])
+      : []
+  )
+  const setVideoConsumers = React.useContext(DispatchVideoConsumerContext)
+  // Sync video tracks by creating consumers
+  React.useEffect(() => {
+    syncTracks(videoTracks, setVideoConsumers)
+  }, [syncTracks, videoTracks, setVideoConsumers])
+  // Remove all consumers when receive transport is gone
   React.useEffect(() => {
     if (receiveTransport && setVideoConsumers) {
       return () => {
@@ -343,44 +349,67 @@ const MediasoupService = () => {
     }
   }, [receiveTransport, setVideoConsumers])
 
-  const localVideoTrack = useWebcam()
+
+  const audioTracks = useStageSelector<MediasoupAudioTrack[]>((state) =>
+    state.globals.stageId && state.audioTracks.byStage[state.globals.stageId]
+      ? (state.audioTracks.byStage[state.globals.stageId]
+        .map((id) => state.audioTracks.byId[id])
+        .filter(
+          (track) =>
+            track.type === 'mediasoup' && track.stageDeviceId !== localStageDeviceId
+        ) as MediasoupAudioTrack[])
+      : []
+  )
+  const setAudioConsumers = React.useContext(DispatchAudioConsumerContext)
+  // Sync video tracks by creating consumers
   React.useEffect(() => {
+    syncTracks(audioTracks, setAudioConsumers)
+  }, [syncTracks, audioTracks, setAudioConsumers])
+  // Remove all consumers when receive transport is gone
+  React.useEffect(() => {
+    if (receiveTransport && setAudioConsumers) {
+      return () => {
+        setAudioConsumers(prevState => {
+          Object.values(prevState).map(consumer => consumer.close())
+          return {}
+        })
+      }
+    }
+  }, [receiveTransport, setAudioConsumers])
+
+  const produceLocalTrack = React.useCallback((localTrack: MediaStreamTrack): CleanupFunction => {
     if (
       emit &&
       reportError &&
       routerConnection &&
-      sendTransport &&
-      stageId &&
-      videoType === 'mediasoup' &&
-      localVideoTrack &&
-      !useP2P
+      sendTransport
     ) {
       let abort: boolean = false
       let producer: Producer
       let publishedId: string
       let timeout
-      const track = localVideoTrack.clone()
-      trace(`Publishing local video`)
+      const track = localTrack.clone()
+      trace(`Publishing local ${track.kind}`)
       ;(async () => {
         try {
           if (!abort) {
             producer = await createProducer(sendTransport, track)
           }
           if (!abort && producer.paused) {
-            trace(`Video producer ${producer.id} is paused`)
+            trace(`${track.kind} producer ${producer.id} is paused`)
             producer.resume()
           }
           if (!abort) {
-            const {_id} = await publishProducer(emit, stageId, producer.id, 'video')
+            const {_id} = await publishProducer(emit, stageId, producer.id, track.kind === "video" ? "video" : "audio")
             publishedId = _id
-            trace(`Published local video track ${track.id}/producer ${producer.id} as video ${publishedId}`)
+            trace(`Published local ${track.kind} track ${track.id}/producer ${producer.id} as ${track.kind} ${publishedId}`)
             log.current(ClientLogEvents.MediasoupProducerCreated, {
               producerId: producer.id,
               trackId: publishedId
             } as Partial<ClientLogPayloads.MediasoupProducerCreated>)
           }
         } catch (err) {
-          reportError(`Could not produce or publish local video track ${track.id}. Reason: ${err}`)
+          reportError(`Could not produce or publish local ${track.kind} track ${track.id}. Reason: ${err}`)
         }
       })()
       return () => {
@@ -396,15 +425,15 @@ const MediasoupService = () => {
         }
         if (emit && publishedId) {
           unpublishProducer(emit, publishedId, 'video')
-            .then(() => trace(`Un-published local video track ${track.id} published as video ${publishedId}`))
+            .then(() => trace(`Un-published local ${track.kind} track ${track.id} published as ${track.kind} ${publishedId}`))
             .catch((err) => reportError(
-              `Could not un-publish local video track ${track?.id} published as video ${publishedId}. Reason: ${err}`
+              `Could not un-publish local ${track.kind} track ${track?.id} published as ${track.kind} ${publishedId}. Reason: ${err}`
             ))
         }
         if (routerConnection && producer) {
           stopProducer(routerConnection, producer).catch((err) =>
             reportError(
-              `Could not stop producer ${producer.id} of local video track ${track?.id} published as video ${publishedId}. Reason: ${err}`
+              `Could not stop producer ${producer.id} of local ${track.kind} track ${track?.id} published as ${track.kind} ${publishedId}. Reason: ${err}`
             )
           )
         }
@@ -413,7 +442,27 @@ const MediasoupService = () => {
         }
       }
     }
-  }, [emit, stageId, reportError, useP2P, videoType, localVideoTrack, routerConnection, sendTransport])
+    return () => {}
+  }, [])
+
+  const localVideoTrack = useWebcam()
+  React.useEffect(() => {
+    if (stageId && videoType === 'mediasoup' && !useP2P) {
+      const cleanup = produceLocalTrack(localVideoTrack)
+      return () => {
+        cleanup()
+      }
+    }
+  }, [stageId, videoType, useP2P, produceLocalTrack, localVideoTrack])
+  const localAudioTrack = useMicrophone()
+  React.useEffect(() => {
+    if (stageId && audioType === 'mediasoup' && !useP2P) {
+      const cleanup = produceLocalTrack(localAudioTrack)
+      return () => {
+        cleanup()
+      }
+    }
+  }, [stageId, audioType, useP2P, produceLocalTrack, localAudioTrack])
 
   return null
 }
