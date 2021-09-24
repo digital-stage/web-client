@@ -27,7 +27,7 @@ import {
   createProducer,
   createWebRTCTransport,
   getRTPCapabilities,
-  publishProducer, resumeConsumer,
+  publishProducer, resumeConsumer, resumeProducer,
   stopProducer,
   unpublishProducer,
 } from './util'
@@ -281,10 +281,11 @@ const MediasoupService = () => {
                   trace(`Consumer ${consumer.id} is paused, try to resume it`)
                   return resumeConsumer(routerConnection, consumer)
                 }
+                return consumer
               })
               .then((consumer) => {
-                  trace(`Consuming now ${track.kind} ${track._id} with producer ${track.producerId}`)
-                  setVideoConsumers((prev) => ({...prev, [track._id]: consumer}))
+                  trace(`Consuming now ${consumer.track.kind} ${track._id} with producer ${track.producerId}`)
+                  dispatch((prev) => ({...prev, [track._id]: consumer}))
                   log.current(ClientLogEvents.MediasoupConsumerCreated, {
                     consumerId: consumer.id,
                     producerId: consumer.producerId,
@@ -292,7 +293,7 @@ const MediasoupService = () => {
                     kind: track.kind,
                   } as Partial<ClientLogPayloads.MediasoupConsumerCreated>)
                   consumer.track.addEventListener("mute", () => {
-                    trace(`Track of consumer ${consumer.id} for ${track.kind} ${track._id} is muted`)
+                    trace(`Track of consumer ${consumer.id} for ${consumer.kind} ${track._id} is muted`)
                     log.current(ClientLogEvents.MediasoupConsumerMuteChanged, {
                       consumerId: consumer.id,
                       producerId: consumer.producerId,
@@ -320,7 +321,7 @@ const MediasoupService = () => {
         return existing
       })
     }
-  }, [routerConnection, device, receiveTransport])
+  }, [routerConnection, device, receiveTransport, reportError])
 
   const videoTracks = useStageSelector<MediasoupVideoTrack[]>((state) =>
     state.globals.stageId && state.videoTracks.byStage[state.globals.stageId]
@@ -378,12 +379,15 @@ const MediasoupService = () => {
   }, [receiveTransport, setAudioConsumers])
 
   const produceLocalTrack = React.useCallback((localTrack: MediaStreamTrack): CleanupFunction => {
+    trace("produceLocalTrack(" + localTrack.kind + ")")
     if (
+      routerConnection &&
+      sendTransport &&
       emit &&
       reportError &&
-      routerConnection &&
-      sendTransport
+      stageId
     ) {
+      trace("produceLocalTrack(" + localTrack.kind + ")2")
       let abort: boolean = false
       let producer: Producer
       let publishedId: string
@@ -397,7 +401,8 @@ const MediasoupService = () => {
           }
           if (!abort && producer.paused) {
             trace(`${track.kind} producer ${producer.id} is paused`)
-            producer.resume()
+            //producer.resume()
+            await resumeProducer(routerConnection, producer)
           }
           if (!abort) {
             const {_id} = await publishProducer(emit, stageId, producer.id, track.kind === "video" ? "video" : "audio")
@@ -442,27 +447,30 @@ const MediasoupService = () => {
         }
       }
     }
-    return () => {}
-  }, [])
+    return () => {
+    }
+  }, [routerConnection, sendTransport, emit, reportError, stageId])
 
   const localVideoTrack = useWebcam()
   React.useEffect(() => {
-    if (stageId && videoType === 'mediasoup' && !useP2P) {
+    if (videoType === 'mediasoup' && !useP2P && localVideoTrack) {
+      console.log("Produce video")
       const cleanup = produceLocalTrack(localVideoTrack)
       return () => {
+        console.log("Cleaning up video producer")
         cleanup()
       }
     }
-  }, [stageId, videoType, useP2P, produceLocalTrack, localVideoTrack])
+  }, [videoType, useP2P, produceLocalTrack, localVideoTrack])
   const localAudioTrack = useMicrophone()
   React.useEffect(() => {
-    if (stageId && audioType === 'mediasoup' && !useP2P) {
+    if (audioType === 'mediasoup' && !useP2P && localAudioTrack) {
       const cleanup = produceLocalTrack(localAudioTrack)
       return () => {
         cleanup()
       }
     }
-  }, [stageId, audioType, useP2P, produceLocalTrack, localAudioTrack])
+  }, [audioType, useP2P, produceLocalTrack, localAudioTrack])
 
   return null
 }

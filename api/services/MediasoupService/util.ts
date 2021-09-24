@@ -223,10 +223,10 @@ export const createConsumer = (
         trace(
           `Server created consumer ${data.id} for producer ${data.producerId}, consuming now`
         )
-        return transport.consume(data).then(async (consumer) => {
+        return transport.consume(data).then( (consumer) => {
           if (data.paused) {
             trace('Pausing consumer, since it is paused server-side too')
-            await consumer.pause()
+            consumer.pause()
           }
           return resolve(consumer)
         })
