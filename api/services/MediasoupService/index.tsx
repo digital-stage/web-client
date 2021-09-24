@@ -27,7 +27,7 @@ import {
   createProducer,
   createWebRTCTransport,
   getRTPCapabilities,
-  publishProducer, resumeConsumer,
+  publishProducer, resumeConsumer, resumeProducer,
   stopProducer,
   unpublishProducer,
 } from './util'

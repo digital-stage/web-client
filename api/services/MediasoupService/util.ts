@@ -198,12 +198,13 @@ export const createConsumer = (
   producerId: string
 ): Promise<mediasoupClient.types.Consumer> =>
   new Promise<mediasoupClient.types.Consumer>((resolve, reject) => {
+    console.log(device.rtpCapabilities)
     socket.emit(
       RouterRequests.CreateConsumer,
       {
         producerId,
         transportId: transport.id,
-        rtpCapabilities: device.rtpCapabilities, // TODO: Necessary?
+        rtpCapabilities: device.rtpCapabilities,
       },
       (
         error: string | null,
@@ -225,9 +226,15 @@ export const createConsumer = (
         )
         return transport.consume(data).then( (consumer) => {
           if (data.paused) {
-            trace('Pausing consumer, since it is paused server-side too')
+            trace('Pausing consumer, but it is paused server-side ...')
             consumer.pause()
           }
+          /*
+          if(data.paused) {
+            // Avoid calling pause() on consumer for safari (refer to: https://mediasoup.discourse.group/t/producer-pause-still-uploading-streams/167/4)
+            return resumeConsumer(socket, consumer)
+              .then(consumer => resolve(consumer))
+          }*/
           return resolve(consumer)
         })
       }
