@@ -27,7 +27,7 @@ import {
   createProducer,
   createWebRTCTransport,
   getRTPCapabilities,
-  publishProducer, resumeConsumer, resumeProducer,
+  publishProducer, resumeConsumer,
   stopProducer,
   unpublishProducer,
 } from './util'
@@ -402,7 +402,7 @@ const MediasoupService = () => {
           if (!abort && producer.paused) {
             trace(`${track.kind} producer ${producer.id} is paused`)
             //producer.resume()
-            await resumeProducer(routerConnection, producer)
+            //await resumeProducer(routerConnection, producer)
           }
           if (!abort) {
             const {_id} = await publishProducer(emit, stageId, producer.id, track.kind === "video" ? "video" : "audio")
