@@ -33,7 +33,6 @@ const useLogServer = (): LogServerReportFn => {
 
     return React.useCallback((event: string, payload: any) => {
         if (process.env.NEXT_PUBLIC_LOG_URL) {
-            console.log("SENDING LOG")
             if (userId && deviceId && email && stageId) {
                 fetch(process.env.NEXT_PUBLIC_LOG_URL + "/" + event,
                     {
@@ -48,12 +47,10 @@ const useLogServer = (): LogServerReportFn => {
                     }
                 )
                     .catch(err => {
-                        console.error("Could not report to central logging service:")
-                        console.error(err)
+                        console.warn("Could not report to central logging service:")
+                        console.warn(err)
                     })
             }
-        } else {
-            console.log("Missing log server")
         }
     }, [deviceId, email, stageId, userId])
 }

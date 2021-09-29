@@ -26,43 +26,31 @@ import {ITeckosClient} from 'teckos-client'
 import {
   AudioTrack,
   ClientDeviceEvents,
-  ClientDevicePayloads, ClientRouterPayloads,
+  ClientDevicePayloads, ClientMediasoupEvents, ClientMediasoupPayloads,
   MediasoupAudioTrack,
   MediasoupVideoTrack,
   VideoTrack,
-  WebMediaDevice,
 } from '@digitalstage/api-types'
 import {Device} from 'mediasoup-client/lib/Device'
 import {SocketEvent} from 'teckos-client/dist/types'
 import {logger} from '../../logger'
+import {ClientMediasoupCallbacks} from "@digitalstage/api-types/dist/ClientMediasoupCallbacks";
 
 const {trace, reportError} = logger('MediasoupService:utils')
 
-export enum RouterRequests {
-  GetRTPCapabilities = 'rtp-capabilities',
-  CreateTransport = 'create-transport',
-  ConnectTransport = 'connect-transport',
-  CreateProducer = 'create-producer',
-  PauseProducer = 'pause-producer',
-  ResumeProducer = 'resume-producer',
-  CloseProducer = 'close-producer',
-  CreateConsumer = 'create-consumer',
-  PauseConsumer = 'pause-consumer',
-  ResumeConsumer = 'resume-consumer',
-  CloseConsumer = 'close-consumer',
-}
-
 export const getRTPCapabilities = (routerConnection: ITeckosClient) => {
   return new Promise<mediasoupClient.types.RtpCapabilities>((resolve, reject) => {
-    routerConnection.emit(
-      RouterRequests.GetRTPCapabilities,
-      {},
-      (error: string, retrievedRtpCapabilities: mediasoupClient.types.RtpCapabilities) => {
+    const callback: ClientMediasoupCallbacks.GetRTPCapabilities<mediasoupClient.types.RtpCapabilities> =
+      (error, retrievedRtpCapabilities) => {
         if (error) {
           reject(new Error(error))
         }
         resolve(retrievedRtpCapabilities)
       }
+    routerConnection.emit(
+      ClientMediasoupEvents.GetRTPCapabilities,
+      {} as ClientMediasoupPayloads.GetRTPCapabilities,
+      callback
     )
   })
 }
@@ -73,63 +61,62 @@ export const createWebRTCTransport = (
   direction: 'send' | 'receive'
 ): Promise<mediasoupClient.types.Transport> =>
   new Promise<mediasoupClient.types.Transport>((resolve, reject) => {
-    routerConnection.emit(
-      RouterRequests.CreateTransport,
-      {},
-      (error: string, transportOptions: mediasoupClient.types.TransportOptions) => {
-        if (error) {
-          return reject(error)
-        }
-        trace('createWebRTCTransport')
-        const transport: mediasoupClient.types.Transport =
-          direction === 'send'
-            ? device.createSendTransport(transportOptions)
-            : device.createRecvTransport(transportOptions)
-        transport.on('connect', ({dtlsParameters}, callback, errCallback) => {
-          trace(`createWebRTCTransport:transport:${direction}:connect`)
-          ;(async () => {
-            routerConnection.emit(
-              RouterRequests.ConnectTransport,
-              {
-                transportId: transport.id,
-                dtlsParameters,
-              },
-              (transportError: string) => {
-                if (transportError) {
-                  reportError(error)
-                  return errCallback(error)
-                }
-                return callback()
-              }
-            )
-          })()
-        })
-        if (direction === 'send') {
-          transport.on('produce', (producer, callback, errCallback) => {
-            trace(`createWebRTCTransport:transport:${direction}:produce`)
-            routerConnection.emit(
-              RouterRequests.CreateProducer,
-              {
-                transportId: transport.id,
-                kind: producer.kind,
-                rtpParameters: producer.rtpParameters,
-                appData: producer.appData,
-              },
-              (produceError: string | undefined, payload: any) => {
-                if (produceError) {
-                  reportError(produceError)
-                  return errCallback(produceError)
-                }
-                return callback({
-                  ...producer,
-                  id: payload.id,
-                })
-              }
-            )
-          })
-        }
-        return resolve(transport)
+    trace('createWebRTCTransport')
+    const callback: ClientMediasoupCallbacks.CreateTransport = (error, transportOptions) => {
+      if (error) {
+        return reject(error)
       }
+      const transport: mediasoupClient.types.Transport =
+        direction === 'send'
+          ? device.createSendTransport(transportOptions)
+          : device.createRecvTransport(transportOptions)
+      transport.on('connect', ({dtlsParameters}, callback, errCallback) => {
+        trace(`createWebRTCTransport:transport:${direction}:connect`)
+        routerConnection.emit(
+          ClientMediasoupEvents.ConnectTransport,
+          {
+            transportId: transport.id,
+            dtlsParameters,
+          } as ClientMediasoupPayloads.ConnectTransport<mediasoupClient.types.DtlsParameters>,
+          (transportError: string) => {
+            if (transportError) {
+              reportError(error)
+              return errCallback(error)
+            }
+            return callback()
+          }
+        )
+      })
+      if (direction === 'send') {
+        transport.on('produce', (producer, callback, errCallback) => {
+          trace(`createWebRTCTransport:transport:${direction}:produce`)
+          routerConnection.emit(
+            ClientMediasoupEvents.CreateProducer,
+            {
+              transportId: transport.id,
+              kind: producer.kind,
+              rtpParameters: producer.rtpParameters,
+              appData: producer.appData,
+            } as ClientMediasoupPayloads.CreateProducer<mediasoupClient.types.RtpParameters>,
+            (produceError: string | undefined, payload: any) => {
+              if (produceError) {
+                reportError(produceError)
+                return errCallback(produceError)
+              }
+              return callback({
+                ...producer,
+                id: payload.id,
+              })
+            }
+          )
+        })
+      }
+      return resolve(transport)
+    }
+    routerConnection.emit(
+      ClientMediasoupEvents.CreateTransport,
+      {} as ClientMediasoupPayloads.CreateTransport,
+      callback
     )
   })
 
@@ -148,7 +135,7 @@ export const pauseProducer = (
   producer: mediasoupClient.types.Producer
 ): Promise<mediasoupClient.types.Producer> =>
   new Promise<mediasoupClient.types.Producer>((resolve, reject) =>
-    socket.emit(RouterRequests.PauseProducer, producer.id, (error?: string) => {
+    socket.emit(ClientMediasoupEvents.PauseProducer, producer.id as ClientMediasoupPayloads.PauseProducer, (error?: string) => {
       if (error) {
         reportError(error)
         return reject(error)
@@ -164,7 +151,7 @@ export const resumeProducer = (
   producer: mediasoupClient.types.Producer
 ): Promise<mediasoupClient.types.Producer> =>
   new Promise<mediasoupClient.types.Producer>((resolve, reject) =>
-    socket.emit(RouterRequests.ResumeProducer, producer.id, (error?: string) => {
+    socket.emit(ClientMediasoupEvents.ResumeProducer, producer.id as ClientMediasoupPayloads.ResumeProducer, (error?: string) => {
       if (error) {
         reportError(error)
         return reject(error)
@@ -180,7 +167,7 @@ export const stopProducer = (
   producer: mediasoupClient.types.Producer
 ): Promise<mediasoupClient.types.Producer> =>
   new Promise<mediasoupClient.types.Producer>((resolve, reject) =>
-    socket.emit(RouterRequests.CloseProducer, producer.id, (error?: string) => {
+    socket.emit(ClientMediasoupEvents.CloseProducer, producer.id as ClientMediasoupPayloads.CloseProducer, (error?: string) => {
       if (error) {
         reportError(error)
         return reject(error)
@@ -198,39 +185,37 @@ export const createConsumer = (
   producerId: string
 ): Promise<mediasoupClient.types.Consumer> =>
   new Promise<mediasoupClient.types.Consumer>((resolve, reject) => {
+    console.log(device.rtpCapabilities)
+    const callback: ClientMediasoupCallbacks.CreateConsumer<mediasoupClient.types.RtpParameters> = (error, data) => {
+      if (error) {
+        reportError(error)
+        return reject(error)
+      }
+      trace(
+        `Server created consumer ${data.id} for producer ${data.producerId}, consuming now`
+      )
+      return transport.consume(data).then((consumer) => {
+        if (data.paused) {
+          trace('Pausing consumer, cause it is paused server-side ...')
+          consumer.pause()
+        }
+        /*
+        if(data.paused) {
+          // Avoid calling pause() on consumer for safari (refer to: https://mediasoup.discourse.group/t/producer-pause-still-uploading-streams/167/4)
+          return resumeConsumer(socket, consumer)
+            .then(consumer => resolve(consumer))
+        }*/
+        return resolve(consumer)
+      })
+    }
     socket.emit(
-      RouterRequests.CreateConsumer,
+      ClientMediasoupEvents.CreateConsumer,
       {
         producerId,
         transportId: transport.id,
-        rtpCapabilities: device.rtpCapabilities, // TODO: Necessary?
-      },
-      (
-        error: string | null,
-        data: {
-          id: string
-          producerId: string
-          kind: 'audio' | 'video'
-          rtpParameters: mediasoupClient.types.RtpParameters
-          paused: boolean
-          type: 'simple' | 'simulcast' | 'svc' | 'pipe'
-        }
-      ) => {
-        if (error) {
-          reportError(error)
-          return reject(error)
-        }
-        trace(
-          `Server created consumer ${data.id} for producer ${data.producerId}, consuming now`
-        )
-        return transport.consume(data).then(async (consumer) => {
-          if (data.paused) {
-            trace('Pausing consumer, since it is paused server-side too')
-            await consumer.pause()
-          }
-          return resolve(consumer)
-        })
-      }
+        rtpCapabilities: device.rtpCapabilities,
+      } as ClientMediasoupPayloads.CreateConsumer<mediasoupClient.types.RtpCapabilities>,
+      callback
     )
   })
 
@@ -239,10 +224,11 @@ export const resumeConsumer = (
   consumer: mediasoupClient.types.Consumer
 ): Promise<mediasoupClient.types.Consumer> => {
   if (consumer.paused) {
+    consumer.resume()
     return new Promise<mediasoupClient.types.Consumer>((resolve, reject) =>
-      routerConnection.emit(RouterRequests.ResumeConsumer, consumer.id, (error?: string) => {
+      routerConnection.emit(ClientMediasoupEvents.ResumeConsumer, consumer.id as ClientMediasoupPayloads.ResumeConsumer, (error?: string) => {
         if (error) return reject(error)
-        consumer.resume()
+        //consumer.resume()
         trace(`Resumed consumer ${consumer.id}`)
         return resolve(consumer)
       })
@@ -257,7 +243,7 @@ export const pauseConsumer = (
 ): Promise<mediasoupClient.types.Consumer> => {
   if (!consumer.paused) {
     return new Promise<mediasoupClient.types.Consumer>((resolve, reject) =>
-      socket.emit(RouterRequests.PauseConsumer, consumer.id, (error?: string) => {
+      socket.emit(ClientMediasoupEvents.PauseConsumer, consumer.id as ClientMediasoupPayloads.PauseConsumer, (error?: string) => {
         if (error) {
           reportError(error)
           return reject(error)
@@ -276,7 +262,7 @@ export const closeConsumer = (
   consumer: mediasoupClient.types.Consumer
 ): Promise<mediasoupClient.types.Consumer> =>
   new Promise<mediasoupClient.types.Consumer>((resolve, reject) =>
-    socket.emit(RouterRequests.CloseConsumer, consumer.id, (error?: string) => {
+    socket.emit(ClientMediasoupEvents.CloseConsumer, consumer.id as ClientMediasoupPayloads.CloseConsumer, (error?: string) => {
       if (error) {
         reportError(error)
         return reject(error)
@@ -375,13 +361,6 @@ export const consume = (
   return createConsumer(routerConnection, device, receiveTransport, producerId).then(
     async (localConsumer) => {
       trace(`Created consumer ${localConsumer.id} to consume ${producerId}`)
-      if (localConsumer.paused) {
-        trace(`Consumer ${localConsumer.id} is paused, try to resume it`)
-        await resumeConsumer(routerConnection, localConsumer)
-      }
-      if (localConsumer.paused) {
-        reportError(`Consumer ${localConsumer.id} is still paused after resume`)
-      }
       return localConsumer
     }
   )

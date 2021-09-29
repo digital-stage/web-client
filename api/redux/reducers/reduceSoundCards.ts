@@ -21,16 +21,16 @@
  */
 
 import omit from 'lodash/omit'
-import { SoundCard, ServerDevicePayloads, ServerDeviceEvents } from '@digitalstage/api-types'
+import {SoundCard, ServerDevicePayloads, ServerDeviceEvents} from '@digitalstage/api-types'
 import without from 'lodash/without'
-import { SoundCards } from '../state/SoundCards'
-import { upsert } from '../utils/upsert'
+import {SoundCards} from '../state/SoundCards'
+import {upsert} from '../utils/upsert'
 
 function reduceSoundCards(
     state: SoundCards = {
         byId: {},
         byDevice: {},
-        byDeviceAndUUID: {},
+        byDeviceAndDriver: {},
         allIds: [],
     },
     action: {
@@ -41,24 +41,29 @@ function reduceSoundCards(
     switch (action.type) {
         case ServerDeviceEvents.SoundCardAdded: {
             const soundCard: SoundCard = action.payload as ServerDevicePayloads.SoundCardAdded
+            const {_id, deviceId, type, audioDriver} = soundCard
             return {
                 byId: {
                     ...state.byId,
-                    [soundCard._id]: soundCard,
+                    [_id]: soundCard,
                 },
                 byDevice: {
                     ...state.byDevice,
-                    [soundCard.deviceId]: upsert<string>(
-                        state.byDevice[soundCard.deviceId],
-                        soundCard._id
-                    ),
+                    [deviceId]: {
+                        input: type === 'input' ? upsert<string>(state.byDevice[deviceId].input, _id) : state.byDevice[deviceId].input,
+                        output: type === 'output' ? upsert<string>(state.byDevice[deviceId].output, _id) : state.byDevice[deviceId].output,
+                    }
                 },
-                byDeviceAndUUID: {
-                    ...state.byDeviceAndUUID,
-                    [soundCard.deviceId]: {
-                        ...state.byDeviceAndUUID[soundCard.deviceId],
-                        [soundCard.uuid]: soundCard._id,
-                    },
+                byDeviceAndDriver: {
+                    ...state.byDeviceAndDriver,
+                    [deviceId]: {
+                        ...state.byDeviceAndDriver[deviceId],
+                        [audioDriver]: {
+                            ...state.byDeviceAndDriver[deviceId][audioDriver],
+                            input: type === 'input' ? upsert<string>(state.byDevice[deviceId].input, _id) : state.byDevice[deviceId].input,
+                            output: type === 'output' ? upsert<string>(state.byDevice[deviceId].output, _id) : state.byDevice[deviceId].output,
+                        }
+                    }
                 },
                 allIds: upsert<string>(state.allIds, soundCard._id),
             }
@@ -79,17 +84,26 @@ function reduceSoundCards(
         }
         case ServerDeviceEvents.SoundCardRemoved: {
             const removedId: string = action.payload as ServerDevicePayloads.SoundCardRemoved
-            const { deviceId, uuid } = state.byId[removedId]
+            const {deviceId, audioDriver, type} = state.byId[removedId]
             return {
                 ...state,
                 byId: omit(state.byId, removedId),
                 byDevice: {
                     ...state.byDevice,
-                    [deviceId]: without(state.byDevice[deviceId], removedId),
+                    [deviceId]: {
+                        input: type === 'input' ? without(state.byDevice[deviceId].input, removedId) : state.byDevice[deviceId].input,
+                        output: type === 'output' ? without(state.byDevice[deviceId].output, removedId) : state.byDevice[deviceId].output,
+                    }
                 },
-                byDeviceAndUUID: {
-                    ...state.byDeviceAndUUID,
-                    [deviceId]: omit(state.byDeviceAndUUID[deviceId], uuid),
+                byDeviceAndDriver: {
+                    ...state.byDeviceAndDriver,
+                    [deviceId]: {
+                        ...state.byDeviceAndDriver[deviceId],
+                        [audioDriver]: {
+                            input: type === 'input' ? without(state.byDevice[deviceId].input, removedId) : state.byDevice[deviceId].input,
+                            output: type === 'output' ? without(state.byDevice[deviceId].output, removedId) : state.byDevice[deviceId].output,
+                        }
+                    }
                 },
                 allIds: state.allIds.filter((id) => id !== removedId),
             }
@@ -99,4 +113,4 @@ function reduceSoundCards(
     }
 }
 
-export { reduceSoundCards }
+export {reduceSoundCards}

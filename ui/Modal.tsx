@@ -117,7 +117,7 @@ const Modal = (
         }
       }
     }
-  }, [open]);
+  }, [open, onClose, handleTabKey]);
 
   React.useEffect(() => {
     if (backdropRef.current) {
