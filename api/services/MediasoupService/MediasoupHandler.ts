@@ -35,7 +35,9 @@ import {
   createProducer,
   createWebRTCTransport,
   getRTPCapabilities,
-  publishProducer, resumeConsumer,
+  publishProducer,
+  resumeConsumer,
+  stopProducer,
   unpublishProducer
 } from "./util";
 import {Transport as MediasoupTransport} from "mediasoup-client/lib/Transport";
@@ -57,7 +59,6 @@ export type ConsumersList = {
 export enum Events {
   Connected = "connected",
   Disconnected = "disconnected",
-  OnTrack = "ontrack",
 
   ProducerAdded = "producer-added",
   ProducerRemoved = "producer-removed",
@@ -120,7 +121,7 @@ class MediasoupHandler extends EventEmitter {
         this.removeProducer(publishedTrack._id)
           .catch(this.handleError)
       }
-      this.emit(Events.OnTrack, track)
+      this.emit(Events.ProducerAdded, producer)
       return this.producers
     } catch (err) {
       this.handleError(err)
@@ -146,22 +147,24 @@ class MediasoupHandler extends EventEmitter {
       this.receiveTransport,
       publicTrack.producerId
     )
-    if(consumer.paused) {
+    if (consumer.paused) {
       consumer = await resumeConsumer(this.routerConnection, consumer)
     }
     this.consumers = {
       ...this.consumers,
       [publicTrack._id]: consumer
     }
-    this.emit(Events.OnTrack, consumer.track)
+    this.emit(Events.ConsumerAdded, consumer.track)
     return consumer
   }
 
-  public stopConsuming(publicTrackId: string): Promise<MediasoupConsumer> {
+  public async stopConsuming(publicTrackId: string): Promise<MediasoupConsumer> {
     trace('stopConsuming()')
-    if (this.consumers[publicTrackId]) {
+    const consumer = this.consumers[publicTrackId]
+    if (consumer) {
       this.consumers = omit(this.consumers, publicTrackId)
-      return closeConsumer(this.routerConnection, this.consumers[publicTrackId])
+      await closeConsumer(this.routerConnection, this.consumers[publicTrackId])
+      this.emit(Events.ConsumerRemoved, consumer)
     }
     throw new Error(`Consumer for public track ${publicTrackId} not found`)
   }
@@ -183,13 +186,15 @@ class MediasoupHandler extends EventEmitter {
     return this.consumers
   }
 
-  private removeProducer = (publishedTrackId: string): Promise<void> => {
+  private removeProducer = async (publishedTrackId: string): Promise<void> => {
     trace('removeProducer()')
     const producer = this.producers[publishedTrackId]
-    producer.close()
-    this.producers = omit(this.producers, publishedTrackId)
-    this.emit(Events.ProducerRemoved, )
-    return unpublishProducer(this.emitToServer, publishedTrackId, producer.track.kind === 'audio' ? 'audio' : 'video')
+    if (producer) {
+      await stopProducer(this.routerConnection, producer)
+      this.producers = omit(this.producers, publishedTrackId)
+      this.emit(Events.ProducerRemoved, producer)
+      await unpublishProducer(this.emitToServer, publishedTrackId, producer.track.kind === 'audio' ? 'audio' : 'video')
+    }
   }
 
   private async handleConnect() {
@@ -252,7 +257,6 @@ class MediasoupHandler extends EventEmitter {
 
     })
   }
-
 }
 
 export {MediasoupHandler}

@@ -31,29 +31,43 @@ const WebcamDispatchContext = React.createContext<Dispatch>(null)
 
 
 const WebcamProvider = ({children}: { children: React.ReactNode }) => {
-    const [state, dispatch] = useState<MediaStreamTrack>()
+  const [state, dispatch] = useState<MediaStreamTrack>()
 
-    return (
-        <WebcamStateContext.Provider value={state}>
-            <WebcamDispatchContext.Provider value={dispatch}>
-                {children}
-            </WebcamDispatchContext.Provider>
-        </WebcamStateContext.Provider>
-    )
+  /*
+  React.useEffect(() => {
+    if (state) {
+      const handler = () => {
+        console.error("FIX ME")
+        throw new Error("FIX ME")
+      }
+      state.addEventListener("ended", handler)
+      return () => {
+        state.removeEventListener("ended", handler)
+      }
+    }
+  }, [state])*/
+
+  return (
+    <WebcamStateContext.Provider value={state}>
+      <WebcamDispatchContext.Provider value={dispatch}>
+        {children}
+      </WebcamDispatchContext.Provider>
+    </WebcamStateContext.Provider>
+  )
 }
 
 const useWebcam = () => {
-    const state = React.useContext(WebcamStateContext)
-    if (state === null)
-        throw new Error('Please wrap around your DOM tree with the WebcamProvider')
-    return state
+  const state = React.useContext(WebcamStateContext)
+  if (state === null)
+    throw new Error('Please wrap around your DOM tree with the WebcamProvider')
+  return state
 }
 
 const useWebcamDispatch = () => {
-    const state = React.useContext(WebcamDispatchContext)
-    if (state === null)
-        throw new Error('Please wrap around your DOM tree with the WebcamProvider')
-    return state
+  const state = React.useContext(WebcamDispatchContext)
+  if (state === null)
+    throw new Error('Please wrap around your DOM tree with the WebcamProvider')
+  return state
 }
 
 export {WebcamProvider, useWebcam, useWebcamDispatch}

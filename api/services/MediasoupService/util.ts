@@ -125,6 +125,7 @@ export const createProducer = (
   track: MediaStreamTrack
 ): Promise<mediasoupClient.types.Producer> =>
   transport.produce({
+    stopTracks: false,
     track,
     appData: {
       trackId: track.id,
