@@ -27,11 +27,17 @@ interface SoundCards {
         [id: string]: SoundCard
     }
     byDevice: {
-        [deviceId: string]: string[]
+        [deviceId: string]:  {
+            input: string[],
+            output: string[],
+        },
     }
-    byDeviceAndUUID: {
+    byDeviceAndDriver: {
         [deviceId: string]: {
-            [uuid: string]: string
+            [driver: string]: {
+                input: string[],
+                output: string[]
+            }
         }
     }
     allIds: string[]
