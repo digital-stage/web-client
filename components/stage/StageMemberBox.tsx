@@ -25,6 +25,7 @@ import {Avatar} from "./Avatar";
 import {ConductorButton} from "./ConductorButton";
 import React from "react";
 import {useWebRTCStats} from "@digitalstage/api-client-react";
+import { AiOutlineAudioMuted } from "react-icons/ai";
 
 
 const TrackStatsView = ({trackId}: { trackId: string }): JSX.Element => {
@@ -50,6 +51,7 @@ const StageMemberBox = ({
                           active,
                           track,
                           conductorId,
+  muted
                         }: {
   userName: string
   groupName?: string
@@ -57,12 +59,13 @@ const StageMemberBox = ({
   active?: boolean
   track?: MediaStreamTrack
   conductorId?: string
+  muted: boolean
 }): JSX.Element => {
-  const [muted, setMuted] = React.useState<boolean>(track?.muted)
+  const [videoMuted, setVideoMuted] = React.useState<boolean>(track?.muted)
   React.useEffect(() => {
     if(track) {
-      const onMute = () => setMuted(true)
-      const onUnmute = () => setMuted(false)
+      const onMute = () => setVideoMuted(true)
+      const onUnmute = () => setVideoMuted(false)
       track.addEventListener("mute", onMute)
       track.addEventListener("unmute", onUnmute)
       return () => {
@@ -80,6 +83,7 @@ const StageMemberBox = ({
       }}
     >
       {track && <VideoPlayer track={track}/>}
+      {muted && <span className="muted"><AiOutlineAudioMuted/></span>}
       <div className={`info ${!track ? 'centered' : ''}`}>
         <Avatar name={userName} color={groupColor} active={active}/>
         <div className="names">
@@ -94,8 +98,7 @@ const StageMemberBox = ({
             </h6>
           )}
           <h5 className="memberName">{userName}</h5>
-          {muted && <span style={{fontSize: "0.6rem", color: "var(---danger)"}}>(muted)</span>}
-          {track && <span style={{fontSize: "0.6rem", color: "var(---danger)"}}>{track.id}</span>}
+          {videoMuted && <span style={{fontSize: "0.6rem", color: "var(---danger)"}}>(video muted)</span>}
         </div>
         {track && <TrackStatsView trackId={track.id}/>}
       </div>

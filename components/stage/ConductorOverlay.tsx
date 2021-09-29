@@ -25,17 +25,18 @@ import React from 'react'
 import { Panel } from 'ui/Panel'
 import { StageMemberView } from './StageMemberView'
 
-const ConductorOverlayCompo = ({ stageId }: { stageId: string }) => {
+const ConductorOverlayCompo = () => {
     const isStageAdmin = useCurrentStageAdminSelector()
     const conductorIds = useStageSelector<string[]>((state) =>
-        state.stageMembers.byStage[stageId].filter((id) => state.stageMembers.byId[id].isDirector)
+        state.stageMembers.byStage[state.globals.stageId]?.filter((id) => state.stageMembers.byId[id].isDirector) || []
     )
+    const showLanes = useStageSelector<boolean>(state => state.globals.showLanes)
 
     if (!isStageAdmin && conductorIds.length > 0) {
         return (
             <div className="conductorView">
                 <Panel kind="black">
-                    <div className="membersGrid">
+                    <div className={`membersGrid ${showLanes ? 'lanes' : ''}`}>
                         {conductorIds.map((conductorId) => (
                             <StageMemberView key={conductorId} stageMemberId={conductorId} />
                         ))}

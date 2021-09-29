@@ -146,6 +146,13 @@ $portraitAspectRatio: math.div($width, $height);
         padding-top: $landscapeAspectRatio * 100%;
       }
 
+      .muted {
+        position: absolute;
+        bottom: 12px;
+        right: 48px;
+        color: var(---danger)
+      }
+
       .info {
         position: absolute;
         bottom: 0;

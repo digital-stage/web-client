@@ -31,6 +31,7 @@ import {
 import {HiFilter, HiOutlineFilter} from "react-icons/hi";
 import {useDispatch} from "react-redux";
 import {StageMemberView} from './StageMemberView';
+import { ConductorOverlay } from './ConductorOverlay';
 
 const StageView = () => {
     const dispatch = useDispatch()
@@ -49,6 +50,7 @@ const StageView = () => {
                 {sortedStageMemberIds
                     .map(stageMemberId => <StageMemberView key={stageMemberId} stageMemberId={stageMemberId}/>)}
             </div>
+            <ConductorOverlay/>
             <div className="control">
                 <button className="round" onClick={onOfflineToggle}>
                     {showOffline ? <HiOutlineFilter/> : <HiFilter/>}
