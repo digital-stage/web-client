@@ -108,14 +108,13 @@ const MediasoupService = () => {
   const setConsumers = React.useContext<DispatchConsumersList>(DispatchConsumersListContext)
   // Sync video tracks by creating consumers
   React.useEffect(() => {
-    if (handler) {
+    if (setConsumers && handler) {
       handler.syncWithPublicTracks([...videoTracks, ...audioTracks])
-        .then(consumers => {
-          console.log(consumers)
+        .then(consumers =>
           setConsumers(consumers)
-          })
+        )
     }
-  }, [handler, videoTracks, audioTracks])
+  }, [handler, videoTracks, audioTracks, setConsumers])
 
   const localVideoTrack = useWebcam()
   React.useEffect(() => {
