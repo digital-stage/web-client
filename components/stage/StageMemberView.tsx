@@ -36,6 +36,7 @@ const LocalStageMemberView = ({hasAdminRights}: { hasAdminRights: boolean }) => 
     // Gather all tracks together
     const remoteTracks = useRemoteVideos(localStageMemberId)
     const localTrack = useWebcam()
+    const hasAudioTracks = useStageSelector<boolean>(state => state.audioTracks.byStageMember[state.globals.stageMemberId] && state.audioTracks.byStageMember[state.globals.stageMemberId].length > 0)
 
     return (
         <>
@@ -46,6 +47,7 @@ const LocalStageMemberView = ({hasAdminRights}: { hasAdminRights: boolean }) => 
                 active={true}
                 conductorId={hasAdminRights ? localStageMemberId : undefined}
                 track={localTrack}
+                muted={!hasAudioTracks}
             />
             {remoteTracks.map(track => <StageMemberBox
                 key={track.id}
@@ -55,6 +57,7 @@ const LocalStageMemberView = ({hasAdminRights}: { hasAdminRights: boolean }) => 
                 active={true}
                 conductorId={hasAdminRights ? localStageMemberId : undefined}
                 track={track}
+                muted={!hasAudioTracks}
             />)}
         </>
     )
@@ -66,6 +69,7 @@ const RemoteStageMemberView = ({stageMemberId, hasAdminRights}: { stageMemberId:
     const groupName = useStageSelector(state => state.groups.byId[state.stageMembers.byId[stageMemberId].groupId].name)
     const groupColor = useStageSelector(state => state.groups.byId[state.stageMembers.byId[stageMemberId].groupId].color)
     const tracks = useRemoteVideos(stageMemberId)
+    const hasAudioTracks = useStageSelector<boolean>(state => state.audioTracks.byStageMember[stageMemberId] && state.audioTracks.byStageMember[stageMemberId].length > 0)
 
     if (tracks.length === 0) {
         return (
@@ -74,6 +78,7 @@ const RemoteStageMemberView = ({stageMemberId, hasAdminRights}: { stageMemberId:
                 groupName={groupName}
                 groupColor={groupColor}
                 active={active}
+                muted={!hasAudioTracks}
                 conductorId={hasAdminRights ? stageMemberId : undefined}
             />
         )
@@ -90,6 +95,7 @@ const RemoteStageMemberView = ({stageMemberId, hasAdminRights}: { stageMemberId:
                     active={true}
                     conductorId={hasAdminRights ? stageMemberId : undefined}
                     track={track}
+                    muted={!hasAudioTracks}
                 />
             ))}
         </>
