@@ -324,7 +324,10 @@ const GroupPanel = ({ groupId, deviceId }: { groupId: string; deviceId?: string 
             if (state.globals.showOffline) {
                 return [...state.stageMembers.byGroup[groupId]].sort((a, b) => sortStageMembers(state.stageMembers.byId[a], state.stageMembers.byId[b]))
             }
-            return state.stageMembers.byGroup[groupId].filter(id => state.stageMembers.byId[id].active).sort((a, b) => sortStageMembers(state.stageMembers.byId[a], state.stageMembers.byId[b]))
+            if(state.stageMembers.byGroup[groupId]) {
+                return state.stageMembers.byGroup[groupId].filter(id => state.stageMembers.byId[id].active).sort((a, b) => sortStageMembers(state.stageMembers.byId[a], state.stageMembers.byId[b]))
+            }
+            return []
     })
     const group = useStageSelector((state) => state.groups.byId[groupId])
     const customGroup = useStageSelector((state) =>
