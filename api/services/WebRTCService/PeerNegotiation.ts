@@ -1,4 +1,28 @@
+/*
+ * Copyright (c) 2021 Tobias Hegemann
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 import {logger} from "api/logger"
+import {ClientLogEvents} from "@digitalstage/api-types";
+import {LogServerReportFn} from "../../hooks/useLogServer";
 
 const RETRY_LIMIT = 10
 
@@ -7,7 +31,7 @@ const {trace, reportError} = logger('WebRTCService:PeerNegotiation')
 class PeerNegotiation {
     private readonly remoteId: string
     private readonly configuration?: RTCConfiguration
-    private readonly onTrack: (track: MediaStreamTrack, stats?: RTCStatsReport) => void
+    private readonly onTrack: (track: MediaStreamTrack) => void
     private readonly onDescription: (description: RTCSessionDescriptionInit) => void
     private readonly onCandidate: (iceCandidate: RTCIceCandidate) => void
     private readonly onRestart: () => void
@@ -19,11 +43,13 @@ class PeerNegotiation {
     private candidates: RTCIceCandidate[] = []
     private videoSender?: RTCRtpSender
     private audioSender?: RTCRtpSender
+    private report?: LogServerReportFn
 
     private _onnegotiationneeded: (this: RTCPeerConnection, ev: RTCPeerConnectionEventMap["negotiationneeded"]) => any
     private _onicecandidate: (this: RTCPeerConnection, ev: RTCPeerConnectionEventMap["icecandidate"]) => any
     private _onconnectionstatechange: (this: RTCPeerConnection, ev: RTCPeerConnectionEventMap["connectionstatechange"]) => any
     private _ontrack: (this: RTCPeerConnection, ev: RTCPeerConnectionEventMap["track"]) => any
+    private _iceconnectionstatechange: (this: RTCPeerConnection, ev: RTCPeerConnectionEventMap["iceconnectionstatechange"]) => any
 
     constructor({
                     remoteId,
@@ -33,6 +59,7 @@ class PeerNegotiation {
                     onCandidate,
                     onRestart,
                     polite,
+                    report
                 }: {
         remoteId: string
         configuration?: RTCConfiguration,
@@ -41,6 +68,7 @@ class PeerNegotiation {
         onCandidate: (iceCandidate: RTCIceCandidate) => void,
         onRestart: () => void,
         polite: boolean,
+        report?: LogServerReportFn
     }) {
         this.remoteId = remoteId
         this.configuration = configuration
@@ -49,13 +77,14 @@ class PeerNegotiation {
         this.onRestart = onRestart
         this.onTrack = onTrack
         this.polite = polite
+        this.report = report
 
         this.start()
     }
 
     public setVideoTrack(track?: MediaStreamTrack) {
         trace(`${this.remoteId} setVideoTrack(${track?.id})`)
-        if(this.videoSender) {
+        if (this.videoSender) {
             this.peerConnection.removeTrack(this.videoSender)
         }
         if (track) {
@@ -65,7 +94,7 @@ class PeerNegotiation {
 
     public setAudioTrack(track: MediaStreamTrack) {
         trace(`${this.remoteId} setAudioTrack(${track?.id})`)
-        if(this.audioSender) {
+        if (this.audioSender) {
             this.peerConnection.removeTrack(this.audioSender)
         }
         if (track) {
@@ -189,12 +218,12 @@ class PeerNegotiation {
         this.makingOffer = false
         this.isSettingRemoteAnswerPending = false
         this.candidates = []
-        if(this.peerConnection) {
-            if(this.videoSender) {
+        if (this.peerConnection) {
+            if (this.videoSender) {
                 this.peerConnection.removeTrack(this.videoSender)
                 this.videoSender = undefined
             }
-            if(this.audioSender) {
+            if (this.audioSender) {
                 this.peerConnection.removeTrack(this.audioSender)
                 this.audioSender = undefined
             }
@@ -206,6 +235,9 @@ class PeerNegotiation {
         trace(this.remoteId + " setupPeerConnection()")
 
         this.peerConnection = new RTCPeerConnection(this.configuration)
+        this.report(ClientLogEvents.PeerConnecting, {
+            targetDeviceId: this.remoteId
+        })
 
         this._onnegotiationneeded = () => {
             trace(this.remoteId + " _onnegotiationneeded()")
@@ -216,23 +248,36 @@ class PeerNegotiation {
 
         this._onconnectionstatechange = (event) => {
             trace(this.remoteId + " _onconnectionstatechange(" + this.peerConnection.connectionState + ")")
-            if (this.peerConnection.connectionState === 'connected') {
-                this.retryCount = 0
+            switch (this.peerConnection.connectionState) {
+                case "connected": {
+                    this.retryCount = 0
+                    this.report(ClientLogEvents.PeerConnected, {targetDeviceId: this.remoteId})
+                    return
+                }
+                case "failed":
+                case "closed":
+                case "disconnected": {
+                    this.report(ClientLogEvents.PeerDisconnected, {targetDeviceId: this.remoteId})
+                    return
+                }
             }
         }
 
         this._ontrack = (event) => {
             trace(this.remoteId + " _ontrack(" + event.track.id + ")")
-            this.peerConnection.getStats(event.track)
-                .then(stats => this.onTrack(event.track, stats))
-                .catch(error => {
-                    reportError(error)
-                    this.onTrack(event.track)
-                })
+            this.onTrack(event.track)
+        }
+
+        this._iceconnectionstatechange = (event) => {
+            trace(this.remoteId + " _iceconnectionstatechange(" + this.peerConnection.iceConnectionState + ")")
+            if (this.peerConnection.iceConnectionState === "failed") {
+                this.report(ClientLogEvents.PeerIceFailed, {targetDeviceId: this.remoteId})
+            }
         }
 
         this.peerConnection.addEventListener('negotiationneeded', this._onnegotiationneeded)
         this.peerConnection.addEventListener('icecandidate', this._onicecandidate)
+        this.peerConnection.addEventListener('iceconnectionstatechange', this._iceconnectionstatechange)
         this.peerConnection.addEventListener('connectionstatechange', this._onconnectionstatechange)
         this.peerConnection.addEventListener('track', this._ontrack)
     }

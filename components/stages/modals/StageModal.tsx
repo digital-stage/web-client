@@ -1,3 +1,25 @@
+/*
+ * Copyright (c) 2021 Tobias Hegemann
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import { useEmit, useStageSelector } from '@digitalstage/api-client-react'
 import { ClientDeviceEvents, ClientDevicePayloads, Stage } from '@digitalstage/api-types'
@@ -10,6 +32,7 @@ import { TextInput } from 'ui/TextInput'
 import {Collapse} from 'ui/Collapse'
 import { shallowEqual } from 'react-redux'
 import { Switch } from 'ui/Switch'
+import {Radio} from "../../../ui/Radio";
 
 const StageModal = ({
     open,
@@ -120,14 +143,14 @@ const StageModal = ({
                         />
                         <h5 className="muted">Audioübertragung</h5>
                         <div>
-                            <label>
-                                <Field type="radio" name="audioType" value="mediasoup" /> Browser
+                            <label className="radioLabel">
+                                <Field as={Radio} type="radio" name="audioType" value="mediasoup" /> Browser
                             </label>
-                            <label>
-                                <Field type="radio" name="audioType" value="jammer" /> Jammer
+                            <label className="radioLabel">
+                                <Field as={Radio} type="radio" name="audioType" value="jammer" /> Jammer
                             </label>
-                            <label>
-                                <Field type="radio" name="audioType" value="ov" /> OV
+                            <label className="radioLabel">
+                                <Field as={Radio} type="radio" name="audioType" value="ov" /> OV
                             </label>
                         </div>
                         {errors.audioType && touched.audioType && (
@@ -249,6 +272,7 @@ const StageModal = ({
                                 disabled={isSubmitting || !!error}
                                 className="danger"
                                 type="submit"
+                                autoFocus={true}
                             >
                                 {stage ? 'Speichern' : 'Neue Bühne erstellen'}
                             </ModalButton>

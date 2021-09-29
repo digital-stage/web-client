@@ -1,12 +1,35 @@
+/*
+ * Copyright (c) 2021 Tobias Hegemann
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 import React from 'react'
 import {config} from './config'
 import {logger} from 'api/logger'
 import {Broker} from './Broker'
-import {ClientDeviceEvents, ClientDevicePayloads} from "@digitalstage/api-types";
+import {ClientDeviceEvents, ClientDevicePayloads, ClientLogEvents} from "@digitalstage/api-types";
 import {PeerNegotiation} from "./PeerNegotiation";
 import {useStageSelector} from 'api/redux/selectors/useStageSelector';
 import {useEmit} from '../ConnectionService';
 import {useNotification} from 'api/hooks/useNotification';
+import {useLogServer} from "../../hooks/useLogServer";
 
 const {trace} = logger('WebRTCService:PeerConnection')
 
@@ -25,10 +48,12 @@ const PeerConnection = ({
     onStats: (trackId: string, stats: RTCStatsReport) => void
     broker: Broker
 }): JSX.Element => {
+    const report = useLogServer()
     const ready = useStageSelector(state => state.globals.ready)
     const notify = useNotification()
     const emit = useEmit()
     const localStageDeviceId = useStageSelector((state) => state.globals.localStageDeviceId)
+    const targetDeviceId = useStageSelector(state => state.stageDevices.byId[stageDeviceId].deviceId)
     const [receivedTracks, setReceivedTracks] = React.useState<MediaStreamTrack[]>([])
     const turnServers = useStageSelector(state => state.globals.turn?.urls || [])
     const turnUsername = useStageSelector(state => state.globals.turn?.username)
@@ -36,7 +61,7 @@ const PeerConnection = ({
     const [connection, setConnection] = React.useState<PeerNegotiation>()
 
     React.useEffect(() => {
-        if (ready && notify && emit && localStageDeviceId && stageDeviceId && onRemoteTrack && broker && onStats) {
+        if (ready && notify && emit && localStageDeviceId && targetDeviceId && stageDeviceId && onRemoteTrack && broker && onStats && report) {
             trace('Created new peer connection ' + stageDeviceId)
             trace(turnServers.length > 0 ? 'Using TURN servers' : 'Fallback to public STUN servers')
 
@@ -98,13 +123,14 @@ const PeerConnection = ({
                 sdpSemantics: 'unified-plan'
             } : config
             const peerConnection = new PeerNegotiation({
-                remoteId: stageDeviceId,
+                remoteId: targetDeviceId,
                 configuration,
                 onTrack,
                 onDescription,
                 onCandidate,
                 onRestart,
-                polite
+                polite,
+                report: report
             })
             const handleRestart = () => {
                 peerConnection.restart()
@@ -135,22 +161,36 @@ const PeerConnection = ({
                 setConnection(undefined)
             }
         }
-    }, [stageDeviceId, turnServers, turnUsername, turnCredential, localStageDeviceId, emit, onRemoteTrack, onStats, broker, notify, ready])
+    }, [stageDeviceId, turnServers, turnUsername, turnCredential, localStageDeviceId, emit, onRemoteTrack, onStats, broker, notify, ready, targetDeviceId, report])
 
     React.useEffect(() => {
-        if (process.env.NODE_ENV !== 'production') {
-            const id = setInterval(() => {
-                if (connection) {
-                    receivedTracks.map((track) =>
-                        connection.getStats(track).then((stats) => onStats(track.id, stats))
-                    )
-                }
-            }, 5000)
-            return () => {
-                clearInterval(id)
+        //if (process.env.NODE_ENV !== 'production') {
+        const id = setInterval(() => {
+            if (connection) {
+                receivedTracks.map((track) =>
+                    connection.getStats(track).then((stats) => onStats(track.id, stats))
+                )
+                connection.getStats(null)
+                    .then((stats) => {
+                        let formattedStats = {}
+                        stats.forEach((v,k) => {
+                            formattedStats = {
+                                ...formattedStats,
+                                [k]: v
+                            }
+                        })
+                        report(ClientLogEvents.PeerStats, {
+                            targetDeviceId: targetDeviceId,
+                            stats: formattedStats
+                        })
+                    })
             }
+        }, 5000)
+        return () => {
+            clearInterval(id)
         }
-    }, [connection, onStats, receivedTracks])
+        //}
+    }, [connection, onStats, receivedTracks, report, targetDeviceId])
 
     React.useEffect(() => {
         if (connection) {

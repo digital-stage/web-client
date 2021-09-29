@@ -1,123 +1,149 @@
+/*
+ * Copyright (c) 2021 Tobias Hegemann
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 import {useAudioContext, useRemoteAudioTracks, useStageSelector} from "@digitalstage/api-client-react";
-import React, {useEffect, useMemo} from "react";
-import {CustomAudioTrackVolume} from "@digitalstage/api-types";
-import {shallowEqual} from "react-redux";
+import React from "react";
 import {useLocalAudioTracks} from "../../hooks/useLocalAudioTracks";
+import {useAudioNodeDispatch} from "../../provider/AudioNodeProvider";
 
 const AudioTrackRenderer = ({audioTrackId, track}: { audioTrackId: string, track: MediaStreamTrack }) => {
-  const audioTrack = useStageSelector(state => state.audioTracks.byId[audioTrackId])
-  const audioRef = React.useRef<HTMLAudioElement>(null)
-  const {audioContext} = useAudioContext()
-  const [sourceNode, setSourceNode] = React.useState<AudioNode>()
-  const gainNode = useMemo<GainNode>(
-    () => audioContext.createGain(),
-    [audioContext]
-  )
-  const customVolume = useStageSelector<CustomAudioTrackVolume | undefined>(
-    (state) =>
-      state.globals.localDeviceId &&
-      state.customAudioTrackVolumes.byDeviceAndAudioTrack[state.globals.localDeviceId] &&
-      state.customAudioTrackVolumes.byDeviceAndAudioTrack[state.globals.localDeviceId][audioTrackId]
-        ? state.customAudioTrackVolumes.byId[
-          state.customAudioTrackVolumes.byDeviceAndAudioTrack[state.globals.localDeviceId][audioTrackId]
-          ]
-        : undefined,
-    shallowEqual
-  )
+    const audioTrack = useStageSelector(state => state.audioTracks.byId[audioTrackId])
+    const audioRef = React.useRef<HTMLAudioElement>(null)
+    const {audioContext} = useAudioContext()
+    const dispatchAudioNode = useAudioNodeDispatch()
+    const [sourceNode, setSourceNode] = React.useState<AudioNode>()
+    const gainNode = React.useMemo<GainNode>(
+        () => audioContext.createGain(),
+        [audioContext]
+    )
+    const customMuted = useStageSelector<boolean | undefined>((state) =>
+        state.globals.localDeviceId &&
+        state.customAudioTrackVolumes.byDeviceAndAudioTrack[state.globals.localDeviceId] &&
+        state.customAudioTrackVolumes.byDeviceAndAudioTrack[state.globals.localDeviceId][audioTrackId]
+            ? state.customAudioTrackVolumes.byId[
+                state.customAudioTrackVolumes.byDeviceAndAudioTrack[state.globals.localDeviceId][audioTrackId]
+                ].muted
+            : undefined,
+    )
+    const customVolume = useStageSelector<number | undefined>((state) =>
+        state.globals.localDeviceId &&
+        state.customAudioTrackVolumes.byDeviceAndAudioTrack[state.globals.localDeviceId] &&
+        state.customAudioTrackVolumes.byDeviceAndAudioTrack[state.globals.localDeviceId][audioTrackId]
+            ? state.customAudioTrackVolumes.byId[
+                state.customAudioTrackVolumes.byDeviceAndAudioTrack[state.globals.localDeviceId][audioTrackId]
+                ].volume
+            : undefined,
+    )
 
-  React.useEffect(() => {
-    if (audioContext) {
-      const stream = new MediaStream([track])
-      const source = audioContext.createMediaStreamSource(stream)
-      setSourceNode(source)
-      const audioElement = audioRef.current
-      audioElement.srcObject = stream
-      audioElement.muted = true
-      return () => {
-        setSourceNode(undefined)
-        audioElement.srcObject = undefined
-      }
-    }
-  }, [audioContext, track])
+    React.useEffect(() => {
+        if (audioContext) {
+            const stream = new MediaStream([track])
+            const source = audioContext.createMediaStreamSource(stream)
+            setSourceNode(source)
+            const audioElement = audioRef.current
+            audioElement.srcObject = stream
+            audioElement.muted = true
+            return () => {
+                setSourceNode(undefined)
+                audioElement.srcObject = undefined
+            }
+        }
+    }, [audioContext, track])
 
-  React.useEffect(() => {
-    if (sourceNode && gainNode && audioContext.destination) {
-      /*
-      sourceNode.connect(gainNode)
-      gainNode.connect(audioContext.destination)
-      */
-      sourceNode.connect(audioContext.destination)
-      return () => {
-        /*
-        gainNode.disconnect(audioContext.destination)
-        sourceNode.disconnect(gainNode)
-         */
-        sourceNode.disconnect(audioContext.destination)
-      }
-    }
-  }, [sourceNode, gainNode, audioContext.destination])
+    React.useEffect(() => {
+        if (sourceNode && gainNode && audioContext.destination) {
+            sourceNode.connect(gainNode)
+            gainNode.connect(audioContext.destination)
+            return () => {
+                gainNode.disconnect(audioContext.destination)
+                sourceNode.disconnect(gainNode)
+            }
+        }
+    }, [sourceNode, gainNode, audioContext.destination])
 
-  useEffect(() => {
-    if (audioContext && gainNode) {
-      if (customVolume?.muted) {
-        gainNode.gain.setValueAtTime(0, audioContext.currentTime)
-      } else if (customVolume?.volume) {
-        gainNode.gain.setValueAtTime(customVolume.volume, audioContext.currentTime)
-      } else if (audioTrack.muted) {
-        gainNode.gain.setValueAtTime(0, audioContext.currentTime)
-      } else {
-        gainNode.gain.setValueAtTime(audioTrack.volume, audioContext.currentTime)
-      }
-    }
-  }, [
-    audioContext,
-    gainNode,
-    audioTrack.volume,
-    audioTrack.muted,
-    customVolume?.volume,
-    customVolume?.muted,
-  ])
 
-  return (
-    <audio ref={audioRef}/>
-  )
+    React.useEffect(() => {
+        if (audioContext && gainNode) {
+            if (customMuted) {
+                gainNode.gain.setValueAtTime(0, audioContext.currentTime)
+            } else if (customVolume) {
+                gainNode.gain.setValueAtTime(customVolume, audioContext.currentTime)
+            } else if (audioTrack.muted) {
+                gainNode.gain.setValueAtTime(0, audioContext.currentTime)
+            } else {
+                gainNode.gain.setValueAtTime(audioTrack.volume, audioContext.currentTime)
+            }
+        }
+    }, [
+        audioContext,
+        gainNode,
+        audioTrack.volume,
+        audioTrack.muted,
+        customVolume,
+        customMuted,
+    ])
+
+    return (
+        <audio ref={audioRef}/>
+    )
 }
 
 const LocalStageDeviceRenderer = () => {
-  const localAudioTracks = useLocalAudioTracks()
-  return (
-    <>
-      {Object.keys(localAudioTracks).map(audioTrackId => <AudioTrackRenderer key={audioTrackId}
-                                                                             audioTrackId={audioTrackId}
-                                                                             track={localAudioTracks[audioTrackId]}/>)}
-    </>
-  )
+    const localAudioTracks = useLocalAudioTracks()
+    return (
+        <>
+            {Object.keys(localAudioTracks).map(audioTrackId => <AudioTrackRenderer key={audioTrackId}
+                                                                                   audioTrackId={audioTrackId}
+                                                                                   track={localAudioTracks[audioTrackId]}/>)}
+        </>
+    )
 }
 
 const RemoteStageDeviceRenderer = ({stageDeviceId}: { stageDeviceId: string }) => {
-  const remoteAudioTracks = useRemoteAudioTracks(stageDeviceId)
+    const {audioContext} = useAudioContext()
+    const analyserNode = React.useMemo<AnalyserNode>(() => audioContext && audioContext.createAnalyser(), [audioContext])
+    const remoteAudioTracks = useRemoteAudioTracks(stageDeviceId)
 
-  return (
-    <>
-      {Object.keys(remoteAudioTracks).map(audioTrackId => <AudioTrackRenderer key={audioTrackId}
-                                                                              audioTrackId={audioTrackId}
-                                                                              track={remoteAudioTracks[audioTrackId]}/>)}
-    </>
-  )
+    return (
+        <>
+            {Object.keys(remoteAudioTracks).map(audioTrackId => <AudioTrackRenderer key={audioTrackId}
+                                                                                    audioTrackId={audioTrackId}
+                                                                                    track={remoteAudioTracks[audioTrackId]}/>)}
+        </>
+    )
 }
 
 const AudioRenderService = () => {
-  const localStageDeviceId = useStageSelector(state => state.globals.localStageDeviceId)
-  const stageDeviceIds = useStageSelector(state => state.globals.ready && state.globals.stageId ? state.stageDevices.byStage[state.globals.stageId] : [])
-  return (
-    <>
-      {stageDeviceIds.map(stageDeviceId => {
-        if (stageDeviceId === localStageDeviceId) {
-          return (<LocalStageDeviceRenderer key={stageDeviceId}/>)
-        }
-        return (<RemoteStageDeviceRenderer key={stageDeviceId} stageDeviceId={stageDeviceId}/>)
-      })}
-    </>
-  )
+    const localStageDeviceId = useStageSelector(state => state.globals.localStageDeviceId)
+    const stageDeviceIds = useStageSelector(state => state.globals.ready && state.globals.stageId ? state.stageDevices.byStage[state.globals.stageId] : [])
+    return (
+        <>
+            {stageDeviceIds.map(stageDeviceId => {
+                if (stageDeviceId === localStageDeviceId) {
+                    return (<LocalStageDeviceRenderer key={stageDeviceId}/>)
+                }
+                return (<RemoteStageDeviceRenderer key={stageDeviceId} stageDeviceId={stageDeviceId}/>)
+            })}
+        </>
+    )
 }
 export {AudioRenderService}

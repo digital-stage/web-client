@@ -1,3 +1,25 @@
+/*
+ * Copyright (c) 2021 Tobias Hegemann
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 import React, {useEffect, useMemo, useRef, useState} from 'react'
 import {
   CustomAudioTrackVolume,
@@ -540,11 +562,21 @@ const ListenerRenderer = ({
   const position = useStageDevicePosition({stageDeviceId, deviceId})
 
   useEffect(() => {
-    if (audioContext) {
+    const orientation = yRotationToVector(position.rZ)
+    if(!audioContext.listener.positionX) {
+      // Fallback for firefox
+      audioContext.listener.setOrientation(
+        position.x,
+        position.z,
+        position.y,
+        orientation[0],
+        orientation[1],
+        orientation[2],
+      )
+    } else {
       audioContext.listener.positionX.setValueAtTime(position.x, audioContext.currentTime)
       audioContext.listener.positionY.setValueAtTime(position.z, audioContext.currentTime)
       audioContext.listener.positionZ.setValueAtTime(position.y, audioContext.currentTime)
-      const orientation = yRotationToVector(position.rZ)
       audioContext.listener.forwardX.setValueAtTime(orientation[0], audioContext.currentTime)
       audioContext.listener.forwardY.setValueAtTime(orientation[1], audioContext.currentTime)
       audioContext.listener.forwardZ.setValueAtTime(orientation[2], audioContext.currentTime)
