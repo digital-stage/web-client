@@ -23,7 +23,7 @@
 import { logger } from "../logger";
 import { useStageSelector } from "../redux/selectors/useStageSelector";
 import React from "react";
-import {useAudioConsumers, useVideoConsumers } from "./MediasoupService";
+import {useConsumers } from "./MediasoupService";
 import {useWebRTCRemoteAudioTracks, useWebRTCRemoteVideos } from "./WebRTCService";
 
 const { trace } = logger('Temporary')
@@ -33,8 +33,7 @@ const TemporaryLogger = () => {
   const audioTracks = useStageSelector(state => state.audioTracks.allIds)
   const webRTCVideos = useWebRTCRemoteVideos()
   const webRTCAudioTracks = useWebRTCRemoteAudioTracks()
-  const mediasoupVideoConsumers = useVideoConsumers()
-  const mediasoupAudioConsumers = useAudioConsumers()
+  const mediasoupConsumers = useConsumers()
 
   React.useEffect(() => {
     trace("Video track models changed", videoTracks)
@@ -53,12 +52,8 @@ const TemporaryLogger = () => {
   }, [webRTCAudioTracks])
 
   React.useEffect(() => {
-    trace("Mediasoup video consumer list changed", mediasoupVideoConsumers)
-  }, [mediasoupVideoConsumers])
-
-  React.useEffect(() => {
-    trace("Mediasoup audio consumer list changed", mediasoupAudioConsumers)
-  }, [mediasoupAudioConsumers])
+    trace("Mediasoup consumer list changed", mediasoupConsumers)
+  }, [mediasoupConsumers])
 
   return null
 }

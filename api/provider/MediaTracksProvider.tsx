@@ -1,0 +1,64 @@
+/*
+ * Copyright (c) 2021 Tobias Hegemann
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+import React, {useState} from "react";
+import {AudioTrack, VideoTrack} from '@digitalstage/api-types'
+
+/**
+ * Map referencing MediaStreamTracks to IDs of AudioTracks or VideoTracks
+ * @see AudioTrack._id
+ * @see VideoTrack._id
+ */
+type State = {
+  [audioOrVideoTrackId: string]: MediaStreamTrack
+}
+type Dispatch = React.Dispatch<React.SetStateAction<State>>
+
+const MediaTracksStateContext = React.createContext<State>(null)
+const MediaTracksDispatchContext = React.createContext<Dispatch>(null)
+
+const MediaTracksProvider = ({children}: { children: React.ReactNode }) => {
+  const [state, dispatch] = useState<State>({})
+  return (
+    <MediaTracksStateContext.Provider value={state}>
+      <MediaTracksDispatchContext.Provider value={dispatch}>
+        {children}
+      </MediaTracksDispatchContext.Provider>
+    </MediaTracksStateContext.Provider>
+  )
+}
+
+const useTracks = () => {
+  const state = React.useContext(MediaTracksStateContext)
+  if (state === null)
+    throw new Error('Please wrap around your DOM tree with the MediaTracksProvider')
+  return state
+}
+
+const useTracksDispatch = () => {
+  const state = React.useContext(MediaTracksDispatchContext)
+  if (state === null)
+    throw new Error('Please wrap around your DOM tree with the MediaTracksProvider')
+  return state
+}
+
+export {MediaTracksProvider, useTracks, useTracksDispatch}

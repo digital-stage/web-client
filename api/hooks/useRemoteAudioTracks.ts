@@ -21,7 +21,7 @@
  */
 
 import {useStageSelector} from "../redux/selectors/useStageSelector";
-import {useAudioConsumers} from "../services/MediasoupService";
+import {useConsumers} from "../services/MediasoupService";
 import {useWebRTCRemoteAudioTracks} from "../services/WebRTCService";
 import React from "react";
 
@@ -37,7 +37,7 @@ const useRemoteAudioTracks = (stageDeviceId: string): RemoteAudioTracks => {
         .byStageDevice[stageDeviceId]?.find(id => state.audioTracks.byId[id].type === "mediasoup"))
 
     const webRTCAudioTracks = useWebRTCRemoteAudioTracks()
-    const mediasoupAudioConsumers = useAudioConsumers()
+    const mediasoupConsumers = useConsumers()
 
     return React.useMemo(() => {
         let tracks = {}
@@ -51,14 +51,14 @@ const useRemoteAudioTracks = (stageDeviceId: string): RemoteAudioTracks => {
                 console.error("Could not find audio track model for WebRTC audio track " + webRTCAudioTracks[stageDeviceId].id)
             }
         }
-        if(mediasoupAudioConsumers[mediasoupAudioTrackId]) {
+        if(mediasoupConsumers[mediasoupAudioTrackId]) {
             tracks = {
                 ...tracks,
-                [mediasoupAudioTrackId]: mediasoupAudioConsumers[mediasoupAudioTrackId].track
+                [mediasoupAudioTrackId]: mediasoupConsumers[mediasoupAudioTrackId].track
             }
         }
         return tracks
-    }, [mediasoupAudioConsumers, mediasoupAudioTrackId, stageDeviceId, webRTCAudioTrackId, webRTCAudioTracks])
+    }, [mediasoupConsumers, mediasoupAudioTrackId, stageDeviceId, webRTCAudioTrackId, webRTCAudioTracks])
 }
 
 export {useRemoteAudioTracks}
