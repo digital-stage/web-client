@@ -196,7 +196,7 @@ export const createConsumer = (
       )
       return transport.consume(data).then((consumer) => {
         if (data.paused) {
-          trace('Pausing consumer, but it is paused server-side ...')
+          trace('Pausing consumer, cause it is paused server-side ...')
           consumer.pause()
         }
         /*
@@ -224,10 +224,11 @@ export const resumeConsumer = (
   consumer: mediasoupClient.types.Consumer
 ): Promise<mediasoupClient.types.Consumer> => {
   if (consumer.paused) {
+    consumer.resume()
     return new Promise<mediasoupClient.types.Consumer>((resolve, reject) =>
       routerConnection.emit(ClientMediasoupEvents.ResumeConsumer, consumer.id as ClientMediasoupPayloads.ResumeConsumer, (error?: string) => {
         if (error) return reject(error)
-        consumer.resume()
+        //consumer.resume()
         trace(`Resumed consumer ${consumer.id}`)
         return resolve(consumer)
       })

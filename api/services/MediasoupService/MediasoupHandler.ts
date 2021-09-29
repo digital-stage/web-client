@@ -35,7 +35,7 @@ import {
   createProducer,
   createWebRTCTransport,
   getRTPCapabilities,
-  publishProducer,
+  publishProducer, resumeConsumer,
   unpublishProducer
 } from "./util";
 import {Transport as MediasoupTransport} from "mediasoup-client/lib/Transport";
@@ -140,12 +140,15 @@ class MediasoupHandler extends EventEmitter {
 
   public async consume(publicTrack: MediasoupAudioTrack | MediasoupVideoTrack): Promise<MediasoupConsumer> {
     trace('consume()')
-    const consumer = await createConsumer(
+    let consumer = await createConsumer(
       this.routerConnection,
       this.device,
       this.receiveTransport,
       publicTrack.producerId
     )
+    if(consumer.paused) {
+      consumer = await resumeConsumer(this.routerConnection, consumer)
+    }
     this.consumers = {
       ...this.consumers,
       [publicTrack._id]: consumer
@@ -196,7 +199,9 @@ class MediasoupHandler extends EventEmitter {
     // Tell device
     await this.device.load({routerRtpCapabilities: routerRtpCapabilities})
     // Create send transport
+    trace("Creating send transport")
     this.sendTransport = await createWebRTCTransport(this.routerConnection, this.device, "send")
+    trace("Creating receive transport")
     this.receiveTransport = await createWebRTCTransport(this.routerConnection, this.device, "receive")
     this.emit(Events.Connected)
   }
@@ -220,11 +225,8 @@ class MediasoupHandler extends EventEmitter {
 
   private init() {
     trace('init()')
-    this.routerConnection.on("connect", () => {
-      trace("CONNECTED?!?")
-      this.handleConnect()
-    })
-    this.routerConnection.on("disconnect", () => this.handleDisconnect)
+    this.routerConnection.on("connect", () => this.handleConnect())
+    this.routerConnection.on("disconnect", () => this.handleDisconnect())
     this.routerConnection.on(ServerMediasoupEvents.ConsumerClosed, (id: ServerMediasoupPayloads.ConsumerClosed) => {
       const publicTrackId = Object.keys(this.consumers).find(currId => this.consumers[currId].id === id)
       if (publicTrackId) {

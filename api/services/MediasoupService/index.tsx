@@ -110,8 +110,10 @@ const MediasoupService = () => {
   React.useEffect(() => {
     if (handler) {
       handler.syncWithPublicTracks([...videoTracks, ...audioTracks])
-        .then(consumers => setConsumers(consumers)
-        )
+        .then(consumers => {
+          console.log(consumers)
+          setConsumers(consumers)
+          })
     }
   }, [handler, videoTracks, audioTracks])
 
