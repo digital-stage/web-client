@@ -111,11 +111,13 @@ class MediasoupHandler extends EventEmitter {
     }
     try {
       const kind = track.kind === 'audio' ? 'audio' : 'video'
-      const facingMode = track.getConstraints().facingMode ? track.getConstraints().facingMode : undefined
+      const settings = track.getSettings()
+      const capabilities = track.getCapabilities()
       const publishedTrack = await publishTrack(this.emitToServer, this.stageId, kind, {
         producerId: producer.id,
-        facingMode: facingMode,
-        type: "mediasoup"
+        capabilities: capabilities,
+        ...settings,
+        type: "mediasoup",
       }) as MediasoupVideoTrack | MediasoupAudioTrack
       this.producers = {
         ...this.producers,

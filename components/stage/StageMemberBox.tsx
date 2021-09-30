@@ -24,8 +24,8 @@ import {VideoPlayer} from "./VideoPlayer";
 import {Avatar} from "./Avatar";
 import {ConductorButton} from "./ConductorButton";
 import React from "react";
-import {useWebRTCStats} from "@digitalstage/api-client-react";
-import { AiOutlineAudioMuted } from "react-icons/ai";
+import {useStageSelector, useWebRTCStats} from "@digitalstage/api-client-react";
+import {AiOutlineAudioMuted} from "react-icons/ai";
 
 
 const TrackStatsView = ({trackId}: { trackId: string }): JSX.Element => {
@@ -50,20 +50,22 @@ const StageMemberBox = ({
                           groupColor,
                           active,
                           track,
+                          videoTrackId,
                           conductorId,
-  muted
+                          muted
                         }: {
   userName: string
   groupName?: string
   groupColor?: string
   active?: boolean
   track?: MediaStreamTrack
+  videoTrackId?: string
   conductorId?: string
   muted: boolean
 }): JSX.Element => {
   const [videoMuted, setVideoMuted] = React.useState<boolean>(track?.muted)
   React.useEffect(() => {
-    if(track) {
+    if (track) {
       const onMute = () => setVideoMuted(true)
       const onUnmute = () => setVideoMuted(false)
       track.addEventListener("mute", onMute)
@@ -74,6 +76,7 @@ const StageMemberBox = ({
       }
     }
   }, [track])
+  const facingMode = useStageSelector(state => videoTrackId && state.videoTracks.byId[videoTrackId]?.facingMode)
 
   return (
     <div
@@ -85,6 +88,7 @@ const StageMemberBox = ({
       {track && <VideoPlayer track={track}/>}
       {muted && <span className="muted"><AiOutlineAudioMuted/></span>}
       <div className={`info ${!track ? 'centered' : ''}`}>
+        {facingMode && <span>FACING MODE: {facingMode}</span>}
         <Avatar name={userName} color={groupColor} active={active}/>
         <div className="names">
           {groupName && (
@@ -98,7 +102,9 @@ const StageMemberBox = ({
             </h6>
           )}
           <h5 className="memberName">{userName}</h5>
-          {videoMuted && <span style={{fontSize: "0.6rem", color: "var(---danger)"}}>(video muted)</span>}
+          {videoTrackId && <span style={{fontSize: "0.5rem"}}>{videoTrackId}</span>}
+          {videoMuted &&
+          <span style={{fontSize: "0.6rem", color: "var(---danger)"}}>Schlechte Internetverbindung</span>}
         </div>
         {track && <TrackStatsView trackId={track.id}/>}
       </div>

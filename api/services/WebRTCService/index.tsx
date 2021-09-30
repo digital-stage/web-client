@@ -201,8 +201,12 @@ const WebRTCService = (): JSX.Element => {
     ) {
       let publishedId: string
       const track = localVideoTrack.clone()
+      const settings = localVideoTrack.getSettings()
+      const capabilities = localVideoTrack.getCapabilities()
       publishTrack(emit, stageId, 'video', {
-        trackId: track.id,
+        capabilities: capabilities,
+        ...settings,
+        trackId: localVideoTrack.id,
         type: 'browser',
       })
         .then((videoTrack) => {
@@ -242,9 +246,12 @@ const WebRTCService = (): JSX.Element => {
     ) {
       let publishedId: string = undefined
       const track = localAudioTrack.clone()
-
+      const settings = localAudioTrack.getSettings()
+      const capabilities = localAudioTrack.getCapabilities()
       publishTrack(emit, stageId, 'audio', {
-        trackId: track.id,
+        capabilities: capabilities,
+        ...settings,
+        trackId: localAudioTrack.id,
         type: 'browser',
       })
         .then((audioTrack) => {
@@ -254,12 +261,12 @@ const WebRTCService = (): JSX.Element => {
         })
         .catch(error => reportError(`Could not publish local audio track ${track.id}. Reason: ${error}`))
       return () => {
-        setPublishedAudioTrack(undefined)
         if (publishedId) {
           unpublishTrack(emit, publishedId, "audio")
             .then(() => trace(`Un-published local audio track ${track.id} published as audio ${publishedId}`))
             .catch((error) => reportError(`Could not un-publish local audio track ${track?.id} published as audio ${publishedId}. Reason: ${error}`))
         }
+        setPublishedAudioTrack(undefined)
         if (track) {
           track.stop()
         }

@@ -51,6 +51,15 @@ const WebcamProvider = ({children}: { children: React.ReactNode }) => {
     }
   }, [state, reportError, videoTracks])
 
+  React.useEffect(() => {
+    if(state) {
+      console.log("CONSTRAINTS")
+      console.log(state.getConstraints())
+      console.log(state.getCapabilities())
+      console.log(state.getSettings())
+    }
+  }, [state])
+
   /*
   React.useEffect(() => {
     if (state) {

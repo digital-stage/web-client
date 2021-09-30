@@ -38,7 +38,7 @@ import { logger } from './logger'
 import { useCurrentStageAdminSelector } from './redux/selectors/useCurrentStageAdminSelector'
 import { useStageAdminSelector } from './redux/selectors/useStageAdminSelector'
 import { useSpatialAudioSelector } from './redux/selectors/useSpatialAudioSelector'
-import { useRemoteVideos } from './hooks/useRemoteVideos'
+import { useRemoteVideoTracks } from './hooks/useRemoteVideoTracks'
 import { useRemoteAudioTracks } from './hooks/useRemoteAudioTracks'
 import { useReady } from './hooks/useReady'
 import { useWebcam } from './provider/WebcamProvider'
@@ -67,7 +67,7 @@ export {
     useWebRTCStats,
     useWebcam,
     useMicrophone,
-    useRemoteVideos,
+    useRemoteVideoTracks,
     useRemoteAudioTracks,
     useErrorReporting,
     useSpatialAudioSelector,
