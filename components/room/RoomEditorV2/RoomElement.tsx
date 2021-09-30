@@ -20,8 +20,7 @@
  * SOFTWARE.
  */
 
-import React, { useCallback, useEffect, useMemo, useRef } from 'react'
-import { useSvgImage } from '../../../lib/useImage'
+import React from 'react'
 import {
     Text,
     Image,
@@ -35,8 +34,9 @@ import 'konva/lib/shapes/Image'
 import 'konva/lib/shapes/Transformer'
 import 'konva/lib/shapes/Circle'
 import 'konva/lib/shapes/Line'
+import { useSvgImage } from 'lib/useImage'
+import {useStageSelector} from "@digitalstage/api-client-react";
 
-// @ts-ignore
 export const FACTOR = process.browser && navigator?.maxTouchPoints > 1 ? 50 : 100
 
 const RoomElement = ({
@@ -49,8 +49,6 @@ const RoomElement = ({
     x,
     y,
     rZ,
-    stageWidth,
-    stageHeight,
     onSelected,
     selected,
     color,
@@ -67,8 +65,6 @@ const RoomElement = ({
     x: number
     y: number
     rZ: number
-    stageWidth: number
-    stageHeight: number
     onChange: (event: { x?: number; y?: number; rZ?: number }) => any
     onFinalChange: (event: { x?: number; y?: number; rZ?: number }) => any
     onSelected: () => any
@@ -80,22 +76,25 @@ const RoomElement = ({
     linePoints?: number[]
     lineDash?: number[]
 }) => {
+    const stageWidth = useStageSelector<number>((state) => state.stages.byId[state.globals.stageId].height)
+    const stageHeight = useStageSelector<number>((state) => state.stages.byId[state.globals.stageId].width)
+
     const sourceImage = useSvgImage(src, size, size, color)
     const imageRef = React.useRef<any>()
     const transformerRef = React.useRef<any>()
 
-    const maximumX = useMemo(() => stageWidth * FACTOR - size, [stageWidth, size])
-    const maximumY = useMemo(() => stageHeight * FACTOR - size, [stageHeight, size])
-    const realX = useMemo(() => (stageWidth / 2 + x) * FACTOR, [stageWidth, x])
-    const realY = useMemo(() => (stageHeight / 2 + y) * FACTOR, [stageHeight, y])
-    const dragBoundFunc = useCallback(
+    const maximumX = React.useMemo(() => stageWidth * FACTOR - size, [stageWidth, size])
+    const maximumY = React.useMemo(() => stageHeight * FACTOR - size, [stageHeight, size])
+    const realX = React.useMemo(() => (stageWidth / 2 + x) * FACTOR, [stageWidth, x])
+    const realY = React.useMemo(() => (stageHeight / 2 + y) * FACTOR, [stageHeight, y])
+    const dragBoundFunc = React.useCallback(
         (pos) => ({
             x: Math.min(maximumX, Math.max(size, pos.x)),
             y: Math.min(maximumY, Math.max(size, pos.y)),
         }),
         [size, maximumY, maximumX]
     )
-    const handleDrag = useCallback(
+    const handleDrag = React.useCallback(
         (e: any) => {
             if (e.target) {
                 const event: {
@@ -109,7 +108,7 @@ const RoomElement = ({
         },
         [onChange, stageHeight, stageWidth]
     )
-    const handleDragEnd = useCallback(
+    const handleDragEnd = React.useCallback(
         (e: any) => {
             if (e.target) {
                 const event: {
@@ -126,7 +125,7 @@ const RoomElement = ({
         [onFinalChange, stageHeight, stageWidth]
     )
 
-    const handleTransform = useCallback(
+    const handleTransform = React.useCallback(
         (e: any) => {
             if (e.target) {
                 const rZ = e.target.rotation()
@@ -137,7 +136,7 @@ const RoomElement = ({
         },
         [onChange]
     )
-    const handleTransformEnd = useCallback(
+    const handleTransformEnd = React.useCallback(
         (e: any) => {
             if (e.target) {
                 const rZ = e.target.rotation()

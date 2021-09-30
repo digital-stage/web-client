@@ -20,8 +20,30 @@
  * SOFTWARE.
  */
 
-import {StageMember} from "@digitalstage/api-types";
+import {StageDevice, StageMember} from "@digitalstage/api-types";
 import {useStageSelector} from "@digitalstage/api-client-react";
+
+const sortStageDevices = (a: StageDevice, b: StageDevice): number => {
+  if (a.active === b.active) {
+    if (a.stageMemberId == b.stageMemberId) {
+      if (a._id === b._id) {
+        return 0;
+      } else if (a._id < b._id) {
+        return -1
+      } else {
+        return 1
+      }
+    } else if (a.stageMemberId <= b.stageMemberId) {
+      return -1
+    } else {
+      return 1
+    }
+  } else if (a.active) {
+    return -1
+  } else {
+    return 1
+  }
+}
 
 const sortStageMembers = (a: StageMember, b: StageMember): number => {
   if (a.active === b.active) {
@@ -55,4 +77,14 @@ const useFilteredStageMembers = () => useStageSelector(state => {
   return []
 })
 
-export {useFilteredStageMembers, sortStageMembers}
+const useFilteredStageDevicesOfStageMember = (stageMemberId: string) => useStageSelector(state => {
+  if (stageMemberId) {
+    if (state.globals.showOffline) {
+      return [...state.stageDevices.byStageMember[stageMemberId]].sort((a, b) => sortStageDevices(state.stageDevices.byId[a], state.stageDevices.byId[b]))
+    }
+    return state.stageDevices.byStageMember[stageMemberId].filter(id => state.stageDevices.byId[id].active).sort((a, b) => sortStageDevices(state.stageDevices.byId[a], state.stageDevices.byId[b]))
+  }
+  return []
+})
+
+export {useFilteredStageMembers, useFilteredStageDevicesOfStageMember, sortStageMembers, sortStageDevices}
