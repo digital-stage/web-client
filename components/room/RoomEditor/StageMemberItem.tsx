@@ -30,7 +30,7 @@ import {
     StageMember,
 } from '@digitalstage/api-types'
 import {RoomElement} from './RoomElement'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import {StageDeviceItem} from './StageDeviceItem'
 import { shallowEqual } from 'react-redux'
 

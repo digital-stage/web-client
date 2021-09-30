@@ -38,11 +38,10 @@ import { FACTOR } from "./RoomElement";
 
 const RoomEditor = () => {
   const innerRef = React.useRef<HTMLDivElement>(null)
-  const stageId = useStageSelector(state => state.globals.stageId)
   const dispatch = useDispatch()
 
-  const height = useStageSelector<number>((state) => state.stages.byId[stageId].height)
-  const width = useStageSelector<number>((state) => state.stages.byId[stageId].width)
+  const height = useStageSelector<number>((state) => state.stages.byId[state.globals.stageId].height)
+  const width = useStageSelector<number>((state) => state.stages.byId[state.globals.stageId].width)
 
   const [selection, setSelection] = React.useState<RoomSelection[]>([])
   const selectedDeviceId = useStageSelector((state) => state.globals.selectedDeviceId)

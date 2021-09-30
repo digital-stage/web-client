@@ -26,41 +26,59 @@ import {shallowEqual} from "react-redux";
 import {ClientDeviceEvents, ClientDevicePayloads} from "@digitalstage/api-types";
 import {RoomElement} from "./RoomElement";
 import React from "react";
-import {
-  selectResultingGroupPosition, selectResultingStageDevicePosition, selectResultingStageMemberPosition,
-  useCustomStageMemberPosition,
-  useStageMemberPosition
-} from "./utils";
 
-const useListenerPosition = () => {
-  const groupPosition = useStageSelector<{ x: number, y: number, rZ: number }>(state =>
-    selectResultingGroupPosition(state.globals.groupId, state), shallowEqual)
-  const stageMemberPosition = useStageSelector<{ x: number, y: number, rZ: number }>(state =>
-    selectResultingStageMemberPosition(state.globals.stageMemberId, state), shallowEqual)
-  const stageDevicePosition = useStageSelector<{ x: number, y: number, rZ: number }>(state =>
-    selectResultingStageDevicePosition(state.globals.localStageDeviceId, state), shallowEqual)
-  return ({
-    x: groupPosition.x + stageMemberPosition.x + stageDevicePosition.x,
-    y: groupPosition.y + stageMemberPosition.y + stageDevicePosition.y,
-    rZ: groupPosition.rZ + stageMemberPosition.rZ + stageDevicePosition.rZ
-  })
-}
-
-const StageMemberElement = ({stageMemberId, selection, onSelected}: {
+const StageDeviceElement = ({stageMemberId, selection, onSelected}: {
   stageMemberId: string,
   selection: RoomSelection[]
   onSelected: (selection: RoomSelection) => void
 }) => {
   const emit = useEmit()
-  const isLocalStageMember = useStageSelector<boolean>(state => state.globals.stageMemberId === stageMemberId)
-  const position = useStageMemberPosition(stageMemberId)
-  const customPosition = useCustomStageMemberPosition(stageMemberId)
-  const groupPosition = useStageSelector<{ x: number, y: number, rZ: number }>(state =>
-    selectResultingGroupPosition(state.stageMembers.byId[stageMemberId].groupId, state), shallowEqual)
+  const position = useStageSelector<{ x: number, y: number, rZ: number }>(state => ({
+    x: state.stageMembers.byId[stageMemberId].x,
+    y: state.stageMembers.byId[stageMemberId].y,
+    rZ: state.stageMembers.byId[stageMemberId].rZ
+  }), shallowEqual)
+  const customPosition = useStageSelector<{ _id: string, x: number, y: number, rZ: number } | undefined>(
+    (state) => {
+      if (
+        state.globals.selectedMode === "personal" &&
+        state.customStageMemberPositions.byDeviceAndStageMember[state.globals.selectedDeviceId] &&
+        state.customStageMemberPositions.byDeviceAndStageMember[state.globals.selectedDeviceId][stageMemberId]) {
+        const {
+          _id,
+          x,
+          y,
+          rZ,
+        } = state.customStageMemberPositions.byId[state.customStageMemberPositions.byDeviceAndStageMember[state.globals.selectedDeviceId][stageMemberId]]
+        return {
+          _id, x, y, rZ
+        }
+      }
+      return undefined
+    }, shallowEqual)
+  const groupPosition = useStageSelector<{ x: number, y: number, rZ: number }>(
+    state => {
+      const selectedDevice = state.globals.selectedDeviceId
+      const groupId = state.stageMembers.byId[stageMemberId].groupId
+      const customGroupId = state.globals.selectedMode === "personal" &&
+        state.customGroupPositions.byDeviceAndGroup[selectedDevice] &&
+        state.customGroupPositions.byDeviceAndGroup[selectedDevice][groupId]
+      return customGroupId ? ({
+        x: state.customGroupPositions.byId[customGroupId].x,
+        y: state.customGroupPositions.byId[customGroupId].y,
+        rZ: state.customGroupPositions.byId[customGroupId].rZ
+      }) : ({
+        x: state.groups.byId[groupId].x,
+        y: state.groups.byId[groupId].y,
+        rZ: state.groups.byId[groupId].rZ,
+      })
+    }, shallowEqual
+  )
   const username = useStageSelector<string | undefined>((state) =>
     state.users.byId[state.stageMembers.byId[stageMemberId].userId]?.name
   )
   const groupColor = useStageSelector(state => state.groups.byId[state.stageMembers.byId[stageMemberId].groupId].color)
+
 
   const [currentPosition, setCurrentPosition] = React.useState<{ x: number; y: number; rZ: number }>({
     x: groupPosition.x + (customPosition?.x || position.x),
@@ -110,7 +128,7 @@ const StageMemberElement = ({stageMemberId, selection, onSelected}: {
     <RoomElement
       name={username || stageMemberId}
       size={64}
-      src={isLocalStageMember && stageDeviceIds.length === 0 ? "/room/center.svg" : "/room/member.svg"}
+      src="/room/member.svg"
       x={currentPosition.x}
       y={currentPosition.y}
       rZ={currentPosition.rZ}
@@ -135,4 +153,4 @@ const StageMemberElement = ({stageMemberId, selection, onSelected}: {
   )
 }
 
-export {StageMemberElement}
+export {StageDeviceElement}
