@@ -35,16 +35,15 @@ import {
   createProducer,
   createWebRTCTransport,
   getRTPCapabilities,
-  publishProducer,
   resumeConsumer,
   stopProducer,
-  unpublishProducer
 } from "./util";
 import {Transport as MediasoupTransport} from "mediasoup-client/lib/Transport";
 import {Producer as MediasoupProducer} from "mediasoup-client/lib/Producer";
 import omit from "lodash/omit";
 import {Consumer as MediasoupConsumer} from "mediasoup-client/lib/Consumer";
 import {logger} from "api/logger";
+import {publishTrack, unpublishTrack} from "api/utils/trackPublishing";
 
 const {trace} = logger('MediasoupHandler')
 
@@ -112,7 +111,12 @@ class MediasoupHandler extends EventEmitter {
     }
     try {
       const kind = track.kind === 'audio' ? 'audio' : 'video'
-      const publishedTrack = await publishProducer(this.emitToServer, this.stageId, producer.id, kind)
+      const facingMode = track.getConstraints().facingMode ? track.getConstraints().facingMode : undefined
+      const publishedTrack = await publishTrack(this.emitToServer, this.stageId, kind, {
+        producerId: producer.id,
+        facingMode: facingMode,
+        type: "mediasoup"
+      }) as MediasoupVideoTrack | MediasoupAudioTrack
       this.producers = {
         ...this.producers,
         [publishedTrack._id]: producer
@@ -130,11 +134,12 @@ class MediasoupHandler extends EventEmitter {
     }
   }
 
-  public async removeTrack(trackId: string): Promise<void> {
+  public async removeTrack(trackId: string): Promise<ProducersList> {
     trace('removeTrack()')
     const publishedTrackId = Object.keys(this.producers).find(currId => this.producers[currId].track.id === trackId)
     if (publishedTrackId) {
       return this.removeProducer(publishedTrackId)
+        .then(() => this.producers)
     }
     throw new Error("Track not found")
   }
@@ -193,7 +198,7 @@ class MediasoupHandler extends EventEmitter {
       await stopProducer(this.routerConnection, producer)
       this.producers = omit(this.producers, publishedTrackId)
       this.emit(Events.ProducerRemoved, producer)
-      await unpublishProducer(this.emitToServer, publishedTrackId, producer.track.kind === 'audio' ? 'audio' : 'video')
+      await unpublishTrack(this.emitToServer, publishedTrackId, producer.track.kind === 'audio' ? 'audio' : 'video')
     }
   }
 

@@ -20,7 +20,9 @@
  * SOFTWARE.
  */
 
-import React, {useState} from "react";
+import React from "react";
+import {useErrorReporting, useStageSelector} from "@digitalstage/api-client-react";
+import {VideoTrack} from "@digitalstage/api-types";
 
 
 type State = MediaStreamTrack
@@ -29,9 +31,25 @@ type Dispatch = React.Dispatch<React.SetStateAction<State>>
 const WebcamStateContext = React.createContext<State>(null)
 const WebcamDispatchContext = React.createContext<Dispatch>(null)
 
-
 const WebcamProvider = ({children}: { children: React.ReactNode }) => {
-  const [state, dispatch] = useState<MediaStreamTrack>()
+  const [state, dispatch] = React.useState<MediaStreamTrack>()
+  const videoTracks = useStageSelector<VideoTrack[]>(state => state.videoTracks.byStageDevice[state.globals.localStageDeviceId]?.map(id => state.videoTracks.byId[id]) || [])
+  const reportError = useErrorReporting()
+
+  React.useEffect(() => {
+    if (state && reportError && videoTracks.length > 0) {
+      // Just use first video track (should be only one in webclient)
+      const videoTrack = videoTracks[0]
+      if (videoTrack.facingMode) {
+        if (state.getConstraints().facingMode !== videoTrack.facingMode) {
+          state.applyConstraints({
+            facingMode: videoTrack.facingMode
+          })
+            .catch(err => reportError(err))
+        }
+      }
+    }
+  }, [state, reportError, videoTracks])
 
   /*
   React.useEffect(() => {
