@@ -60,12 +60,12 @@ const useRemoteVideoTracks = (stageMemberId: string): RemoteVideoTracks => {
     return {_id, type, producerId, stageDeviceId}
   }) || [])
   //TODO: Discuss if we should wrap this with React.useMemo ...
-  return videoTracks.reduce<RemoteVideoTracks>((prev, {_id, type, producerId, stageDeviceId}) => {
+  return videoTracks.reduce<RemoteVideoTracks>((prev, {_id, type, stageDeviceId}) => {
     if (type === "mediasoup") {
-      if (mediasoupConsumers[producerId]) {
+      if (mediasoupConsumers[_id]) {
         return {
           ...prev,
-          [_id]: mediasoupConsumers[producerId].track
+          [_id]: mediasoupConsumers[_id].track
         }
       }
     } else if (type === "browser") {

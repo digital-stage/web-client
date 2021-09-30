@@ -170,8 +170,9 @@ class MediasoupHandler extends EventEmitter {
     const consumer = this.consumers[publicTrackId]
     if (consumer) {
       this.consumers = omit(this.consumers, publicTrackId)
-      await closeConsumer(this.routerConnection, this.consumers[publicTrackId])
+      await closeConsumer(this.routerConnection, consumer)
       this.emit(Events.ConsumerRemoved, consumer)
+      return consumer
     }
     throw new Error(`Consumer for public track ${publicTrackId} not found`)
   }
