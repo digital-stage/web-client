@@ -21,105 +21,110 @@
  */
 
 import {
-  useCurrentStageAdminSelector,
-  useRemoteVideoTracks,
-  useStageSelector, useWebcam,
+    useCurrentStageAdminSelector,
+    useRemoteVideoTracks,
+    useStageSelector, useWebcam,
 } from '@digitalstage/api-client-react'
 import React from 'react'
 import {StageMemberBox} from "./StageMemberBox";
 
 const LocalStageMemberView = ({hasAdminRights}: { hasAdminRights: boolean }) => {
-  const localStageMemberId = useStageSelector(state => state.globals.stageMemberId)
-  const userName = useStageSelector(state => state.globals.localUserId ? state.users.byId[state.globals.localUserId].name : "Local user")
-  const groupName = useStageSelector(state => state.globals.groupId ? state.groups.byId[state.globals.groupId].name : "")
-  const groupColor = useStageSelector(state => state.globals.groupId ? state.groups.byId[state.globals.groupId].color : "")
+    const localStageMemberId = useStageSelector(state => state.globals.stageMemberId)
+    const userName = useStageSelector<string | undefined>(state => state.globals.localUserId && state.users.byId[state.globals.localUserId]?.name || "Local user")
+    const groupName = useStageSelector<string | undefined>(state => state.globals.groupId && state.groups.byId[state.globals.groupId]?.name || "")
+    const groupColor = useStageSelector(state => state.globals.groupId && state.groups.byId[state.globals.groupId]?.color || "")
 
-  // Gather all tracks together
-  const remoteTracks = useRemoteVideoTracks(localStageMemberId)
-  const localTrack = useWebcam()
-  const videoTrackId = useStageSelector<string | undefined>(state => state.videoTracks.byStageDevice[state.globals.localStageDeviceId]?.length > 0 ? state.videoTracks.byStageDevice[state.globals.localStageDeviceId][0] : undefined)
-  const hasAudioTracks = useStageSelector<boolean>(state => state.audioTracks.byStageDevice[state.globals.localStageDeviceId]?.length > 0 || false)
+    // Gather all tracks together
+    const remoteTracks = useRemoteVideoTracks(localStageMemberId)
+    const localTrack = useWebcam()
+    const videoTrackId = useStageSelector<string | undefined>(state =>
+        state.globals.localStageDeviceId &&
+        state.videoTracks.byStageDevice[state.globals.localStageDeviceId] &&
+        state.videoTracks.byStageDevice[state.globals.localStageDeviceId]?.length > 0
+            ? state.videoTracks.byStageDevice[state.globals.localStageDeviceId][0]
+            : undefined)
+    const hasAudioTracks = useStageSelector<boolean>(state => state.globals.localStageDeviceId && state.audioTracks.byStageDevice[state.globals.localStageDeviceId]?.length > 0 || false)
 
-  return (
-    <>
-      <StageMemberBox
-        userName={userName}
-        groupName={groupName}
-        groupColor={groupColor}
-        active={true}
-        conductorId={hasAdminRights ? localStageMemberId : undefined}
-        track={localTrack}
-        videoTrackId={videoTrackId}
-        muted={!hasAudioTracks}
-      />
-      {Object.keys(remoteTracks).map(videoTrackId => <StageMemberBox
-        key={videoTrackId}
-        userName={userName}
-        groupName={groupName}
-        groupColor={groupColor}
-        active={true}
-        conductorId={hasAdminRights ? localStageMemberId : undefined}
-        track={remoteTracks[videoTrackId]}
-        videoTrackId={videoTrackId}
-        muted={!hasAudioTracks}
-      />)}
-    </>
-  )
+    return (
+        <>
+            <StageMemberBox
+                userName={userName}
+                groupName={groupName}
+                groupColor={groupColor}
+                active={true}
+                conductorId={hasAdminRights ? localStageMemberId : undefined}
+                track={localTrack}
+                videoTrackId={videoTrackId}
+                muted={!hasAudioTracks}
+            />
+            {Object.keys(remoteTracks).map(videoTrackId => <StageMemberBox
+                key={videoTrackId}
+                userName={userName}
+                groupName={groupName}
+                groupColor={groupColor}
+                active={true}
+                conductorId={hasAdminRights ? localStageMemberId : undefined}
+                track={remoteTracks[videoTrackId]}
+                videoTrackId={videoTrackId}
+                muted={!hasAudioTracks}
+            />)}
+        </>
+    )
 }
 
 const RemoteStageMemberView = ({stageMemberId, hasAdminRights}: { stageMemberId: string, hasAdminRights: boolean }) => {
-  const active = useStageSelector(state => state.stageMembers.byId[stageMemberId].active)
-  const userName = useStageSelector(state => state.users.byId[state.stageMembers.byId[stageMemberId].userId].name)
-  const groupName = useStageSelector(state => state.groups.byId[state.stageMembers.byId[stageMemberId].groupId].name)
-  const groupColor = useStageSelector(state => state.groups.byId[state.stageMembers.byId[stageMemberId].groupId].color)
-  const hasAudioTracks = useStageSelector<boolean>(state => state.audioTracks.byStageMember[stageMemberId] && state.audioTracks.byStageMember[stageMemberId].length > 0)
-  const videoTracks = useRemoteVideoTracks(stageMemberId)
+    const active = useStageSelector<boolean>(state => state.stageMembers.byId[stageMemberId].active)
+    const userName = useStageSelector<string | undefined>(state => state.stageMembers.byId[stageMemberId].userId && state.users.byId[state.stageMembers.byId[stageMemberId].userId]?.name)
+    const groupName = useStageSelector<string | undefined>(state => state.stageMembers.byId[stageMemberId].groupId && state.groups.byId[state.stageMembers.byId[stageMemberId].groupId]?.name)
+    const groupColor = useStageSelector<string | undefined>(state => state.stageMembers.byId[stageMemberId].groupId && state.groups.byId[state.stageMembers.byId[stageMemberId].groupId]?.color)
+    const hasAudioTracks = useStageSelector<boolean>(state => state.audioTracks.byStageMember[stageMemberId] && state.audioTracks.byStageMember[stageMemberId].length > 0)
+    const videoTracks = useRemoteVideoTracks(stageMemberId)
 
-  if (Object.keys(videoTracks).length === 0) {
+    if (Object.keys(videoTracks).length === 0) {
+        return (
+            <StageMemberBox
+                userName={userName}
+                groupName={groupName}
+                groupColor={groupColor}
+                active={active}
+                muted={!hasAudioTracks}
+                conductorId={hasAdminRights ? stageMemberId : undefined}
+            />
+        )
+    }
+
     return (
-      <StageMemberBox
-        userName={userName}
-        groupName={groupName}
-        groupColor={groupColor}
-        active={active}
-        muted={!hasAudioTracks}
-        conductorId={hasAdminRights ? stageMemberId : undefined}
-      />
+        <>
+            {Object.keys(videoTracks).map(videoTrackId => (
+                <StageMemberBox
+                    key={videoTrackId}
+                    userName={userName}
+                    groupName={groupName}
+                    groupColor={groupColor}
+                    active={true}
+                    conductorId={hasAdminRights ? stageMemberId : undefined}
+                    videoTrackId={videoTrackId}
+                    track={videoTracks[videoTrackId]}
+                    muted={!hasAudioTracks}
+                />
+            ))}
+        </>
     )
-  }
-
-  return (
-    <>
-      {Object.keys(videoTracks).map(videoTrackId => (
-        <StageMemberBox
-          key={videoTrackId}
-          userName={userName}
-          groupName={groupName}
-          groupColor={groupColor}
-          active={true}
-          conductorId={hasAdminRights ? stageMemberId : undefined}
-          videoTrackId={videoTrackId}
-          track={videoTracks[videoTrackId]}
-          muted={!hasAudioTracks}
-        />
-      ))}
-    </>
-  )
 }
 
 const StageMemberView = ({stageMemberId}: { stageMemberId: string }) => {
-  const hasAdminRights = useCurrentStageAdminSelector()
-  const localStageMemberId = useStageSelector(state => state.globals.stageMemberId)
-  if (stageMemberId === localStageMemberId) {
-    return (<LocalStageMemberView
-      key={stageMemberId}
-      hasAdminRights={hasAdminRights}
-    />)
-  }
-  return (<RemoteStageMemberView
-      key={stageMemberId}
-      stageMemberId={stageMemberId}
-      hasAdminRights={hasAdminRights}/>
-  )
+    const hasAdminRights = useCurrentStageAdminSelector()
+    const localStageMemberId = useStageSelector(state => state.globals.stageMemberId)
+    if (stageMemberId === localStageMemberId) {
+        return (<LocalStageMemberView
+            key={stageMemberId}
+            hasAdminRights={hasAdminRights}
+        />)
+    }
+    return (<RemoteStageMemberView
+            key={stageMemberId}
+            stageMemberId={stageMemberId}
+            hasAdminRights={hasAdminRights}/>
+    )
 }
 export {StageMemberView}

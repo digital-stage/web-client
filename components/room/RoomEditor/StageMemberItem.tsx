@@ -87,7 +87,7 @@ const StageMemberItem = ({
                       stageMember?.rZ !== DefaultThreeDimensionalProperties.rZ)
     }, [customStageMemberPosition, deviceId, stageMember?.rZ, stageMember?.x, stageMember?.y])
     const username = useStageSelector<string | undefined>((state) =>
-        stageMember ? state.users.byId[stageMember.userId]?.name : undefined
+        stageMember.userId ? state.users.byId[stageMember.userId]?.name : undefined
     )
     const stageDeviceIds = useStageSelector<string[]>(
         (state) => state.stageDevices.byStageMember[stageMemberId] || []
