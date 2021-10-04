@@ -23,6 +23,14 @@
 import {RootState, useStageSelector} from "@digitalstage/api-client-react";
 import {shallowEqual} from "react-redux";
 
+export const FACTOR = 100;
+
+export type RoomPosition = {
+  x: number,
+  y: number,
+  rZ: number
+}
+
 const selectGroupPosition = (groupId: string, state: RootState) => ({
   x: state.groups.byId[groupId].x,
   y: state.groups.byId[groupId].y,
