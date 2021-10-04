@@ -43,24 +43,28 @@ const Rotator = ({
     if (ref.current) {
       const currentRef = ref.current
       const onDragEnd = (e: MouseEvent) => {
+        e.preventDefault()
         e.stopPropagation()
-        global.window.removeEventListener("mouseup", onDragEnd)
+        global.window.removeEventListener("touchcancel", onDragEnd)
         global.window.removeEventListener("touchend", onDragEnd)
+        global.window.removeEventListener("mouseup", onDragEnd)
         setDragging(false)
       }
       const onDragStart = (e: MouseEvent) => {
+        e.preventDefault()
         e.stopPropagation()
         setDragging(true)
-        global.window.addEventListener("mouseup", onDragEnd)
+        global.window.addEventListener("touchcancel", onDragEnd)
         global.window.addEventListener("touchend", onDragEnd)
+        global.window.addEventListener("mouseup", onDragEnd)
       }
       const handleClicked = (e: MouseEvent) => e.stopPropagation()
-      currentRef.addEventListener("mousedown", onDragStart)
       currentRef.addEventListener("touchstart", onDragStart)
+      currentRef.addEventListener("mousedown", onDragStart)
       currentRef.addEventListener("click", handleClicked)
       return () => {
-        currentRef.removeEventListener("mousedown", onDragStart)
         currentRef.removeEventListener("touchstart", onDragStart)
+        currentRef.removeEventListener("mousedown", onDragStart)
         currentRef.removeEventListener("click", handleClicked)
       }
     }
@@ -72,13 +76,17 @@ const Rotator = ({
   React.useEffect(() => {
     if (interactiveRef && dragging) {
       const handleMove = (e: MouseEvent) => {
+        e.preventDefault()
+        e.stopPropagation()
         const angle = Math.atan2(e.offsetX - absoluteX, -(e.offsetY - absoluteY)) * (180 / Math.PI)
         onChange(angle)
       }
+      interactiveRef.addEventListener("touchmove", handleMove)
       interactiveRef.addEventListener("mousemove", handleMove)
       interactiveRef.style.setProperty("z-index", "100")
       return () => {
         interactiveRef.style.removeProperty("z-index" )
+        interactiveRef.removeEventListener("touchmove", handleMove)
         interactiveRef.removeEventListener("mousemove", handleMove)
       }
     }
@@ -172,9 +180,11 @@ const RoomItem = ({
     if (ref.current) {
       const currentRef = ref.current
       const onDragEnd = (e: MouseEvent) => {
+        e.preventDefault()
         e.stopPropagation()
-        global.window.removeEventListener("mouseup", onDragEnd)
+        global.window.removeEventListener("touchcancel", onDragEnd)
         global.window.removeEventListener("touchend", onDragEnd)
+        global.window.removeEventListener("mouseup", onDragEnd)
         setDragging(false)
         if (dragged.current) {
           if (onFinalChange) {
@@ -188,21 +198,23 @@ const RoomItem = ({
         }
       }
       const onDragStart = (e: MouseEvent) => {
+        e.preventDefault()
         e.stopPropagation()
         dragged.current = false
         setDragging(true)
-        global.window.addEventListener("mouseup", onDragEnd)
+        global.window.addEventListener("touchcancel", onDragEnd)
         global.window.addEventListener("touchend", onDragEnd)
+        global.window.addEventListener("mouseup", onDragEnd)
       }
       const handleClicked = (e: MouseEvent) => {
         e.stopPropagation()
       }
-      currentRef.addEventListener("mousedown", onDragStart)
       currentRef.addEventListener("touchstart", onDragStart)
+      currentRef.addEventListener("mousedown", onDragStart)
       currentRef.addEventListener("click", handleClicked)
       return () => {
-        currentRef.removeEventListener("mousedown", onDragStart)
         currentRef.removeEventListener("touchstart", onDragStart)
+        currentRef.removeEventListener("mousedown", onDragStart)
         currentRef.removeEventListener("click", handleClicked)
       }
     }
@@ -211,6 +223,7 @@ const RoomItem = ({
   React.useEffect(() => {
     if (dragging) {
       const onMove = (e: MouseEvent) => {
+        e.preventDefault()
         e.stopPropagation()
         dragged.current = true
         const movementX = e.movementX / FACTOR
@@ -227,10 +240,10 @@ const RoomItem = ({
           return position
         })
       }
-      console.log("Adding global mousemove listener")
+      global.window.addEventListener("touchmove", onMove)
       global.window.addEventListener("mousemove", onMove)
       return () => {
-        console.log("Removing global mousemove listener")
+        global.window.removeEventListener("touchmove", onMove)
         global.window.removeEventListener("mousemove", onMove)
       }
     }
