@@ -32,19 +32,7 @@ import {
   useStageMemberPosition
 } from "./utils";
 
-const useListenerPosition = () => {
-  const groupPosition = useStageSelector<{ x: number, y: number, rZ: number }>(state =>
-    selectResultingGroupPosition(state.globals.groupId, state), shallowEqual)
-  const stageMemberPosition = useStageSelector<{ x: number, y: number, rZ: number }>(state =>
-    selectResultingStageMemberPosition(state.globals.stageMemberId, state), shallowEqual)
-  const stageDevicePosition = useStageSelector<{ x: number, y: number, rZ: number }>(state =>
-    selectResultingStageDevicePosition(state.globals.localStageDeviceId, state), shallowEqual)
-  return ({
-    x: groupPosition.x + stageMemberPosition.x + stageDevicePosition.x,
-    y: groupPosition.y + stageMemberPosition.y + stageDevicePosition.y,
-    rZ: groupPosition.rZ + stageMemberPosition.rZ + stageDevicePosition.rZ
-  })
-}
+
 
 const StageMemberElement = ({stageMemberId, selection, onSelected}: {
   stageMemberId: string,
@@ -58,7 +46,8 @@ const StageMemberElement = ({stageMemberId, selection, onSelected}: {
   const groupPosition = useStageSelector<{ x: number, y: number, rZ: number }>(state =>
     selectResultingGroupPosition(state.stageMembers.byId[stageMemberId].groupId, state), shallowEqual)
   const username = useStageSelector<string | undefined>((state) =>
-    state.users.byId[state.stageMembers.byId[stageMemberId].userId]?.name
+      state.stageMembers.byId[stageMemberId].userId &&
+      state.users.byId[state.stageMembers.byId[stageMemberId].userId]?.name
   )
   const groupColor = useStageSelector(state => state.groups.byId[state.stageMembers.byId[stageMemberId].groupId].color)
 

@@ -35,6 +35,7 @@ import {TextSwitch} from "../../../ui/TextSwitch";
 import { StageMemberElement } from "./StageMemberElement";
 import { RoomSelection } from "./RoomSelection";
 import { FACTOR } from "./RoomElement";
+import { useListenerPosition } from "./utils";
 
 const RoomEditor = () => {
   const innerRef = React.useRef<HTMLDivElement>(null)
@@ -53,13 +54,21 @@ const RoomEditor = () => {
       setSelection([])
     }
   }, [])
-  /** Scroll into center of stage **/
+
+
+  /** Scroll into the listener (current stage device or stage member (if only one stage device is available)) **/
+  const listenerPosition = useListenerPosition()
   React.useEffect(() => {
     if (innerRef.current && width && height) {
-      innerRef.current.scrollLeft = (width * FACTOR) / 2 - window.innerWidth / 2
-      innerRef.current.scrollTop = (height * FACTOR) / 2 - window.innerHeight / 2
+      const x = (width / 2 + listenerPosition.x) * FACTOR
+      const y = (height / 2 + listenerPosition.y) * FACTOR
+      innerRef.current.scrollLeft = x
+      innerRef.current.scrollTop = y
+      console.log("ROOM", listenerPosition.x, listenerPosition.y, (width* FACTOR), (height* FACTOR), x, y)
     }
-  }, [innerRef, width, height])
+  }, [innerRef, width, height, listenerPosition.x, listenerPosition.y])
+
+
   const showOffline = useStageSelector(state => state.globals.showOffline)
   const onOfflineToggle = useCallback(() => {
     dispatch(clientActions.showOffline(!showOffline))

@@ -106,10 +106,16 @@ const Sidebar = () => {
                                     <span>Mischpult</span>
                                 </SidebarItem>
                                 {renderSpatialAudio ? (
-                                    <SidebarItem onClick={() => setOpen(false)} href="/room">
-                                        <BiCube />
-                                        <span>3D Audio</span>
-                                    </SidebarItem>
+                                    <>
+                                        <SidebarItem onClick={() => setOpen(false)} href="/room">
+                                            <BiCube />
+                                            <span>3D Audio</span>
+                                        </SidebarItem>
+                                        <SidebarItem onClick={() => setOpen(false)} href="/room2">
+                                            <BiCube />
+                                            <span>3D Audio v2</span>
+                                        </SidebarItem>
+                                    </>
                                 ) : null}
                                 <SidebarItem onClick={() => setOpen(false)} href="/chat">
                                     <BiChat />

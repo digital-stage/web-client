@@ -127,6 +127,19 @@ const selectCustomAudioTrackPosition = (audioTrackId: string, state: RootState) 
 }
 const useCustomAudioTrackPosition = (audioTrackId: string) => useStageSelector<{ x: number, y: number, rZ: number } | undefined>(state => selectCustomAudioTrackPosition(audioTrackId, state), shallowEqual)
 
+const useListenerPosition = () => {
+  const groupPosition = useStageSelector<{ x: number, y: number, rZ: number }>(state =>
+      selectResultingGroupPosition(state.globals.groupId, state), shallowEqual)
+  const stageMemberPosition = useStageSelector<{ x: number, y: number, rZ: number }>(state =>
+      selectResultingStageMemberPosition(state.globals.stageMemberId, state), shallowEqual)
+  const stageDevicePosition = useStageSelector<{ x: number, y: number, rZ: number }>(state =>
+      selectResultingStageDevicePosition(state.globals.localStageDeviceId, state), shallowEqual)
+  return ({
+    x: groupPosition.x + stageMemberPosition.x + stageDevicePosition.x,
+    y: groupPosition.y + stageMemberPosition.y + stageDevicePosition.y,
+    rZ: groupPosition.rZ + stageMemberPosition.rZ + stageDevicePosition.rZ
+  })
+}
 
 export {
   selectAudioTrackPosition,
@@ -147,5 +160,6 @@ export {
   useStageDevicePosition,
   useCustomStageDevicePosition,
   useAudioTrackPosition,
-  useCustomAudioTrackPosition
+  useCustomAudioTrackPosition,
+    useListenerPosition
 }
