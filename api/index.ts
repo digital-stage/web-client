@@ -32,7 +32,7 @@ import { useStageJoiner } from './hooks/useStageJoiner'
 import {
     useWebRTCStats,
 } from './services/WebRTCService'
-import { useEmit, useConnection, ConnectionStateContext } from './services/ConnectionService'
+import { useEmit, useConnection, ConnectionStateContext, EmitFunction } from './services/ConnectionService'
 import { useErrorReporting } from './hooks/useErrorReporting'
 import { logger } from './logger'
 import { useCurrentStageAdminSelector } from './redux/selectors/useCurrentStageAdminSelector'
@@ -47,7 +47,7 @@ import {sortStageMembers, useFilteredStageMembers } from './hooks/useFilteredSta
 
 export * from './redux/actions'
 export * from './redux/state'
-export type { RootState, AppDispatch }
+export type { RootState, AppDispatch, EmitFunction }
 export {
     useReady,
     useStageJoiner,

@@ -28,7 +28,6 @@ import {WebRTCService} from './WebRTCService'
 
 import {ConnectionService} from './ConnectionService'
 import {AudioContextService} from "./AudioContextService";
-import {TemporaryLogger} from "./TemporaryLogger";
 import {MediaCaptureService} from "./MediaCaptureService";
 
 const DigitalStageServices = () => {
@@ -41,7 +40,6 @@ const DigitalStageServices = () => {
             <AudioRenderService/>
             <MediasoupService/>
             <WebRTCService/>
-            <TemporaryLogger/>
         </>
     )
 }
