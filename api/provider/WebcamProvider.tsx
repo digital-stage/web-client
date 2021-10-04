@@ -41,7 +41,7 @@ const WebcamProvider = ({children}: { children: React.ReactNode }) => {
       // Just use first video track (should be only one in webclient)
       const videoTrack = videoTracks[0]
       if (videoTrack.facingMode) {
-        if (state.getConstraints().facingMode !== videoTrack.facingMode) {
+        if (state.getConstraints && state.getConstraints().facingMode !== videoTrack.facingMode) {
           state.applyConstraints({
             facingMode: videoTrack.facingMode
           })
@@ -50,15 +50,6 @@ const WebcamProvider = ({children}: { children: React.ReactNode }) => {
       }
     }
   }, [state, reportError, videoTracks])
-
-  React.useEffect(() => {
-    if(state) {
-      console.log("CONSTRAINTS")
-      console.log(state.getConstraints())
-      console.log(state.getCapabilities())
-      console.log(state.getSettings())
-    }
-  }, [state])
 
   /*
   React.useEffect(() => {
