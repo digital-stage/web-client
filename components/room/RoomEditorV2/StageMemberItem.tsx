@@ -18,6 +18,31 @@ const StageMemberItem = ({stageMemberId, local, selections, onSelect, onDeselect
 }) => {
     const position = useStageMemberPosition(stageMemberId)
     const customPosition = useCustomStageMemberPosition(stageMemberId)
+    const [currentPosition, setCurrentPosition] = React.useState<RoomPositionWithAngle>({
+        x: customPosition?.x || position.x,
+        y: customPosition?.y || position.y,
+        rZ: customPosition?.rZ || position.rZ
+    })
+    React.useEffect(() => {
+        setCurrentPosition({
+            x: customPosition?.x || position.x,
+            y: customPosition?.y || position.y,
+            rZ: customPosition?.rZ || position.rZ
+        })
+    }, [customPosition?.rZ, customPosition?.x, customPosition?.y, position.rZ, position.x, position.y])
+
+    const stageDeviceIds = useStageSelector<string[]>(
+        (state) => {
+            if (state.stageDevices.byStageMember[stageMemberId]) {
+                if (state.globals.showOffline) {
+                    return state.stageDevices.byStageMember[stageMemberId]
+                }
+                return state.stageDevices.byStageMember[stageMemberId].filter(id => state.stageDevices.byId[id].active)
+            }
+            return []
+        }
+    )
+    // Stage management only for this item
     const selected = React.useMemo(() => selections.some(selection => selection.id === stageMemberId), [selections, stageMemberId])
     const userName = useStageSelector<string>(
         state =>
@@ -44,19 +69,6 @@ const StageMemberItem = ({stageMemberId, local, selections, onSelect, onDeselect
             }
         }
     }, [customPosition, onDeselect, onSelect, selected, stageMemberId])
-
-    const [currentPosition, setCurrentPosition] = React.useState<RoomPositionWithAngle>({
-        x: customPosition?.x || position.x,
-        y: customPosition?.y || position.y,
-        rZ: customPosition?.rZ || position.rZ
-    })
-    React.useEffect(() => {
-        setCurrentPosition({
-            x: customPosition?.x || position.x,
-            y: customPosition?.y || position.y,
-            rZ: customPosition?.rZ || position.rZ
-        })
-    }, [customPosition?.rZ, customPosition?.x, customPosition?.y, position.rZ, position.x, position.y])
 
     const emit = useEmit()
     const deviceId = useStageSelector(state => state.globals.selectedDeviceId)
