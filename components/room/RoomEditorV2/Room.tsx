@@ -78,21 +78,44 @@ const Rotator = ({
 
   React.useEffect(() => {
     if (interactiveRef && dragging) {
-      const handleMove = (e: MouseEvent) => {
+      const handleDrag = (angle: number) => {
+        onChange(angle)
+      }
+      let nodePos: { x: number, y: number } = undefined
+      const handleTouchMove = (e: any) => {
+        e.preventDefault()
+        e.stopPropagation()
+        if (e.touches.length === 1) {
+          if (!nodePos) {
+            if (e.touches[0].target && e.touches[0].target.parentElement) {
+              const rect = (e.touches[0].target.parentElement as HTMLDivElement).getBoundingClientRect()
+              nodePos = {
+                x: rect.x + (rect.width / 2),
+                y: rect.y + (rect.height / 2)
+              }
+            }
+          }
+          if (nodePos) {
+            const angle = Math.atan2(e.touches[0].pageX - nodePos.x, -(e.touches[0].pageY - nodePos.y)) * (180 / Math.PI)
+            handleDrag(angle)
+          }
+        }
+      }
+      const handleMouseMove = (e: MouseEvent) => {
         e.preventDefault()
         e.stopPropagation()
         const angle = Math.atan2(e.offsetX - absoluteX, -(e.offsetY - absoluteY)) * (180 / Math.PI)
-        onChange(angle)
+        handleDrag(angle)
       }
-      interactiveRef.addEventListener("touchmove", handleMove)
-      interactiveRef.addEventListener("mousemove", handleMove)
+      global.window.addEventListener("touchmove", handleTouchMove)
+      interactiveRef.addEventListener("mousemove", handleMouseMove)
       interactiveRef.style.setProperty("z-index", "100")
       interactiveRef.style.setProperty("cursor", "crosshair")
       return () => {
-        interactiveRef.style.removeProperty("z-index" )
+        interactiveRef.style.removeProperty("z-index")
         interactiveRef.style.removeProperty("cursor")
-        interactiveRef.removeEventListener("touchmove", handleMove)
-        interactiveRef.removeEventListener("mousemove", handleMove)
+        global.window.removeEventListener("touchmove", handleTouchMove)
+        interactiveRef.removeEventListener("mousemove", handleMouseMove)
       }
     }
   }, [onChange, interactiveRef, dragging, absoluteX, absoluteY])
@@ -164,6 +187,8 @@ const RoomItem = ({
     rZ: rZ
   })
 
+  const interactiveRef = React.useContext(InteractionLayerContext)
+
   React.useEffect(() => {
     setCurrentPosition({
       x: x,
@@ -218,12 +243,8 @@ const RoomItem = ({
 
   React.useEffect(() => {
     if (dragging) {
-      const onMove = (e: MouseEvent) => {
-        e.preventDefault()
-        e.stopPropagation()
+      const handleDrag = (movementX: number, movementY: number) => {
         dragged.current = true
-        const movementX = e.movementX / FACTOR
-        const movementY = e.movementY / FACTOR
         setCurrentPosition(prev => {
           const position = {
             ...(dragBounceFunc
@@ -236,14 +257,36 @@ const RoomItem = ({
           return position
         })
       }
-      global.window.addEventListener("touchmove", onMove)
-      global.window.addEventListener("mousemove", onMove)
+      let previousTouch: Touch = undefined
+      const onTouchMove = (e: TouchEvent) => {
+        e.preventDefault()
+        e.stopPropagation()
+        if (e.touches.length === 1) {
+          // Use only single touch
+          const touch = e.touches[0]
+          if (previousTouch) {
+            const movementX = (touch.pageX - previousTouch.pageX) / FACTOR
+            const movementY = (touch.pageY - previousTouch.pageY) / FACTOR
+            handleDrag(movementX, movementY)
+          }
+          previousTouch = touch
+        }
+      }
+      const onMouseMove = (e: MouseEvent) => {
+        e.preventDefault()
+        e.stopPropagation()
+        const movementX = e.movementX / FACTOR
+        const movementY = e.movementY / FACTOR
+        handleDrag(movementX, movementY)
+      }
+      global.window.addEventListener("touchmove", onTouchMove)
+      global.window.addEventListener("mousemove", onMouseMove)
       return () => {
-        global.window.removeEventListener("touchmove", onMove)
-        global.window.removeEventListener("mousemove", onMove)
+        global.window.removeEventListener("touchmove", onTouchMove)
+        global.window.removeEventListener("mousemove", onMouseMove)
       }
     }
-  }, [dragBounceFunc, dragging, onChange])
+  }, [interactiveRef, dragBounceFunc, dragging, onChange])
 
   return (
     <>
