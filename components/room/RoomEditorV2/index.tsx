@@ -22,7 +22,7 @@
 
 import React from "react";
 import {useStageSelector} from "@digitalstage/api-client-react";
-import {selectResultingGroupPosition, useCustomStageMemberPosition, useStageMemberPosition} from "./utils";
+import {FACTOR, selectResultingGroupPosition, useCustomStageMemberPosition, useStageMemberPosition} from "./utils";
 import {RoomSelection} from "./RoomSelection";
 import {Room, RoomItem} from "./Room";
 
@@ -80,7 +80,7 @@ const StageMemberItem = ({stageMemberId, local, selected, onSelect, onDeselect}:
       stageWidth={stageWidth}
       stageHeight={stageHeight}
       dragBounceFunc={dragBounceFunc}
-      size={32}
+      size={0.5 * FACTOR}
       src={local ? "/room/center.svg" : "/room/member.svg"}
       selected={selected}
       onClicked={onClicked}

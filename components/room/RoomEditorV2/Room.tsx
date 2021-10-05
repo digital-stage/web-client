@@ -58,7 +58,10 @@ const Rotator = ({
         global.window.addEventListener("touchend", onDragEnd)
         global.window.addEventListener("mouseup", onDragEnd)
       }
-      const handleClicked = (e: MouseEvent) => e.stopPropagation()
+      const handleClicked = (e: MouseEvent) => {
+        e.stopPropagation()
+        e.preventDefault()
+      }
       currentRef.addEventListener("touchstart", onDragStart)
       currentRef.addEventListener("mousedown", onDragStart)
       currentRef.addEventListener("click", handleClicked)
@@ -84,8 +87,10 @@ const Rotator = ({
       interactiveRef.addEventListener("touchmove", handleMove)
       interactiveRef.addEventListener("mousemove", handleMove)
       interactiveRef.style.setProperty("z-index", "100")
+      interactiveRef.style.setProperty("cursor", "crosshair")
       return () => {
         interactiveRef.style.removeProperty("z-index" )
+        interactiveRef.style.removeProperty("cursor")
         interactiveRef.removeEventListener("touchmove", handleMove)
         interactiveRef.removeEventListener("mousemove", handleMove)
       }
@@ -99,31 +104,22 @@ const Rotator = ({
       <style jsx>{`
               .line {
                   position: absolute;
-                  top: -100%;
+                  top: -70%;
                   left: calc(50% - 1px);
                   width: 2px;
-                  height: 100%;
+                  height: 70%;
                   background-color: var(---primary);
               }
               .rotator {
                   position: absolute;
                   top: -100%;
-                  left: calc(50% - 4px);
+                  left: 35%;
                   border-width: 2px;
                   border-style: solid;
                   border-color: var(---primary);
-                  width: 8px;
-                  height: 8px;
+                  width: 30%;
+                  height: 30%;
                   cursor: crosshair;
-              }
-              .rotator:after {
-                  position: absolute;
-                  content: '';
-                  top: 0;
-                  bottom: 0;
-                  width: 2px;
-                  height: 100%;
-                  background-color: red;
               }
       `}</style>
     </>
@@ -267,7 +263,6 @@ const RoomItem = ({
               stageWidth={stageWidth}
               stageHeight={stageHeight}
               onChange={(rZ) => {
-                console.log(rZ)
                 setCurrentPosition(prev => ({
                   ...prev,
                   rZ: rZ
