@@ -4,8 +4,9 @@ import {useCustomStageMemberPosition, useStageMemberPosition} from "./utils";
 import React from "react";
 import {RoomItem, RoomPositionWithAngle} from "./RoomEditor";
 import {ClientDeviceEvents, ClientDevicePayloads} from "@digitalstage/api-types";
-import { CenterIcon } from "./icons/CenterIcon";
-import { StageMemberIcon } from "./icons/StageMemberIcon";
+import {CenterIcon} from "./icons/CenterIcon";
+import {StageMemberIcon} from "./icons/StageMemberIcon";
+import {StageDeviceItem} from "./StageDeviceItem";
 
 const StageMemberItem = ({stageMemberId, local, selections, onSelect, onDeselect, groupColor, groupPosition}: {
     stageMemberId: string,
@@ -31,6 +32,7 @@ const StageMemberItem = ({stageMemberId, local, selections, onSelect, onDeselect
         })
     }, [customPosition?.rZ, customPosition?.x, customPosition?.y, position.rZ, position.x, position.y])
 
+    const localStageDeviceId = useStageSelector(state => state.globals.localStageDeviceId)
     const stageDeviceIds = useStageSelector<string[]>(
         (state) => {
             if (state.stageDevices.byStageMember[stageMemberId]) {
@@ -88,23 +90,41 @@ const StageMemberItem = ({stageMemberId, local, selections, onSelect, onDeselect
     }, [customPosition, deviceId, emit, stageMemberId])
 
     return (
-        <RoomItem
-            caption={userName}
-            x={currentPosition.x}
-            y={currentPosition.y}
-            rZ={currentPosition.rZ}
-            offsetX={groupPosition.x}
-            offsetY={groupPosition.y}
-            offsetRz={groupPosition.rZ}
-            size={0.5}
-            color={groupColor}
-            selected={selected}
-            onClicked={onClicked}
-            onChange={position => setCurrentPosition(position)}
-            onFinalChange={onFinalChange}
-        >
-            {local ? <CenterIcon/> : <StageMemberIcon/>}
-        </RoomItem>
+        <>
+            <RoomItem
+                caption={userName}
+                x={currentPosition.x}
+                y={currentPosition.y}
+                rZ={currentPosition.rZ}
+                offsetX={groupPosition.x}
+                offsetY={groupPosition.y}
+                offsetRz={groupPosition.rZ}
+                size={0.5}
+                color={groupColor}
+                selected={selected}
+                onClicked={onClicked}
+                onChange={position => setCurrentPosition(position)}
+                onFinalChange={onFinalChange}
+            >
+                {stageDeviceIds.length === 1 && local ? <CenterIcon/> : <StageMemberIcon/>}
+            </RoomItem>
+            {stageDeviceIds.length > 1 && stageDeviceIds.map(stageDeviceId =>
+                <StageDeviceItem
+                    key={stageDeviceId}
+                    stageDeviceId={stageDeviceId}
+                    selections={selections}
+                    onSelect={onSelect}
+                    onDeselect={onDeselect}
+                    groupColor={groupColor}
+                    stageMemberPosition={{
+                        x: currentPosition.x + groupPosition.x,
+                        y: currentPosition.y + groupPosition.y,
+                        rZ: currentPosition.rZ + groupPosition.rZ,
+                    }}
+                    local={stageDeviceId === localStageDeviceId}
+                />
+            )}
+        </>
     )
 }
 export {StageMemberItem}

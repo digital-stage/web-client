@@ -42,7 +42,7 @@ const RoomItem = ({
     const [dragging, setDragging] = React.useState<boolean>(false)
     const dragged = React.useRef<boolean>(false)
 
-    const {interactionLayer, factor, width: roomWidth, height: roomHeight} = React.useContext(RoomContext)
+    const {interactionLayer, factor, width: roomWidth, height: roomHeight, rotation: roomRotation} = React.useContext(RoomContext)
 
     const lastPosition = React.useRef<RoomPositionWithAngle>({x, y, rZ})
 
@@ -107,11 +107,19 @@ const RoomItem = ({
             const handleDrag = (movementX: number, movementY: number) => {
                 if (movementX !== 0 || movementY !== 0) {
                     dragged.current = true
+                    let mX = movementX
+                    let mY = movementY
+                    // First normalize x and y, since we could have an rotated room
+                    if(roomRotation && roomRotation !== 0) {
+                        mX = (mX * Math.cos(roomRotation)) - (mY * Math.sin(roomRotation))
+                        mY = (mY * Math.cos(roomRotation)) + (mX * Math.sin(roomRotation))
+                    }
                     // Add offset and movement and check using drag bounce
-                    const bounced = dragBounceFunc({
-                        x: lastPosition.current.x + movementX + (offsetX || 0),
-                        y: lastPosition.current.y + movementY + (offsetY || 0)
-                    })
+                    let positionWithOffset = {
+                        x: lastPosition.current.x + mX + (offsetX || 0),
+                        y: lastPosition.current.y + mY + (offsetY || 0)
+                    }
+                    const bounced = dragBounceFunc(positionWithOffset)
                     // Use drag bounce result, but subtract offset again
                     const position: RoomPositionWithAngle = {
                         x: bounced.x - (offsetX || 0),
@@ -152,7 +160,7 @@ const RoomItem = ({
                 global.window.removeEventListener("mousemove", onMouseMove)
             }
         }
-    }, [interactionLayer, dragBounceFunc, dragging, onChange, factor, offsetX, offsetY])
+    }, [interactionLayer, dragBounceFunc, dragging, onChange, factor, offsetX, offsetY, roomRotation])
 
     React.useEffect(() => {
         lastPosition.current = {
@@ -163,26 +171,28 @@ const RoomItem = ({
     }, [rZ, x, y])
 
     const handleRotation = React.useCallback((rZ: number) => {
+        const relativeRz = rZ - (offsetRz || 0)
         onChange({
             ...lastPosition.current,
-            rZ
+            rZ: relativeRz
         })
-        lastPosition.current.rZ = rZ
-    }, [onChange])
+        lastPosition.current.rZ = relativeRz
+    }, [offsetRz, onChange])
     const handleFinalRotation = React.useCallback((rZ: number) => {
+        const relativeRz = rZ - (offsetRz || 0)
         if (onFinalChange) {
             onFinalChange({
                 ...lastPosition.current,
-                rZ
+                rZ: relativeRz
             })
         }
-        lastPosition.current.rZ = rZ
-    }, [onFinalChange])
+        lastPosition.current.rZ = relativeRz
+    }, [offsetRz, onFinalChange])
 
     return (
         <>
             <div ref={ref} className="item" style={{
-                transform: `translate(${(x + (offsetX || 0) - (size / 2)) * factor}px, ${((y + (offsetY || 0) - (size / 2)) * factor)}px)`,
+                transform: `translate(${(x + (offsetX || 0) - (size / 2)) * factor}px, ${((y + (offsetY || 0) - (size / 2)) * factor)}px) rotate(${roomRotation ? -roomRotation : 0}deg)`,
                 width: `${size * factor}px`,
                 height: `${size * factor}px`,
             }}>

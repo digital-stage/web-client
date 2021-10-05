@@ -12,7 +12,7 @@ const Rotator = ({
     const [dragging, setDragging] = React.useState<boolean>(false)
     const lastRz = React.useRef<number>(rZ)
 
-    const {width: roomWidth, height: roomHeight, interactionLayer, factor} = React.useContext(RoomContext)
+    const {width: roomWidth, height: roomHeight, interactionLayer, factor, rotation: roomRotation} = React.useContext(RoomContext)
 
     React.useEffect(() => {
         if (ref.current) {

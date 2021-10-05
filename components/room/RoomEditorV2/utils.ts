@@ -99,7 +99,7 @@ const selectCustomStageDevicePosition = (stageDeviceId: string, state: RootState
   }
   return undefined
 }
-const useCustomStageDevicePosition = (stageDeviceId: string) => useStageSelector<{ x: number, y: number, rZ: number } | undefined>(state => selectCustomStageDevicePosition(stageDeviceId, state), shallowEqual)
+const useCustomStageDevicePosition = (stageDeviceId: string) => useStageSelector<{ x: number, y: number, rZ: number, _id: string } | undefined>(state => selectCustomStageDevicePosition(stageDeviceId, state), shallowEqual)
 const selectResultingStageDevicePosition = (stageDeviceId: string, state: RootState) => {
   const customPosition = selectCustomStageDevicePosition(stageDeviceId, state)
   if (customPosition)

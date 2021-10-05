@@ -1,5 +1,4 @@
 import React from "react";
-import {useStageSelector} from "@digitalstage/api-client-react";
 import {DragBounceFunc, RoomItem} from "./RoomItem";
 import {RoomPosition, RoomPositionWithAngle} from "./types";
 import {FACTOR, RoomContext} from "./RoomContext";
@@ -14,8 +13,6 @@ const Room = ({children, onClick, width, height, center, rotation, factor = FACT
     factor?: number
 }) => {
     const ref = React.useRef<HTMLDivElement>(null)
-    const stageWidth = useStageSelector(state => state.stages.byId[state.globals.stageId].width)
-    const stageHeight = useStageSelector(state => state.stages.byId[state.globals.stageId].height)
 
     React.useEffect(() => {
         if (ref.current && onClick) {
@@ -28,10 +25,14 @@ const Room = ({children, onClick, width, height, center, rotation, factor = FACT
     }, [onClick])
 
     React.useEffect(() => {
-        if (center) {
-
+        if (ref.current && center) {
+            const left = ((center.x + width / 2) * factor) - window.innerWidth / 2
+            const top = ((center.y + height / 2) * factor) - window.innerHeight / 2
+            console.log("Scroll to ", left, top)
+            ref.current.scrollLeft = left
+            ref.current.scrollTop = top
         }
-    }, [center])
+    }, [center, factor, width, height])
 
     const interactionRef = React.useRef<HTMLDivElement>()
 
@@ -44,11 +45,15 @@ const Room = ({children, onClick, width, height, center, rotation, factor = FACT
                         interactionLayer: interactionRef.current,
                         width,
                         height,
-                        factor
+                        factor,
+                        rotation
                     }}>
                         {children}
                     </RoomContext.Provider>
                 </div>
+            </div>
+            <div className="info">
+
             </div>
             <style jsx>{`
                 .outer {
@@ -60,13 +65,15 @@ const Room = ({children, onClick, width, height, center, rotation, factor = FACT
                 }
                 .inner {
                     position: absolute;
-                    width: ${stageWidth * FACTOR}px;
-                    height: ${stageHeight * FACTOR}px;
+                    width: ${width * FACTOR}px;
+                    height: ${height * FACTOR}px;
                     transition-property: transform;
                     transition-duration: 200ms;
                     transition-timing-function: cubic-bezier(0, 0, 1, 1);
-                    transform: ${rotation ? `rotate(${rotation}deg)` : 'none'};
+                    transform: ${rotation && `rotate(${rotation}deg)`};
                     background-image: url('/room/background.svg');
+                    -webkit-transform-style: preserve-3d;
+                    perspective: 100px;
                 }
                 .interaction {
                     position: absolute;
@@ -74,6 +81,11 @@ const Room = ({children, onClick, width, height, center, rotation, factor = FACT
                     height: 100%;
                     top: 0;
                     left: 0;
+                }
+                .info {
+                    position: fixed;
+                    bottom: 50px;
+                    right: 50px;
                 }
             `}</style>
         </>

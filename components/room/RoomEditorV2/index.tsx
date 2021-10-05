@@ -62,6 +62,7 @@ const RoomEditor = () => {
                 width={stageWidth}
                 height={stageHeight}
                 center={listenerPosition}
+                rotation={5}
             >
                 {groupIds.map(groupId =>
                     <GroupItem
