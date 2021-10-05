@@ -20,30 +20,30 @@
  * SOFTWARE.
  */
 
-import { useRouter } from 'next/router'
-import React, { useState } from 'react'
-import { useOpenState } from 'ui/useOpenState'
-import { Backdrop } from 'ui/Backdrop'
+import {useRouter} from 'next/router'
+import React, {useState} from 'react'
+import {useOpenState} from 'ui/useOpenState'
+import {Backdrop} from 'ui/Backdrop'
 import Image from 'next/image'
 import logo from '../../public/logo.svg'
 import Link from 'next/link'
-import { useSpatialAudioSelector, useStageSelector } from '@digitalstage/api-client-react'
-import { GoBroadcast, GoListUnordered, GoSettings } from 'react-icons/go'
-import { BiChat, BiCube, BiDevices } from 'react-icons/bi'
-import { FaBug, FaTools } from 'react-icons/fa'
-import { MdMoreHoriz } from 'react-icons/md'
-import { IoIosNotifications } from 'react-icons/io'
+import {useSpatialAudioSelector, useStageSelector} from '@digitalstage/api-client-react'
+import {GoBroadcast, GoListUnordered, GoSettings} from 'react-icons/go'
+import {BiChat, BiCube, BiDevices} from 'react-icons/bi'
+import {FaBug, FaTools} from 'react-icons/fa'
+import {MdMoreHoriz} from 'react-icons/md'
+import {IoIosNotifications} from 'react-icons/io'
 
 const SidebarItem = ({
-    children,
-    href,
-    onClick,
-}: {
+                         children,
+                         href,
+                         onClick,
+                     }: {
     children: React.ReactNode
     href: string
     onClick?: () => void
 }) => {
-    const { pathname } = useRouter()
+    const {pathname} = useRouter()
     return (
         <Link href={href}>
             <a
@@ -81,7 +81,7 @@ const Sidebar = () => {
                     onClick={() => setOpen((prev) => !prev)}
                     className={`secondary round sidebarBurgerButton`}
                 >
-                    <MdMoreHoriz />
+                    <MdMoreHoriz/>
                 </button>
             ) : null}
             <div
@@ -91,50 +91,44 @@ const Sidebar = () => {
             >
                 <div className="sidebarContent">
                     <div className="sidebarHeader">
-                        <Image width="38" height="38" src={logo} alt="Digital Stage" />
+                        <Image width="38" height="38" src={logo} alt="Digital Stage"/>
                     </div>
-                    <div className="sidebarSpacer" />
+                    <div className="sidebarSpacer"/>
                     <div className="sidebarBody">
                         {insideStage ? (
                             <>
                                 <SidebarItem onClick={() => setOpen(false)} href="/stage">
-                                    <GoBroadcast />
+                                    <GoBroadcast/>
                                     <span>Stage</span>
                                 </SidebarItem>
                                 <SidebarItem onClick={() => setOpen(false)} href="/mixer">
-                                    <GoSettings />
+                                    <GoSettings/>
                                     <span>Mischpult</span>
                                 </SidebarItem>
                                 {renderSpatialAudio ? (
-                                    <>
-                                        <SidebarItem onClick={() => setOpen(false)} href="/room">
-                                            <BiCube />
-                                            <span>3D Audio</span>
-                                        </SidebarItem>
-                                        <SidebarItem onClick={() => setOpen(false)} href="/room2">
-                                            <BiCube />
-                                            <span>3D Audio v2</span>
-                                        </SidebarItem>
-                                    </>
+                                    <SidebarItem onClick={() => setOpen(false)} href="/room">
+                                        <BiCube/>
+                                        <span>3D Audio</span>
+                                    </SidebarItem>
                                 ) : null}
                                 <SidebarItem onClick={() => setOpen(false)} href="/chat">
-                                    <BiChat />
+                                    <BiChat/>
                                     <span>Chat</span>
                                 </SidebarItem>
                             </>
                         ) : null}
                         {deviceCount > 1 ? (
                             <SidebarItem onClick={() => setOpen(false)} href="/devices">
-                                <BiDevices />
+                                <BiDevices/>
                                 <span>Geräte</span>
                             </SidebarItem>
                         ) : undefined}
                         <SidebarItem onClick={() => setOpen(false)} href="/settings/device">
-                            <FaTools />
+                            <FaTools/>
                             <span>Einstellungen</span>
                         </SidebarItem>
                         <SidebarItem onClick={() => setOpen(false)} href="/stages">
-                            <GoListUnordered />
+                            <GoListUnordered/>
                             <span>Bühnen</span>
                         </SidebarItem>
                         {process.env.NODE_ENV !== "production" && (
@@ -144,17 +138,17 @@ const Sidebar = () => {
                             </SidebarItem>
                         )}
                     </div>
-                    <div className="sidebarSpacer" />
+                    <div className="sidebarSpacer"/>
                     <div className="sidebarFooter">
                         {hasNotifications ? (
                             <SidebarItem onClick={() => setOpen(false)} href="/notifications">
-                                <IoIosNotifications />
+                                <IoIosNotifications/>
                                 <span>Ereignisse</span>
                             </SidebarItem>
                         ) : null}
                         <Link href="https://forum.digital-stage.org/c/deutsch/ds-web/30">
                             <a target="_blank" className="sidebarItem">
-                                <FaBug />
+                                <FaBug/>
                                 <span>Feedback</span>
                             </a>
                         </Link>
@@ -167,4 +161,4 @@ const Sidebar = () => {
 
 const MemoizedSidebar = React.memo(Sidebar)
 
-export { MemoizedSidebar as Sidebar }
+export {MemoizedSidebar as Sidebar}

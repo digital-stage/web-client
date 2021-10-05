@@ -21,7 +21,7 @@
  */
 
 export interface RoomSelection {
-    type: 'member' | 'device' | 'track'
+    type: 'group' | 'member' | 'device' | 'track'
     id: string
     customId?: string
 }

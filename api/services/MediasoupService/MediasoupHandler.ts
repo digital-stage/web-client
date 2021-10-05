@@ -207,15 +207,17 @@ class MediasoupHandler extends EventEmitter {
 
   private async handleConnect() {
     trace('handleConnect()')
-    // Get RTP capabilities
-    const routerRtpCapabilities = await getRTPCapabilities(this.routerConnection)
-    // Tell device
-    await this.device.load({routerRtpCapabilities: routerRtpCapabilities})
-    // Create send transport
-    trace("Creating send transport")
-    this.sendTransport = await createWebRTCTransport(this.routerConnection, this.device, "send")
-    trace("Creating receive transport")
-    this.receiveTransport = await createWebRTCTransport(this.routerConnection, this.device, "receive")
+    if(!this.device.loaded) {
+      // Get RTP capabilities
+      const routerRtpCapabilities = await getRTPCapabilities(this.routerConnection)
+      // Tell device
+      await this.device.load({routerRtpCapabilities: routerRtpCapabilities})
+      // Create send transport
+      trace("Creating send transport")
+      this.sendTransport = await createWebRTCTransport(this.routerConnection, this.device, "send")
+      trace("Creating receive transport")
+      this.receiveTransport = await createWebRTCTransport(this.routerConnection, this.device, "receive")
+    }
     this.emit(Events.Connected)
   }
 

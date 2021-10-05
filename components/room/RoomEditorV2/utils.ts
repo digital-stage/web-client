@@ -23,14 +23,6 @@
 import {RootState, useStageSelector} from "@digitalstage/api-client-react";
 import {shallowEqual} from "react-redux";
 
-export const FACTOR = 100;
-
-export type RoomPosition = {
-  x: number,
-  y: number,
-  rZ: number
-}
-
 const selectGroupPosition = (groupId: string, state: RootState) => ({
   x: state.groups.byId[groupId].x,
   y: state.groups.byId[groupId].y,
@@ -45,12 +37,13 @@ const selectCustomGroupPosition = (groupId: string, state: RootState) => {
     return {
       x: state.customGroupPositions.byId[customGroupId].x,
       y: state.customGroupPositions.byId[customGroupId].y,
-      rZ: state.customGroupPositions.byId[customGroupId].rZ
+      rZ: state.customGroupPositions.byId[customGroupId].rZ,
+      _id: state.customGroupPositions.byId[customGroupId]._id,
     }
   }
   return undefined
 }
-const useCustomGroupPosition = (groupId: string) => useStageSelector<{ x: number, y: number, rZ: number } | undefined>(state => selectCustomGroupPosition(groupId, state), shallowEqual)
+const useCustomGroupPosition = (groupId: string) => useStageSelector<{ x: number, y: number, rZ: number, _id: string } | undefined>(state => selectCustomGroupPosition(groupId, state), shallowEqual)
 const selectResultingGroupPosition = (groupId, state: RootState) => {
   const customPosition = selectCustomGroupPosition(groupId, state)
   if (customPosition)
