@@ -24,7 +24,7 @@ import {
     clientActions,
     selectMode, sortStageMembers,
     useCurrentStageAdminSelector,
-    useEmit, useFilteredStageMembers,
+    useEmit,
     useStageSelector,
 } from '@digitalstage/api-client-react'
 import React from 'react'

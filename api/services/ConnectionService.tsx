@@ -37,6 +37,8 @@ const { trace } = logger('ConnectionService')
 type ConnectionState = ITeckosClient
 type ConnectionDispatch = React.Dispatch<React.SetStateAction<ConnectionState>>
 
+export type EmitFunction = (event: SocketEvent, ...args: any[]) => boolean
+
 const ConnectionDispatchContext = React.createContext<ConnectionDispatch>(undefined)
 const ConnectionStateContext = React.createContext<ConnectionState>(undefined)
 
@@ -51,7 +53,7 @@ const ConnectionProvider = ({ children }: { children: React.ReactNode }): JSX.El
     )
 }
 const useConnection = (): ITeckosClient => React.useContext(ConnectionStateContext)
-const useEmit = (): ((event: SocketEvent, ...args: any[]) => boolean) => {
+const useEmit = (): EmitFunction => {
     const connection = useConnection()
     return connection?.emit
 }

@@ -38,7 +38,7 @@ const RemoveGroupModal = ({
 }) => {
     const emit = useEmit()
     const name = useStageSelector((state) =>
-        groupId ? state.groups.byId[groupId].name : undefined
+        groupId ? state.groups.byId[groupId]?.name : undefined
     )
     const [error, setError] = React.useState<string>()
     const [isDeleting, setDeleting] = React.useState<boolean>(false)

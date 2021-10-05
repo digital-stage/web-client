@@ -32,13 +32,13 @@ import { useStageJoiner } from './hooks/useStageJoiner'
 import {
     useWebRTCStats,
 } from './services/WebRTCService'
-import { useEmit, useConnection, ConnectionStateContext } from './services/ConnectionService'
+import { useEmit, useConnection, ConnectionStateContext, EmitFunction } from './services/ConnectionService'
 import { useErrorReporting } from './hooks/useErrorReporting'
 import { logger } from './logger'
 import { useCurrentStageAdminSelector } from './redux/selectors/useCurrentStageAdminSelector'
 import { useStageAdminSelector } from './redux/selectors/useStageAdminSelector'
 import { useSpatialAudioSelector } from './redux/selectors/useSpatialAudioSelector'
-import { useRemoteVideos } from './hooks/useRemoteVideos'
+import { useRemoteVideoTracks } from './hooks/useRemoteVideoTracks'
 import { useRemoteAudioTracks } from './hooks/useRemoteAudioTracks'
 import { useReady } from './hooks/useReady'
 import { useWebcam } from './provider/WebcamProvider'
@@ -47,7 +47,7 @@ import {sortStageMembers, useFilteredStageMembers } from './hooks/useFilteredSta
 
 export * from './redux/actions'
 export * from './redux/state'
-export type { RootState, AppDispatch }
+export type { RootState, AppDispatch, EmitFunction }
 export {
     useReady,
     useStageJoiner,
@@ -67,7 +67,7 @@ export {
     useWebRTCStats,
     useWebcam,
     useMicrophone,
-    useRemoteVideos,
+    useRemoteVideoTracks,
     useRemoteAudioTracks,
     useErrorReporting,
     useSpatialAudioSelector,

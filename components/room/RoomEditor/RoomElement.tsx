@@ -21,7 +21,7 @@
  */
 
 import React, { useCallback, useEffect, useMemo, useRef } from 'react'
-import { useSvgImage } from './useImage'
+import { useSvgImage } from '../../../lib/useImage'
 import {
     Text,
     Image,

@@ -20,30 +20,34 @@
  * SOFTWARE.
  */
 
+import {useSpatialAudioSelector, useStageSelector} from '@digitalstage/api-client-react'
+import {useRouter} from 'next/router'
 import React from 'react'
-import {AudioRenderService} from './AudioRenderer/old'
-import {AutoLoginService} from './AutoLoginService'
-import {MediasoupService} from './MediasoupService'
-import {WebRTCService} from './WebRTCService'
+import {RoomEditor} from '../components/room/RoomEditor'
+import {Loading} from "../components/global/Loading";
 
-import {ConnectionService} from './ConnectionService'
-import {AudioContextService} from "./AudioContextService";
-import {MediaCaptureService} from "./MediaCaptureService";
+const Room = () => {
+    const {isReady, push} = useRouter()
+    const connectionReady = useStageSelector((state) => state.globals.ready)
+    const stageId = useStageSelector<string | undefined>((state) => state.globals.stageId)
+    const renderSpatialAudio = useSpatialAudioSelector()
+    React.useEffect(() => {
+        if (isReady && connectionReady) {
+            if (!stageId) {
+                push('/stages')
+            } else if (!renderSpatialAudio) {
+                push('/stage')
+            }
+        }
+    }, [isReady, push, stageId, connectionReady, renderSpatialAudio])
 
-const DigitalStageServices = () => {
-    return (
-        <>
-            <ConnectionService/>
-            <AutoLoginService/>
-            <MediaCaptureService/>
-            <AudioContextService/>
-            <AudioRenderService/>
-            <MediasoupService/>
-            <WebRTCService/>
-        </>
-    )
+    if (connectionReady && stageId && renderSpatialAudio) {
+        return (
+          <div className="roomWrapper">
+              {stageId && process.browser ? <RoomEditor stageId={stageId}/> : null}
+          </div>
+        )
+    }
+    return <Loading message="Lade 3D Editor ..."/>
 }
-
-const MemoizedDigitalStageServices = React.memo(DigitalStageServices)
-
-export {MemoizedDigitalStageServices as DigitalStageServices}
+export default Room

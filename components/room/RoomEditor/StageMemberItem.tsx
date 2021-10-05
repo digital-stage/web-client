@@ -30,7 +30,7 @@ import {
     StageMember,
 } from '@digitalstage/api-types'
 import {RoomElement} from './RoomElement'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import {StageDeviceItem} from './StageDeviceItem'
 import { shallowEqual } from 'react-redux'
 
@@ -87,7 +87,7 @@ const StageMemberItem = ({
                       stageMember?.rZ !== DefaultThreeDimensionalProperties.rZ)
     }, [customStageMemberPosition, deviceId, stageMember?.rZ, stageMember?.x, stageMember?.y])
     const username = useStageSelector<string | undefined>((state) =>
-        stageMember ? state.users.byId[stageMember.userId]?.name : undefined
+        stageMember.userId ? state.users.byId[stageMember.userId]?.name : undefined
     )
     const stageDeviceIds = useStageSelector<string[]>(
         (state) => state.stageDevices.byStageMember[stageMemberId] || []
