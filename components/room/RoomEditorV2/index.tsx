@@ -33,11 +33,11 @@ const useListenerPosition = (): RoomPositionWithAngle => {
     const stageMemberPosition = useStageMemberPosition(localStageDevice.stageMemberId)
     const groupPosition = useGroupPosition(localStageDevice.groupId)
 
-    return {
+    return React.useMemo( () => ({
         x: groupPosition.x + stageMemberPosition.x + position.x,
         y: groupPosition.y + stageMemberPosition.y + position.y,
         rZ: groupPosition.rZ + stageMemberPosition.rZ + position.rZ,
-    }
+    }), [groupPosition.rZ, groupPosition.x, groupPosition.y, position.rZ, position.x, position.y, stageMemberPosition.rZ, stageMemberPosition.x, stageMemberPosition.y])
 }
 
 const RoomEditor = () => {

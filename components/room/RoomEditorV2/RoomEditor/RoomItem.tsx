@@ -2,18 +2,9 @@ import React from "react";
 import {RoomContext} from "./RoomContext";
 import {RoomPositionWithAngle} from "./types";
 import {Rotator} from "./Rotator";
+import {rotatePointAroundOrigin} from "./utils";
 
 export type DragBounceFunc = (pos: { x: number, y: number }) => { x: number, y: number }
-
-const rotatePoint = (x: number, y: number, deg: number): { x: number, y: number } => {
-  const radians = deg * (Math.PI / 180)
-  const rX = x * Math.cos(radians) - y * Math.sin(radians)
-  const rY = y * Math.cos(radians) + x * Math.sin(radians)
-  return {
-    x: rX,
-    y: rY
-  }
-}
 
 const RoomItem = ({
                     caption,
@@ -163,7 +154,7 @@ const RoomItem = ({
         let mX = e.movementX
         let mY = e.movementY
         if (roomRotation || roomRotation === 0) {
-          const rotated = rotatePoint(e.movementX, e.movementY, -roomRotation)
+          const rotated = rotatePointAroundOrigin(e.movementX, e.movementY, -roomRotation)
           mX = rotated.x
           mY = rotated.y
         }
