@@ -1,8 +1,8 @@
 import {useCustomGroupPosition, useGroupPosition} from "./utils";
 import {useEmit, useStageSelector} from "@digitalstage/api-client-react";
 import React from "react";
-import {RoomItem, RoomPositionWithAngle} from "./RoomEditor";
-import {RoomSelection} from "./RoomEditor/RoomSelection";
+import {RoomItem, RoomPositionWithAngle} from "../../../ui/RoomEditor";
+import {RoomSelection} from "../../../ui/RoomEditor/RoomSelection";
 import {StageMemberItem} from "./StageMemberItem";
 import {ClientDeviceEvents, ClientDevicePayloads} from "@digitalstage/api-types";
 import { GroupIcon } from "./icons/GroupIcon";

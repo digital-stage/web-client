@@ -1,17 +1,27 @@
-import {RoomSelection} from "./RoomEditor/RoomSelection";
+import {RoomSelection} from "../../../ui/RoomEditor/RoomSelection";
 import {useEmit, useStageSelector} from "@digitalstage/api-client-react";
 import {
     useCustomStageDevicePosition,
     useStageDevicePosition,
 } from "./utils";
 import React from "react";
-import {RoomItem, RoomPositionWithAngle} from "./RoomEditor";
+import {RoomItem, RoomPositionWithAngle} from "../../../ui/RoomEditor";
 import {ClientDeviceEvents, ClientDevicePayloads} from "@digitalstage/api-types";
 import {CenterIcon} from "./icons/CenterIcon";
 import {StageDeviceIcon} from "./icons/StageDeviceIcon";
 import {BrowserDevice} from "@digitalstage/api-types/dist/model/browser";
+import {AudioTrackItem} from "./AudioTrackItem";
 
-const StageDeviceItem = ({stageDeviceId, userName, local, selections, onSelect, onDeselect, groupColor, stageMemberPosition}: {
+const StageDeviceItem = ({
+                             stageDeviceId,
+                             userName,
+                             local,
+                             selections,
+                             onSelect,
+                             onDeselect,
+                             groupColor,
+                             stageMemberPosition
+                         }: {
     userName: string
     stageDeviceId: string,
     local: boolean,
@@ -36,13 +46,13 @@ const StageDeviceItem = ({stageDeviceId, userName, local, selections, onSelect, 
         })
     }, [customPosition?.rZ, customPosition?.x, customPosition?.y, position.rZ, position.x, position.y])
 
-    const audioTrackIds = useStageSelector<string[]>((state) => state.audioTracks.byStageDevice[stageDeviceId])
+    const audioTrackIds = useStageSelector<string[]>((state) => state.audioTracks.byStageDevice[stageDeviceId] || [])
 
     // Stage management only for this item
     const selected = React.useMemo(() => selections.some(selection => selection.id === stageDeviceId), [selections, stageDeviceId])
     const deviceName = useStageSelector<string>(state => {
         const device = state.stageDevices.byId[stageDeviceId]
-        if(device.userId === state.globals.localUserId && device.type === "browser") {
+        if (device.userId === state.globals.localUserId && device.type === "browser") {
             // Use device instead of stage device for naming
             const browserDevice = state.devices.byId[device.deviceId] as BrowserDevice
             return browserDevice.browser
@@ -86,24 +96,44 @@ const StageDeviceItem = ({stageDeviceId, userName, local, selections, onSelect, 
         }
     }, [customPosition, deviceId, emit, stageDeviceId])
 
+    const caption = React.useMemo(() => {
+        return `${userName}: ${deviceName}`
+    }, [deviceName, userName])
+
     return (
-        <RoomItem
-            caption={`${userName}: ${deviceName}`}
-            x={currentPosition.x}
-            y={currentPosition.y}
-            rZ={currentPosition.rZ}
-            offsetX={stageMemberPosition.x}
-            offsetY={stageMemberPosition.y}
-            offsetRz={stageMemberPosition.rZ}
-            size={local ? 0.8 : 0.5}
-            color={groupColor}
-            selected={selected}
-            onClicked={onClicked}
-            onChange={position => setCurrentPosition(position)}
-            onFinalChange={onFinalChange}
-        >
-            {local ? <CenterIcon/> : <StageDeviceIcon/>}
-        </RoomItem>
+        <>
+            <RoomItem
+                caption={caption}
+                x={currentPosition.x}
+                y={currentPosition.y}
+                rZ={currentPosition.rZ}
+                offsetX={stageMemberPosition.x}
+                offsetY={stageMemberPosition.y}
+                offsetRz={stageMemberPosition.rZ}
+                size={local ? 0.8 : 0.5}
+                color={groupColor}
+                selected={selected}
+                onClicked={onClicked}
+                onChange={position => setCurrentPosition(position)}
+                onFinalChange={onFinalChange}
+            >
+                {local ? <CenterIcon/> : <StageDeviceIcon/>}
+            </RoomItem>
+            {audioTrackIds.map((audioTrackId, index) => <AudioTrackItem
+                key={audioTrackId}
+                audioTrackId={audioTrackId}
+                caption={`${caption} (${index})`}
+                selections={selections}
+                onSelect={onSelect}
+                onDeselect={onDeselect}
+                groupColor={groupColor}
+                stageDevicePosition={{
+                    x: currentPosition.x + stageMemberPosition.x,
+                    y: currentPosition.y + stageMemberPosition.y,
+                    rZ: currentPosition.rZ + stageMemberPosition.rZ,
+                }}
+            />)}
+        </>
     )
 }
 export {StageDeviceItem}

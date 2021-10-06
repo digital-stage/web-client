@@ -23,13 +23,12 @@
 import {useAudioContext, useRemoteAudioTracks, useStageSelector} from "@digitalstage/api-client-react";
 import React from "react";
 import {useLocalAudioTracks} from "../../hooks/useLocalAudioTracks";
-import {useAudioNodeDispatch} from "../../provider/AudioNodeProvider";
 
 const AudioTrackRenderer = ({audioTrackId, track}: { audioTrackId: string, track: MediaStreamTrack }) => {
     const audioTrack = useStageSelector(state => state.audioTracks.byId[audioTrackId])
     const audioRef = React.useRef<HTMLAudioElement>(null)
     const {audioContext} = useAudioContext()
-    const dispatchAudioNode = useAudioNodeDispatch()
+    //const dispatchAudioNode = useAudioNodeDispatch()
     const [sourceNode, setSourceNode] = React.useState<AudioNode>()
     const gainNode = React.useMemo<GainNode>(
         () => audioContext.createGain(),

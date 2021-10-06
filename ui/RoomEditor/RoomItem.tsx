@@ -237,7 +237,7 @@ const RoomItem = ({
           }
         </div>
         {caption && <span>{caption}</span>}
-        {selected && <span className="info">({x}|{y}) {rZ}</span>}
+        {process.env.NODE_ENV !== "production" && <span className="info">({Math.round(x)}|{Math.round(y)}) with {Math.round(rZ)}&deg;</span>}
       </div>
       <style jsx>{`
                 .item {
@@ -254,8 +254,8 @@ const RoomItem = ({
                     color: ${color ? color : 'inherit'};
                 }
                 .item .cage {
-                    user-select: none;
                     position: relative;
+                    user-select: none;
                     width: 100%;
                     height: 100%;
                     border-width: 2px;
@@ -265,15 +265,19 @@ const RoomItem = ({
                 .item span {
                     display: inline-block;
                     user-select: none;
+                    text-align: center;
+                    white-space: nowrap;
+                    padding-top: 8px;
                 }
                 .item img {
                     user-select: none;
                 }
                 .info {
-                  position: absolute;
-                  top: 100%;
-                  left: 0;
-                  margin-top: 50%;
+                  font-size: 0.6rem;
+                  text-align: center;
+                  white-space: nowrap;
+                  margin: 0;
+                  padding: 0;
                 }
             `}</style>
     </>

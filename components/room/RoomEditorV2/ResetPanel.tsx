@@ -23,7 +23,7 @@
 import { useEmit, useStageSelector } from '@digitalstage/api-client-react'
 import React  from 'react'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
-import {RoomSelection} from './RoomEditor/RoomSelection'
+import {RoomSelection} from '../../../ui/RoomEditor/RoomSelection'
 
 const SelectionToGlobal = {
     group: ClientDeviceEvents.ChangeGroup,

@@ -232,7 +232,7 @@ const AudioTrackRenderer = ({
         // eslint-disable-next-line no-param-reassign
         pannerNode.coneOuterAngle = 120
         // eslint-disable-next-line no-param-reassign
-        pannerNode.coneOuterGain = 0.5
+        pannerNode.coneOuterGain = 0.3
       } else {
         // eslint-disable-next-line no-param-reassign
         pannerNode.coneInnerAngle = 360
@@ -349,8 +349,8 @@ const StageDeviceRenderer = ({
   useEffect(() => {
     if (audioContext && pannerNode) {
       pannerNode.positionX.setValueAtTime(position.x, audioContext.currentTime)
-      pannerNode.positionY.setValueAtTime(position.z, audioContext.currentTime)
-      pannerNode.positionZ.setValueAtTime(position.y, audioContext.currentTime)
+      pannerNode.positionY.setValueAtTime(position.y, audioContext.currentTime)
+      pannerNode.positionZ.setValueAtTime(position.z, audioContext.currentTime)
       const orientation = yRotationToVector(position.rZ)
       pannerNode.orientationX.setValueAtTime(orientation[0], audioContext.currentTime)
       pannerNode.orientationY.setValueAtTime(orientation[1], audioContext.currentTime)
@@ -360,6 +360,7 @@ const StageDeviceRenderer = ({
         pannerNode.coneInnerAngle = 90
         // eslint-disable-next-line no-param-reassign
         pannerNode.coneOuterAngle = 360
+        pannerNode.coneOuterGain = 0.3
       } else {
         // eslint-disable-next-line no-param-reassign
         pannerNode.coneInnerAngle = 30

@@ -202,7 +202,7 @@ const WebRTCService = (): JSX.Element => {
       let publishedId: string
       const track = localVideoTrack.clone()
       const settings = localVideoTrack.getSettings()
-      const capabilities = localVideoTrack.getCapabilities()
+      const capabilities = !!localVideoTrack.getCapabilities && localVideoTrack.getCapabilities()
       publishTrack(emit, stageId, 'video', {
         capabilities: capabilities,
         ...settings,

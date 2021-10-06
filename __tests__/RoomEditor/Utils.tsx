@@ -1,4 +1,4 @@
-import {calculateActualSize, rotatePointAroundOrigin} from "../../components/room/RoomEditorV2/RoomEditor/utils";
+import {calculateActualSize, rotatePointAroundOrigin} from "../../ui/RoomEditor/utils";
 
 describe('RoomEditor Utils', () => {
     it('Calculation of actual size', () => {

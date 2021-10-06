@@ -22,8 +22,8 @@
 
 import React, {useCallback} from "react";
 import {clientActions, useStageSelector} from "@digitalstage/api-client-react";
-import {RoomSelection} from "./RoomEditor/RoomSelection";
-import {Room, RoomPositionWithAngle} from "./RoomEditor";
+import {RoomSelection} from "../../../ui/RoomEditor/RoomSelection";
+import {Room, RoomPositionWithAngle} from "../../../ui/RoomEditor";
 import {GroupItem} from "./GroupItem";
 import {useGroupPosition, useStageDevicePosition, useStageMemberPosition} from "./utils";
 import {HiFilter, HiOutlineFilter} from "react-icons/hi";

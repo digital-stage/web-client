@@ -3,7 +3,8 @@ import {DragBounceFunc, RoomItem} from "./RoomItem";
 import {RoomPosition, RoomPositionWithAngle} from "./types";
 import {FACTOR, RoomContext} from "./RoomContext";
 import {logger} from "@digitalstage/api-client-react";
-import { calculateActualSize } from "./utils";
+import {calculateActualSize, rotatePointAroundOrigin} from "./utils";
+import {MdMyLocation} from "react-icons/md";
 
 const {trace} = logger("RoomEditor")
 
@@ -18,6 +19,7 @@ const Room = ({children, onClick, width, height, center, rotation, factor = FACT
     factor?: number
 }) => {
     const ref = React.useRef<HTMLDivElement>(null)
+    const interactionRef = React.useRef<HTMLDivElement>(null)
 
     React.useEffect(() => {
         if (ref.current && onClick) {
@@ -30,41 +32,43 @@ const Room = ({children, onClick, width, height, center, rotation, factor = FACT
     }, [onClick])
 
 
-    const interactionRef = React.useRef<HTMLDivElement>()
-
-
     const [actualSize, setActualSize] = React.useState<{ width: number, height: number }>({
         width,
         height
     })
 
-   React.useEffect(() => {
-        if (ref.current && rotation) {
-            const size = calculateActualSize(width * factor, height * factor, rotation)
-            setActualSize(size)
+    React.useEffect(() => {
+        if (rotation) {
+            setActualSize(calculateActualSize(width * factor, height * factor, rotation))
         }
     }, [factor, height, rotation, width])
 
     const scrollToCenter = React.useCallback(() => {
         if (ref.current && center) {
-            const left = ((center.x + width / 2) * factor) - window.innerWidth / 2
-            const top = ((center.y + height / 2) * factor) - window.innerHeight / 2
-            trace("Scroll to ", left, top)
+            const normalizedCenter = rotatePointAroundOrigin(center.x, (-1) * center.y, rotation)
+
+            const top = (actualSize.height / 2) + (normalizedCenter.y * factor) - (window.innerHeight / 2)
+            const left = (actualSize.width / 2) + (normalizedCenter.x * factor) - (window.innerWidth / 2)
+
+            trace("Scroll from " + ref.current.scrollTop + " to " + top)
             ref.current.scrollLeft = left
             ref.current.scrollTop = top
+            ref.current.scrollTo({
+                behavior: "smooth",
+                top: top,
+                left: left
+            })
         }
-    }, [center, factor, height, width])
-
+    }, [center, rotation, actualSize.height, actualSize.width, factor])
 
     React.useEffect(() => {
         scrollToCenter()
     }, [scrollToCenter])
 
-
     return (
         <>
-            <div className="outer">
-                <div className="inner" ref={ref}>
+            <div className="roomEditor" ref={ref}>
+                <div className="inner">
                     <div className="room">
                         <div ref={interactionRef} className="interaction"/>
                         <RoomContext.Provider value={{
@@ -78,13 +82,15 @@ const Room = ({children, onClick, width, height, center, rotation, factor = FACT
                         </RoomContext.Provider>
                     </div>
                 </div>
+                <button className="round centerRoom" onClick={scrollToCenter}><MdMyLocation/></button>
             </div>
             <style jsx>{`
-                .outer {
+                .roomEditor {
                     position: relative;
                     width: 100%;
                     height: 100%;
                     overflow: scroll;
+                    scroll-behavior: smooth;
                 }
                 .inner {
                     position: absolute;
@@ -116,6 +122,11 @@ const Room = ({children, onClick, width, height, center, rotation, factor = FACT
                     height: 100%;
                     top: 0;
                     left: 0;
+                }
+                .centerRoom {
+                    position: fixed;
+                    bottom: 16px;
+                    right: 16px;
                 }
             `}</style>
         </>
