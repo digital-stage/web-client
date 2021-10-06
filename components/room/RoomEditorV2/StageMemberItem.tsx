@@ -112,7 +112,7 @@ const StageMemberItem = ({stageMemberId, local, selections, onSelect, onDeselect
           {stageDeviceIds.length === 1 && local ? <CenterIcon/> : <StageMemberIcon/>}
         </RoomItem>
       )}
-      {stageDeviceIds.length > 1 && stageDeviceIds.map(stageDeviceId =>
+      {(!SHOW_STAGE_MEMBER || stageDeviceIds.length > 1) && stageDeviceIds.map(stageDeviceId =>
         <StageDeviceItem
           key={stageDeviceId}
           userName={userName}

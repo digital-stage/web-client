@@ -20,12 +20,14 @@
  * SOFTWARE.
  */
 
-import React from "react";
-import {useStageSelector} from "@digitalstage/api-client-react";
+import React, {useCallback} from "react";
+import {clientActions, useStageSelector} from "@digitalstage/api-client-react";
 import {RoomSelection} from "./RoomEditor/RoomSelection";
 import {Room, RoomPositionWithAngle} from "./RoomEditor";
 import {GroupItem} from "./GroupItem";
 import {useGroupPosition, useStageDevicePosition, useStageMemberPosition} from "./utils";
+import {HiFilter, HiOutlineFilter} from "react-icons/hi";
+import {useDispatch} from "react-redux";
 
 const useListenerPosition = (): RoomPositionWithAngle => {
     const localStageDevice = useStageSelector(state => state.stageDevices.byId[state.globals.localStageDeviceId])
@@ -61,9 +63,11 @@ const RoomEditor = () => {
         setSelections((prev) => prev.filter(sel => sel.id !== id))
     }, [])
 
-    React.useEffect(() => {
-        console.log(selections)
-    }, [selections])
+    const dispatch = useDispatch()
+    const showOffline = useStageSelector(state => state.globals.showOffline)
+    const onOfflineToggle = useCallback(() => {
+        dispatch(clientActions.showOffline(!showOffline))
+    }, [dispatch, showOffline])
 
     const listenerPosition = useListenerPosition()
 
@@ -86,6 +90,16 @@ const RoomEditor = () => {
                     />
                 )}
             </Room>
+            <button className="round offlineToggle" onClick={onOfflineToggle}>
+                {showOffline ? <HiOutlineFilter/> : <HiFilter/>}
+            </button>
+            <style jsx>{`
+                .offlineToggle {
+                    position: fixed;
+                    top: 48px;
+                    right: 8px;
+                }
+            `}</style>
         </>
     )
 }

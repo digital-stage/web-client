@@ -10,10 +10,10 @@ const RoomItem = ({
                     caption,
                     color,
                     x,
-                    y,
+                    y: invertedY,
                     rZ,
                     offsetX,
-                    offsetY,
+                    offsetY: invertedOffsetY,
                     offsetRz,
                     size,
                     dragBounceFunc: customDragBounceFunc,
@@ -42,6 +42,12 @@ const RoomItem = ({
   const ref = React.useRef<HTMLDivElement>(null)
   const [dragging, setDragging] = React.useState<boolean>(false)
   const dragged = React.useRef<boolean>(false)
+  const y = React.useMemo(() => {
+    return invertedY * -1
+  }, [invertedY])
+  const offsetY = React.useMemo(() => {
+    return invertedOffsetY * -1
+  }, [invertedOffsetY])
 
   const {
     interactionLayer,
@@ -67,7 +73,11 @@ const RoomItem = ({
         setDragging(false)
         if (dragged.current) {
           if (onFinalChange) {
-            onFinalChange(lastPosition.current)
+            onFinalChange({
+              x: lastPosition.current.x,
+              y: lastPosition.current.y * -1,
+              rZ: lastPosition.current.rZ
+            })
           }
         } else {
           if (onClicked) {
@@ -127,7 +137,11 @@ const RoomItem = ({
             rZ: lastPosition.current.rZ
           }
           lastPosition.current = position
-          onChange(position)
+          onChange({
+            x: position.x,
+            y: -1 * position.y,
+            rZ: position.rZ
+          })
         }
       }
       let previousTouch: Touch = undefined
@@ -139,6 +153,7 @@ const RoomItem = ({
           if (previousTouch) {
             const movementX = (touch.pageX - previousTouch.pageX) / factor
             const movementY = (touch.pageY - previousTouch.pageY) / factor
+            // Invert the y axis
             handleDrag(movementX, movementY)
           }
           previousTouch = touch
@@ -180,7 +195,8 @@ const RoomItem = ({
   const handleRotation = React.useCallback((rZ: number) => {
     const relativeRz = rZ - (offsetRz || 0)
     onChange({
-      ...lastPosition.current,
+      x: lastPosition.current.x,
+      y: lastPosition.current.y * -1,
       rZ: relativeRz
     })
     lastPosition.current.rZ = relativeRz
@@ -189,7 +205,8 @@ const RoomItem = ({
     const relativeRz = rZ - (offsetRz || 0)
     if (onFinalChange) {
       onFinalChange({
-        ...lastPosition.current,
+        x: lastPosition.current.x,
+        y: lastPosition.current.y * -1,
         rZ: relativeRz
       })
     }
@@ -220,6 +237,7 @@ const RoomItem = ({
           }
         </div>
         {caption && <span>{caption}</span>}
+        {selected && <span className="info">({x}|{y}) {rZ}</span>}
       </div>
       <style jsx>{`
                 .item {
@@ -250,6 +268,12 @@ const RoomItem = ({
                 }
                 .item img {
                     user-select: none;
+                }
+                .info {
+                  position: absolute;
+                  top: 100%;
+                  left: 0;
+                  margin-top: 50%;
                 }
             `}</style>
     </>
