@@ -54,7 +54,7 @@ const StageMemberBox = ({
                           conductorId,
                           muted
                         }: {
-  userName: string
+  userName?: string
   groupName?: string
   groupColor?: string
   active?: boolean
@@ -89,7 +89,7 @@ const StageMemberBox = ({
       {muted && <span className="muted"><AiOutlineAudioMuted/></span>}
       <div className={`info ${!track ? 'centered' : ''}`}>
         {facingMode && <span>FACING MODE: {facingMode}</span>}
-        <Avatar name={userName} color={groupColor} active={active}/>
+        {userName && <Avatar name={userName} color={groupColor} active={active}/>}
         <div className="names">
           {groupName && (
             <h6
@@ -101,7 +101,7 @@ const StageMemberBox = ({
               {groupName}
             </h6>
           )}
-          <h5 className="memberName">{userName}</h5>
+          {userName && <h5 className="memberName">{userName}</h5>}
           {videoTrackId && <span style={{fontSize: "0.5rem"}}>{videoTrackId}</span>}
           {videoMuted &&
           <span style={{fontSize: "0.6rem", color: "var(---danger)"}}>Schlechte Internetverbindung</span>}

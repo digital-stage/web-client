@@ -22,18 +22,18 @@
 
 import React from 'react'
 
-const Avatar = ({ name, color, active }: { name: string; color?: string; active?: boolean }) => (
+const Avatar = ({ name, color, active }: { name?: string; color?: string; active?: boolean }) => (
     <div
         className={`avatar ${active ? 'active' : ''}`}
         style={{
             backgroundColor: color,
         }}
     >
-        {name
+        {name ? name
             .split(' ')
             .filter((word, index) => index < 2)
             .map((word) => word.charAt(0).toUpperCase())
-            .join('')}
+            .join('') : null}
     </div>
 )
 const MemoizedAvatar = React.memo(Avatar)

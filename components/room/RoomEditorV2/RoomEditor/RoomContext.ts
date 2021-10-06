@@ -6,7 +6,8 @@ export type RoomState = {
     interactionLayer: HTMLDivElement,
     width: number,
     height: number,
-    factor: number
+    factor: number,
+    rotation: number
 }
 
 const RoomContext = React.createContext<RoomState>(null)
