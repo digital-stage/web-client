@@ -1,3 +1,4 @@
+
 /*
  * Copyright (c) 2021 Tobias Hegemann
  *
@@ -23,7 +24,7 @@
 import {useSpatialAudioSelector, useStageSelector} from '@digitalstage/api-client-react'
 import {useRouter} from 'next/router'
 import React from 'react'
-import {RoomEditor} from '../components/room/RoomEditorV2'
+import {RoomEditor} from '../components/room/RoomEditor'
 import {Loading} from "../components/global/Loading";
 
 const Room = () => {
@@ -43,9 +44,9 @@ const Room = () => {
 
     if (connectionReady && stageId && renderSpatialAudio) {
         return (
-          <div className="roomWrapper">
-              {stageId && process.browser ? <RoomEditor /> : null}
-          </div>
+            <div className="roomWrapper">
+                {stageId && process.browser ? <RoomEditor stageId={stageId}/> : null}
+            </div>
         )
     }
     return <Loading message="Lade 3D Editor ..."/>
