@@ -52,7 +52,7 @@ const StageMemberItem = ({
   const adminUserIds = useStageSelector(state => state.stages.byId[stageId].admins)
   const soundEditorUserIds = useStageSelector(state => state.stages.byId[stageId].soundEditors)
   const userId = useStageSelector(state => state.stageMembers.byId[stageMemberId].userId)
-  const username = useStageSelector(state => state.users.byId[state.stageMembers.byId[stageMemberId].userId].name)
+  const username = useStageSelector(state => state.stageMembers.byId[stageMemberId].userId && state.users.byId[state.stageMembers.byId[stageMemberId].userId]?.name)
   const emit = useEmit()
 
   const isAdmin = adminUserIds.some(id => id === userId)
