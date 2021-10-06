@@ -7,7 +7,7 @@ import {StageMemberItem} from "./StageMemberItem";
 import {ClientDeviceEvents, ClientDevicePayloads} from "@digitalstage/api-types";
 import { GroupIcon } from "./icons/GroupIcon";
 
-const SHOW_GROUPS = true
+const SHOW_GROUPS = false
 
 
 const GroupItem = ({groupId, onSelect, onDeselect, selections}: {

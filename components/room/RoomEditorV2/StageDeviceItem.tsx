@@ -11,7 +11,8 @@ import {CenterIcon} from "./icons/CenterIcon";
 import {StageDeviceIcon} from "./icons/StageDeviceIcon";
 import {BrowserDevice} from "@digitalstage/api-types/dist/model/browser";
 
-const StageDeviceItem = ({stageDeviceId, local, selections, onSelect, onDeselect, groupColor, stageMemberPosition}: {
+const StageDeviceItem = ({stageDeviceId, userName, local, selections, onSelect, onDeselect, groupColor, stageMemberPosition}: {
+    userName: string
     stageDeviceId: string,
     local: boolean,
     selections: RoomSelection[]
@@ -72,29 +73,29 @@ const StageDeviceItem = ({stageDeviceId, local, selections, onSelect, onDeselect
     const deviceId = useStageSelector(state => state.globals.selectedDeviceId)
     const onFinalChange = React.useCallback((position: RoomPositionWithAngle) => {
         if (customPosition && deviceId) {
-            emit(ClientDeviceEvents.SetCustomStageMemberPosition, {
-                stageMemberId: stageDeviceId,
+            emit(ClientDeviceEvents.SetCustomStageDevicePosition, {
+                stageDeviceId: stageDeviceId,
                 deviceId: deviceId,
                 ...position
-            } as ClientDevicePayloads.SetCustomStageMemberPosition)
+            } as ClientDevicePayloads.SetCustomStageDevicePosition)
         } else {
-            emit(ClientDeviceEvents.ChangeStageMember, {
+            emit(ClientDeviceEvents.ChangeStageDevice, {
                 _id: stageDeviceId,
                 ...position
-            } as ClientDevicePayloads.ChangeStageMember)
+            } as ClientDevicePayloads.ChangeStageDevice)
         }
     }, [customPosition, deviceId, emit, stageDeviceId])
 
     return (
         <RoomItem
-            caption={deviceName}
+            caption={`${userName}: ${deviceName}`}
             x={currentPosition.x}
             y={currentPosition.y}
             rZ={currentPosition.rZ}
             offsetX={stageMemberPosition.x}
             offsetY={stageMemberPosition.y}
             offsetRz={stageMemberPosition.rZ}
-            size={0.5}
+            size={local ? 0.8 : 0.5}
             color={groupColor}
             selected={selected}
             onClicked={onClicked}

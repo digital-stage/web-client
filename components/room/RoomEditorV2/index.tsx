@@ -22,11 +22,23 @@
 
 import React from "react";
 import {useStageSelector} from "@digitalstage/api-client-react";
-import {useListenerPosition} from "./utils";
 import {RoomSelection} from "./RoomEditor/RoomSelection";
-import {Room} from "./RoomEditor";
+import {Room, RoomPositionWithAngle} from "./RoomEditor";
 import {GroupItem} from "./GroupItem";
+import {useGroupPosition, useStageDevicePosition, useStageMemberPosition} from "./utils";
 
+const useListenerPosition = (): RoomPositionWithAngle => {
+    const localStageDevice = useStageSelector(state => state.stageDevices.byId[state.globals.localStageDeviceId])
+    const position = useStageDevicePosition(localStageDevice._id)
+    const stageMemberPosition = useStageMemberPosition(localStageDevice.stageMemberId)
+    const groupPosition = useGroupPosition(localStageDevice.groupId)
+
+    return {
+        x: groupPosition.x + stageMemberPosition.x + position.x,
+        y: groupPosition.y + stageMemberPosition.y + position.y,
+        rZ: groupPosition.rZ + stageMemberPosition.rZ + position.rZ,
+    }
+}
 
 const RoomEditor = () => {
     const stageWidth = useStageSelector(state => state.stages.byId[state.globals.stageId].width)
@@ -62,7 +74,7 @@ const RoomEditor = () => {
                 width={stageWidth}
                 height={stageHeight}
                 center={listenerPosition}
-                rotation={5}
+                rotation={-listenerPosition.rZ}
             >
                 {groupIds.map(groupId =>
                     <GroupItem
