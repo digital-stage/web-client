@@ -35,8 +35,8 @@ import { ConductorOverlay } from './ConductorOverlay';
 
 const StageView = () => {
     const dispatch = useDispatch()
-    const showLanes = useStageSelector<boolean>(state => state.globals.showLanes)
-    const showOffline = useStageSelector<boolean>(state => state.globals.showOffline)
+    const showLanes = useStageSelector<boolean>(state => !!state.globals.showLanes)
+    const showOffline = useStageSelector<boolean>(state => !!state.globals.showOffline)
     const sortedStageMemberIds = useFilteredStageMembers()
     const onOfflineToggle = React.useCallback(() => {
         dispatch(clientActions.showOffline(!showOffline))

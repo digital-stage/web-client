@@ -54,7 +54,7 @@ const StageMemberItem = ({stageMemberId, local, selections, onSelect, onDeselect
       state.users.byId[state.stageMembers.byId[stageMemberId].userId]?.name
       || stageMemberId
   )
-  const onClicked = React.useCallback((e: MouseEvent) => {
+  const onClicked = React.useCallback(() => {
     if (selected) {
       if (onDeselect) {
         onDeselect({
@@ -77,17 +77,19 @@ const StageMemberItem = ({stageMemberId, local, selections, onSelect, onDeselect
   const emit = useEmit()
   const deviceId = useStageSelector(state => state.globals.selectedDeviceId)
   const onFinalChange = React.useCallback((position: RoomPositionWithAngle) => {
-    if (customPosition && deviceId) {
-      emit(ClientDeviceEvents.SetCustomStageMemberPosition, {
-        stageMemberId: stageMemberId,
-        deviceId: deviceId,
-        ...position
-      } as ClientDevicePayloads.SetCustomStageMemberPosition)
-    } else {
-      emit(ClientDeviceEvents.ChangeStageMember, {
-        _id: stageMemberId,
-        ...position
-      } as ClientDevicePayloads.ChangeStageMember)
+    if (emit) {
+      if (customPosition && deviceId) {
+        emit(ClientDeviceEvents.SetCustomStageMemberPosition, {
+          stageMemberId: stageMemberId,
+          deviceId: deviceId,
+          ...position
+        } as ClientDevicePayloads.SetCustomStageMemberPosition)
+      } else {
+        emit(ClientDeviceEvents.ChangeStageMember, {
+          _id: stageMemberId,
+          ...position
+        } as ClientDevicePayloads.ChangeStageMember)
+      }
     }
   }, [customPosition, deviceId, emit, stageMemberId])
 

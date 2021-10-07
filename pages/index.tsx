@@ -31,7 +31,7 @@ import { Loading } from 'components/global/Loading'
 const Index = () => {
     const { isReady, replace } = useRouter()
     const insideStage = useStageSelector<boolean>((state) =>
-        state.globals.ready ? !!state.globals.stageId : undefined
+        state.globals.ready ? !!state.globals.stageId : false
     )
 
     React.useEffect(() => {

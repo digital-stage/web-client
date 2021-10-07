@@ -57,8 +57,11 @@ function ResetPasswordForm({resetToken, onReset}: {
       .required('Die Passwortwiederholung wird benötigt'),
   })
 
-  const onSubmit = React.useCallback((values: Values, {resetForm}: FormikHelpers<Values>) =>
-    resetPassword(resetToken, values.password)
+  const onSubmit = React.useCallback((values: Values, {resetForm}: FormikHelpers<Values>) => {
+    if (!values.password) {
+      throw new Error("Missing password")
+    }
+    return resetPassword(resetToken, values.password)
       .then(() => resetForm(undefined))
       .then(() => onReset())
       .catch((err: AuthError) =>
@@ -66,7 +69,8 @@ function ResetPasswordForm({resetToken, onReset}: {
           kind: 'error',
           label: translateError(err),
         })
-      ), [resetToken, onReset])
+      )
+  }, [resetToken, onReset])
 
   return (
     <Formik

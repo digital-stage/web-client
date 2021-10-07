@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-const getVideoTrack = (inputVideoDeviceId?: string): Promise<MediaStreamTrack> =>
+const getVideoTrack = (inputVideoDeviceId?: string): Promise<MediaStreamTrack | undefined> =>
     navigator.mediaDevices
         .getUserMedia({
             audio: false,

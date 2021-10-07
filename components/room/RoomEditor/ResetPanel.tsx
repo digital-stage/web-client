@@ -21,7 +21,7 @@
  */
 
 import { useEmit, useStageSelector } from '@digitalstage/api-client-react'
-import React, { useCallback } from 'react'
+import React from 'react'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
 import {RoomSelection} from './RoomSelection'
 
@@ -71,42 +71,44 @@ const ResetPanel = ({ deviceId, selection }: { deviceId?: string; selection: Roo
             : []
     )
     const resetAll = React.useCallback(() => {
-        if (deviceId) {
-            customGroupIds.map((id) => emit(ClientDeviceEvents.RemoveCustomGroupPosition, id))
-            customStageMemberIds.map((id) =>
-                emit(ClientDeviceEvents.RemoveCustomStageMemberPosition, id)
-            )
-            customStageDeviceIds.map((id) =>
-                emit(ClientDeviceEvents.RemoveCustomStageDevicePosition, id)
-            )
-            customAudioTrackIds.map((id) =>
-                emit(ClientDeviceEvents.RemoveCustomAudioTrackPosition, id)
-            )
-        } else {
-            groupIds.map((id) =>
-                emit(ClientDeviceEvents.ChangeGroup, {
-                    _id: id,
-                    ...DEFAULT_POSITION,
-                } as ClientDevicePayloads.ChangeGroup)
-            )
-            stageMemberIds.map((id) =>
-                emit(ClientDeviceEvents.ChangeStageMember, {
-                    _id: id,
-                    ...DEFAULT_POSITION,
-                })
-            )
-            stageDeviceIds.map((id) =>
-                emit(ClientDeviceEvents.ChangeStageDevice, {
-                    _id: id,
-                    ...DEFAULT_POSITION,
-                })
-            )
-            audioTracksIds.map((id) =>
-                emit(ClientDeviceEvents.ChangeAudioTrack, {
-                    _id: id,
-                    ...DEFAULT_POSITION,
-                })
-            )
+        if(emit) {
+            if (deviceId) {
+                customGroupIds.map((id) => emit(ClientDeviceEvents.RemoveCustomGroupPosition, id))
+                customStageMemberIds.map((id) =>
+                  emit(ClientDeviceEvents.RemoveCustomStageMemberPosition, id)
+                )
+                customStageDeviceIds.map((id) =>
+                  emit(ClientDeviceEvents.RemoveCustomStageDevicePosition, id)
+                )
+                customAudioTrackIds.map((id) =>
+                  emit(ClientDeviceEvents.RemoveCustomAudioTrackPosition, id)
+                )
+            } else {
+                groupIds.map((id) =>
+                  emit(ClientDeviceEvents.ChangeGroup, {
+                      _id: id,
+                      ...DEFAULT_POSITION,
+                  } as ClientDevicePayloads.ChangeGroup)
+                )
+                stageMemberIds.map((id) =>
+                  emit(ClientDeviceEvents.ChangeStageMember, {
+                      _id: id,
+                      ...DEFAULT_POSITION,
+                  })
+                )
+                stageDeviceIds.map((id) =>
+                  emit(ClientDeviceEvents.ChangeStageDevice, {
+                      _id: id,
+                      ...DEFAULT_POSITION,
+                  })
+                )
+                audioTracksIds.map((id) =>
+                  emit(ClientDeviceEvents.ChangeAudioTrack, {
+                      _id: id,
+                      ...DEFAULT_POSITION,
+                  })
+                )
+            }
         }
     }, [
         audioTracksIds,
@@ -121,17 +123,19 @@ const ResetPanel = ({ deviceId, selection }: { deviceId?: string; selection: Roo
         stageMemberIds,
     ])
     const resetSelection = React.useCallback(() => {
-        if (deviceId) {
-            selection.map((selection) => {
-                emit(SelectionToCustom[selection.type], selection.id)
-            })
-        } else {
-            selection.map((selection) =>
-                emit(SelectionToGlobal[selection.type], {
-                    _id: selection.id,
-                    ...DEFAULT_POSITION,
+        if(emit) {
+            if (deviceId) {
+                selection.map((selection) => {
+                    emit(SelectionToCustom[selection.type], selection.id)
                 })
-            )
+            } else {
+                selection.map((selection) =>
+                  emit(SelectionToGlobal[selection.type], {
+                      _id: selection.id,
+                      ...DEFAULT_POSITION,
+                  })
+                )
+            }
         }
     }, [deviceId, emit, selection])
 

@@ -44,7 +44,7 @@ const AudioTrackItem = ({
     // Stage management only for this item
     const selected = React.useMemo(() => selections.some(selection => selection.id === audioTrackId), [selections, audioTrackId])
     const muted = useStageSelector<boolean>(state => state.audioTracks.byId[audioTrackId].muted)
-    const onClicked = React.useCallback((e: MouseEvent) => {
+    const onClicked = React.useCallback(() => {
         if (selected) {
             if (onDeselect) {
                 onDeselect({
@@ -67,34 +67,38 @@ const AudioTrackItem = ({
     const emit = useEmit()
     const deviceId = useStageSelector(state => state.globals.selectedDeviceId)
     const onFinalChange = React.useCallback((position: RoomPositionWithAngle) => {
-        if (customPosition && deviceId) {
-            emit(ClientDeviceEvents.SetCustomAudioTrackPosition, {
-                audioTrackId: audioTrackId,
-                deviceId: deviceId,
-                ...position
-            } as ClientDevicePayloads.SetCustomAudioTrackPosition)
-        } else {
-            emit(ClientDeviceEvents.ChangeAudioTrack, {
-                _id: audioTrackId,
-                ...position
-            } as ClientDevicePayloads.ChangeAudioTrack)
+        if(emit) {
+            if (customPosition && deviceId) {
+                emit(ClientDeviceEvents.SetCustomAudioTrackPosition, {
+                    audioTrackId: audioTrackId,
+                    deviceId: deviceId,
+                    ...position
+                } as ClientDevicePayloads.SetCustomAudioTrackPosition)
+            } else {
+                emit(ClientDeviceEvents.ChangeAudioTrack, {
+                    _id: audioTrackId,
+                    ...position
+                } as ClientDevicePayloads.ChangeAudioTrack)
+            }
         }
     }, [customPosition, deviceId, emit, audioTrackId])
 
     const onMuteClicked = React.useCallback((e) => {
         e.preventDefault()
         e.stopPropagation()
-        if (customPosition && deviceId) {
-            emit(ClientDeviceEvents.SetCustomAudioTrackVolume, {
-                audioTrackId: audioTrackId,
-                deviceId: deviceId,
-                muted: !muted
-            } as ClientDevicePayloads.SetCustomAudioTrackVolume)
-        } else {
-            emit(ClientDeviceEvents.ChangeAudioTrack, {
-                _id: audioTrackId,
-                muted: !muted
-            } as ClientDevicePayloads.ChangeAudioTrack)
+        if(emit) {
+            if (customPosition && deviceId) {
+                emit(ClientDeviceEvents.SetCustomAudioTrackVolume, {
+                    audioTrackId: audioTrackId,
+                    deviceId: deviceId,
+                    muted: !muted
+                } as ClientDevicePayloads.SetCustomAudioTrackVolume)
+            } else {
+                emit(ClientDeviceEvents.ChangeAudioTrack, {
+                    _id: audioTrackId,
+                    muted: !muted
+                } as ClientDevicePayloads.ChangeAudioTrack)
+            }
         }
     }, [audioTrackId, customPosition, deviceId, emit, muted])
 

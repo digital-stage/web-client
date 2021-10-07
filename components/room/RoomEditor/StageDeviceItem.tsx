@@ -30,7 +30,7 @@ import {
     StageDevice,
 } from '@digitalstage/api-types'
 import {RoomElement} from './RoomElement'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React from 'react'
 import {AudioTrackItem} from './AudioTrackItem'
 
 const StageDeviceItem = ({
@@ -69,7 +69,7 @@ const StageDeviceItem = ({
     const isLocal = useStageSelector(
         (state) => !!stageDeviceId && stageDeviceId === state.globals.localStageDeviceId
     )
-    const customStageDevicePosition = useStageSelector<CustomStageDevicePosition>((state) =>
+    const customStageDevicePosition = useStageSelector<CustomStageDevicePosition | undefined>((state) =>
         deviceId &&
         state.customStageDevicePositions.byDeviceAndStageDevice[deviceId] &&
         state.customStageDevicePositions.byDeviceAndStageDevice[deviceId][stageDeviceId]
@@ -78,7 +78,7 @@ const StageDeviceItem = ({
               ]
             : undefined
     )
-    const modified = useMemo(() => {
+    const modified = React.useMemo(() => {
         return deviceId
             ? !!customStageDevicePosition
             : !!stageDevice?.x &&
@@ -114,24 +114,26 @@ const StageDeviceItem = ({
             }
         }
     }, [stageDevice, deviceId, customStageDevicePosition, offsetX, offsetY, offsetRz])
-    const handleFinalChange = useCallback(
+    const handleFinalChange = React.useCallback(
         (event: { x?: number; y?: number; rZ?: number }) => {
-            let normalized = {
-                x: event.x ? event.x - offsetX : undefined,
-                y: event.y ? event.y - offsetY : undefined,
-                rZ: event.rZ ? event.rZ - offsetRz : undefined,
-            }
-            if (deviceId) {
-                emit(ClientDeviceEvents.SetCustomStageDevicePosition, {
-                    stageDeviceId,
-                    deviceId,
-                    ...normalized,
-                } as ClientDevicePayloads.SetCustomStageDevicePosition)
-            } else {
-                emit(ClientDeviceEvents.ChangeStageDevice, {
-                    _id: stageDeviceId,
-                    ...normalized,
-                } as ClientDevicePayloads.ChangeStageDevice)
+            if(emit) {
+                let normalized = {
+                    x: event.x ? event.x - offsetX : undefined,
+                    y: event.y ? event.y - offsetY : undefined,
+                    rZ: event.rZ ? event.rZ - offsetRz : undefined,
+                }
+                if (deviceId) {
+                    emit(ClientDeviceEvents.SetCustomStageDevicePosition, {
+                        stageDeviceId,
+                        deviceId,
+                        ...normalized,
+                    } as ClientDevicePayloads.SetCustomStageDevicePosition)
+                } else {
+                    emit(ClientDeviceEvents.ChangeStageDevice, {
+                        _id: stageDeviceId,
+                        ...normalized,
+                    } as ClientDevicePayloads.ChangeStageDevice)
+                }
             }
         },
         [deviceId, emit, offsetRz, offsetX, offsetY, stageDeviceId]

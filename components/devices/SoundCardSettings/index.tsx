@@ -27,88 +27,90 @@ import {Switch} from 'ui/Switch'
 import {Select} from 'ui/Select'
 
 const ChannelSelector = ({soundCardId}: { soundCardId: string }) => {
-    const soundCard = useStageSelector<SoundCard>(
-        (state) => state.soundCards.byId[soundCardId],
-        shallowEqual
-    )
-    const emit = useEmit()
-    if (!soundCard) return null
-    return (
+  const soundCard = useStageSelector<SoundCard>(
+    (state) => state.soundCards.byId[soundCardId],
+    shallowEqual
+  )
+  const emit = useEmit()
+  if (!soundCard) return null
+  if (!emit) return null
+  return (
+    <ul>
+      <li>
+        {Object.keys(soundCard.channels).length} Eingangskanäle:
         <ul>
-            <li>
-                {Object.keys(soundCard.channels).length} Eingangskanäle:
-                <ul>
-                    {Object.keys(soundCard.channels).map((channelName) => (
-                        <li key={channelName}>
-                            <label>
-                                <Switch
-                                    checked={soundCard.channels[channelName]}
-                                    onChange={(event) =>
-                                        emit(ClientDeviceEvents.ChangeSoundCard, {
-                                            _id: soundCard._id,
-                                            channels: {
-                                                ...soundCard.channels,
-                                                [channelName]: event.currentTarget.checked,
-                                            },
-                                        })
-                                    }
-                                />
-                                {channelName}
-                            </label>
-                        </li>
-                    ))}
-                </ul>
+          {Object.keys(soundCard.channels).map((channelName) => (
+            <li key={channelName}>
+              <label>
+                <Switch
+                  checked={soundCard.channels[channelName]}
+                  onChange={(event) =>
+                    emit(ClientDeviceEvents.ChangeSoundCard, {
+                      _id: soundCard._id,
+                      channels: {
+                        ...soundCard.channels,
+                        [channelName]: event.currentTarget.checked,
+                      },
+                    })
+                  }
+                />
+                {channelName}
+              </label>
             </li>
+          ))}
         </ul>
-    )
+      </li>
+    </ul>
+  )
 }
 const SoundCardsSelector = ({device, soundCards}: { device: Device, soundCards: SoundCard[] }) => {
-    const emit = useEmit()
-    return (
-        <>
-            <Select
-                onChange={(event) => {
-                    emit(ClientDeviceEvents.ChangeDevice, {
-                        _id: device._id,
-                        soundCardId: event.currentTarget.value,
-                    })
-                }}
-                value={device.soundCardId || ''}
-            >
-                <option disabled value="">
-                    --- Please select a sound card ---
-                </option>
-                {soundCards.map((soundCard) => (
-                    <option key={soundCard._id} value={soundCard._id}>
-                        {soundCard.label} ({soundCard.audioDriver})
-                    </option>
-                ))}
-            </Select>
-            {device.soundCardId && <ChannelSelector soundCardId={device.soundCardId}/>}
-        </>
-    )
+  const emit = useEmit()
+  if (!emit) return null
+  return (
+    <>
+      <Select
+        onChange={(event) => {
+          emit(ClientDeviceEvents.ChangeDevice, {
+            _id: device._id,
+            soundCardId: event.currentTarget.value,
+          })
+        }}
+        value={device.soundCardId || ''}
+      >
+        <option disabled value="">
+          --- Please select a sound card ---
+        </option>
+        {soundCards.map((soundCard) => (
+          <option key={soundCard._id} value={soundCard._id}>
+            {soundCard.label} ({soundCard.audioDriver})
+          </option>
+        ))}
+      </Select>
+      {device.soundCardId && <ChannelSelector soundCardId={device.soundCardId}/>}
+    </>
+  )
 }
 const SoundCardSettings = ({deviceId}: { deviceId: string }) => {
-    const device = useStageSelector<Device>((state) => state.devices.byId[deviceId])
-    const inputSoundCards = useStageSelector<SoundCard[]>((state) =>
-        state.soundCards.byDevice[device._id]
-            ? state.soundCards.byDevice[device._id].input.map(
-                (soundCardId) => state.soundCards.byId[soundCardId]
-            )
-            : []
-    )
-    const outputSoundCards = useStageSelector<SoundCard[]>((state) =>
-        state.soundCards.byDevice[device._id]
-            ? state.soundCards.byDevice[device._id].output.map(
-                (soundCardId) => state.soundCards.byId[soundCardId]
-            )
-            : []
-    )
-    return (
-        <>
-            <SoundCardsSelector device={device} soundCards={inputSoundCards}/>
-            <SoundCardsSelector device={device} soundCards={outputSoundCards}/>
-        </>
-    )
+  const device = useStageSelector<Device>((state) => state.devices.byId[deviceId])
+  const inputSoundCards = useStageSelector<SoundCard[]>((state) =>
+    state.soundCards.byDevice[device._id]
+      ? state.soundCards.byDevice[device._id].input.map(
+        (soundCardId) => state.soundCards.byId[soundCardId]
+      )
+      : []
+  )
+  const outputSoundCards = useStageSelector<SoundCard[]>((state) =>
+    state.soundCards.byDevice[device._id]
+      ? state.soundCards.byDevice[device._id].output.map(
+        (soundCardId) => state.soundCards.byId[soundCardId]
+      )
+      : []
+  )
+  return (
+    <>
+      <SoundCardsSelector device={device} soundCards={inputSoundCards}/>
+      <SoundCardsSelector device={device} soundCards={outputSoundCards}/>
+    </>
+  )
 }
 export {SoundCardSettings}

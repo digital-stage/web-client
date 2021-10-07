@@ -25,82 +25,96 @@ import {clientActions, useStageSelector} from "@digitalstage/api-client-react";
 import {RoomSelection} from "../../../ui/RoomEditor/RoomSelection";
 import {Room, RoomPositionWithAngle} from "../../../ui/RoomEditor";
 import {GroupItem} from "./GroupItem";
-import {useGroupPosition, useStageDevicePosition, useStageMemberPosition} from "./utils";
+import {
+  selectResultingGroupPosition,
+  selectResultingStageDevicePosition, selectResultingStageMemberPosition,
+  useGroupPosition,
+  useStageDevicePosition,
+  useStageMemberPosition
+} from "./utils";
 import {HiFilter, HiOutlineFilter} from "react-icons/hi";
 import {useDispatch} from "react-redux";
+import {DefaultThreeDimensionalProperties, StageDevice} from "@digitalstage/api-types";
 
 const useListenerPosition = (): RoomPositionWithAngle => {
-    const localStageDevice = useStageSelector(state => state.stageDevices.byId[state.globals.localStageDeviceId])
-    const position = useStageDevicePosition(localStageDevice._id)
-    const stageMemberPosition = useStageMemberPosition(localStageDevice.stageMemberId)
-    const groupPosition = useGroupPosition(localStageDevice.groupId)
+  const position = useStageSelector(state => state.globals.localStageDeviceId ? selectResultingStageDevicePosition(state.globals.localStageDeviceId, state) : DefaultThreeDimensionalProperties)
+  const stageMemberPosition = useStageSelector(state =>
+    state.globals.localStageDeviceId &&
+    state.stageDevices.byId[state.globals.localStageDeviceId]
+      ? selectResultingStageMemberPosition(state.stageDevices.byId[state.globals.localStageDeviceId].stageMemberId, state)
+      : DefaultThreeDimensionalProperties)
+  const groupPosition = useStageSelector(state =>
+    state.globals.localStageDeviceId &&
+    state.stageDevices.byId[state.globals.localStageDeviceId]
+      ? selectResultingGroupPosition(state.stageDevices.byId[state.globals.localStageDeviceId].groupId, state)
+      : DefaultThreeDimensionalProperties)
 
-    return React.useMemo( () => ({
-        x: groupPosition.x + stageMemberPosition.x + position.x,
-        y: groupPosition.y + stageMemberPosition.y + position.y,
-        rZ: groupPosition.rZ + stageMemberPosition.rZ + position.rZ,
-    }), [groupPosition.rZ, groupPosition.x, groupPosition.y, position.rZ, position.x, position.y, stageMemberPosition.rZ, stageMemberPosition.x, stageMemberPosition.y])
+  return React.useMemo(() => ({
+    x: groupPosition.x + stageMemberPosition.x + position.x,
+    y: groupPosition.y + stageMemberPosition.y + position.y,
+    rZ: groupPosition.rZ + stageMemberPosition.rZ + position.rZ,
+  }), [groupPosition.rZ, groupPosition.x, groupPosition.y, position.rZ, position.x, position.y, stageMemberPosition.rZ, stageMemberPosition.x, stageMemberPosition.y])
 }
 
 const RoomEditor = () => {
-    const stageWidth = useStageSelector(state => state.stages.byId[state.globals.stageId].width)
-    const stageHeight = useStageSelector(state => state.stages.byId[state.globals.stageId].height)
-    const groupIds = useStageSelector(state => state.groups.byStage[state.globals.stageId])
-    const [selections, setSelections] = React.useState<RoomSelection[]>([])
-    const onStageClicked = React.useCallback(() => {
-        console.log("onStageClicked")
-        setSelections([])
-    }, [])
-    const onSelect = React.useCallback((selection: RoomSelection) => {
-        console.log("onSelect", selection)
-        setSelections((prev) => [
-            ...prev,
-            selection,
-        ])
-    }, [])
-    const onDeselect = React.useCallback(({id}: RoomSelection) => {
-        console.log("onDeselect", id)
-        setSelections((prev) => prev.filter(sel => sel.id !== id))
-    }, [])
+  const stageWidth = useStageSelector<number>(state => state.globals.stageId ? state.stages.byId[state.globals.stageId].width : 0)
+  const stageHeight = useStageSelector<number>(state => state.globals.stageId ? state.stages.byId[state.globals.stageId].height : 0)
+  const groupIds = useStageSelector<string[]>(state => state.globals.stageId ? state.groups.byStage[state.globals.stageId] : [])
+  const [selections, setSelections] = React.useState<RoomSelection[]>([])
+  const onStageClicked = React.useCallback(() => {
+    console.log("onStageClicked")
+    setSelections([])
+  }, [])
+  const onSelect = React.useCallback((selection: RoomSelection) => {
+    console.log("onSelect", selection)
+    setSelections((prev) => [
+      ...prev,
+      selection,
+    ])
+  }, [])
+  const onDeselect = React.useCallback(({id}: RoomSelection) => {
+    console.log("onDeselect", id)
+    setSelections((prev) => prev.filter(sel => sel.id !== id))
+  }, [])
 
-    const dispatch = useDispatch()
-    const showOffline = useStageSelector(state => state.globals.showOffline)
-    const onOfflineToggle = useCallback(() => {
-        dispatch(clientActions.showOffline(!showOffline))
-    }, [dispatch, showOffline])
+  const dispatch = useDispatch()
+  const showOffline = useStageSelector(state => state.globals.showOffline)
+  const onOfflineToggle = useCallback(() => {
+    dispatch(clientActions.showOffline(!showOffline))
+  }, [dispatch, showOffline])
 
-    const listenerPosition = useListenerPosition()
+  const listenerPosition = useListenerPosition()
 
-    return (
-        <>
-            <Room
-                onClick={onStageClicked}
-                width={stageWidth}
-                height={stageHeight}
-                center={listenerPosition}
-                rotation={-listenerPosition.rZ}
-            >
-                {groupIds.map(groupId =>
-                    <GroupItem
-                        key={groupId}
-                        groupId={groupId}
-                        selections={selections}
-                        onSelect={onSelect}
-                        onDeselect={onDeselect}
-                    />
-                )}
-            </Room>
-            <button className="round offlineToggle" onClick={onOfflineToggle}>
-                {showOffline ? <HiOutlineFilter/> : <HiFilter/>}
-            </button>
-            <style jsx>{`
+  return (
+    <>
+      <Room
+        onClick={onStageClicked}
+        width={stageWidth}
+        height={stageHeight}
+        center={listenerPosition}
+        rotation={-listenerPosition.rZ}
+      >
+        {groupIds.map(groupId =>
+          <GroupItem
+            key={groupId}
+            groupId={groupId}
+            selections={selections}
+            onSelect={onSelect}
+            onDeselect={onDeselect}
+          />
+        )}
+      </Room>
+      <button className="round offlineToggle" onClick={onOfflineToggle}>
+        {showOffline ? <HiOutlineFilter/> : <HiFilter/>}
+      </button>
+      <style jsx>{`
                 .offlineToggle {
                     position: fixed;
                     top: 48px;
                     right: 8px;
                 }
             `}</style>
-        </>
-    )
+    </>
+  )
 }
 export {RoomEditor}

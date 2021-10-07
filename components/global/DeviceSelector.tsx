@@ -49,7 +49,7 @@ const DeviceSelector = ({
             : undefined
     )
 
-    if (ready) {
+    if (ready && emit) {
         return (
             <div
                 className={`deviceSelector large ${className || ''}`}

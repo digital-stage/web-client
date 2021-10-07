@@ -42,7 +42,7 @@ const GroupItem = ({
                        onSelected,
                    }: {
     groupId: string
-    deviceId: string
+    deviceId?: string
     stageWidth: number
     stageHeight: number
     selection: RoomSelection[]
@@ -61,7 +61,7 @@ const GroupItem = ({
         }
     )
     const group = useStageSelector<Group>((state) => state.groups.byId[groupId])
-    const customGroupPosition = useStageSelector<CustomGroupPosition>((state) =>
+    const customGroupPosition = useStageSelector<CustomGroupPosition | undefined>((state) =>
         deviceId &&
         state.customGroupPositions.byDeviceAndGroup[deviceId] &&
         state.customGroupPositions.byDeviceAndGroup[deviceId][groupId]
@@ -100,18 +100,20 @@ const GroupItem = ({
     }, [group, deviceId, customGroupPosition])
     const handleFinalChange = useCallback(
         (event: { x?: number; y?: number; rZ?: number }) => {
+          if(emit) {
             if (deviceId) {
-                emit(ClientDeviceEvents.SetCustomGroupPosition, {
-                    groupId,
-                    deviceId,
-                    ...event,
-                } as ClientDevicePayloads.SetCustomGroupPosition)
+              emit(ClientDeviceEvents.SetCustomGroupPosition, {
+                groupId,
+                deviceId,
+                ...event,
+              } as ClientDevicePayloads.SetCustomGroupPosition)
             } else {
-                emit(ClientDeviceEvents.ChangeGroup, {
-                    _id: groupId,
-                    ...event,
-                } as ClientDevicePayloads.ChangeGroup)
+              emit(ClientDeviceEvents.ChangeGroup, {
+                _id: groupId,
+                ...event,
+              } as ClientDevicePayloads.ChangeGroup)
             }
+          }
         },
         [deviceId, emit, groupId]
     )
@@ -150,7 +152,7 @@ const GroupItem = ({
                     })
                 }
             />
-            {stageMemberIds.map((stageMemberId) => (
+            {deviceId && stageMemberIds.map((stageMemberId) => (
                 <StageMemberItem
                     key={stageMemberId}
                     stageMemberId={stageMemberId}

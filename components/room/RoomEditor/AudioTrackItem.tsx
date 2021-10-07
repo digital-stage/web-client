@@ -67,7 +67,7 @@ const AudioTrackItem = ({
     const audioTrack = useStageSelector<AudioTrack | undefined>(
         (state) => state.audioTracks.byId[audioTrackId]
     )
-    const customAudioTrackPosition = useStageSelector<CustomAudioTrackPosition>((state) =>
+    const customAudioTrackPosition = useStageSelector<CustomAudioTrackPosition | undefined>((state) =>
         deviceId &&
         state.customAudioTrackPositions.byDeviceAndAudioTrack[deviceId] &&
         state.customAudioTrackPositions.byDeviceAndAudioTrack[deviceId][audioTrackId]
@@ -113,17 +113,21 @@ const AudioTrackItem = ({
                 y: event.y ? event.y - offsetY : undefined,
                 rZ: event.rZ ? event.rZ - offsetRz : undefined,
             }
-            if (deviceId) {
+            if(emit) {
+              if (deviceId) {
                 emit(ClientDeviceEvents.SetCustomAudioTrackPosition, {
-                    audioTrackId,
-                    deviceId,
-                    ...normalized,
+                  audioTrackId,
+                  deviceId,
+                  ...normalized,
                 } as ClientDevicePayloads.SetCustomAudioTrackPosition)
-            } else {
+              } else {
                 emit(ClientDeviceEvents.ChangeAudioTrack, {
-                    _id: audioTrackId,
-                    ...normalized,
+                  _id: audioTrackId,
+                  ...normalized,
                 } as ClientDevicePayloads.ChangeAudioTrack)
+              }
+            } else {
+              throw new Error("Not connected")
             }
         },
         [deviceId, emit, offsetRz, offsetX, offsetY, audioTrackId]

@@ -22,7 +22,7 @@
 
 import {selectDevice, useEmit, useStageSelector} from '@digitalstage/api-client-react'
 import {shallowEqual, useDispatch} from 'react-redux'
-import React, {useMemo, useState} from 'react'
+import React from 'react'
 import Link from 'next/link'
 import {DeleteModal} from './DeleteModal'
 import {useRouter} from 'next/router'
@@ -33,15 +33,11 @@ import {MdEdit, MdMic, MdMicOff, MdVideocam, MdVideocamOff} from 'react-icons/md
 import {GoBrowser, GoDeviceDesktop} from 'react-icons/go'
 import {FaRaspberryPi, FaTrash} from 'react-icons/fa'
 
-const TypeNames = {
-  jammer: 'Jammer-Client',
-  ov: 'ORLANDOviols-Client',
-  browser: 'Webbrowser',
-}
 const TypeIcons = {
   jammer: <GoDeviceDesktop/>,
   ov: <FaRaspberryPi/>,
   browser: <GoBrowser/>,
+  mediasoup: <GoBrowser/>,
 }
 
 const DeviceEntry = ({
@@ -57,89 +53,92 @@ const DeviceEntry = ({
 }) => {
   const selectedDeviceId = useStageSelector((state) => state.globals.selectedDeviceId)
   const device = useStageSelector((state) => state.devices.byId[deviceId], shallowEqual)
-  const selected = useMemo(() => {
+  const selected = React.useMemo(() => {
     return selectedDeviceId === deviceId
   }, [deviceId, selectedDeviceId])
   const emit = useEmit()
 
-  return (
-    <ListItem
-      onSelect={onSelect}
-      selected={selected}
-      className={deviceId === localDeviceId && 'deviceSelected'}
-    >
-      <div className="deviceCaption">
-        {TypeIcons[device.type]}
-        {device.name ||
-        (device.type === 'browser'
-          ? `${device.os}: ${device.browser}`
-          : device._id)}{' '}
-        {localDeviceId === device._id ? '(Dieser Webbrowser)' : ''}
-      </div>
-      <div
-        className="deviceActions"
-        onClick={(e) => {
-          e.stopPropagation()
-        }}
+  if (emit) {
+    return (
+      <ListItem
+        onSelect={onSelect}
+        selected={selected}
+        className={deviceId === localDeviceId ? 'deviceSelected' : undefined}
       >
-        {device?.type === 'browser' ? (
-          <label className="deviceLabel">
-            P2P&nbsp;
-            <Switch
-              size="small"
-              round={true}
-              checked={device.useP2P}
-              onChange={(e) =>
+        <div className="deviceCaption">
+          {TypeIcons[device.type]}
+          {device.name ||
+          (device.type === 'browser'
+            ? `${device.os}: ${device.browser}`
+            : device._id)}{' '}
+          {localDeviceId === device._id ? '(Dieser Webbrowser)' : ''}
+        </div>
+        <div
+          className="deviceActions"
+          onClick={(e) => {
+            e.stopPropagation()
+          }}
+        >
+          {device?.type === 'browser' ? (
+            <label className="deviceLabel">
+              P2P&nbsp;
+              <Switch
+                size="small"
+                round={true}
+                checked={device.useP2P}
+                onChange={(e) =>
+                  emit(ClientDeviceEvents.ChangeDevice, {
+                    _id: device._id,
+                    useP2P: e.currentTarget.checked,
+                  } as ClientDevicePayloads.ChangeDevice)
+                }
+              />
+            </label>
+          ) : null}
+          {device?.canVideo ? (
+            <button
+              className="round secondary small"
+              onClick={() =>
                 emit(ClientDeviceEvents.ChangeDevice, {
-                  _id: device._id,
-                  useP2P: e.currentTarget.checked,
+                  _id: deviceId,
+                  sendVideo: !device.sendVideo,
+                })
+              }
+            >
+              {device.sendVideo ? <MdVideocam/> : <MdVideocamOff/>}
+            </button>
+          ) : null}
+          {device?.canAudio ? (
+            <button
+              onClick={() =>
+                emit(ClientDeviceEvents.ChangeDevice, {
+                  _id: deviceId,
+                  sendAudio: !device.sendAudio,
                 } as ClientDevicePayloads.ChangeDevice)
               }
-            />
-          </label>
-        ) : null}
-        {device?.canVideo ? (
-          <button
-            className="round secondary small"
-            onClick={() =>
-              emit(ClientDeviceEvents.ChangeDevice, {
-                _id: deviceId,
-                sendVideo: !device.sendVideo,
-              })
-            }
-          >
-            {device.sendVideo ? <MdVideocam/> : <MdVideocamOff/>}
-          </button>
-        ) : null}
-        {device?.canAudio ? (
-          <button
-            onClick={() =>
-              emit(ClientDeviceEvents.ChangeDevice, {
-                _id: deviceId,
-                sendAudio: !device.sendAudio,
-              } as ClientDevicePayloads.ChangeDevice)
-            }
-            className="round small secondary"
-          >
-            {device.sendAudio ? <MdMic/> : <MdMicOff/>}
-          </button>
-        ) : null}
-        <Link href={`/devices/${deviceId}`} passHref>
-          <button className="round small">
-            <MdEdit/>
-          </button>
-        </Link>
-        {!device.online ? (
-          <button className="round small danger" onClick={onDeleteClicked}>
-            <FaTrash/>
-          </button>
-        ) : undefined}
-      </div>
-    </ListItem>
-  )
+              className="round small secondary"
+            >
+              {device.sendAudio ? <MdMic/> : <MdMicOff/>}
+            </button>
+          ) : null}
+          <Link href={`/devices/${deviceId}`} passHref>
+            <button className="round small">
+              <MdEdit/>
+            </button>
+          </Link>
+          {!device.online ? (
+            <button className="round small danger" onClick={onDeleteClicked}>
+              <FaTrash/>
+            </button>
+          ) : undefined}
+        </div>
+      </ListItem>
+    )
+  }
+  return null
 }
 
-const DevicesList = () => {
+const DevicesList = (): JSX.Element | null => {
   const deviceIds = useStageSelector((state) => state.devices.allIds)
   const localDeviceId = useStageSelector((state) => state.globals.localDeviceId)
   const dispatch = useDispatch()
@@ -147,25 +146,28 @@ const DevicesList = () => {
   const [deleteRequest, requestDelete] = React.useState<string>()
   const {push} = useRouter()
 
-  return (
-    <List className="devicesList">
-      {deviceIds.map((deviceId) => (
-        <DeviceEntry
-          key={deviceId}
-          deviceId={deviceId}
-          localDeviceId={localDeviceId}
-          onSelect={() => {
-            if (selectedDeviceId === deviceId) {
-              push(`/devices/${deviceId}`)
-            } else {
-              dispatch(selectDevice(deviceId))
-            }
-          }}
-          onDeleteClicked={() => requestDelete(deviceId)}
-        />
-      ))}
-      <DeleteModal deviceId={deleteRequest} onClose={() => requestDelete(undefined)}/>
-    </List>
-  )
+  if (localDeviceId) {
+    return (
+      <List className="devicesList">
+        {deviceIds.map((deviceId) => (
+          <DeviceEntry
+            key={deviceId}
+            deviceId={deviceId}
+            localDeviceId={localDeviceId}
+            onSelect={() => {
+              if (selectedDeviceId === deviceId) {
+                push(`/devices/${deviceId}`)
+              } else {
+                dispatch(selectDevice(deviceId))
+              }
+            }}
+            onDeleteClicked={() => requestDelete(deviceId)}
+          />
+        ))}
+        {deleteRequest && <DeleteModal deviceId={deleteRequest} onClose={() => requestDelete(undefined)}/>}
+      </List>
+    )
+  }
+  return null
 }
 export {DevicesList}

@@ -28,7 +28,7 @@ import {useStageSelector, useWebRTCStats} from "@digitalstage/api-client-react";
 import {AiOutlineAudioMuted} from "react-icons/ai";
 
 
-const TrackStatsView = ({trackId}: { trackId: string }): JSX.Element => {
+const TrackStatsView = ({trackId}: { trackId: string }): JSX.Element | null => {
   const stats = useWebRTCStats(trackId)
   if (stats) {
     return (
@@ -63,7 +63,7 @@ const StageMemberBox = ({
   conductorId?: string
   muted: boolean
 }): JSX.Element => {
-  const [videoMuted, setVideoMuted] = React.useState<boolean>(track?.muted)
+  const [videoMuted, setVideoMuted] = React.useState<boolean>(track ? track.muted : false)
   React.useEffect(() => {
     if (track) {
       const onMute = () => setVideoMuted(true)

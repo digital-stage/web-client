@@ -36,7 +36,7 @@ const RandomSentence = [
 const Loading = ({message}: {
     message?: string
 }) => {
-    const [sentence, setSentence] = React.useState<string>(message)
+    const [sentence, setSentence] = React.useState<string | undefined>(message)
     React.useEffect(() => {
         if(!message) {
             setSentence(RandomSentence[Math.floor(Math.random() * RandomSentence.length)])

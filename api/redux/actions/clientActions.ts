@@ -54,7 +54,7 @@ export const selectMode = (mode: 'global' | 'personal'): ReducerAction => ({
 export const requestJoin = (payload?: {
     stageId: string
     groupId?: string
-    password?: string
+    password?: string | null
 }): ReducerAction => ({
     type: InternalActionTypes.REQUEST_JOIN,
     payload,

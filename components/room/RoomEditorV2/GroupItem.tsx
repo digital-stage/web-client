@@ -50,17 +50,19 @@ const GroupItem = ({groupId, onSelect, onDeselect, selections}: {
     const groupName = useStageSelector(state => state.groups.byId[groupId].name)
     const deviceId = useStageSelector(state => state.globals.selectedDeviceId)
     const onFinalChange = React.useCallback((position: RoomPositionWithAngle) => {
-        if (customPosition && deviceId) {
-            emit(ClientDeviceEvents.SetCustomGroupPosition, {
-                groupId: groupId,
-                deviceId: deviceId,
-                ...position
-            } as ClientDevicePayloads.SetCustomGroupPosition)
-        } else {
-            emit(ClientDeviceEvents.ChangeGroup, {
-                _id: groupId,
-                ...position
-            } as ClientDevicePayloads.ChangeGroup)
+        if(emit) {
+            if (customPosition && deviceId) {
+                emit(ClientDeviceEvents.SetCustomGroupPosition, {
+                    groupId: groupId,
+                    deviceId: deviceId,
+                    ...position
+                } as ClientDevicePayloads.SetCustomGroupPosition)
+            } else {
+                emit(ClientDeviceEvents.ChangeGroup, {
+                    _id: groupId,
+                    ...position
+                } as ClientDevicePayloads.ChangeGroup)
+            }
         }
     }, [customPosition, deviceId, emit, groupId])
 

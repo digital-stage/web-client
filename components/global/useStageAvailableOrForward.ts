@@ -27,11 +27,11 @@ import React from "react";
 const useStageAvailableOrForward = (): boolean => {
   const {isReady, replace} = useRouter()
   const insideStage = useStageSelector<boolean>((state) =>
-    state.globals.ready ? !!state.globals.stageId : undefined
+    state.globals.ready ? !!state.globals.stageId : false
   )
 
   React.useEffect(() => {
-    if (isReady && insideStage === false) {
+    if (isReady && !insideStage) {
       replace('/stages')
     }
   }, [isReady, insideStage, replace])
