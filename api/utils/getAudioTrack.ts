@@ -21,11 +21,11 @@
  */
 
 export type AudioOptions = {
-  deviceId: string,
-  sampleRate: number,
-  autoGainControl: boolean,
-  echoCancellation: boolean,
-  noiseSuppression: boolean,
+  deviceId?: string,
+  sampleRate?: number,
+  autoGainControl?: boolean,
+  echoCancellation?: boolean,
+  noiseSuppression?: boolean,
 }
 
 const getAudioTrack = ({
@@ -33,7 +33,6 @@ const getAudioTrack = ({
                          echoCancellation,
                          deviceId,
                          noiseSuppression,
-                         sampleRate,
                        }: AudioOptions): Promise<MediaStreamTrack | undefined> => {
   return navigator.mediaDevices
     .getUserMedia({

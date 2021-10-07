@@ -30,8 +30,8 @@ import {useMicrophone} from '../../provider/MicrophoneProvider'
 import {ConsumersList, Events, MediasoupHandler} from "./MediasoupHandler";
 
 type DispatchConsumersList = React.Dispatch<React.SetStateAction<ConsumersList>>
-const ConsumersListContext = React.createContext<ConsumersList>(null)
-const DispatchConsumersListContext = React.createContext<DispatchConsumersList>(undefined)
+const ConsumersListContext = React.createContext<ConsumersList | null>(null)
+const DispatchConsumersListContext = React.createContext<DispatchConsumersList | null>(null)
 const MediasoupProvider = ({children}: { children: React.ReactNode }) => {
   const [consumers, setConsumers] = React.useState<ConsumersList>({})
   return (
@@ -43,16 +43,21 @@ const MediasoupProvider = ({children}: { children: React.ReactNode }) => {
   )
 }
 
-const useConsumers = (): ConsumersList => React.useContext<ConsumersList>(ConsumersListContext)
+const useConsumers = (): ConsumersList => {
+  const state = React.useContext<ConsumersList | null>(ConsumersListContext)
+  if(state === null)
+    throw new Error('useConsumers must be used within a MediasoupProvider')
+  return state
+}
 
 const MediasoupService = () => {
   const emit = useEmit()
   const token = useStageSelector(state => state.auth.token)
   const reportError = useErrorReporting()
-  const localStageDeviceId = useStageSelector<string>((state) => state.globals.localStageDeviceId)
+  const localStageDeviceId = useStageSelector<string | undefined>((state) => state.globals.localStageDeviceId)
   const useP2P = useStageSelector<boolean>(state => state.globals.localDeviceId ? state.devices.byId[state.globals.localDeviceId].useP2P : undefined)
-  const stageId = useStageSelector<string>((state) => state.globals.stageId)
-  const routerUrl = useStageSelector<string>((state) => {
+  const stageId = useStageSelector<string | undefined>((state) => state.globals.stageId)
+  const routerUrl = useStageSelector<string | undefined>((state) => {
     if (state.globals.stageId) {
       const {audioType, videoType, mediasoup} = state.stages.byId[state.globals.stageId]
       if ((videoType === 'mediasoup' || audioType === 'mediasoup') && mediasoup?.url && mediasoup?.port) {
@@ -72,7 +77,7 @@ const MediasoupService = () => {
 
   // Creating connection to router
   React.useEffect(() => {
-    if (routerUrl && reportError && token && stageId) {
+    if (routerUrl && reportError && token && stageId && emit) {
       const createdHandler = new MediasoupHandler(token, routerUrl, stageId, emit)
       createdHandler.on(Events.Error, (err) => reportError(err))
       createdHandler.on(Events.Connected, () => {
@@ -105,7 +110,7 @@ const MediasoupService = () => {
         ) as MediasoupAudioTrack[])
       : []
   )
-  const setConsumers = React.useContext<DispatchConsumersList>(DispatchConsumersListContext)
+  const setConsumers = React.useContext<DispatchConsumersList | null>(DispatchConsumersListContext)
   // Sync video tracks by creating consumers
   React.useEffect(() => {
     if (setConsumers && handler) {
