@@ -21,10 +21,10 @@
  */
 
 import React from 'react'
-import { createBuffer, startAudioContext } from './utils'
-import { logger } from '../../logger'
+import {createBuffer, startAudioContext} from './utils'
+import {logger} from '../../logger'
 
-const { trace, warn } = logger('AudioContextProvider')
+const {trace, warn} = logger('AudioContextProvider')
 
 type Action =
     | { type: 'start'; sampleRate?: number; sinkId?: string; dispatch: Dispatch }
@@ -38,8 +38,8 @@ type State = {
 }
 type Dispatch = (action: Action) => void
 
-const AudioContextStateContext = React.createContext<State>(undefined)
-const AudioContextDispatchContext = React.createContext<Dispatch>(undefined)
+const AudioContextStateContext = React.createContext<State | null>(null)
+const AudioContextDispatchContext = React.createContext<Dispatch | null>(null)
 
 function audioContextReducer(prevState: State, action: Action): State {
     switch (action.type) {
@@ -52,25 +52,26 @@ function audioContextReducer(prevState: State, action: Action): State {
                 !audioContext ||
                 (audioContext && action.sampleRate && audioContext.sampleRate !== action.sampleRate)
             ) {
+                const onStateChanged = (e: any) => {
+                    if (e.currentTarget.state === 'running') {
+                        action.dispatch({type: 'setRunning', running: true})
+                    } else {
+                        action.dispatch({type: 'setRunning', running: false})
+                    }
+                }
                 // (Re)creation necessary
                 if (audioContext) {
                     trace('Closing audio context')
                     audioContext.close().catch((err) => warn(err))
-                    audioContext.onstatechange = undefined
+                    audioContext.removeEventListener("statechange", onStateChanged)
                 }
                 audioContext = createBuffer(action.sampleRate)
-                audioContext.onstatechange = (e: any) => {
-                    if (e.currentTarget.state === 'running') {
-                        action.dispatch({ type: 'setRunning', running: true })
-                    } else {
-                        action.dispatch({ type: 'setRunning', running: false })
-                    }
-                }
+                audioContext.addEventListener("statechange", onStateChanged)
                 destination = audioContext.createMediaStreamDestination()
                 player.srcObject = destination.stream
             }
             if (audioContext.state === 'running') {
-                action.dispatch({ type: 'setRunning', running: true })
+                action.dispatch({type: 'setRunning', running: true})
             } else {
                 startAudioContext(audioContext, player).catch((err) => warn(err))
             }
@@ -105,7 +106,7 @@ function audioContextReducer(prevState: State, action: Action): State {
     }
 }
 
-const AudioContextProvider = ({ children }: { children: React.ReactNode }): JSX.Element => {
+const AudioContextProvider = ({children}: { children: React.ReactNode }): JSX.Element => {
     const [state, dispatch] = React.useReducer(audioContextReducer, {})
 
     return (
@@ -117,20 +118,20 @@ const AudioContextProvider = ({ children }: { children: React.ReactNode }): JSX.
     )
 }
 
-const useAudioContext = () => {
+const useAudioContext = (): State => {
     const state = React.useContext(AudioContextStateContext)
-    if (state === undefined) {
+    if (state === null) {
         throw new Error('useAudioContext must be used within a AudioContextProvider')
     }
     return state
 }
 
-const useAudioContextDispatch = () => {
+const useAudioContextDispatch = (): Dispatch => {
     const dispatch = React.useContext(AudioContextDispatchContext)
-    if (dispatch === undefined) {
+    if (dispatch === null) {
         throw new Error('useAudioContext must be used within a AudioContextProvider')
     }
     return dispatch
 }
 
-export { useAudioContext, useAudioContextDispatch, AudioContextProvider }
+export {useAudioContext, useAudioContextDispatch, AudioContextProvider}

@@ -33,7 +33,6 @@ import {
 
 import {useStageDevicePosition} from './useStageDevicePosition'
 import {useAudioTrackPosition} from './useAudioTrackPosition'
-import useAnimationFrame from 'use-animation-frame'
 import {useAudioContext} from '../../provider/AudioContextProvider'
 import {useAudioLevelDispatch} from '../../provider/AudioLevelProvider'
 import {shallowEqual} from 'react-redux'
@@ -42,6 +41,7 @@ import {logger} from '../../logger'
 import {useSpatialAudioSelector} from '../../redux/selectors/useSpatialAudioSelector'
 import {useRemoteAudioTracks} from "../../hooks/useRemoteAudioTracks";
 import {useLocalAudioTracks} from "../../hooks/useLocalAudioTracks";
+import {useAnimationFrame} from "../../../lib/useAnimationFrame";
 
 const {trace} = logger('AudioRendererService')
 
@@ -152,7 +152,7 @@ const AudioTrackRenderer = ({
   const position = useAudioTrackPosition({audioTrack, deviceId})
 
   useEffect(() => {
-    if (audioContext && track) {
+    if (audioContext && track && audioRef.current) {
       const stream = new MediaStream([track])
       const audioElement = audioRef.current
       audioElement.srcObject = stream

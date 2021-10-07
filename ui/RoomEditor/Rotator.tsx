@@ -1,5 +1,5 @@
 import React from "react";
-import {RoomContext} from "./RoomContext";
+import {useRoom} from "./RoomContext";
 
 const Rotator = ({
                      x,
@@ -12,12 +12,12 @@ const Rotator = ({
     const [dragging, setDragging] = React.useState<boolean>(false)
     const lastRz = React.useRef<number>(rZ)
 
-    const {width: roomWidth, height: roomHeight, interactionLayer, factor, rotation: roomRotation} = React.useContext(RoomContext)
+    const {width: roomWidth, height: roomHeight, interactionLayer, factor, rotation: roomRotation} = useRoom()
 
     React.useEffect(() => {
         if (ref.current) {
             const currentRef = ref.current
-            const onDragEnd = (e: MouseEvent) => {
+            const onDragEnd = (e: MouseEvent | TouchEvent) => {
                 if(e.cancelable) {
                     e.preventDefault()
                 }
@@ -28,7 +28,7 @@ const Rotator = ({
                 onFinalChange(lastRz.current)
                 setDragging(false)
             }
-            const onDragStart = (e: MouseEvent) => {
+            const onDragStart = (e: MouseEvent | TouchEvent) => {
                 if(e.cancelable) {
                     e.preventDefault()
                 }
@@ -38,7 +38,7 @@ const Rotator = ({
                 global.window.addEventListener("touchend", onDragEnd)
                 global.window.addEventListener("mouseup", onDragEnd)
             }
-            const handleClicked = (e: MouseEvent) => {
+            const handleClicked = (e: MouseEvent | TouchEvent) => {
                 e.stopPropagation()
                 e.preventDefault()
             }
@@ -62,7 +62,7 @@ const Rotator = ({
                 onChange(angle)
                 lastRz.current = angle
             }
-            let nodePos: { x: number, y: number } = undefined
+            let nodePos: { x: number, y: number } | null = null
             const handleTouchMove = (e: any) => {
                 e.preventDefault()
                 e.stopPropagation()
@@ -78,7 +78,7 @@ const Rotator = ({
                     }
                     if (nodePos) {
                         const angle = Math.atan2(e.touches[0].pageX - nodePos.x, -(e.touches[0].pageY - nodePos.y)) * (180 / Math.PI)
-                        handleDrag(angle - roomRotation)
+                        handleDrag(angle - (roomRotation || 0))
                     }
                 }
             }

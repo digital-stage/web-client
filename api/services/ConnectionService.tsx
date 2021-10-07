@@ -20,29 +20,29 @@
  * SOFTWARE.
  */
 
-import { ITeckosClient, TeckosClientWithJWT } from 'teckos-client'
+import {ITeckosClient, TeckosClientWithJWT} from 'teckos-client'
 import React from 'react'
-import { useDispatch } from 'react-redux'
-import { getInitialDevice } from '../utils/getInitialDevice'
-import { registerSocketHandler } from '../redux/registerSocketHandler'
+import {useDispatch} from 'react-redux'
+import {getInitialDevice} from '../utils/getInitialDevice'
+import {registerSocketHandler} from '../redux/registerSocketHandler'
 import Cookie from 'js-cookie'
-import { SocketEvent } from 'teckos-client/dist/types'
-import { logger } from '../logger'
-import { useStageSelector } from '../redux/selectors/useStageSelector'
-import { useNotification } from '../hooks/useNotification'
-import { clientActions } from '../redux/actions'
+import {SocketEvent} from 'teckos-client/dist/types'
+import {logger} from '../logger'
+import {useStageSelector} from '../redux/selectors/useStageSelector'
+import {useNotification} from '../hooks/useNotification'
+import {clientActions} from '../redux/actions'
 
-const { trace } = logger('ConnectionService')
+const {trace} = logger('ConnectionService')
 
-type ConnectionState = ITeckosClient
+type ConnectionState = ITeckosClient | undefined
 type ConnectionDispatch = React.Dispatch<React.SetStateAction<ConnectionState>>
 
 export type EmitFunction = (event: SocketEvent, ...args: any[]) => boolean
 
-const ConnectionDispatchContext = React.createContext<ConnectionDispatch>(undefined)
-const ConnectionStateContext = React.createContext<ConnectionState>(undefined)
+const ConnectionDispatchContext = React.createContext<ConnectionDispatch | null>(null)
+const ConnectionStateContext = React.createContext<ConnectionState | null>(null)
 
-const ConnectionProvider = ({ children }: { children: React.ReactNode }): JSX.Element => {
+const ConnectionProvider = ({children}: { children: React.ReactNode }): JSX.Element => {
     const [connection, setConnection] = React.useState<ConnectionState>()
     return (
         <ConnectionDispatchContext.Provider value={setConnection}>
@@ -52,13 +52,18 @@ const ConnectionProvider = ({ children }: { children: React.ReactNode }): JSX.El
         </ConnectionDispatchContext.Provider>
     )
 }
-const useConnection = (): ITeckosClient => React.useContext(ConnectionStateContext)
-const useEmit = (): EmitFunction => {
+const useConnection = (): ConnectionState => {
+    const state = React.useContext(ConnectionStateContext)
+    if(state === null)
+        throw new Error('useConnection must be used within a ConnectionProvider')
+    return state
+}
+const useEmit = (): EmitFunction | undefined => {
     const connection = useConnection()
     return connection?.emit
 }
 
-const ConnectionService = (): JSX.Element => {
+const ConnectionService = (): JSX.Element | null => {
     trace('RENDER')
     const userId = useStageSelector<string | undefined>((state) => state.auth.user?._id)
     const token = useStageSelector<string | undefined>((state) => state.auth.token)
@@ -76,6 +81,9 @@ const ConnectionService = (): JSX.Element => {
                 .then((initialDevice) => {
                     if (isActive) {
                         trace('Creating new connection to API server')
+                        if (!process.env.NEXT_PUBLIC_API_URL) {
+                            throw new Error("NEXT_PUBLIC_API_UR is not defined")
+                        }
                         return new TeckosClientWithJWT(
                             process.env.NEXT_PUBLIC_API_URL,
                             {
@@ -88,14 +96,14 @@ const ConnectionService = (): JSX.Element => {
                             }
                         )
                     }
-                    return undefined
+                    throw new Error("Aborted by user")
                 })
                 .then((conn) => {
                     if (conn && isActive) {
                         registerSocketHandler(dispatch, conn)
                         return conn
                     }
-                    return undefined
+                    throw new Error("Aborted by user")
                 })
                 .then((conn) => {
                     if (isActive) {
@@ -134,4 +142,4 @@ const ConnectionService = (): JSX.Element => {
 
     return null
 }
-export { ConnectionProvider, ConnectionService, useConnection, useEmit, ConnectionStateContext }
+export {ConnectionProvider, ConnectionService, useConnection, useEmit, ConnectionStateContext}

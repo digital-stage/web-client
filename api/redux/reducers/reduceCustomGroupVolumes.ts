@@ -30,6 +30,7 @@ import {
 import { upsert } from '../utils/upsert'
 import { CustomGroupVolumes } from '../state/CustomGroupVolumes'
 import { InternalActionTypes } from '../actions/InternalActionTypes'
+import {ReducerAction} from "../actions/ReducerAction";
 
 const addCustomGroupVolume = (
     state: CustomGroupVolumes,
@@ -69,10 +70,7 @@ function reduceCustomGroupVolumes(
         byDeviceAndGroup: {},
         allIds: [],
     },
-    action: {
-        type: string
-        payload: any
-    }
+    action: ReducerAction
 ): CustomGroupVolumes {
     switch (action.type) {
         case ServerDeviceEvents.StageLeft:

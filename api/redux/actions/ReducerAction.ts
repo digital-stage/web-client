@@ -27,3 +27,5 @@ export interface ReducerAction extends AnyAction {
     type: string | InternalActionTypes
     payload?: any
 }
+
+// export type ReducerAction = PayloadAction<any>

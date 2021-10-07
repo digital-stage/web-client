@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-import { Middleware } from 'redux'
+import {Dispatch, Middleware } from 'redux'
 import { ServerDeviceEvents, ServerDevicePayloads } from '@digitalstage/api-types'
 import { setInitialized, setToken, setUser } from './actions/clientActions'
 import { InternalActionTypes } from './actions/InternalActionTypes'
@@ -33,7 +33,7 @@ import { RootState } from './state'
 
 const { trace } = logger('authMiddleware')
 
-const initializeApplication: any = (token?: string) => async (dispatch) => {
+const initializeApplication: any = (token?: string) => async (dispatch: Dispatch) => {
     if (token) {
         try {
             trace('Verifying token from cookie')
@@ -78,7 +78,7 @@ const authMiddleware: Middleware<
         }
         case ServerDeviceEvents.LocalDeviceReady: {
             const payload = action.payload as ServerDevicePayloads.LocalDeviceReady
-            if (prevState.auth.user) {
+            if (prevState.auth.user && payload.uuid) {
                 // Will be read by getInitialDevice() in next session
                 Cookie.set(prevState.auth.user._id, payload.uuid, { expires: 365, sameSite: 'strict' })
             }

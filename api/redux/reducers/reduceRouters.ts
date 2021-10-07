@@ -26,6 +26,7 @@ import { ServerDevicePayloads, ServerDeviceEvents } from '@digitalstage/api-type
 import { upsert } from '../utils/upsert'
 import { InternalActionTypes } from '../actions/InternalActionTypes'
 import { Routers } from '../state/Routers'
+import {ReducerAction} from "../actions/ReducerAction";
 
 function reduceRouters(
     state: Routers = {
@@ -35,10 +36,7 @@ function reduceRouters(
         byType: {},
         allIds: [],
     },
-    action: {
-        type: string
-        payload: any
-    }
+    action: ReducerAction
 ): Routers {
     switch (action.type) {
         case InternalActionTypes.RESET: {

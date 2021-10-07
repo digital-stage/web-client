@@ -45,36 +45,36 @@ import { reduceNotifications } from './reducers/reduceNotifications'
 import { configureStore } from '@reduxjs/toolkit'
 import { authMiddleware } from './authMiddleware'
 import { notificationMiddleware } from './notificationMiddleware'
+import {CurriedGetDefaultMiddleware} from "@reduxjs/toolkit/dist/getDefaultMiddleware";
+import {ReducerAction, RootState} from "@digitalstage/api-client-react";
 
-const reducer = {
-    auth: reduceAuth,
-    globals: reduceGlobals,
-    chatMessages: reduceChatMessage,
-    devices: reduceDevices,
-    soundCards: reduceSoundCards,
-    routers: reduceRouters,
-    users: reduceUsers,
-    stages: reduceStages,
-    groups: reduceGroups,
-    stageMembers: reduceStageMembers,
-    stageDevices: reduceStageDevices,
-    videoTracks: reduceVideoTracks,
-    audioTracks: reduceAudioTracks,
-    customGroupVolumes: reduceCustomGroupVolumes,
-    customGroupPositions: reduceCustomGroupPositions,
-    customStageMemberVolumes: reduceCustomStageMemberVolumes,
-    customStageMemberPositions: reduceCustomStageMemberPositions,
-    customStageDeviceVolumes: reduceCustomStageDeviceVolumes,
-    customStageDevicePositions: reduceCustomStageDevicePositions,
-    customAudioTrackVolumes: reduceCustomAudioTrackVolumes,
-    customAudioTrackPositions: reduceCustomAudioTrackPositions,
-    notifications: reduceNotifications,
-}
-
-const store = configureStore({
-    reducer: reducer,
+const store = configureStore<RootState, ReducerAction, any>({
+    reducer: {
+        auth: reduceAuth,
+        globals: reduceGlobals,
+        chatMessages: reduceChatMessage,
+        devices: reduceDevices,
+        soundCards: reduceSoundCards,
+        routers: reduceRouters,
+        users: reduceUsers,
+        stages: reduceStages,
+        groups: reduceGroups,
+        stageMembers: reduceStageMembers,
+        stageDevices: reduceStageDevices,
+        videoTracks: reduceVideoTracks,
+        audioTracks: reduceAudioTracks,
+        customGroupVolumes: reduceCustomGroupVolumes,
+        customGroupPositions: reduceCustomGroupPositions,
+        customStageMemberVolumes: reduceCustomStageMemberVolumes,
+        customStageMemberPositions: reduceCustomStageMemberPositions,
+        customStageDeviceVolumes: reduceCustomStageDeviceVolumes,
+        customStageDevicePositions: reduceCustomStageDevicePositions,
+        customAudioTrackVolumes: reduceCustomAudioTrackVolumes,
+        customAudioTrackPositions: reduceCustomAudioTrackPositions,
+        notifications: reduceNotifications,
+    },
     devTools: true,
-    middleware: (getDefaultMiddleware) =>
+    middleware: (getDefaultMiddleware: CurriedGetDefaultMiddleware) =>
         getDefaultMiddleware().concat(authMiddleware).concat(notificationMiddleware),
 })
 

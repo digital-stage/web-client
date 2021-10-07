@@ -27,8 +27,8 @@ type Action = { type: 'add'; id: string; level: ArrayBuffer } | { type: 'remove'
 type State = { [id: string]: ArrayBuffer }
 type Dispatch = (action: Action) => void
 
-const AudioLevelStateContext = React.createContext<State>(undefined)
-const AudioLevelDispatchContext = React.createContext<Dispatch>(undefined)
+const AudioLevelStateContext = React.createContext<State | null>(null)
+const AudioLevelDispatchContext = React.createContext<Dispatch | null>(null)
 
 function audioLevelReducer(prevState: State, action: Action) {
     switch (action.type) {
@@ -60,16 +60,16 @@ const AudioLevelProvider = ({ children }: { children: React.ReactNode }) => {
     )
 }
 
-const useAudioLevel = () => {
+const useAudioLevel = (): State => {
     const state = React.useContext(AudioLevelStateContext)
-    if (state === undefined) {
+    if (state === null) {
         throw new Error('useAudioLevel must be used within a AudioLevelProvider')
     }
     return state
 }
-const useAudioLevelDispatch = () => {
+const useAudioLevelDispatch = (): Dispatch => {
     const dispatch = React.useContext(AudioLevelDispatchContext)
-    if (dispatch === undefined) {
+    if (dispatch === null) {
         throw new Error('useAudioLevelDispatch must be used within a AudioLevelProvider')
     }
     return dispatch

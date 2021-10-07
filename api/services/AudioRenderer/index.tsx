@@ -30,8 +30,8 @@ const AudioTrackRenderer = ({audioTrackId, track}: { audioTrackId: string, track
     const {audioContext} = useAudioContext()
     //const dispatchAudioNode = useAudioNodeDispatch()
     const [sourceNode, setSourceNode] = React.useState<AudioNode>()
-    const gainNode = React.useMemo<GainNode>(
-        () => audioContext.createGain(),
+    const gainNode = React.useMemo<GainNode | undefined>(
+        () => audioContext && audioContext.createGain(),
         [audioContext]
     )
     const customMuted = useStageSelector<boolean | undefined>((state) =>
@@ -54,7 +54,7 @@ const AudioTrackRenderer = ({audioTrackId, track}: { audioTrackId: string, track
     )
 
     React.useEffect(() => {
-        if (audioContext) {
+        if (audioContext && audioRef.current) {
             const stream = new MediaStream([track])
             const source = audioContext.createMediaStreamSource(stream)
             setSourceNode(source)
@@ -63,13 +63,13 @@ const AudioTrackRenderer = ({audioTrackId, track}: { audioTrackId: string, track
             audioElement.muted = true
             return () => {
                 setSourceNode(undefined)
-                audioElement.srcObject = undefined
+                audioElement.srcObject = null
             }
         }
     }, [audioContext, track])
 
     React.useEffect(() => {
-        if (sourceNode && gainNode && audioContext.destination) {
+        if (sourceNode && gainNode && audioContext?.destination) {
             sourceNode.connect(gainNode)
             gainNode.connect(audioContext.destination)
             return () => {
@@ -77,7 +77,7 @@ const AudioTrackRenderer = ({audioTrackId, track}: { audioTrackId: string, track
                 sourceNode.disconnect(gainNode)
             }
         }
-    }, [sourceNode, gainNode, audioContext.destination])
+    }, [sourceNode, gainNode, audioContext?.destination])
 
 
     React.useEffect(() => {
@@ -119,7 +119,7 @@ const LocalStageDeviceRenderer = () => {
 
 const RemoteStageDeviceRenderer = ({stageDeviceId}: { stageDeviceId: string }) => {
     const {audioContext} = useAudioContext()
-    const analyserNode = React.useMemo<AnalyserNode>(() => audioContext && audioContext.createAnalyser(), [audioContext])
+    const analyserNode = React.useMemo<AnalyserNode | undefined>(() => audioContext && audioContext.createAnalyser(), [audioContext])
     const remoteAudioTracks = useRemoteAudioTracks(stageDeviceId)
 
     return (

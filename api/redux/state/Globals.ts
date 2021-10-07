@@ -50,8 +50,8 @@ interface Globals {
     /* WebRTC related */
     turn?: {
         urls: string[],
-        username: string,
-        credential: string
+        username?: string,
+        credential?: string
     }
 }
 

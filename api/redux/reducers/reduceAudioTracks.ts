@@ -26,6 +26,7 @@ import { ServerDeviceEvents, ServerDevicePayloads, AudioTrack } from '@digitalst
 import { upsert } from '../utils/upsert'
 import { AudioTracks } from '../state/AudioTracks'
 import { InternalActionTypes } from '../actions/InternalActionTypes'
+import {ReducerAction} from "../actions/ReducerAction";
 
 const addAudioTrack = (state: AudioTracks, audioTrack: AudioTrack): AudioTracks => ({
     ...state,
@@ -67,10 +68,7 @@ function reduceAudioTracks(
         byUser: {},
         allIds: [],
     },
-    action: {
-        type: string
-        payload: any
-    }
+    action: ReducerAction
 ): AudioTracks {
     switch (action.type) {
         case ServerDeviceEvents.StageLeft:

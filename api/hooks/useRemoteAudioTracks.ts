@@ -51,7 +51,7 @@ const useRemoteAudioTracks = (stageDeviceId: string): RemoteAudioTracks => {
                 console.error("Could not find audio track model for WebRTC audio track " + webRTCAudioTracks[stageDeviceId].id)
             }
         }
-        if(mediasoupConsumers[mediasoupAudioTrackId]) {
+        if(mediasoupAudioTrackId && mediasoupConsumers[mediasoupAudioTrackId]) {
             tracks = {
                 ...tracks,
                 [mediasoupAudioTrackId]: mediasoupConsumers[mediasoupAudioTrackId].track

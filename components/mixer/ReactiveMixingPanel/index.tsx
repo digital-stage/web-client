@@ -29,10 +29,10 @@ import {
 } from '@digitalstage/api-client-react'
 import React from 'react'
 import {VolumeSlider} from './VolumeSlider'
-import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
+import {ClientDeviceEvents, ClientDevicePayloads} from '@digitalstage/api-types'
 import {TextSwitch} from 'ui/TextSwitch'
-import { DefaultVolumeProperties } from '@digitalstage/api-types'
-import { useDispatch } from 'react-redux'
+import {DefaultVolumeProperties} from '@digitalstage/api-types'
+import {useDispatch} from 'react-redux'
 
 const BiChevronDown = () => (
     <svg
@@ -44,7 +44,7 @@ const BiChevronDown = () => (
         width="1em"
         xmlns="http://www.w3.org/2000/svg"
     >
-        <path d="M16.293 9.293L12 13.586 7.707 9.293 6.293 10.707 12 16.414 17.707 10.707z" />
+        <path d="M16.293 9.293L12 13.586 7.707 9.293 6.293 10.707 12 16.414 17.707 10.707z"/>
     </svg>
 )
 
@@ -58,13 +58,13 @@ const BiChevronUp = () => (
         width="1em"
         xmlns="http://www.w3.org/2000/svg"
     >
-        <path d="M6.293 13.293L7.707 14.707 12 10.414 16.293 14.707 17.707 13.293 12 7.586z" />
+        <path d="M6.293 13.293L7.707 14.707 12 10.414 16.293 14.707 17.707 13.293 12 7.586z"/>
     </svg>
 )
 const AudioTrackPanel = ({
-    audioTrackId,
-    deviceId,
-}: {
+                             audioTrackId,
+                             deviceId,
+                         }: {
     audioTrackId: string
     deviceId?: string
 }) => {
@@ -75,37 +75,41 @@ const AudioTrackPanel = ({
         state.customAudioTrackVolumes.byDeviceAndAudioTrack[deviceId] &&
         state.customAudioTrackVolumes.byDeviceAndAudioTrack[deviceId][audioTrackId]
             ? state.customAudioTrackVolumes.byId[
-                  state.customAudioTrackVolumes.byDeviceAndAudioTrack[deviceId][audioTrackId]
-              ]
+                state.customAudioTrackVolumes.byDeviceAndAudioTrack[deviceId][audioTrackId]
+                ]
             : undefined
     )
     const updateVolume = React.useCallback(
         (volume: number, muted: boolean) => {
-            if (deviceId) {
-                emit(ClientDeviceEvents.SetCustomAudioTrackVolume, {
-                    audioTrackId,
-                    deviceId,
-                    volume,
-                    muted,
-                } as ClientDevicePayloads.SetCustomAudioTrackVolume)
-            } else {
-                emit(ClientDeviceEvents.ChangeAudioTrack, {
-                    _id: audioTrackId,
-                    volume,
-                    muted,
-                } as ClientDevicePayloads.ChangeAudioTrack)
+            if (emit) {
+                if (deviceId) {
+                    emit(ClientDeviceEvents.SetCustomAudioTrackVolume, {
+                        audioTrackId,
+                        deviceId,
+                        volume,
+                        muted,
+                    } as ClientDevicePayloads.SetCustomAudioTrackVolume)
+                } else {
+                    emit(ClientDeviceEvents.ChangeAudioTrack, {
+                        _id: audioTrackId,
+                        volume,
+                        muted,
+                    } as ClientDevicePayloads.ChangeAudioTrack)
+                }
             }
         },
         [emit, deviceId, audioTrackId]
     )
     const resetVolume = React.useCallback(() => {
-        if (customAudioTrack) {
-            emit(ClientDeviceEvents.RemoveCustomAudioTrackVolume, customAudioTrack._id)
-        } else {
-            emit(ClientDeviceEvents.ChangeAudioTrack, {
-                _id: audioTrackId,
-                ...DefaultVolumeProperties,
-            })
+        if (emit) {
+            if (customAudioTrack) {
+                emit(ClientDeviceEvents.RemoveCustomAudioTrackVolume, customAudioTrack._id)
+            } else {
+                emit(ClientDeviceEvents.ChangeAudioTrack, {
+                    _id: audioTrackId,
+                    ...DefaultVolumeProperties,
+                })
+            }
         }
     }, [audioTrackId, emit, customAudioTrack])
     return (
@@ -127,9 +131,9 @@ const AudioTrackPanel = ({
 }
 
 const StageDevicePanel = ({
-    stageDeviceId,
-    deviceId,
-}: {
+                              stageDeviceId,
+                              deviceId,
+                          }: {
     stageDeviceId: string
     deviceId?: string
 }) => {
@@ -144,37 +148,41 @@ const StageDevicePanel = ({
         state.customStageDeviceVolumes.byDeviceAndStageDevice[deviceId] &&
         state.customStageDeviceVolumes.byDeviceAndStageDevice[deviceId][stageDeviceId]
             ? state.customStageDeviceVolumes.byId[
-                  state.customStageDeviceVolumes.byDeviceAndStageDevice[deviceId][stageDeviceId]
-              ]
+                state.customStageDeviceVolumes.byDeviceAndStageDevice[deviceId][stageDeviceId]
+                ]
             : undefined
     )
     const updateVolume = React.useCallback(
         (volume: number, muted: boolean) => {
-            if (deviceId) {
-                emit(ClientDeviceEvents.SetCustomStageDeviceVolume, {
-                    stageDeviceId,
-                    deviceId,
-                    volume,
-                    muted,
-                } as ClientDevicePayloads.SetCustomStageDeviceVolume)
-            } else {
-                emit(ClientDeviceEvents.ChangeStageDevice, {
-                    _id: stageDeviceId,
-                    volume,
-                    muted,
-                } as ClientDevicePayloads.ChangeStageDevice)
+            if (emit) {
+                if (deviceId) {
+                    emit(ClientDeviceEvents.SetCustomStageDeviceVolume, {
+                        stageDeviceId,
+                        deviceId,
+                        volume,
+                        muted,
+                    } as ClientDevicePayloads.SetCustomStageDeviceVolume)
+                } else {
+                    emit(ClientDeviceEvents.ChangeStageDevice, {
+                        _id: stageDeviceId,
+                        volume,
+                        muted,
+                    } as ClientDevicePayloads.ChangeStageDevice)
+                }
             }
         },
         [emit, deviceId, stageDeviceId]
     )
     const resetVolume = React.useCallback(() => {
-        if (customStageDevice) {
-            emit(ClientDeviceEvents.RemoveCustomStageDeviceVolume, customStageDevice._id)
-        } else {
-            emit(ClientDeviceEvents.ChangeStageDevice, {
-                _id: stageDeviceId,
-                ...DefaultVolumeProperties,
-            })
+        if (emit) {
+            if (customStageDevice) {
+                emit(ClientDeviceEvents.RemoveCustomStageDeviceVolume, customStageDevice._id)
+            } else {
+                emit(ClientDeviceEvents.ChangeStageDevice, {
+                    _id: stageDeviceId,
+                    ...DefaultVolumeProperties,
+                })
+            }
         }
     }, [emit, customStageDevice, stageDeviceId])
     return (
@@ -198,7 +206,7 @@ const StageDevicePanel = ({
                 />
                 {audioTrackIds.length > 0 ? (
                     <div className="expander" onClick={() => setExpanded((prev) => !prev)}>
-                        {expanded ? <BiChevronUp /> : <BiChevronDown />}
+                        {expanded ? <BiChevronUp/> : <BiChevronDown/>}
                     </div>
                 ) : null}
             </div>
@@ -218,9 +226,9 @@ const StageDevicePanel = ({
 }
 
 const StageMemberPanel = ({
-    stageMemberId,
-    deviceId,
-}: {
+                              stageMemberId,
+                              deviceId,
+                          }: {
     stageMemberId: string
     deviceId?: string
 }) => {
@@ -228,8 +236,8 @@ const StageMemberPanel = ({
     const [expanded, setExpanded] = React.useState<boolean>(false)
     const stageDeviceIds = useStageSelector(
         state => {
-            if(state.stageDevices.byStage[stageMemberId]) {
-                if(state.globals.showOffline) {
+            if (state.stageDevices.byStage[stageMemberId]) {
+                if (state.globals.showOffline) {
                     return state.stageDevices.byStage[stageMemberId]
                 }
                 return state.stageDevices.byStage[stageMemberId].filter(id => state.stageDevices.byId[id].active)
@@ -244,37 +252,41 @@ const StageMemberPanel = ({
         state.customStageMemberVolumes.byDeviceAndStageMember[deviceId] &&
         state.customStageMemberVolumes.byDeviceAndStageMember[deviceId][stageMemberId]
             ? state.customStageMemberVolumes.byId[
-                  state.customStageMemberVolumes.byDeviceAndStageMember[deviceId][stageMemberId]
-              ]
+                state.customStageMemberVolumes.byDeviceAndStageMember[deviceId][stageMemberId]
+                ]
             : undefined
     )
     const updateVolume = React.useCallback(
         (volume: number, muted: boolean) => {
-            if (deviceId) {
-                emit(ClientDeviceEvents.SetCustomStageMemberVolume, {
-                    stageMemberId,
-                    deviceId,
-                    volume,
-                    muted,
-                } as ClientDevicePayloads.SetCustomStageMemberVolume)
-            } else {
-                emit(ClientDeviceEvents.ChangeStageMember, {
-                    _id: stageMemberId,
-                    volume,
-                    muted,
-                } as ClientDevicePayloads.ChangeStageMember)
+            if (emit) {
+                if (deviceId) {
+                    emit(ClientDeviceEvents.SetCustomStageMemberVolume, {
+                        stageMemberId,
+                        deviceId,
+                        volume,
+                        muted,
+                    } as ClientDevicePayloads.SetCustomStageMemberVolume)
+                } else {
+                    emit(ClientDeviceEvents.ChangeStageMember, {
+                        _id: stageMemberId,
+                        volume,
+                        muted,
+                    } as ClientDevicePayloads.ChangeStageMember)
+                }
             }
         },
         [emit, deviceId, stageMemberId]
     )
     const resetVolume = React.useCallback(() => {
-        if (customStageMember) {
-            emit(ClientDeviceEvents.RemoveCustomStageMemberVolume, customStageMember._id)
-        } else {
-            emit(ClientDeviceEvents.ChangeStageMember, {
-                _id: stageMemberId,
-                ...DefaultVolumeProperties,
-            })
+        if (emit) {
+            if (customStageMember) {
+                emit(ClientDeviceEvents.RemoveCustomStageMemberVolume, customStageMember._id)
+            } else {
+                emit(ClientDeviceEvents.ChangeStageMember, {
+                    _id: stageMemberId,
+                    ...DefaultVolumeProperties,
+                })
+            }
         }
     }, [emit, customStageMember, stageMemberId])
     return (
@@ -298,7 +310,7 @@ const StageMemberPanel = ({
                 />
                 {stageDeviceIds.length > 0 ? (
                     <div className="expander" onClick={() => setExpanded((prev) => !prev)}>
-                        {expanded ? <BiChevronUp /> : <BiChevronDown />}
+                        {expanded ? <BiChevronUp/> : <BiChevronDown/>}
                     </div>
                 ) : null}
             </div>
@@ -317,17 +329,17 @@ const StageMemberPanel = ({
     )
 }
 
-const GroupPanel = ({ groupId, deviceId }: { groupId: string; deviceId?: string }) => {
+const GroupPanel = ({groupId, deviceId}: { groupId: string; deviceId?: string }) => {
     const emit = useEmit()
     const [expanded, setExpanded] = React.useState<boolean>(true)
     const stageMemberIds = useStageSelector(state => {
-            if (state.globals.showOffline) {
-                return [...state.stageMembers.byGroup[groupId]].sort((a, b) => sortStageMembers(state.stageMembers.byId[a], state.stageMembers.byId[b]))
-            }
-            if(state.stageMembers.byGroup[groupId]) {
-                return state.stageMembers.byGroup[groupId].filter(id => state.stageMembers.byId[id].active).sort((a, b) => sortStageMembers(state.stageMembers.byId[a], state.stageMembers.byId[b]))
-            }
-            return []
+        if (state.globals.showOffline) {
+            return [...state.stageMembers.byGroup[groupId]].sort((a, b) => sortStageMembers(state.stageMembers.byId[a], state.stageMembers.byId[b]))
+        }
+        if (state.stageMembers.byGroup[groupId]) {
+            return state.stageMembers.byGroup[groupId].filter(id => state.stageMembers.byId[id].active).sort((a, b) => sortStageMembers(state.stageMembers.byId[a], state.stageMembers.byId[b]))
+        }
+        return []
     })
     const group = useStageSelector((state) => state.groups.byId[groupId])
     const customGroup = useStageSelector((state) =>
@@ -335,37 +347,41 @@ const GroupPanel = ({ groupId, deviceId }: { groupId: string; deviceId?: string 
         state.customGroupVolumes.byDeviceAndGroup[deviceId] &&
         state.customGroupVolumes.byDeviceAndGroup[deviceId][groupId]
             ? state.customGroupVolumes.byId[
-                  state.customGroupVolumes.byDeviceAndGroup[deviceId][groupId]
-              ]
+                state.customGroupVolumes.byDeviceAndGroup[deviceId][groupId]
+                ]
             : undefined
     )
     const updateVolume = React.useCallback(
         (volume: number, muted: boolean) => {
-            if (deviceId) {
-                emit(ClientDeviceEvents.SetCustomGroupVolume, {
-                    groupId,
-                    deviceId,
-                    volume,
-                    muted,
-                } as ClientDevicePayloads.SetCustomGroupVolume)
-            } else {
-                emit(ClientDeviceEvents.ChangeGroup, {
-                    _id: groupId,
-                    volume,
-                    muted,
-                } as ClientDevicePayloads.ChangeGroup)
+            if (emit) {
+                if (deviceId) {
+                    emit(ClientDeviceEvents.SetCustomGroupVolume, {
+                        groupId,
+                        deviceId,
+                        volume,
+                        muted,
+                    } as ClientDevicePayloads.SetCustomGroupVolume)
+                } else {
+                    emit(ClientDeviceEvents.ChangeGroup, {
+                        _id: groupId,
+                        volume,
+                        muted,
+                    } as ClientDevicePayloads.ChangeGroup)
+                }
             }
         },
         [emit, deviceId, groupId]
     )
     const resetVolume = React.useCallback(() => {
-        if (customGroup) {
-            emit(ClientDeviceEvents.RemoveCustomGroupVolume, customGroup._id)
-        } else {
-            emit(ClientDeviceEvents.ChangeGroup, {
-                _id: groupId,
-                ...DefaultVolumeProperties,
-            })
+        if (emit) {
+            if (customGroup) {
+                emit(ClientDeviceEvents.RemoveCustomGroupVolume, customGroup._id)
+            } else {
+                emit(ClientDeviceEvents.ChangeGroup, {
+                    _id: groupId,
+                    ...DefaultVolumeProperties,
+                })
+            }
         }
     }, [emit, customGroup, groupId])
     return (
@@ -388,7 +404,7 @@ const GroupPanel = ({ groupId, deviceId }: { groupId: string; deviceId?: string 
                 />
                 {stageMemberIds.length > 0 ? (
                     <div className="expander" onClick={() => setExpanded((prev) => !prev)}>
-                        {expanded ? <BiChevronUp /> : <BiChevronDown />}
+                        {expanded ? <BiChevronUp/> : <BiChevronDown/>}
                     </div>
                 ) : null}
             </div>
@@ -407,7 +423,7 @@ const GroupPanel = ({ groupId, deviceId }: { groupId: string; deviceId?: string 
     )
 }
 
-const ResetAllButton = ({ deviceId }: { deviceId?: string }) => {
+const ResetAllButton = ({deviceId}: { deviceId?: string }) => {
     const emit = useEmit()
     const groupIds = useStageSelector((state) => state.groups.allIds)
     const stageMemberIds = useStageSelector((state) => state.stageMembers.allIds)
@@ -492,7 +508,7 @@ const ResetAllButton = ({ deviceId }: { deviceId?: string }) => {
     )
 }
 
-const StagePanel = ({ stageId }: { stageId: string }) => {
+const StagePanel = ({stageId}: { stageId: string }) => {
     const dispatch = useDispatch()
     const selectedDeviceId = useStageSelector((state) => state.globals.selectedDeviceId)
     const selectedMode = useStageSelector((state) => state.globals.selectedMode)
@@ -524,7 +540,7 @@ const StagePanel = ({ stageId }: { stageId: string }) => {
                 />
             ))}
             <div className="mixingLayoutActions">
-                <ResetAllButton deviceId={selectedMode === 'global' ? undefined : selectedDeviceId} />
+                <ResetAllButton deviceId={selectedMode === 'global' ? undefined : selectedDeviceId}/>
                 <button className="" onClick={onOfflineToggle}>
                     {showOffline ? 'Inaktive ausblenden' : 'Inaktive einblenden'}
                 </button>
@@ -537,8 +553,8 @@ const ReactiveMixingPanel = () => {
     const stageId = useStageSelector((state) => state.globals.ready ? state.globals.stageId : undefined)
 
     if (stageId) {
-        return <StagePanel stageId={stageId} />
+        return <StagePanel stageId={stageId}/>
     }
     return null
 }
-export { ReactiveMixingPanel }
+export {ReactiveMixingPanel}

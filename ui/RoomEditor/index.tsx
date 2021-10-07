@@ -8,7 +8,6 @@ import {MdMyLocation} from "react-icons/md";
 
 const {trace} = logger("RoomEditor")
 
-
 const Room = ({children, onClick, width, height, center, rotation, factor = FACTOR}: {
     children: React.ReactNode,
     width: number,
@@ -45,10 +44,15 @@ const Room = ({children, onClick, width, height, center, rotation, factor = FACT
 
     const scrollToCenter = React.useCallback(() => {
         if (ref.current && center) {
-            const normalizedCenter = rotatePointAroundOrigin(center.x, (-1) * center.y, rotation)
-
-            const top = (actualSize.height / 2) + (normalizedCenter.y * factor) - (window.innerHeight / 2)
-            const left = (actualSize.width / 2) + (normalizedCenter.x * factor) - (window.innerWidth / 2)
+            let x = (-1) * center.x
+            let y = (-1) * center.y
+            if(rotation) {
+                const normalizedCenter = rotatePointAroundOrigin(x, y, rotation)
+                x = normalizedCenter.x
+                y = normalizedCenter.y
+            }
+            const top = (actualSize.height / 2) + (y * factor) - (window.innerHeight / 2)
+            const left = (actualSize.width / 2) + (x * factor) - (window.innerWidth / 2)
 
             trace("Scroll from " + ref.current.scrollTop + " to " + top)
             ref.current.scrollLeft = left
@@ -72,9 +76,12 @@ const Room = ({children, onClick, width, height, center, rotation, factor = FACT
                     <div className="room">
                         <div ref={interactionRef} className="interaction"/>
                         <RoomContext.Provider value={{
+                            room: ref.current,
                             interactionLayer: interactionRef.current,
                             width,
                             height,
+                            actualWidth: actualSize.width,
+                            actualHeight: actualSize.height,
                             factor,
                             rotation
                         }}>

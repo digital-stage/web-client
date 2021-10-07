@@ -25,15 +25,15 @@ import {useErrorReporting, useStageSelector} from "@digitalstage/api-client-reac
 import {VideoTrack} from "@digitalstage/api-types";
 
 
-type State = MediaStreamTrack
+type State = MediaStreamTrack | undefined
 type Dispatch = React.Dispatch<React.SetStateAction<State>>
 
-const WebcamStateContext = React.createContext<State>(null)
-const WebcamDispatchContext = React.createContext<Dispatch>(null)
+const WebcamStateContext = React.createContext<State | null>(null)
+const WebcamDispatchContext = React.createContext<Dispatch | null>(null)
 
 const WebcamProvider = ({children}: { children: React.ReactNode }) => {
   const [state, dispatch] = React.useState<MediaStreamTrack>()
-  const videoTracks = useStageSelector<VideoTrack[]>(state => state.videoTracks.byStageDevice[state.globals.localStageDeviceId]?.map(id => state.videoTracks.byId[id]) || [])
+  const videoTracks = useStageSelector<VideoTrack[]>(state => state.globals.localStageDeviceId && state.videoTracks.byStageDevice[state.globals.localStageDeviceId]?.map(id => state.videoTracks.byId[id]) || [])
   const reportError = useErrorReporting()
 
   React.useEffect(() => {
@@ -74,14 +74,14 @@ const WebcamProvider = ({children}: { children: React.ReactNode }) => {
   )
 }
 
-const useWebcam = () => {
+const useWebcam = (): State => {
   const state = React.useContext(WebcamStateContext)
   if (state === null)
     throw new Error('Please wrap around your DOM tree with the WebcamProvider')
   return state
 }
 
-const useWebcamDispatch = () => {
+const useWebcamDispatch = (): Dispatch => {
   const state = React.useContext(WebcamDispatchContext)
   if (state === null)
     throw new Error('Please wrap around your DOM tree with the WebcamProvider')

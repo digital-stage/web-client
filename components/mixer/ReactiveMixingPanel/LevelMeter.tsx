@@ -20,8 +20,8 @@
  * SOFTWARE.
  */
 
+import { useAnimationFrame } from 'lib/useAnimationFrame'
 import React, { CanvasHTMLAttributes, useRef } from 'react'
-import useAnimationFrame from 'use-animation-frame'
 
 const USE_MAX = true
 

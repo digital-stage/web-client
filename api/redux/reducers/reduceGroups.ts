@@ -26,6 +26,7 @@ import { ServerDeviceEvents, ServerDevicePayloads, Group } from '@digitalstage/a
 import { upsert } from '../utils/upsert'
 import { InternalActionTypes } from '../actions/InternalActionTypes'
 import { Groups } from '../state/Groups'
+import {ReducerAction} from "../actions/ReducerAction";
 
 const addGroup = (state: Groups, group: Group): Groups => ({
     ...state,
@@ -46,10 +47,7 @@ function reduceGroups(
         byStage: {},
         allIds: [],
     },
-    action: {
-        type: string
-        payload: any
-    }
+    action: ReducerAction
 ): Groups {
     switch (action.type) {
         case InternalActionTypes.RESET: {

@@ -20,10 +20,10 @@
  * SOFTWARE.
  */
 
-import { ServerDeviceEvents, ServerDevicePayloads } from '@digitalstage/api-types'
+import {BrowserDevice, ServerDeviceEvents, ServerDevicePayloads } from '@digitalstage/api-types'
 import { Globals } from '../state/Globals'
 import { InternalActionTypes } from '../actions/InternalActionTypes'
-import { BrowserDevice } from '@digitalstage/api-types/dist/model/browser'
+import { ReducerAction } from '../actions/ReducerAction'
 
 function reduceGlobals(
     state: Globals = {
@@ -36,10 +36,7 @@ function reduceGlobals(
         showLanes: false,
         showOffline: false
     },
-    action: {
-        type: string
-        payload: any
-    }
+    action: ReducerAction
 ): Globals {
     switch (action.type) {
         case InternalActionTypes.RESET: {
@@ -166,28 +163,6 @@ function reduceGlobals(
                 selectedDeviceId: state.selectedDeviceId ? state.selectedDeviceId : payload._id,
             }
         }
-        /*
-        case ServerDeviceEvents.StageMemberAdded: {
-            const payload = action.payload as ServerDevicePayloads.StageMemberAdded
-            if(payload.userId === state.localUserId) {
-                return {
-                    ...state,
-                    stageMemberId: payload._id
-                }
-            }
-            return state
-        },
-        case ServerDeviceEvents.StageDeviceAdded: {
-            if (state.localDeviceId) {
-                const { _id, deviceId } = action.payload as ServerDevicePayloads.StageDeviceAdded
-                if (state.localDeviceId === deviceId)
-                    return {
-                        ...state,
-                        localStageDeviceId: _id,
-                    }
-            }
-            return state
-        }*/
         default: {
             return state
         }

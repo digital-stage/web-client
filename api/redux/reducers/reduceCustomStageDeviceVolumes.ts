@@ -30,6 +30,7 @@ import {
 import { upsert } from '../utils/upsert'
 import { InternalActionTypes } from '../actions/InternalActionTypes'
 import { CustomStageDeviceVolumes } from '../state/CustomStageDeviceVolumes'
+import {ReducerAction} from "../actions/ReducerAction";
 
 const addCustomStageDeviceVolume = (
     state: CustomStageDeviceVolumes,
@@ -72,10 +73,7 @@ function reduceCustomStageDeviceVolumes(
         byDeviceAndStageDevice: {},
         allIds: [],
     },
-    action: {
-        type: string
-        payload: any
-    }
+    action: ReducerAction
 ): CustomStageDeviceVolumes {
     switch (action.type) {
         case ServerDeviceEvents.StageLeft:

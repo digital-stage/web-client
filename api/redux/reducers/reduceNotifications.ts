@@ -29,16 +29,14 @@ import {
 } from '../actions/clientActions'
 import omit from 'lodash/omit'
 import without from 'lodash/without'
+import {ReducerAction} from "../actions/ReducerAction";
 
 function reduceNotifications(
     state: Notifications = {
         byId: {},
         allIds: [],
     },
-    action: {
-        type: string
-        payload: unknown
-    }
+    action: ReducerAction
 ): Notifications {
     switch (action.type) {
         case InternalActionTypes.ADD_NOTIFICATION:

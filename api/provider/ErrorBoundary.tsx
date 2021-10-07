@@ -21,7 +21,7 @@
  */
 
 import React from 'react';
-import { connect, ConnectedProps } from 'react-redux'
+import {connect, ConnectedProps} from 'react-redux'
 import {reportError} from '../redux/actions/clientActions'
 
 const connector = connect(null, {reportError})
@@ -39,14 +39,14 @@ class ErrorBoundaryWithRedux extends React.Component<Props> {
         hasError: false,
     };
 
-    static getDerivedStateFromError(error) {
+    static getDerivedStateFromError(error: any) {
         return {hasError: true, error};
     }
 
-    componentDidCatch(error, errorInfo) {
+    componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
         // eslint-disable-next-line no-console
         console.error({error, errorInfo});
-        this.props.reportError(error, errorInfo)
+        this.props.reportError(error, errorInfo.componentStack)
         /*
         Sentry.withScope((scope) => {
             scope.setExtras(errorInfo);

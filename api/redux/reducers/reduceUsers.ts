@@ -26,6 +26,7 @@ import { User, ServerDeviceEvents, ServerDevicePayloads } from '@digitalstage/ap
 import { upsert } from '../utils/upsert'
 import { Users } from '../state/Users'
 import { InternalActionTypes } from '../actions/InternalActionTypes'
+import {ReducerAction} from "../actions/ReducerAction";
 
 const addUser = (state: Users, user: User): Users => ({
     ...state,
@@ -41,10 +42,7 @@ function reduceUsers(
         byId: {},
         allIds: [],
     },
-    action: {
-        type: string
-        payload: any
-    }
+    action: ReducerAction
 ): Users {
     switch (action.type) {
         case InternalActionTypes.RESET: {

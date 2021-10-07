@@ -46,7 +46,6 @@
     "redux": "^4.1.1",
     "redux-devtools-extension": "^2.13.9",
     "teckos-client": "^0.2.1",
-    "use-animation-frame": "^0.1.1",
     "uuid": "^8.3.2",
     "webrtc-adapter": "^8.1.0",
     "yup": "^0.32.9"
@@ -55,6 +54,7 @@
     "@babel/core": "^7.15.5",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^12.1.1",
+    "@types/js-cookie": "^3.0.0",
     "@types/node": "^16.10.2",
     "@types/pino": "^6.3.11",
     "@types/react": "^17.0.25",

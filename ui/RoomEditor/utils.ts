@@ -12,11 +12,6 @@ export const calculateActualSize = (width: number, height: number, deg: number):
         height: Math.fround(Math.abs(actualHeight))
     }
 }
-export const precisionRound = (number, precision) => {
-    const factor = Math.pow(10, precision);
-    const n = precision < 0 ? number : 0.01 / factor + number;
-    return Math.round(n * factor) / factor;
-}
 export const rotatePointAroundOrigin = (x: number, y: number, deg: number): { x: number, y: number } => {
     const radians = deg * Math.PI / 180
     const rX = x * Math.cos(radians) - y * Math.sin(radians)

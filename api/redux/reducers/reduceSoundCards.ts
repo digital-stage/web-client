@@ -25,6 +25,7 @@ import {SoundCard, ServerDevicePayloads, ServerDeviceEvents} from '@digitalstage
 import without from 'lodash/without'
 import {SoundCards} from '../state/SoundCards'
 import {upsert} from '../utils/upsert'
+import {ReducerAction} from "../actions/ReducerAction";
 
 function reduceSoundCards(
     state: SoundCards = {
@@ -33,10 +34,7 @@ function reduceSoundCards(
         byDeviceAndDriver: {},
         allIds: [],
     },
-    action: {
-        type: string
-        payload: any
-    }
+    action: ReducerAction
 ): SoundCards {
     switch (action.type) {
         case ServerDeviceEvents.SoundCardAdded: {

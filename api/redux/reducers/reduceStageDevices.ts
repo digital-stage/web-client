@@ -27,6 +27,7 @@ import { ServerDeviceEvents, ServerDevicePayloads, StageDevice } from '@digitals
 import { upsert } from '../utils/upsert'
 import { InternalActionTypes } from '../actions/InternalActionTypes'
 import { StageDevices } from '../state/StageDevices'
+import {ReducerAction} from "../actions/ReducerAction";
 
 const addStageDevice = (prev: StageDevices, stageDevice: StageDevice): StageDevices => ({
     ...prev,
@@ -73,10 +74,7 @@ function reduceStageDevices(
         byStageAndDevice: {},
         allIds: [],
     },
-    action: {
-        type: string
-        payload: any
-    }
+    action: ReducerAction
 ): StageDevices {
     switch (action.type) {
         case ServerDeviceEvents.StageLeft:
