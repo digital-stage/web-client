@@ -64,6 +64,7 @@ const Rotator = ({
             }
             let nodePos: { x: number, y: number } = undefined
             const handleTouchMove = (e: any) => {
+                e.preventDefault()
                 e.stopPropagation()
                 if (e.touches.length === 1) {
                     if (!nodePos) {
@@ -89,7 +90,7 @@ const Rotator = ({
                 const angle = Math.atan2(e.offsetX - absoluteX, -(e.offsetY - absoluteY)) * (180 / Math.PI)
                 handleDrag(angle)
             }
-            global.window.addEventListener("touchmove", handleTouchMove)
+            global.window.addEventListener("touchmove", handleTouchMove, { passive: false })
             interactionLayer.addEventListener("mousemove", handleMouseMove)
             interactionLayer.style.setProperty("z-index", "100")
             interactionLayer.style.setProperty("cursor", "crosshair")

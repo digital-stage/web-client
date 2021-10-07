@@ -6,6 +6,12 @@ import {rotatePointAroundOrigin} from "./utils";
 
 export type DragBounceFunc = (pos: { x: number, y: number }) => { x: number, y: number }
 
+export const getTouchPosition = (touch: Touch, pixelRatio: number): {x: number, y: number} => ({
+  x: (touch.pageX + (touch.radiusX / 2)) * pixelRatio,
+  y: (touch.pageY + (touch.radiusY / 2)) * pixelRatio
+})
+
+
 const RoomItem = ({
                     caption,
                     color,
@@ -121,6 +127,7 @@ const RoomItem = ({
 
   React.useEffect(() => {
     if (dragging) {
+      const scale = window.devicePixelRatio || 1
       const handleDrag = (movementX: number, movementY: number) => {
         if (movementX !== 0 || movementY !== 0) {
           dragged.current = true
@@ -146,25 +153,24 @@ const RoomItem = ({
       }
       let previousTouch: Touch = undefined
       const onTouchMove = (e: TouchEvent) => {
-        e.preventDefault();
+        e.preventDefault()
         e.stopPropagation()
-        if (e.touches.length === 1) {
-          // Use only single touch
-          const touch = e.touches[0]
-          if (previousTouch) {
-            let x = touch.pageX / factor
-            let y = touch.pageY / factor
-            let rX = previousTouch.pageX / factor
-            let rY = previousTouch.pageY / factor
-            let movementX = x - rX
-            let movementY = y - rY
+
+        if(e.changedTouches.length > 0) {
+          console.log(e.changedTouches.length)
+          const touch = e.changedTouches.item(0)
+          if(previousTouch) {
+            // Determine previous touch
+            let movementX = (touch.pageX - previousTouch.pageX) * scale
+            let movementY = (touch.pageY - previousTouch.pageY) * scale
+
             if (roomRotation) {
               const rotated = rotatePointAroundOrigin(movementX, movementY, -roomRotation)
               movementX = rotated.x
               movementY = rotated.y
             }
             // Invert the y axis
-            handleDrag(movementX, movementY)
+            handleDrag(movementX / factor, movementY / factor)
           }
           previousTouch = touch
         }
@@ -174,17 +180,18 @@ const RoomItem = ({
           e.preventDefault()
         }
         e.stopPropagation()
-        let mX = e.movementX
-        let mY = e.movementY
+        let movementX = e.movementX
+        let movementY = e.movementY
         // First normalize x and y, since we could have an rotated room
         if (roomRotation) {
-          const rotated = rotatePointAroundOrigin(e.movementX, e.movementY, -roomRotation)
-          mX = rotated.x
-          mY = rotated.y
+          const rotated = rotatePointAroundOrigin(movementX, movementY, -roomRotation)
+          movementX = rotated.x
+          movementY = rotated.y
         }
-        handleDrag(mX / factor, mY / factor)
+        console.log("mouse movement", movementX, movementY)
+        handleDrag(movementX / factor, movementY / factor)
       }
-      global.window.addEventListener("touchmove", onTouchMove)
+      global.window.addEventListener("touchmove", onTouchMove, { passive: false })
       global.window.addEventListener("mousemove", onMouseMove)
       return () => {
         global.window.removeEventListener("touchmove", onTouchMove)
