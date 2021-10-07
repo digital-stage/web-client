@@ -77,7 +77,7 @@ const Rotator = ({
                     }
                     if (nodePos) {
                         const angle = Math.atan2(e.touches[0].pageX - nodePos.x, -(e.touches[0].pageY - nodePos.y)) * (180 / Math.PI)
-                        handleDrag(angle)
+                        handleDrag(angle - roomRotation)
                     }
                 }
             }
@@ -100,7 +100,7 @@ const Rotator = ({
                 interactionLayer.removeEventListener("mousemove", handleMouseMove)
             }
         }
-    }, [onChange, interactionLayer, dragging, absoluteX, absoluteY])
+    }, [onChange, interactionLayer, dragging, absoluteX, absoluteY, roomRotation])
 
     return (
         <>

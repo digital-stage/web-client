@@ -146,13 +146,23 @@ const RoomItem = ({
       }
       let previousTouch: Touch = undefined
       const onTouchMove = (e: TouchEvent) => {
+        e.preventDefault();
         e.stopPropagation()
         if (e.touches.length === 1) {
           // Use only single touch
           const touch = e.touches[0]
           if (previousTouch) {
-            const movementX = (touch.pageX - previousTouch.pageX) / factor
-            const movementY = (touch.pageY - previousTouch.pageY) / factor
+            let x = touch.pageX / factor
+            let y = touch.pageY / factor
+            let rX = previousTouch.pageX / factor
+            let rY = previousTouch.pageY / factor
+            let movementX = x - rX
+            let movementY = y - rY
+            if (roomRotation) {
+              const rotated = rotatePointAroundOrigin(movementX, movementY, -roomRotation)
+              movementX = rotated.x
+              movementY = rotated.y
+            }
             // Invert the y axis
             handleDrag(movementX, movementY)
           }
@@ -164,11 +174,10 @@ const RoomItem = ({
           e.preventDefault()
         }
         e.stopPropagation()
-
-        // First normalize x and y, since we could have an rotated room
         let mX = e.movementX
         let mY = e.movementY
-        if (roomRotation || roomRotation === 0) {
+        // First normalize x and y, since we could have an rotated room
+        if (roomRotation) {
           const rotated = rotatePointAroundOrigin(e.movementX, e.movementY, -roomRotation)
           mX = rotated.x
           mY = rotated.y
