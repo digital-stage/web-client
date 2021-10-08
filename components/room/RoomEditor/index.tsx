@@ -41,16 +41,24 @@ import {ResetPanel} from "./ResetPanel";
 import {TextSwitch} from "../../../ui/TextSwitch";
 
 const useListenerPosition = (): RoomPositionWithAngle => {
-    const position = useStageSelector(state => state.globals.localStageDeviceId ? selectResultingStageDevicePosition(state.globals.localStageDeviceId, state) : DefaultThreeDimensionalProperties)
+    const stageDeviceId = useStageSelector<string | undefined>(state =>
+        state.globals.stageId &&
+        state.globals.selectedDeviceId &&
+        state.stageDevices.byStageAndDevice[state.globals.stageId] &&
+        state.stageDevices.byStageAndDevice[state.globals.stageId][state.globals.selectedDeviceId]
+            ? state.stageDevices.byStageAndDevice[state.globals.stageId][state.globals.selectedDeviceId]
+            : undefined
+    )
+    const position = useStageSelector(state => stageDeviceId ? selectResultingStageDevicePosition(stageDeviceId, state) : DefaultThreeDimensionalProperties)
     const stageMemberPosition = useStageSelector(state =>
-        state.globals.localStageDeviceId &&
-        state.stageDevices.byId[state.globals.localStageDeviceId]
-            ? selectResultingStageMemberPosition(state.stageDevices.byId[state.globals.localStageDeviceId].stageMemberId, state)
+        stageDeviceId &&
+        state.stageDevices.byId[stageDeviceId]
+            ? selectResultingStageMemberPosition(state.stageDevices.byId[stageDeviceId].stageMemberId, state)
             : DefaultThreeDimensionalProperties)
     const groupPosition = useStageSelector(state =>
-        state.globals.localStageDeviceId &&
-        state.stageDevices.byId[state.globals.localStageDeviceId]
-            ? selectResultingGroupPosition(state.stageDevices.byId[state.globals.localStageDeviceId].groupId, state)
+        stageDeviceId &&
+        state.stageDevices.byId[stageDeviceId]
+            ? selectResultingGroupPosition(state.stageDevices.byId[stageDeviceId].groupId, state)
             : DefaultThreeDimensionalProperties)
 
     return React.useMemo(() => ({
@@ -66,18 +74,15 @@ const RoomEditor = () => {
     const groupIds = useStageSelector<string[]>(state => state.globals.stageId ? state.groups.byStage[state.globals.stageId] : [])
     const [selections, setSelections] = React.useState<RoomSelection[]>([])
     const onStageClicked = React.useCallback(() => {
-        console.log("onStageClicked")
         setSelections([])
     }, [])
     const onSelect = React.useCallback((selection: RoomSelection) => {
-        console.log("onSelect", selection)
         setSelections((prev) => [
             ...prev,
             selection,
         ])
     }, [])
     const onDeselect = React.useCallback(({id}: RoomSelection) => {
-        console.log("onDeselect", id)
         setSelections((prev) => prev.filter(sel => sel.id !== id))
     }, [])
 

@@ -34,7 +34,6 @@ const StageMemberItem = ({stageMemberId, local, selections, onSelect, onDeselect
     })
   }, [customPosition?.rZ, customPosition?.x, customPosition?.y, position.rZ, position.x, position.y])
 
-  const localStageDeviceId = useStageSelector(state => state.globals.localStageDeviceId)
   const stageDeviceIds = useStageSelector<string[]>(
     (state) => {
       if (state.stageDevices.byStageMember[stageMemberId]) {
@@ -132,7 +131,6 @@ const StageMemberItem = ({stageMemberId, local, selections, onSelect, onDeselect
             y: currentPosition.y + groupPosition.y,
             rZ: currentPosition.rZ + groupPosition.rZ,
           }}
-          local={stageDeviceId === localStageDeviceId}
         />
       )}
     </>

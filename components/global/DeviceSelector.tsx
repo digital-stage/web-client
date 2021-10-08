@@ -67,12 +67,11 @@ const DeviceSelector = ({
                             {devices.map((device) => {
                                 const name =
                                     device.name || device.type === 'browser'
-                                        ? `${device.os}: ${device.browser}`
+                                        ? `${device.browser} (${device.os})`
                                         : device._id
                                 return (
                                     <option key={device._id} value={device._id}>
-                                        {name}
-                                        {localDeviceId === device._id ? ' (lokal)' : ''}
+                                        {localDeviceId === device._id ? `Dieses Gerät` : `${name}`}
                                     </option>
                                 )
                             })}
