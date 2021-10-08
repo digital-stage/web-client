@@ -21,20 +21,18 @@
  */
 
 import React from 'react'
-import { Select } from 'ui/Select'
-import { useEmit, useStageSelector, selectDevice } from '@digitalstage/api-client-react'
-import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
-import { useDispatch } from 'react-redux'
-import { MdMic, MdMicOff, MdVideocam, MdVideocamOff } from 'react-icons/md'
-import { ImExit } from 'react-icons/im'
+import {Select} from 'ui/Select'
+import {useEmit, useStageSelector, selectDevice} from '@digitalstage/api-client-react'
+import {ClientDeviceEvents, ClientDevicePayloads} from '@digitalstage/api-types'
+import {useDispatch} from 'react-redux'
+import {MdMic, MdMicOff, MdVideocam, MdVideocamOff} from 'react-icons/md'
+import {ImExit} from 'react-icons/im'
 
 const DeviceSelector = ({
-    className,
-    ...props
-}: Omit<
-    React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
-    'children'
->) => {
+                            className,
+                            ...props
+                        }: Omit<React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
+    'children'>) => {
     const emit = useEmit()
     const dispatch = useDispatch()
     const ready = useStageSelector((state) => state.globals.ready)
@@ -65,8 +63,9 @@ const DeviceSelector = ({
                             }}
                         >
                             {devices.map((device) => {
-                                const name =
-                                    device.name || device.type === 'browser'
+                                const name = device.name
+                                    ? device.name
+                                    : device.type === 'browser'
                                         ? `${device.browser} (${device.os})`
                                         : device._id
                                 return (
@@ -89,7 +88,7 @@ const DeviceSelector = ({
                                 })
                             }
                         >
-                            {selectedDevice.sendVideo ? <MdVideocam /> : <MdVideocamOff />}
+                            {selectedDevice.sendVideo ? <MdVideocam/> : <MdVideocamOff/>}
                         </button>
                     </>
                 ) : null}
@@ -103,7 +102,7 @@ const DeviceSelector = ({
                         }
                         className="round secondary"
                     >
-                        {selectedDevice.sendAudio ? <MdMic /> : <MdMicOff />}
+                        {selectedDevice.sendAudio ? <MdMic/> : <MdMicOff/>}
                     </button>
                 ) : null}
                 {insideStage ? (
@@ -111,7 +110,7 @@ const DeviceSelector = ({
                         className="round danger"
                         onClick={() => emit(ClientDeviceEvents.LeaveStage)}
                     >
-                        <ImExit />
+                        <ImExit/>
                     </button>
                 ) : null}
             </div>
@@ -119,4 +118,4 @@ const DeviceSelector = ({
     }
     return null
 }
-export { DeviceSelector }
+export {DeviceSelector}

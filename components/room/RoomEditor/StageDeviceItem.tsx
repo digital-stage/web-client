@@ -58,7 +58,7 @@ const StageDeviceItem = ({
             // Use device instead of stage device for naming
             const browserDevice = state.devices.byId[device.deviceId] as BrowserDevice
             if (browserDevice.browser)
-                return `${browserDevice.browser} (${browserDevice.os})`
+                return browserDevice.name || `${browserDevice.browser} (${browserDevice.os})`
         }
         return device.name
     })
@@ -129,7 +129,7 @@ const StageDeviceItem = ({
                 offsetY={stageMemberPosition.y}
                 offsetRz={stageMemberPosition.rZ}
                 size={isCurrent ? 0.8 : 0.5}
-                color={groupColor}
+                color={isLocal ? 'var(---text)' : groupColor}
                 selected={selected}
                 onClicked={onClicked}
                 onChange={onChange}
