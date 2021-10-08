@@ -1,217 +1,140 @@
-/*
- * Copyright (c) 2021 Tobias Hegemann
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+import {RoomSelection} from "../../../ui/RoomEditor/RoomSelection";
+import {useEmit, useStageSelector} from "@digitalstage/api-client-react";
+import {useCustomStageMemberPosition, useStageMemberPosition} from "./utils";
+import React from "react";
+import {RoomItem, RoomPositionWithAngle} from "../../../ui/RoomEditor";
+import {ClientDeviceEvents, ClientDevicePayloads} from "@digitalstage/api-types";
+import {CenterIcon} from "./icons/CenterIcon";
+import {StageMemberIcon} from "./icons/StageMemberIcon";
+import {StageDeviceItem} from "./StageDeviceItem";
 
-import {RoomSelection} from './RoomSelection'
-import {useEmit, useStageSelector} from '@digitalstage/api-client-react'
-import {
-  ClientDeviceEvents,
-  ClientDevicePayloads,
-  CustomStageMemberPosition,
-  DefaultThreeDimensionalProperties,
-  StageMember,
-} from '@digitalstage/api-types'
-import {RoomElement} from './RoomElement'
-import React, {useCallback, useMemo} from 'react'
-import {StageDeviceItem} from './StageDeviceItem'
-import {shallowEqual} from 'react-redux'
+const SHOW_STAGE_MEMBER = false
 
-const StageMemberItem = ({
-                           stageMemberId,
-                           deviceId,
-                           groupColor,
-                           offsetX,
-                           offsetY,
-                           offsetRz,
-                           stageWidth,
-                           stageHeight,
-                           selection,
-                           onSelected,
-                         }: {
-  stageMemberId: string
-  deviceId: string
-  groupColor: string
-  offsetX: number
-  offsetY: number
-  offsetRz: number
-  stageWidth: number
-  stageHeight: number
-  selection: RoomSelection[]
-  onSelected: (selection: RoomSelection) => void
+const StageMemberItem = ({stageMemberId, local, selections, onSelect, onDeselect, groupColor, groupPosition}: {
+  stageMemberId: string,
+  local: boolean,
+  selections: RoomSelection[]
+  onSelect?: (selection: RoomSelection) => void
+  onDeselect?: (selection: RoomSelection) => void
+  groupColor: string,
+  groupPosition: RoomPositionWithAngle
 }) => {
-  const emit = useEmit()
-  const stageMember = useStageSelector<StageMember | undefined>(
-    (state) => state.stageMembers.byId[stageMemberId],
-    shallowEqual
-  )
-  const isStreaming = useStageSelector(
-    (state) => state.audioTracks.byStageMember[stageMemberId]?.length > 0
-  )
-  const customStageMemberPosition = useStageSelector<CustomStageMemberPosition | undefined>(
-    (state) =>
-      deviceId &&
-      state.customStageMemberPositions.byDeviceAndStageMember[deviceId] &&
-      state.customStageMemberPositions.byDeviceAndStageMember[deviceId][stageMemberId]
-        ? state.customStageMemberPositions.byId[
-          state.customStageMemberPositions.byDeviceAndStageMember[deviceId][
-            stageMemberId
-            ]
-          ]
-        : undefined,
-    shallowEqual
-  )
-  const modified = useMemo(() => {
-    return deviceId
-      ? !!customStageMemberPosition
-      : !!stageMember?.x &&
-      (stageMember?.x !== DefaultThreeDimensionalProperties.x ||
-        stageMember?.y !== DefaultThreeDimensionalProperties.y ||
-        stageMember?.rZ !== DefaultThreeDimensionalProperties.rZ)
-  }, [customStageMemberPosition, deviceId, stageMember?.rZ, stageMember?.x, stageMember?.y])
-  const username = useStageSelector<string>((state) =>
-    stageMember?.userId ? state.users.byId[stageMember.userId]?.name : stageMemberId
-  )
-  const stageDeviceIds = useStageSelector<string[]>(
-    (state) => state.stageDevices.byStageMember[stageMemberId] || []
-  )
-  const [position, setPosition] = React.useState<{ x: number; y: number; rZ: number }>({
-    x: customStageMemberPosition?.x || stageMember?.x || DefaultThreeDimensionalProperties.x,
-    y: customStageMemberPosition?.y || stageMember?.y || DefaultThreeDimensionalProperties.y,
-    rZ:
-      customStageMemberPosition?.rZ ||
-      stageMember?.rZ ||
-      DefaultThreeDimensionalProperties.rZ,
+  const position = useStageMemberPosition(stageMemberId)
+  const customPosition = useCustomStageMemberPosition(stageMemberId)
+  const [currentPosition, setCurrentPosition] = React.useState<RoomPositionWithAngle>({
+    x: customPosition?.x || position.x,
+    y: customPosition?.y || position.y,
+    rZ: customPosition?.rZ || position.rZ
   })
   React.useEffect(() => {
-    if (deviceId) {
-      setPosition({
-        x:
-          offsetX +
-          (customStageMemberPosition?.x ||
-            stageMember?.x ||
-            DefaultThreeDimensionalProperties.x),
-        y:
-          offsetY +
-          (customStageMemberPosition?.y ||
-            stageMember?.y ||
-            DefaultThreeDimensionalProperties.y),
-        rZ:
-          offsetRz +
-          (customStageMemberPosition?.rZ ||
-            stageMember?.rZ ||
-            DefaultThreeDimensionalProperties.rZ),
-      })
-    } else if (stageMember) {
-      setPosition({
-        x: offsetX + stageMember?.x || DefaultThreeDimensionalProperties.x,
-        y: offsetY + stageMember?.y || DefaultThreeDimensionalProperties.y,
-        rZ: offsetRz + stageMember?.rZ || DefaultThreeDimensionalProperties.rZ,
-      })
-    }
-  }, [stageMember, deviceId, customStageMemberPosition, offsetX, offsetY, offsetRz])
-  const handleFinalChange = useCallback(
-    (event: { x?: number; y?: number; rZ?: number }) => {
-      if (emit) {
-        let normalized = {
-          x: event.x ? event.x - offsetX : undefined,
-          y: event.y ? event.y - offsetY : undefined,
-          rZ: event.rZ ? event.rZ - offsetRz : undefined,
+    setCurrentPosition({
+      x: customPosition?.x || position.x,
+      y: customPosition?.y || position.y,
+      rZ: customPosition?.rZ || position.rZ
+    })
+  }, [customPosition?.rZ, customPosition?.x, customPosition?.y, position.rZ, position.x, position.y])
+
+  const localStageDeviceId = useStageSelector(state => state.globals.localStageDeviceId)
+  const stageDeviceIds = useStageSelector<string[]>(
+    (state) => {
+      if (state.stageDevices.byStageMember[stageMemberId]) {
+        if (state.globals.showOffline) {
+          return state.stageDevices.byStageMember[stageMemberId]
         }
-        if (deviceId) {
-          emit(ClientDeviceEvents.SetCustomStageMemberPosition, {
-            stageMemberId,
-            deviceId,
-            ...normalized,
-          } as ClientDevicePayloads.SetCustomStageMemberPosition)
-        } else {
-          emit(ClientDeviceEvents.ChangeStageMember, {
-            _id: stageMemberId,
-            ...normalized,
-          } as ClientDevicePayloads.ChangeStageMember)
-        }
+        return state.stageDevices.byStageMember[stageMemberId].filter(id => state.stageDevices.byId[id].active)
       }
-    },
-    [deviceId, emit, offsetRz, offsetX, offsetY, stageMemberId]
+      return []
+    }
   )
+  // Stage management only for this item
+  const selected = React.useMemo(() => selections.some(selection => selection.id === stageMemberId), [selections, stageMemberId])
+  const userName = useStageSelector<string>(
+    state =>
+      state.stageMembers.byId[stageMemberId].userId &&
+      state.users.byId[state.stageMembers.byId[stageMemberId].userId]?.name
+      || stageMemberId
+  )
+  const onClicked = React.useCallback(() => {
+    if (selected) {
+      if (onDeselect) {
+        onDeselect({
+          type: 'member',
+          id: stageMemberId,
+          customId: customPosition && customPosition._id
+        })
+      }
+    } else {
+      if (onSelect) {
+        onSelect({
+          type: 'member',
+          id: stageMemberId,
+          customId: customPosition && customPosition._id
+        })
+      }
+    }
+  }, [customPosition, onDeselect, onSelect, selected, stageMemberId])
+
+  const emit = useEmit()
+  const deviceId = useStageSelector<string | undefined>(state => state.globals.selectedMode === "personal" ? state.globals.selectedDeviceId : undefined)
+  const onFinalChange = React.useCallback((position: RoomPositionWithAngle) => {
+    if (emit) {
+      if (customPosition || deviceId) {
+        emit(ClientDeviceEvents.SetCustomStageMemberPosition, {
+          stageMemberId: stageMemberId,
+          deviceId: deviceId,
+          ...position
+        } as ClientDevicePayloads.SetCustomStageMemberPosition)
+      } else {
+        emit(ClientDeviceEvents.ChangeStageMember, {
+          _id: stageMemberId,
+          ...position
+        } as ClientDevicePayloads.ChangeStageMember)
+      }
+    }
+  }, [customPosition, deviceId, emit, stageMemberId])
+
+  const onChange = React.useCallback((position: RoomPositionWithAngle) => {
+    setCurrentPosition(position)
+  }, [])
 
   return (
     <>
-      <RoomElement
-        name={username || stageMemberId}
-        color={groupColor}
-        modified={modified}
-        showOnlineStatus={true}
-        online={stageMember?.active}
-        streaming={isStreaming}
-        x={position.x}
-        y={position.y}
-        rZ={position.rZ}
-        stageWidth={stageWidth}
-        stageHeight={stageHeight}
-        size={64}
-        src="/room/member.svg"
-        onChange={(e) =>
-          setPosition((prev) => ({
-            x: e.x || prev.x,
-            y: e.y || prev.y,
-            rZ: e.rZ || prev.rZ,
-          }))
-        }
-        onFinalChange={handleFinalChange}
-        selected={selection.some((value) => {
-          if (value.type === 'member') {
-            if (customStageMemberPosition)
-              return value.id === customStageMemberPosition._id
-            return value.id === stageMemberId
-          }
-        })}
-        onSelected={() =>
-          onSelected({
-            type: 'member',
-            id: customStageMemberPosition
-              ? customStageMemberPosition._id
-              : stageMemberId,
-          })
-        }
-        linePoints={[offsetX, offsetY, position.x, position.y]}
-        lineDash={[10, 10]}
-      />
-      {stageDeviceIds.map((stageDeviceId, index) => (
+      {SHOW_STAGE_MEMBER && (
+        <RoomItem
+          caption={userName}
+          x={currentPosition.x}
+          y={currentPosition.y}
+          rZ={currentPosition.rZ}
+          offsetX={groupPosition.x}
+          offsetY={groupPosition.y}
+          offsetRz={groupPosition.rZ}
+          size={0.5}
+          color={groupColor}
+          selected={selected}
+          onClicked={onClicked}
+          onChange={onChange}
+          onFinalChange={onFinalChange}
+        >
+          {stageDeviceIds.length === 1 && local ? <CenterIcon/> : <StageMemberIcon/>}
+        </RoomItem>
+      )}
+      {(!SHOW_STAGE_MEMBER || stageDeviceIds.length > 1) && stageDeviceIds.map(stageDeviceId =>
         <StageDeviceItem
           key={stageDeviceId}
+          userName={userName}
           stageDeviceId={stageDeviceId}
-          deviceId={deviceId}
-          numStageDevices={stageDeviceIds.length}
-          index={index}
-          username={username}
+          selections={selections}
+          onSelect={onSelect}
+          onDeselect={onDeselect}
           groupColor={groupColor}
-          stageWidth={stageWidth}
-          stageHeight={stageHeight}
-          selection={selection}
-          onSelected={onSelected}
-          offsetX={position.x}
-          offsetY={position.y}
-          offsetRz={position.rZ}
+          stageMemberPosition={{
+            x: currentPosition.x + groupPosition.x,
+            y: currentPosition.y + groupPosition.y,
+            rZ: currentPosition.rZ + groupPosition.rZ,
+          }}
+          local={stageDeviceId === localStageDeviceId}
         />
-      ))}
+      )}
     </>
   )
 }

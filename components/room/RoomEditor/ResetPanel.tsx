@@ -20,10 +20,11 @@
  * SOFTWARE.
  */
 
-import { useEmit, useStageSelector } from '@digitalstage/api-client-react'
+import {useEmit, useStageSelector} from '@digitalstage/api-client-react'
 import React from 'react'
-import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
-import {RoomSelection} from './RoomSelection'
+import {ClientDeviceEvents, ClientDevicePayloads} from '@digitalstage/api-types'
+import {RoomSelection} from '../../../ui/RoomEditor/RoomSelection'
+import { BiReset } from 'react-icons/bi'
 
 const SelectionToGlobal = {
     group: ClientDeviceEvents.ChangeGroup,
@@ -44,7 +45,7 @@ const DEFAULT_POSITION = {
     rZ: 0,
 }
 
-const ResetPanel = ({ deviceId, selection }: { deviceId?: string; selection: RoomSelection[] }) => {
+const ResetPanel = ({deviceId, selections}: { deviceId?: string; selections: RoomSelection[] }) => {
     const emit = useEmit()
     const groupIds = useStageSelector((state) => state.groups.allIds)
     const stageMemberIds = useStageSelector((state) => state.stageMembers.allIds)
@@ -71,42 +72,42 @@ const ResetPanel = ({ deviceId, selection }: { deviceId?: string; selection: Roo
             : []
     )
     const resetAll = React.useCallback(() => {
-        if(emit) {
+        if (emit) {
             if (deviceId) {
                 customGroupIds.map((id) => emit(ClientDeviceEvents.RemoveCustomGroupPosition, id))
                 customStageMemberIds.map((id) =>
-                  emit(ClientDeviceEvents.RemoveCustomStageMemberPosition, id)
+                    emit(ClientDeviceEvents.RemoveCustomStageMemberPosition, id)
                 )
                 customStageDeviceIds.map((id) =>
-                  emit(ClientDeviceEvents.RemoveCustomStageDevicePosition, id)
+                    emit(ClientDeviceEvents.RemoveCustomStageDevicePosition, id)
                 )
                 customAudioTrackIds.map((id) =>
-                  emit(ClientDeviceEvents.RemoveCustomAudioTrackPosition, id)
+                    emit(ClientDeviceEvents.RemoveCustomAudioTrackPosition, id)
                 )
             } else {
                 groupIds.map((id) =>
-                  emit(ClientDeviceEvents.ChangeGroup, {
-                      _id: id,
-                      ...DEFAULT_POSITION,
-                  } as ClientDevicePayloads.ChangeGroup)
+                    emit(ClientDeviceEvents.ChangeGroup, {
+                        _id: id,
+                        ...DEFAULT_POSITION,
+                    } as ClientDevicePayloads.ChangeGroup)
                 )
                 stageMemberIds.map((id) =>
-                  emit(ClientDeviceEvents.ChangeStageMember, {
-                      _id: id,
-                      ...DEFAULT_POSITION,
-                  })
+                    emit(ClientDeviceEvents.ChangeStageMember, {
+                        _id: id,
+                        ...DEFAULT_POSITION,
+                    })
                 )
                 stageDeviceIds.map((id) =>
-                  emit(ClientDeviceEvents.ChangeStageDevice, {
-                      _id: id,
-                      ...DEFAULT_POSITION,
-                  })
+                    emit(ClientDeviceEvents.ChangeStageDevice, {
+                        _id: id,
+                        ...DEFAULT_POSITION,
+                    })
                 )
                 audioTracksIds.map((id) =>
-                  emit(ClientDeviceEvents.ChangeAudioTrack, {
-                      _id: id,
-                      ...DEFAULT_POSITION,
-                  })
+                    emit(ClientDeviceEvents.ChangeAudioTrack, {
+                        _id: id,
+                        ...DEFAULT_POSITION,
+                    })
                 )
             }
         }
@@ -123,33 +124,33 @@ const ResetPanel = ({ deviceId, selection }: { deviceId?: string; selection: Roo
         stageMemberIds,
     ])
     const resetSelection = React.useCallback(() => {
-        if(emit) {
+        if (emit) {
             if (deviceId) {
-                selection.map((selection) => {
+                selections.map((selection) => {
                     emit(SelectionToCustom[selection.type], selection.id)
                 })
             } else {
-                selection.map((selection) =>
-                  emit(SelectionToGlobal[selection.type], {
-                      _id: selection.id,
-                      ...DEFAULT_POSITION,
-                  })
+                selections.map((selection) =>
+                    emit(SelectionToGlobal[selection.type], {
+                        _id: selection.id,
+                        ...DEFAULT_POSITION,
+                    })
                 )
             }
         }
-    }, [deviceId, emit, selection])
+    }, [deviceId, emit, selections])
 
     return (
-        <div className="roomResetPanel">
-            {selection.length > 0 ? (
+        <div className="resetPanel">
+            {selections.length > 0 ? (
                 <button className="small" onClick={resetSelection}>
-                    Auswahl löschen
+                   <BiReset/>&nbsp;&nbsp;Auswahl
                 </button>
             ) : null}
             <button className="small" onClick={resetAll}>
-                Alle löschen
+                <BiReset/>&nbsp;&nbsp;Alle
             </button>
         </div>
     )
 }
-export { ResetPanel }
+export {ResetPanel}

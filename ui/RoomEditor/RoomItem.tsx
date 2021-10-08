@@ -125,7 +125,7 @@ const RoomItem = ({
     }, [customDragBounceFunc, roomHeight, roomWidth])
     React.useEffect(() => {
         // Assure that all dependencies are matched to avoid unnecessary event handler registrations
-        if (dragging && room?.scrollLeft && room?.scrollTop) {
+        if (dragging) {
             const centerX = actualWidth / 2
             const centerY = actualHeight / 2
             const xOffset = offsetX || 0
@@ -136,8 +136,8 @@ const RoomItem = ({
                 const touch = e.changedTouches.item(0)
                 if (touch) {
                     dragged.current = true
-                    const absoluteX = touch.pageX + room.scrollLeft
-                    const absoluteY = touch.pageY + room.scrollTop
+                    const absoluteX = touch.pageX + (room?.scrollLeft || 0)
+                    const absoluteY = touch.pageY + (room?.scrollTop || 0)
                     let position = {
                         x: (absoluteX - centerX) / factor,
                         y: (absoluteY - centerY) / factor
@@ -166,8 +166,8 @@ const RoomItem = ({
                 e.stopPropagation()
                 if (e.movementX !== 0 || e.movementY !== 0) {
                     dragged.current = true
-                    let movementX = e.movementX
-                    let movementY = e.movementY
+                    let movementX = e.movementX / factor
+                    let movementY = e.movementY / factor
                     // First normalize x and y, since we could have an rotated room
                     if (roomRotation) {
                         const rotated = rotatePointAroundOrigin(movementX, movementY, -roomRotation)
@@ -257,7 +257,7 @@ const RoomItem = ({
                 </div>
                 {caption && <span>{caption}</span>}
                 {process.env.NODE_ENV !== "production" &&
-                <span className="info">({Math.round(x)}|{Math.round(y)}) with {Math.round(rZ)}&deg;</span>}
+                <span className="info">({Math.round(x)}|{-1 * Math.round(y)}) with {Math.round(rZ)}&deg;</span>}
             </div>
             <style jsx>{`
                 .item {
@@ -266,8 +266,11 @@ const RoomItem = ({
                     top: 50%;
                     left: 50%;
                     cursor: move;
-                    overflow: visible;
                     color: ${color ? color : 'inherit'};
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    overflow: visible;
                 }
                 .item .cage {
                     position: relative;

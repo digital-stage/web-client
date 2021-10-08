@@ -20,113 +20,109 @@
  * SOFTWARE.
  */
 
-import React, {useCallback} from 'react'
-import { Layer as KonvaLayer, Stage as KonvaStage } from 'react-konva/es/ReactKonvaCore'
+import React, {useCallback} from "react";
 import {
-    selectMode,
-    useStageSelector,
-    ConnectionStateContext,
-    useCurrentStageAdminSelector,
     clientActions,
-} from '@digitalstage/api-client-react'
-import { ReactReduxContext, useDispatch } from 'react-redux'
-import { FACTOR } from './RoomElement'
-import {RoomSelection} from './RoomSelection'
-import {GroupItem} from './GroupItem'
-import {TextSwitch} from 'ui/TextSwitch'
-import {ResetPanel} from './ResetPanel'
+    selectMode,
+    useCurrentStageAdminSelector,
+    useStageSelector
+} from "@digitalstage/api-client-react";
+import {RoomSelection} from "../../../ui/RoomEditor/RoomSelection";
+import {Room, RoomPositionWithAngle} from "../../../ui/RoomEditor";
+import {GroupItem} from "./GroupItem";
+import {
+    selectResultingGroupPosition,
+    selectResultingStageDevicePosition, selectResultingStageMemberPosition,
+} from "./utils";
 import {HiFilter, HiOutlineFilter} from "react-icons/hi";
+import {useDispatch} from "react-redux";
+import {DefaultThreeDimensionalProperties} from "@digitalstage/api-types";
+import {ResetPanel} from "./ResetPanel";
+import {TextSwitch} from "../../../ui/TextSwitch";
 
-const RoomEditor = ({ stageId }: { stageId: string }) => {
-    const innerRef = React.useRef<HTMLDivElement>(null)
-    const dispatch = useDispatch()
+const useListenerPosition = (): RoomPositionWithAngle => {
+    const position = useStageSelector(state => state.globals.localStageDeviceId ? selectResultingStageDevicePosition(state.globals.localStageDeviceId, state) : DefaultThreeDimensionalProperties)
+    const stageMemberPosition = useStageSelector(state =>
+        state.globals.localStageDeviceId &&
+        state.stageDevices.byId[state.globals.localStageDeviceId]
+            ? selectResultingStageMemberPosition(state.stageDevices.byId[state.globals.localStageDeviceId].stageMemberId, state)
+            : DefaultThreeDimensionalProperties)
+    const groupPosition = useStageSelector(state =>
+        state.globals.localStageDeviceId &&
+        state.stageDevices.byId[state.globals.localStageDeviceId]
+            ? selectResultingGroupPosition(state.stageDevices.byId[state.globals.localStageDeviceId].groupId, state)
+            : DefaultThreeDimensionalProperties)
 
-    const height = useStageSelector<number>((state) => state.stages.byId[stageId].height)
-    const width = useStageSelector<number>((state) => state.stages.byId[stageId].width)
+    return React.useMemo(() => ({
+        x: groupPosition.x + stageMemberPosition.x + position.x,
+        y: groupPosition.y + stageMemberPosition.y + position.y,
+        rZ: groupPosition.rZ + stageMemberPosition.rZ + position.rZ,
+    }), [groupPosition.rZ, groupPosition.x, groupPosition.y, position.rZ, position.x, position.y, stageMemberPosition.rZ, stageMemberPosition.x, stageMemberPosition.y])
+}
 
-    const groupIds = useStageSelector<string[]>((state) => state.groups.byStage[stageId] || [])
-    const [selection, setSelection] = React.useState<RoomSelection[]>([])
-    const selectedDeviceId = useStageSelector((state) => state.globals.selectedDeviceId)
-    const selectedMode = useStageSelector((state) => state.globals.selectedMode)
-    const isStageAdmin = useCurrentStageAdminSelector()
-    const onStageClicked = React.useCallback((e) => {
-        const clickedOnEmpty = e.target === e.target.getStage()
-        if (clickedOnEmpty) {
-            setSelection([])
-        }
+const RoomEditor = () => {
+    const stageWidth = useStageSelector<number>(state => state.globals.stageId ? state.stages.byId[state.globals.stageId].width : 0)
+    const stageHeight = useStageSelector<number>(state => state.globals.stageId ? state.stages.byId[state.globals.stageId].height : 0)
+    const groupIds = useStageSelector<string[]>(state => state.globals.stageId ? state.groups.byStage[state.globals.stageId] : [])
+    const [selections, setSelections] = React.useState<RoomSelection[]>([])
+    const onStageClicked = React.useCallback(() => {
+        console.log("onStageClicked")
+        setSelections([])
     }, [])
-    /** Scroll into center of stage **/
-    React.useEffect(() => {
-        if (innerRef.current && width && height) {
-            innerRef.current.scrollLeft = (width * FACTOR) / 2 - window.innerWidth / 2
-            innerRef.current.scrollTop = (height * FACTOR) / 2 - window.innerHeight / 2
-        }
-    }, [innerRef, width, height])
+    const onSelect = React.useCallback((selection: RoomSelection) => {
+        console.log("onSelect", selection)
+        setSelections((prev) => [
+            ...prev,
+            selection,
+        ])
+    }, [])
+    const onDeselect = React.useCallback(({id}: RoomSelection) => {
+        console.log("onDeselect", id)
+        setSelections((prev) => prev.filter(sel => sel.id !== id))
+    }, [])
+
+    const isStageAdmin = useCurrentStageAdminSelector()
+    const selectedDeviceId = useStageSelector<string | undefined>((state) => state.globals.selectedMode === "personal" ? state.globals.selectedDeviceId : undefined)
+    const selectedMode = useStageSelector<"global" | "personal">((state) => state.globals.selectedMode)
+    const dispatch = useDispatch()
     const showOffline = useStageSelector(state => state.globals.showOffline)
     const onOfflineToggle = useCallback(() => {
         dispatch(clientActions.showOffline(!showOffline))
     }, [dispatch, showOffline])
 
-    return (
-        <div className="roomEditor">
-            <div className="roomInner" ref={innerRef}>
-                <ReactReduxContext.Consumer>
-                    {(store) => (
-                        <ConnectionStateContext.Consumer>
-                            {(connection) => (
-                                <KonvaStage
-                                    width={width * FACTOR}
-                                    height={height * FACTOR}
-                                    onClick={onStageClicked}
-                                    onTap={onStageClicked}
-                                >
-                                    <KonvaLayer>
-                                        <ReactReduxContext.Provider value={store}>
-                                            <ConnectionStateContext.Provider value={connection}>
-                                                {groupIds.map((groupId) => (
-                                                    <GroupItem
-                                                        key={groupId}
-                                                        groupId={groupId}
-                                                        deviceId={
-                                                            selectedMode === 'global'
-                                                                ? undefined
-                                                                : selectedDeviceId
-                                                        }
-                                                        stageWidth={width}
-                                                        stageHeight={height}
-                                                        selection={selection}
-                                                        onSelected={(selection) =>
-                                                            setSelection((prev) => [
-                                                                ...prev,
-                                                                selection,
-                                                            ])
-                                                        }
-                                                    />
-                                                ))}
-                                            </ConnectionStateContext.Provider>
-                                        </ReactReduxContext.Provider>
-                                    </KonvaLayer>
-                                </KonvaStage>
-                            )}
-                        </ConnectionStateContext.Consumer>
-                    )}
-                </ReactReduxContext.Consumer>
-            </div>
+    const listenerPosition = useListenerPosition()
 
-            {isStageAdmin || selectedMode === 'personal' ? (
+    return (
+        <>
+            <Room
+                onClick={onStageClicked}
+                width={stageWidth}
+                height={stageHeight}
+                center={listenerPosition}
+                rotation={-listenerPosition.rZ}
+            >
+                {groupIds.map(groupId =>
+                    <GroupItem
+                        key={groupId}
+                        groupId={groupId}
+                        selections={selections}
+                        onSelect={onSelect}
+                        onDeselect={onDeselect}
+                    />
+                )}
+            </Room>
+            {isStageAdmin ? (
                 <ResetPanel
-                    deviceId={selectedMode === 'global' ? undefined : selectedDeviceId}
-                    selection={selection}
+                    deviceId={selectedDeviceId}
+                    selections={selections}
                 />
             ) : null}
-
             <button className="round offlineToggle" onClick={onOfflineToggle}>
                 {showOffline ? <HiOutlineFilter/> : <HiFilter/>}
             </button>
-
             {isStageAdmin ? (
                 <TextSwitch
-                    className="roomModeSwitch"
+                    className="modeSwitch"
                     value={selectedMode}
                     onSelect={(v) => {
                         dispatch(selectMode(v === 'global' ? 'global' : 'personal'))
@@ -136,8 +132,7 @@ const RoomEditor = ({ stageId }: { stageId: string }) => {
                     <span key="global">Voreinstellungen</span>
                 </TextSwitch>
             ) : null}
-        </div>
+        </>
     )
 }
-
-export { RoomEditor }
+export {RoomEditor}

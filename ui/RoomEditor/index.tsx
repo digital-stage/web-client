@@ -2,20 +2,18 @@ import React from "react";
 import {DragBounceFunc, RoomItem} from "./RoomItem";
 import {RoomPosition, RoomPositionWithAngle} from "./types";
 import {FACTOR, RoomContext} from "./RoomContext";
-import {logger} from "@digitalstage/api-client-react";
 import {calculateActualSize, rotatePointAroundOrigin} from "./utils";
 import {MdMyLocation} from "react-icons/md";
 
-const {trace} = logger("RoomEditor")
-
-const Room = ({children, onClick, width, height, center, rotation, factor = FACTOR}: {
+const Room = ({children, onClick, width, height, center, rotation, className, factor = FACTOR}: {
     children: React.ReactNode,
     width: number,
     height: number,
     onClick?: (e: MouseEvent) => void,
     center?: RoomPosition,
     rotation?: number,
-    factor?: number
+    factor?: number,
+    className?: string
 }) => {
     const ref = React.useRef<HTMLDivElement>(null)
     const interactionRef = React.useRef<HTMLDivElement>(null)
@@ -30,10 +28,9 @@ const Room = ({children, onClick, width, height, center, rotation, factor = FACT
         }
     }, [onClick])
 
-
     const [actualSize, setActualSize] = React.useState<{ width: number, height: number }>({
-        width,
-        height
+        width: width * factor,
+        height: height * factor
     })
 
     React.useEffect(() => {
@@ -44,17 +41,16 @@ const Room = ({children, onClick, width, height, center, rotation, factor = FACT
 
     const scrollToCenter = React.useCallback(() => {
         if (ref.current && center) {
-            let x = (-1) * center.x
-            let y = (-1) * center.y
+            let x = center.x
+            let y = center.y
             if(rotation) {
-                const normalizedCenter = rotatePointAroundOrigin(x, y, rotation)
+                const normalizedCenter = rotatePointAroundOrigin(x, y, 180 - rotation)
                 x = normalizedCenter.x
                 y = normalizedCenter.y
             }
             const top = (actualSize.height / 2) + (y * factor) - (window.innerHeight / 2)
-            const left = (actualSize.width / 2) + (x * factor) - (window.innerWidth / 2)
+            const left = (actualSize.width / 2) + (-1 * x * factor) - (window.innerWidth / 2)
 
-            trace("Scroll from " + ref.current.scrollTop + " to " + top)
             ref.current.scrollLeft = left
             ref.current.scrollTop = top
             ref.current.scrollTo({
@@ -71,7 +67,7 @@ const Room = ({children, onClick, width, height, center, rotation, factor = FACT
 
     return (
         <>
-            <div className="roomEditor" ref={ref}>
+            <div className={`roomEditor ${className || ''}`} ref={ref}>
                 <div className="inner">
                     <div className="room">
                         <div ref={interactionRef} className="interaction"/>
@@ -121,7 +117,7 @@ const Room = ({children, onClick, width, height, center, rotation, factor = FACT
                     transition-duration: 200ms;
                     transition-timing-function: cubic-bezier(0, 0, 1, 1);
                     background-image: url('/room/background.svg');
-                    transform: translate(-50%, -50%) ${rotation && `rotate(${rotation}deg)`};
+                    transform: translate(-50%, -50%) ${rotation ? `rotate(${rotation}deg)` : ''};
                 }
                 .interaction {
                     position: absolute;
