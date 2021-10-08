@@ -21,15 +21,9 @@
  */
 
 import React from 'react'
-import {StageView} from 'components/stage2/StageView'
-import {Loading} from "../components/global/Loading";
-import {useStageAvailableOrForward} from "../components/global/useStageAvailableOrForward";
+import {StageView} from 'components/stage/StageView'
 
 const Stage = () => {
-    const stageAvailable = useStageAvailableOrForward()
-    if (stageAvailable) {
-        return <StageView/>
-    }
-    return <Loading/>
+    return <StageView/>
 }
 export default Stage

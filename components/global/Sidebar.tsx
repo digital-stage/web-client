@@ -21,7 +21,7 @@
  */
 
 import {useRouter} from 'next/router'
-import React, {useState} from 'react'
+import React from 'react'
 import {useOpenState} from 'ui/useOpenState'
 import {Backdrop} from 'ui/Backdrop'
 import Image from 'next/image'
@@ -131,12 +131,6 @@ const Sidebar = () => {
                             <GoListUnordered/>
                             <span>Bühnen</span>
                         </SidebarItem>
-                        {process.env.NODE_ENV !== "production" && (
-                            <SidebarItem onClick={() => setOpen(false)} href="/test">
-                                T
-                                <span>TEST</span>
-                            </SidebarItem>
-                        )}
                     </div>
                     <div className="sidebarSpacer"/>
                     <div className="sidebarFooter">

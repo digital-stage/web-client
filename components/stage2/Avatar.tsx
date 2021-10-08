@@ -21,15 +21,20 @@
  */
 
 import React from 'react'
-import {StageView} from 'components/stage2/StageView'
-import {Loading} from "../components/global/Loading";
-import {useStageAvailableOrForward} from "../components/global/useStageAvailableOrForward";
 
-const Stage = () => {
-    const stageAvailable = useStageAvailableOrForward()
-    if (stageAvailable) {
-        return <StageView/>
-    }
-    return <Loading/>
-}
-export default Stage
+const Avatar = ({ name, color, active }: { name: string; color?: string; active?: boolean }) => (
+    <div
+        className={`avatar ${active ? 'active' : ''}`}
+        style={{
+            backgroundColor: color,
+        }}
+    >
+        {name ? name
+            .split(' ')
+            .filter((word, index) => index < 2)
+            .map((word) => word.charAt(0).toUpperCase())
+            .join('') : null}
+    </div>
+)
+const MemoizedAvatar = React.memo(Avatar)
+export { MemoizedAvatar as Avatar }

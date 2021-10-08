@@ -213,3 +213,10 @@
   }
   /* Add non-firefox CSS code here */
 }
+
+:root {
+  --sidebar-width: 0px;
+  @include tablet {
+    --sidebar-width: 88px;
+  }
+}
