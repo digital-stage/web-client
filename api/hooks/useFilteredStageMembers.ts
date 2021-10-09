@@ -68,8 +68,8 @@ const sortStageMembers = (a: StageMember, b: StageMember): number => {
 }
 
 const useFilteredStageMembers = () => useStageSelector(state => {
-    if (state.globals.stageId) {
-        if (state.globals.showOffline) {
+    if (state.globals.stageId && state.globals.localDeviceId) {
+        if (state.devices.byId[state.globals.localDeviceId].showOffline) {
             return [...state.stageMembers.byStage[state.globals.stageId]].sort((a, b) => sortStageMembers(state.stageMembers.byId[a], state.stageMembers.byId[b]))
         }
         return state.stageMembers.byStage[state.globals.stageId].filter(id => state.stageMembers.byId[id].active).sort((a, b) => sortStageMembers(state.stageMembers.byId[a], state.stageMembers.byId[b]))
@@ -79,7 +79,7 @@ const useFilteredStageMembers = () => useStageSelector(state => {
 
 
 const useFilteredStageMembersByGroup = (groupId: string) => useStageSelector(state => {
-    if (state.globals.showOffline) {
+    if (state.globals.localDeviceId && state.devices.byId[state.globals.localDeviceId].showOffline) {
         return [...state.stageMembers.byGroup[groupId]].sort((a, b) => sortStageMembers(state.stageMembers.byId[a], state.stageMembers.byId[b]))
     }
     return state.stageMembers.byGroup[groupId].filter(id => state.stageMembers.byId[id].active).sort((a, b) => sortStageMembers(state.stageMembers.byId[a], state.stageMembers.byId[b]))
@@ -87,7 +87,7 @@ const useFilteredStageMembersByGroup = (groupId: string) => useStageSelector(sta
 
 const useFilteredStageDevicesOfStageMember = (stageMemberId: string) => useStageSelector(state => {
     if (stageMemberId) {
-        if (state.globals.showOffline) {
+        if (state.globals.localDeviceId && state.devices.byId[state.globals.localDeviceId].showOffline) {
             return [...state.stageDevices.byStageMember[stageMemberId]].sort((a, b) => sortStageDevices(state.stageDevices.byId[a], state.stageDevices.byId[b]))
         }
         return state.stageDevices.byStageMember[stageMemberId].filter(id => state.stageDevices.byId[id].active).sort((a, b) => sortStageDevices(state.stageDevices.byId[a], state.stageDevices.byId[b]))

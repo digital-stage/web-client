@@ -20,12 +20,12 @@
  * SOFTWARE.
  */
 
-import React, {useCallback} from "react";
+import React from "react";
 import {
-    clientActions,
     selectMode,
     useCurrentStageAdminSelector,
-    useStageSelector
+    useShowOffline,
+    useStageSelector, useToggleOffline
 } from "@digitalstage/api-client-react";
 import {RoomSelection} from "../../../ui/RoomEditor/RoomSelection";
 import {Room, RoomPositionWithAngle} from "../../../ui/RoomEditor";
@@ -36,7 +36,7 @@ import {
 } from "./utils";
 import {HiFilter, HiOutlineFilter} from "react-icons/hi";
 import {useDispatch} from "react-redux";
-import {DefaultThreeDimensionalProperties} from "@digitalstage/api-types";
+import { DefaultThreeDimensionalProperties} from "@digitalstage/api-types";
 import {ResetPanel} from "./ResetPanel";
 import {TextSwitch} from "../../../ui/TextSwitch";
 
@@ -90,11 +90,8 @@ const RoomEditor = () => {
     const selectedDeviceId = useStageSelector<string | undefined>((state) => state.globals.selectedMode === "personal" ? state.globals.selectedDeviceId : undefined)
     const selectedMode = useStageSelector<"global" | "personal">((state) => state.globals.selectedMode)
     const dispatch = useDispatch()
-    const showOffline = useStageSelector(state => state.globals.showOffline)
-    const onOfflineToggle = useCallback(() => {
-        dispatch(clientActions.showOffline(!showOffline))
-    }, [dispatch, showOffline])
-
+    const showOffline = useShowOffline()
+    const toggleOffline = useToggleOffline()
     const listenerPosition = useListenerPosition()
 
     return (
@@ -122,7 +119,7 @@ const RoomEditor = () => {
                     selections={selections}
                 />
             ) : null}
-            <button className="round offlineToggle" onClick={onOfflineToggle}>
+            <button className="round offlineToggle" onClick={toggleOffline}>
                 {showOffline ? <HiOutlineFilter/> : <HiFilter/>}
             </button>
             {isStageAdmin ? (

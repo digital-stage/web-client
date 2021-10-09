@@ -36,16 +36,6 @@ export const reset = (): ReducerAction => ({
     type: InternalActionTypes.RESET,
 })
 
-export const showOffline = (value: boolean): ReducerAction => ({
-    type: InternalActionTypes.SHOW_OFFLINE,
-    payload: value,
-})
-
-export const showLanes = (value: boolean): ReducerAction => ({
-    type: InternalActionTypes.SHOW_LANES,
-    payload: value,
-})
-
 export const selectMode = (mode: 'global' | 'personal'): ReducerAction => ({
     type: InternalActionTypes.SELECT_MODE,
     payload: mode,
@@ -210,10 +200,6 @@ const clientActions = {
     /* Selection of mode and device */
     selectMode,
     selectDevice,
-
-    /* Video display */
-    showLanes,
-    showOffline,
 
     /* Mediasoup related */
     addMediasoupAudioConsumer,

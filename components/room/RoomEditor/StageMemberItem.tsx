@@ -7,6 +7,7 @@ import {ClientDeviceEvents, ClientDevicePayloads} from "@digitalstage/api-types"
 import {CenterIcon} from "./icons/CenterIcon";
 import {StageMemberIcon} from "./icons/StageMemberIcon";
 import {StageDeviceItem} from "./StageDeviceItem";
+import {useFilteredStageDevicesOfStageMember} from "../../../api/hooks/useFilteredStageMembers";
 
 const SHOW_STAGE_MEMBER = false
 
@@ -34,17 +35,7 @@ const StageMemberItem = ({stageMemberId, local, selections, onSelect, onDeselect
     })
   }, [customPosition?.rZ, customPosition?.x, customPosition?.y, position.rZ, position.x, position.y])
 
-  const stageDeviceIds = useStageSelector<string[]>(
-    (state) => {
-      if (state.stageDevices.byStageMember[stageMemberId]) {
-        if (state.globals.showOffline) {
-          return state.stageDevices.byStageMember[stageMemberId]
-        }
-        return state.stageDevices.byStageMember[stageMemberId].filter(id => state.stageDevices.byId[id].active)
-      }
-      return []
-    }
-  )
+  const stageDeviceIds = useFilteredStageDevicesOfStageMember(stageMemberId)
   // Stage management only for this item
   const selected = React.useMemo(() => selections.some(selection => selection.id === stageMemberId), [selections, stageMemberId])
   const userName = useStageSelector<string>(

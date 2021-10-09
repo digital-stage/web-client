@@ -20,57 +20,67 @@
  * SOFTWARE.
  */
 
-import { DigitalStageProvider } from './DigitalStageProvider'
-import { useAuth } from './hooks/useAuth'
-import { useNotification } from './hooks/useNotification'
-import { AppDispatch } from './redux/store'
-import { useStageSelector } from './redux/selectors/useStageSelector'
-import { RootState } from './redux/state'
-import { useAudioContext, useAudioContextDispatch } from './provider/AudioContextProvider'
-import { useAudioLevel } from './provider/AudioLevelProvider'
-import { useStageJoiner } from './hooks/useStageJoiner'
+import {DigitalStageProvider} from './DigitalStageProvider'
+import {useAuth} from './hooks/useAuth'
+import {useNotification} from './hooks/useNotification'
+import {AppDispatch} from './redux/store'
+import {useStageSelector} from './redux/selectors/useStageSelector'
+import {RootState} from './redux/state'
+import {useAudioContext, useAudioContextDispatch} from './provider/AudioContextProvider'
+import {useAudioLevel} from './provider/AudioLevelProvider'
+import {useStageJoiner} from './hooks/useStageJoiner'
 import {
-    useWebRTCStats,
+  useWebRTCStats,
 } from './services/WebRTCService'
-import { useEmit, useConnection, ConnectionStateContext, EmitFunction } from './services/ConnectionService'
-import { useErrorReporting } from './hooks/useErrorReporting'
-import { logger } from './logger'
-import { useCurrentStageAdminSelector } from './redux/selectors/useCurrentStageAdminSelector'
-import { useStageAdminSelector } from './redux/selectors/useStageAdminSelector'
-import { useSpatialAudioSelector } from './redux/selectors/useSpatialAudioSelector'
-import { useRemoteVideoTracks } from './hooks/useRemoteVideoTracks'
-import { useRemoteAudioTracks } from './hooks/useRemoteAudioTracks'
-import { useReady } from './hooks/useReady'
-import { useWebcam } from './provider/WebcamProvider'
-import { useMicrophone } from './provider/MicrophoneProvider'
-import {sortStageMembers, useFilteredStageMembers } from './hooks/useFilteredStageMembers'
+import {useEmit, useConnection, ConnectionStateContext, EmitFunction} from './services/ConnectionService'
+import {useErrorReporting} from './hooks/useErrorReporting'
+import {logger} from './logger'
+import {useCurrentStageAdminSelector} from './redux/selectors/useCurrentStageAdminSelector'
+import {useStageAdminSelector} from './redux/selectors/useStageAdminSelector'
+import {useSpatialAudioSelector} from './redux/selectors/useSpatialAudioSelector'
+import {useRemoteVideoTracks} from './hooks/useRemoteVideoTracks'
+import {useRemoteAudioTracks} from './hooks/useRemoteAudioTracks'
+import {useReady} from './hooks/useReady'
+import {useWebcam} from './provider/WebcamProvider'
+import {useMicrophone} from './provider/MicrophoneProvider'
+import {sortStageMembers, useFilteredStageMembers} from './hooks/useFilteredStageMembers'
+import {useShowOffline} from './hooks/useShowOffline'
+import {useLocalDeviceId} from './hooks/useLocalDeviceId'
+import { useShowLanes } from './hooks/useShowLanes'
+import { useToggleLanes } from './hooks/useToggleLanes'
+import { useToggleOffline } from './hooks/useToggleOffline'
 
 export * from './redux/actions'
 export * from './redux/state'
-export type { RootState, AppDispatch, EmitFunction }
+export type {RootState, AppDispatch, EmitFunction}
 export {
-    useReady,
-    useStageJoiner,
-    useFilteredStageMembers,
-    sortStageMembers,
-    useAudioContext,
-    useAudioContextDispatch,
-    useAudioLevel,
-    useStageSelector,
-    useStageAdminSelector,
-    useCurrentStageAdminSelector,
-    DigitalStageProvider,
-    useNotification,
-    useEmit,
-    useConnection,
-    useAuth,
-    useWebRTCStats,
-    useWebcam,
-    useMicrophone,
-    useRemoteVideoTracks,
-    useRemoteAudioTracks,
-    useErrorReporting,
-    useSpatialAudioSelector,
-    ConnectionStateContext,
-    logger
+  useReady,
+  useStageJoiner,
+  useFilteredStageMembers,
+  sortStageMembers,
+  useAudioContext,
+  useAudioContextDispatch,
+  useAudioLevel,
+  useStageSelector,
+  useStageAdminSelector,
+  useCurrentStageAdminSelector,
+  useShowOffline,
+  useShowLanes,
+  useToggleLanes,
+  useToggleOffline,
+  useLocalDeviceId,
+  DigitalStageProvider,
+  useNotification,
+  useEmit,
+  useConnection,
+  useAuth,
+  useWebRTCStats,
+  useWebcam,
+  useMicrophone,
+  useRemoteVideoTracks,
+  useRemoteAudioTracks,
+  useErrorReporting,
+  useSpatialAudioSelector,
+  ConnectionStateContext,
+  logger
 }

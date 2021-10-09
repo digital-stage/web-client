@@ -20,35 +20,22 @@
  * SOFTWARE.
  */
 
-interface Globals {
-    ready: boolean
 
-    /* Information about this device */
-    localDeviceId?: string
-    localUserId?: string
+import {useEmit, useLocalDeviceId, useShowOffline} from "@digitalstage/api-client-react";
+import {useCallback} from "react";
+import {ClientDeviceEvents} from "@digitalstage/api-types";
 
-    /* Information about the active stage */
-    stageId?: string
-    stageMemberId?: string
-    groupId?: string
-    localStageDeviceId?: string
-    // Request for joining (processed by react handlers)
-    request?: {
-        stageId: string
-        groupId?: string
-        password?: string
-    }
-
-    /* Selection of the device (depends on session) */
-    selectedDeviceId?: string
-    selectedMode: 'global' | 'personal'
-
-    /* WebRTC related */
-    turn?: {
-        urls: string[],
-        username?: string,
-        credential?: string
-    }
+const useToggleOffline = (): () => void => {
+  const emit = useEmit()
+  const localDeviceId = useLocalDeviceId()
+  const showOffline = useShowOffline()
+  return useCallback(() => {
+    if (emit && localDeviceId)
+      emit(ClientDeviceEvents.ChangeDevice, {
+        _id: localDeviceId,
+        showOffline: !showOffline
+      })
+  }, [emit, localDeviceId, showOffline])
 }
 
-export type { Globals }
+export {useToggleOffline}

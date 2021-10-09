@@ -2,6 +2,17 @@
   display: flex;
   min-height: 100%;
 
+  &:not(.lanes) {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  &.lanes {
+    width: auto;
+    flex-direction: row;
+    overflow-x: scroll;
+  }
+
   .control {
     position: fixed;
     top: 48px;
@@ -29,7 +40,19 @@
     border-style: solid;
     border-color: transparent;
 
-     & > .groupName {
+    &:not(.lanes) {
+      flex-wrap: wrap;
+      flex-grow: 0;
+    }
+
+    &.lanes {
+      overflow-x: visible;
+      height: 100%;
+      flex-wrap: nowrap;
+      flex-grow: 1;
+    }
+
+    & > .groupName {
       position: absolute;
       top: 8px;
       left: 8px;

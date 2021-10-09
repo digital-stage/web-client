@@ -33,8 +33,6 @@ function reduceGlobals(
         groupId: undefined,
         localDeviceId: undefined,
         localUserId: undefined,
-        showLanes: false,
-        showOffline: false
     },
     action: ReducerAction
 ): Globals {
@@ -83,18 +81,6 @@ function reduceGlobals(
             return {
                 ...state,
                 selectedMode: action.payload,
-            }
-        }
-        case InternalActionTypes.SHOW_LANES: {
-            return {
-                ...state,
-                showLanes: action.payload,
-            }
-        }
-        case InternalActionTypes.SHOW_OFFLINE: {
-            return {
-                ...state,
-                showOffline: action.payload,
             }
         }
         case ServerDeviceEvents.TurnServersChanged:{
