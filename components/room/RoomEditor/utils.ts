@@ -31,6 +31,7 @@ const selectGroupPosition = (groupId: string, state: RootState) => ({
 const useGroupPosition = (groupId: string) => useStageSelector<{ x: number, y: number, rZ: number }>(state => selectGroupPosition(groupId, state), shallowEqual)
 const selectCustomGroupPosition = (groupId: string, state: RootState) => {
   const customGroupId = state.globals.selectedMode === "personal" &&
+    state.globals.selectedDeviceId &&
     state.customGroupPositions.byDeviceAndGroup[state.globals.selectedDeviceId] &&
     state.customGroupPositions.byDeviceAndGroup[state.globals.selectedDeviceId][groupId]
   if (customGroupId) {
@@ -44,7 +45,7 @@ const selectCustomGroupPosition = (groupId: string, state: RootState) => {
   return undefined
 }
 const useCustomGroupPosition = (groupId: string) => useStageSelector<{ x: number, y: number, rZ: number, _id: string } | undefined>(state => selectCustomGroupPosition(groupId, state), shallowEqual)
-const selectResultingGroupPosition = (groupId, state: RootState) => {
+const selectResultingGroupPosition = (groupId: string, state: RootState) => {
   const customPosition = selectCustomGroupPosition(groupId, state)
   if (customPosition)
     return customPosition
@@ -59,6 +60,7 @@ const selectStageMemberPosition = (stageMemberId: string, state: RootState) => (
 const useStageMemberPosition = (stageMemberId: string) => useStageSelector<{ x: number, y: number, rZ: number }>(state => selectStageMemberPosition(stageMemberId, state), shallowEqual)
 const selectCustomStageMemberPosition = (stageMemberId: string, state: RootState) => {
   const customStageMemberId = state.globals.selectedMode === "personal" &&
+    state.globals.selectedDeviceId &&
     state.customStageMemberPositions.byDeviceAndStageMember[state.globals.selectedDeviceId] &&
     state.customStageMemberPositions.byDeviceAndStageMember[state.globals.selectedDeviceId][stageMemberId]
   if (customStageMemberId) {
@@ -87,6 +89,7 @@ const selectStageDevicePosition = (stageDeviceId: string, state: RootState) => (
 const useStageDevicePosition = (stageDeviceId: string) => useStageSelector<{ x: number, y: number, rZ: number }>(state => selectStageDevicePosition(stageDeviceId, state), shallowEqual)
 const selectCustomStageDevicePosition = (stageDeviceId: string, state: RootState) => {
   const customStageDeviceId = state.globals.selectedMode === "personal" &&
+    state.globals.selectedDeviceId &&
     state.customStageDevicePositions.byDeviceAndStageDevice[state.globals.selectedDeviceId] &&
     state.customStageDevicePositions.byDeviceAndStageDevice[state.globals.selectedDeviceId][stageDeviceId]
   if (customStageDeviceId) {
@@ -115,32 +118,20 @@ const selectAudioTrackPosition = (audioTrackId: string, state: RootState) => ({
 const useAudioTrackPosition = (audioTrackId: string) => useStageSelector<{ x: number, y: number, rZ: number }>(state => selectAudioTrackPosition(audioTrackId, state), shallowEqual)
 const selectCustomAudioTrackPosition = (audioTrackId: string, state: RootState) => {
   const customAudioTrackId = state.globals.selectedMode === "personal" &&
+    state.globals.selectedDeviceId &&
     state.customAudioTrackPositions.byDeviceAndAudioTrack[state.globals.selectedDeviceId] &&
     state.customAudioTrackPositions.byDeviceAndAudioTrack[state.globals.selectedDeviceId][audioTrackId]
   if (customAudioTrackId) {
     return {
       x: state.customAudioTrackPositions.byId[customAudioTrackId].x,
       y: state.customAudioTrackPositions.byId[customAudioTrackId].y,
-      rZ: state.customAudioTrackPositions.byId[customAudioTrackId].rZ
+      rZ: state.customAudioTrackPositions.byId[customAudioTrackId].rZ,
+      _id: state.customAudioTrackPositions.byId[customAudioTrackId]._id
     }
   }
   return undefined
 }
-const useCustomAudioTrackPosition = (audioTrackId: string) => useStageSelector<{ x: number, y: number, rZ: number } | undefined>(state => selectCustomAudioTrackPosition(audioTrackId, state), shallowEqual)
-
-const useListenerPosition = () => {
-  const groupPosition = useStageSelector<{ x: number, y: number, rZ: number }>(state =>
-      selectResultingGroupPosition(state.globals.groupId, state), shallowEqual)
-  const stageMemberPosition = useStageSelector<{ x: number, y: number, rZ: number }>(state =>
-      selectResultingStageMemberPosition(state.globals.stageMemberId, state), shallowEqual)
-  const stageDevicePosition = useStageSelector<{ x: number, y: number, rZ: number }>(state =>
-      selectResultingStageDevicePosition(state.globals.localStageDeviceId, state), shallowEqual)
-  return ({
-    x: groupPosition.x + stageMemberPosition.x + stageDevicePosition.x,
-    y: groupPosition.y + stageMemberPosition.y + stageDevicePosition.y,
-    rZ: groupPosition.rZ + stageMemberPosition.rZ + stageDevicePosition.rZ
-  })
-}
+const useCustomAudioTrackPosition = (audioTrackId: string) => useStageSelector<{ x: number, y: number, rZ: number, _id: string } | undefined>(state => selectCustomAudioTrackPosition(audioTrackId, state), shallowEqual)
 
 export {
   selectAudioTrackPosition,
@@ -162,5 +153,4 @@ export {
   useCustomStageDevicePosition,
   useAudioTrackPosition,
   useCustomAudioTrackPosition,
-    useListenerPosition
 }

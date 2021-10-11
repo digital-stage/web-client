@@ -22,13 +22,11 @@
 
 import { ChatMessage, ServerDeviceEvents, ServerDevicePayloads } from '@digitalstage/api-types'
 import { InternalActionTypes } from '../actions/InternalActionTypes'
+import {ReducerAction} from "../actions/ReducerAction";
 
 function reduceChatMessage(
     state: Array<ChatMessage> = [],
-    action: {
-        type: string
-        payload: unknown
-    }
+    action: ReducerAction
 ): Array<ChatMessage> {
     switch (action.type) {
         case ServerDeviceEvents.StageLeft:

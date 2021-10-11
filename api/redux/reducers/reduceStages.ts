@@ -26,6 +26,7 @@ import { ServerDeviceEvents, ServerDevicePayloads, Stage } from '@digitalstage/a
 import { Stages } from '../state/Stages'
 import { upsert } from '../utils/upsert'
 import { InternalActionTypes } from '../actions/InternalActionTypes'
+import {ReducerAction} from "../actions/ReducerAction";
 
 const addStage = (state: Stages, stage: Stage): Stages => ({
     ...state,
@@ -41,10 +42,7 @@ function reduceStages(
         byId: {},
         allIds: [],
     },
-    action: {
-        type: string
-        payload: any
-    }
+    action: ReducerAction
 ): Stages {
     switch (action.type) {
         case InternalActionTypes.RESET: {

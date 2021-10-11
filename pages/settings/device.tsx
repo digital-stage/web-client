@@ -21,16 +21,19 @@
  */
 
 import {DeviceSettings} from '../../components/devices/DeviceSettings'
-import { useStageSelector } from '@digitalstage/api-client-react'
+import {useStageSelector} from '@digitalstage/api-client-react'
 import React from 'react'
 import {SettingsLayout} from 'components/settings/SettingsLayout'
 
 const DeviceSettingsPage = () => {
-    const selectedDeviceId = useStageSelector<string>((state) => state.globals.selectedDeviceId)
+  const selectedDeviceId = useStageSelector<string | undefined>((state) => state.globals.selectedDeviceId)
+  if (selectedDeviceId) {
     return (
-        <SettingsLayout>
-            <DeviceSettings deviceId={selectedDeviceId} />
-        </SettingsLayout>
+      <SettingsLayout>
+        <DeviceSettings deviceId={selectedDeviceId}/>
+      </SettingsLayout>
     )
+  }
+  return null
 }
 export default DeviceSettingsPage

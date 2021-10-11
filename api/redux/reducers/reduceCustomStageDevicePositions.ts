@@ -30,6 +30,7 @@ import {
 import { upsert } from '../utils/upsert'
 import { CustomStageDevicePositions } from '../state/CustomStageDevicePositions'
 import { InternalActionTypes } from '../actions/InternalActionTypes'
+import {ReducerAction} from "../actions/ReducerAction";
 
 const addCustomStageDevicePosition = (
     state: CustomStageDevicePositions,
@@ -72,10 +73,7 @@ function reduceCustomStageDevicePositions(
         byDeviceAndStageDevice: {},
         allIds: [],
     },
-    action: {
-        type: string
-        payload: any
-    }
+    action: ReducerAction
 ): CustomStageDevicePositions {
     switch (action.type) {
         case ServerDeviceEvents.StageLeft:

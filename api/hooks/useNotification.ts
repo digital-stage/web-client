@@ -20,11 +20,11 @@
  * SOFTWARE.
  */
 
-import { useCallback } from 'react'
-import { KIND } from '../redux/state/Notifications'
-import { useDispatch } from 'react-redux'
-import { addNotification } from '../redux/actions/clientActions'
-import { v4 as uuidv4 } from 'uuid'
+import {useCallback} from 'react'
+import {KIND} from '../redux/state/Notifications'
+import {useDispatch} from 'react-redux'
+import {addNotification} from '../redux/actions/clientActions'
+import {v4 as uuidv4} from 'uuid'
 
 type NotificationContextT = (report: {
     kind?: KIND[keyof KIND]
@@ -38,11 +38,11 @@ const useNotification = (): NotificationContextT => {
 
     return useCallback(
         ({
-            kind = 'info',
-            message,
-            link,
-            permanent,
-        }: {
+             kind = 'info',
+             message,
+             link,
+             permanent,
+         }: {
             kind?: KIND[keyof KIND]
             message: any
             link?: string
@@ -56,11 +56,11 @@ const useNotification = (): NotificationContextT => {
                         kind: kind,
                         link: link,
                         message: message,
-                        permanent: permanent,
+                        permanent: (permanent || false),
                         featured: true,
                     })
                 )
-            } else if ((message as unknown).toString) {
+            } else if (message.toString !== undefined) {
                 dispatch(
                     addNotification({
                         id: uuidv4(),
@@ -68,7 +68,7 @@ const useNotification = (): NotificationContextT => {
                         kind: kind,
                         link: link,
                         message: message.toString(),
-                        permanent: permanent,
+                        permanent: (permanent || false),
                         featured: true,
                     })
                 )
@@ -77,4 +77,4 @@ const useNotification = (): NotificationContextT => {
         [dispatch]
     )
 }
-export { useNotification }
+export {useNotification}

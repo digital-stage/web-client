@@ -51,12 +51,15 @@ const JoinPage = () => {
           if (error) {
             return notify({kind: 'error', message: error})
           }
-          const {stageId, groupId} = result
-          return join({
-            stageId,
-            groupId,
-            password: null,
-          })
+          if (result) {
+            const {stageId, groupId} = result
+            return join({
+              stageId,
+              groupId,
+              password: undefined
+            })
+          }
+          return notify({kind: 'error', message: 'Ungültige Antwort vom Server'})
         }
       )
     }

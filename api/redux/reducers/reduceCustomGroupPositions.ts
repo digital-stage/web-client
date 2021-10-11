@@ -30,6 +30,7 @@ import {
 import { upsert } from '../utils/upsert'
 import { CustomGroupPositions } from '../state/CustomGroupPositions'
 import { InternalActionTypes } from '../actions/InternalActionTypes'
+import {ReducerAction} from "../actions/ReducerAction";
 
 const addCustomGroupPosition = (
     state: CustomGroupPositions,
@@ -69,10 +70,7 @@ function reduceCustomGroupPositions(
         byDeviceAndGroup: {},
         allIds: [],
     },
-    action: {
-        type: string
-        payload: any
-    }
+    action: ReducerAction
 ): CustomGroupPositions {
     switch (action.type) {
         case ServerDeviceEvents.StageLeft:

@@ -43,9 +43,9 @@ const Room = () => {
 
     if (connectionReady && stageId && renderSpatialAudio) {
         return (
-          <div className="roomWrapper">
-              {stageId && process.browser ? <RoomEditor stageId={stageId}/> : null}
-          </div>
+            <div className="roomWrapper">
+                {stageId && process.browser ? <RoomEditor /> : null}
+            </div>
         )
     }
     return <Loading message="Lade 3D Editor ..."/>

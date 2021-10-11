@@ -28,6 +28,7 @@ import { upsert } from '../utils/upsert'
 import { StageMembers } from '../state/StageMembers'
 import { InternalActionTypes } from '../actions/InternalActionTypes'
 import { logger } from '../../logger'
+import {ReducerAction} from "../actions/ReducerAction";
 
 const { reportError } = logger('reduceStageMembers')
 
@@ -60,10 +61,7 @@ function reduceStageMembers(
         byUser: {},
         allIds: [],
     },
-    action: {
-        type: string
-        payload: any
-    }
+    action: ReducerAction
 ): StageMembers {
     switch (action.type) {
         case ServerDeviceEvents.StageLeft:

@@ -21,14 +21,15 @@
  */
 
 import { Auth } from '../state/Auth'
-import { AnyAction, CombinedState } from 'redux'
+import { CombinedState } from 'redux'
 import { InternalActionTypes } from '../actions/InternalActionTypes'
+import { ReducerAction } from '../actions/ReducerAction'
 
 const reduceAuth = (
     state: CombinedState<Auth> = {
         initialized: false,
     },
-    action: AnyAction
+    action: ReducerAction
 ): CombinedState<Auth> => {
     switch (action.type) {
         case InternalActionTypes.SET_INITIALIZED: {

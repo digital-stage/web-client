@@ -87,14 +87,20 @@ const MediaCaptureService = () => {
     if (ready && dispatchWebcam && sendVideo && refreshMediaDevices) {
       trace("Fetching webcam")
       let abort = false
-      let track
+      let track: MediaStreamTrack
       getVideoTrack(inputVideoDeviceId)
         .then(capturedTrack => {
           if (abort) {
-            capturedTrack.stop()
+            if (capturedTrack)
+              capturedTrack.stop()
+            throw new Error("Aborted by user")
           } else {
-            track = capturedTrack
-            dispatchWebcam(track)
+            if(capturedTrack) {
+              track = capturedTrack
+              dispatchWebcam(track)
+            } else {
+              throw new Error("User denied access to webcam")
+            }
           }
         })
         .then(() => refreshMediaDevices())
@@ -116,7 +122,7 @@ const MediaCaptureService = () => {
     if (ready && reportError && dispatchMicrophone && sendAudio && refreshMediaDevices) {
       trace("Fetching microphone")
       let abort = false
-      let track
+      let track: MediaStreamTrack
       getAudioTrack({
         deviceId: inputAudioDeviceId,
         autoGainControl,
@@ -125,10 +131,15 @@ const MediaCaptureService = () => {
         sampleRate,
       }).then((capturedTrack) => {
         if (abort) {
-          capturedTrack.stop()
+          if (capturedTrack)
+            capturedTrack.stop()
         } else {
-          track = capturedTrack
-          dispatchMicrophone(track)
+          if (capturedTrack) {
+            track = capturedTrack
+            dispatchMicrophone(track)
+          } else {
+            throw new Error("User denied access to microphone")
+          }
         }
       })
         .then(() => refreshMediaDevices())

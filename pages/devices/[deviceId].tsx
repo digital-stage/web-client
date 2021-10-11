@@ -46,9 +46,9 @@ const DevicePage = () => {
     }
   }, [isReady, replace, query])
 
-  const deviceFound = useStageSelector(state => state.globals.ready && deviceId ? !!state.devices.byId[deviceId] : undefined)
+  const deviceFound = useStageSelector<boolean>(state => state.globals.ready && deviceId ? !!state.devices.byId[deviceId] : false)
   React.useEffect(() => {
-    if (deviceFound === false) {
+    if (!deviceFound) {
       replace("/devices")
     }
   }, [deviceFound, replace])
@@ -71,7 +71,7 @@ const DevicePage = () => {
           <h3 className="heading">
             Gerät bearbeiten {localDeviceId === deviceId ? ' (Dieser Webbrowser)' : ''}
           </h3>
-          <DeviceSettings deviceId={deviceId}/>
+          {deviceId && <DeviceSettings deviceId={deviceId}/>}
         </Panel>
       </Container>
     )

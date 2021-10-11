@@ -52,10 +52,10 @@ export type RemoteVideoTracks = {
   [videoTrackId: string]: MediaStreamTrack
 }
 
-const useRemoteVideoTracks = (stageMemberId: string): RemoteVideoTracks => {
+const useRemoteVideoTracks = (stageMemberId?: string): RemoteVideoTracks => {
   const webRTCVideos = useWebRTCRemoteVideos()
   const mediasoupConsumers = useConsumers()
-  const videoTracks = useStageSelector(state => state.videoTracks.byStageMember[stageMemberId]?.map(id => {
+  const videoTracks = useStageSelector(state => stageMemberId && state.videoTracks.byStageMember[stageMemberId]?.map(id => {
     const {_id, type, producerId, stageDeviceId} = state.videoTracks.byId[id]
     return {_id, type, producerId, stageDeviceId}
   }) || [])

@@ -33,7 +33,6 @@ import {
 
 import {useStageDevicePosition} from './useStageDevicePosition'
 import {useAudioTrackPosition} from './useAudioTrackPosition'
-import useAnimationFrame from 'use-animation-frame'
 import {useAudioContext} from '../../provider/AudioContextProvider'
 import {useAudioLevelDispatch} from '../../provider/AudioLevelProvider'
 import {shallowEqual} from 'react-redux'
@@ -42,6 +41,7 @@ import {logger} from '../../logger'
 import {useSpatialAudioSelector} from '../../redux/selectors/useSpatialAudioSelector'
 import {useRemoteAudioTracks} from "../../hooks/useRemoteAudioTracks";
 import {useLocalAudioTracks} from "../../hooks/useLocalAudioTracks";
+import {useAnimationFrame} from "../../../lib/useAnimationFrame";
 
 const {trace} = logger('AudioRendererService')
 
@@ -152,7 +152,7 @@ const AudioTrackRenderer = ({
   const position = useAudioTrackPosition({audioTrack, deviceId})
 
   useEffect(() => {
-    if (audioContext && track) {
+    if (audioContext && track && audioRef.current) {
       const stream = new MediaStream([track])
       const audioElement = audioRef.current
       audioElement.srcObject = stream
@@ -232,7 +232,7 @@ const AudioTrackRenderer = ({
         // eslint-disable-next-line no-param-reassign
         pannerNode.coneOuterAngle = 120
         // eslint-disable-next-line no-param-reassign
-        pannerNode.coneOuterGain = 0.5
+        pannerNode.coneOuterGain = 0.3
       } else {
         // eslint-disable-next-line no-param-reassign
         pannerNode.coneInnerAngle = 360
@@ -349,8 +349,8 @@ const StageDeviceRenderer = ({
   useEffect(() => {
     if (audioContext && pannerNode) {
       pannerNode.positionX.setValueAtTime(position.x, audioContext.currentTime)
-      pannerNode.positionY.setValueAtTime(position.z, audioContext.currentTime)
-      pannerNode.positionZ.setValueAtTime(position.y, audioContext.currentTime)
+      pannerNode.positionY.setValueAtTime(position.y, audioContext.currentTime)
+      pannerNode.positionZ.setValueAtTime(position.z, audioContext.currentTime)
       const orientation = yRotationToVector(position.rZ)
       pannerNode.orientationX.setValueAtTime(orientation[0], audioContext.currentTime)
       pannerNode.orientationY.setValueAtTime(orientation[1], audioContext.currentTime)
@@ -360,6 +360,7 @@ const StageDeviceRenderer = ({
         pannerNode.coneInnerAngle = 90
         // eslint-disable-next-line no-param-reassign
         pannerNode.coneOuterAngle = 360
+        pannerNode.coneOuterGain = 0.3
       } else {
         // eslint-disable-next-line no-param-reassign
         pannerNode.coneInnerAngle = 30

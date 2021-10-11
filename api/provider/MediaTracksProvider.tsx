@@ -33,8 +33,8 @@ type State = {
 }
 type Dispatch = React.Dispatch<React.SetStateAction<State>>
 
-const MediaTracksStateContext = React.createContext<State>(null)
-const MediaTracksDispatchContext = React.createContext<Dispatch>(null)
+const MediaTracksStateContext = React.createContext<State | null>(null)
+const MediaTracksDispatchContext = React.createContext<Dispatch | null>(null)
 
 const MediaTracksProvider = ({children}: { children: React.ReactNode }) => {
   const [state, dispatch] = useState<State>({})
@@ -47,14 +47,14 @@ const MediaTracksProvider = ({children}: { children: React.ReactNode }) => {
   )
 }
 
-const useTracks = () => {
+const useTracks = (): State => {
   const state = React.useContext(MediaTracksStateContext)
   if (state === null)
     throw new Error('Please wrap around your DOM tree with the MediaTracksProvider')
   return state
 }
 
-const useTracksDispatch = () => {
+const useTracksDispatch = (): Dispatch => {
   const state = React.useContext(MediaTracksDispatchContext)
   if (state === null)
     throw new Error('Please wrap around your DOM tree with the MediaTracksProvider')

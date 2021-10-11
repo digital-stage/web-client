@@ -23,11 +23,11 @@
 import React, {useState} from "react";
 
 
-type State = MediaStreamTrack
+type State = MediaStreamTrack | undefined
 type Dispatch = React.Dispatch<React.SetStateAction<State>>
 
-const MicrophoneStateContext = React.createContext<State>(null)
-const MicrophoneDispatchContext = React.createContext<Dispatch>(null)
+const MicrophoneStateContext = React.createContext<State | null>(null)
+const MicrophoneDispatchContext = React.createContext<Dispatch | null>(null)
 
 
 const MicrophoneProvider = ({children}: { children: React.ReactNode }) => {
@@ -42,14 +42,14 @@ const MicrophoneProvider = ({children}: { children: React.ReactNode }) => {
     )
 }
 
-const useMicrophone = () => {
+const useMicrophone = (): State => {
     const state = React.useContext(MicrophoneStateContext)
     if (state === null)
         throw new Error('Please wrap around your DOM tree with the MicrophoneProvider')
     return state
 }
 
-const useMicrophoneDispatch = () => {
+const useMicrophoneDispatch = (): Dispatch => {
     const state = React.useContext(MicrophoneDispatchContext)
     if (state === null)
         throw new Error('Please wrap around your DOM tree with the MicrophoneProvider')

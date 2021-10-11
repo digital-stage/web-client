@@ -26,6 +26,7 @@ import { ServerDeviceEvents, ServerDevicePayloads, VideoTrack } from '@digitalst
 import { upsert } from '../utils/upsert'
 import { VideoTracks } from '../state/VideoTracks'
 import { InternalActionTypes } from '../actions/InternalActionTypes'
+import {ReducerAction} from "../actions/ReducerAction";
 
 const addVideoTrack = (state: VideoTracks, videoTrack: VideoTrack): VideoTracks => ({
     ...state,
@@ -67,10 +68,7 @@ function reduceVideoTracks(
         byUser: {},
         allIds: [],
     },
-    action: {
-        type: string
-        payload: any
-    }
+    action: ReducerAction
 ): VideoTracks {
     switch (action.type) {
         case ServerDeviceEvents.StageLeft:

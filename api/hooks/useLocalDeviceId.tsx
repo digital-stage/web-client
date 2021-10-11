@@ -20,8 +20,8 @@
  * SOFTWARE.
  */
 
-export interface RoomSelection {
-    type: 'group' | 'member' | 'device' | 'track'
-    id: string
-    customId?: string
-}
+import {useStageSelector} from "@digitalstage/api-client-react";
+
+const useLocalDeviceId = (): string | undefined => useStageSelector<string | undefined>(state => state.globals.localDeviceId || undefined)
+
+export {useLocalDeviceId}

@@ -36,16 +36,6 @@ export const reset = (): ReducerAction => ({
     type: InternalActionTypes.RESET,
 })
 
-export const showOffline = (value: boolean): ReducerAction => ({
-    type: InternalActionTypes.SHOW_OFFLINE,
-    payload: value,
-})
-
-export const showLanes = (value: boolean): ReducerAction => ({
-    type: InternalActionTypes.SHOW_LANES,
-    payload: value,
-})
-
 export const selectMode = (mode: 'global' | 'personal'): ReducerAction => ({
     type: InternalActionTypes.SELECT_MODE,
     payload: mode,
@@ -54,7 +44,7 @@ export const selectMode = (mode: 'global' | 'personal'): ReducerAction => ({
 export const requestJoin = (payload?: {
     stageId: string
     groupId?: string
-    password?: string
+    password?: string | null
 }): ReducerAction => ({
     type: InternalActionTypes.REQUEST_JOIN,
     payload,
@@ -172,7 +162,7 @@ export const reportError = (error: Error, stack?: string): ReducerAction =>
         kind: 'error',
         message: `${error.name}: ${error.message}`,
         stack: stack,
-        permanent: true,
+        permanent: false,
         featured: true,
     })
 
@@ -210,10 +200,6 @@ const clientActions = {
     /* Selection of mode and device */
     selectMode,
     selectDevice,
-
-    /* Video display */
-    showLanes,
-    showOffline,
 
     /* Mediasoup related */
     addMediasoupAudioConsumer,

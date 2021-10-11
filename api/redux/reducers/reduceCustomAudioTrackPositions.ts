@@ -30,6 +30,7 @@ import {
 import { upsert } from '../utils/upsert'
 import { CustomAudioTrackPositions } from '../state/CustomAudioTrackPositions'
 import { InternalActionTypes } from '../actions/InternalActionTypes'
+import {ReducerAction} from "../actions/ReducerAction";
 
 const addCustomAudioTrackPosition = (
     state: CustomAudioTrackPositions,
@@ -72,10 +73,7 @@ function reduceCustomAudioTrackPositions(
         byDeviceAndAudioTrack: {},
         allIds: [],
     },
-    action: {
-        type: string
-        payload: any
-    }
+    action: ReducerAction
 ): CustomAudioTrackPositions {
     switch (action.type) {
         case ServerDeviceEvents.StageLeft:

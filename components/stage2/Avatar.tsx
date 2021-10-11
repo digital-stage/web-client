@@ -20,34 +20,21 @@
  * SOFTWARE.
  */
 
-import {useSpatialAudioSelector, useStageSelector} from '@digitalstage/api-client-react'
-import {useRouter} from 'next/router'
 import React from 'react'
-import {RoomEditor} from '../components/room/RoomEditorV2'
-import {Loading} from "../components/global/Loading";
 
-const Room = () => {
-    const {isReady, push} = useRouter()
-    const connectionReady = useStageSelector((state) => state.globals.ready)
-    const stageId = useStageSelector<string | undefined>((state) => state.globals.stageId)
-    const renderSpatialAudio = useSpatialAudioSelector()
-    React.useEffect(() => {
-        if (isReady && connectionReady) {
-            if (!stageId) {
-                push('/stages')
-            } else if (!renderSpatialAudio) {
-                push('/stage')
-            }
-        }
-    }, [isReady, push, stageId, connectionReady, renderSpatialAudio])
-
-    if (connectionReady && stageId && renderSpatialAudio) {
-        return (
-          <div className="roomWrapper">
-              {stageId && process.browser ? <RoomEditor /> : null}
-          </div>
-        )
-    }
-    return <Loading message="Lade 3D Editor ..."/>
-}
-export default Room
+const Avatar = ({ name, color, active }: { name: string; color?: string; active?: boolean }) => (
+    <div
+        className={`avatar ${active ? 'active' : ''}`}
+        style={{
+            backgroundColor: color,
+        }}
+    >
+        {name ? name
+            .split(' ')
+            .filter((word, index) => index < 2)
+            .map((word) => word.charAt(0).toUpperCase())
+            .join('') : null}
+    </div>
+)
+const MemoizedAvatar = React.memo(Avatar)
+export { MemoizedAvatar as Avatar }

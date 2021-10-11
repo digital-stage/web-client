@@ -57,74 +57,78 @@ const StageMemberItem = ({
 
   const isAdmin = adminUserIds.some(id => id === userId)
 
-  return (
-    <AltListItem>
-      <div className="stageMemberRow">
-        <h5>
-          {username}
-        </h5>
-        {hasAdminRights ? (
-          <div className="stageMemberActions">
-            <label>
-              Global mischen
-              <Switch
-                round={true}
-                size="small"
-                checked={soundEditorUserIds.some(id => id === userId)}
-                onChange={e => {
-                  //TODO: Write react callbacks
-                  if (e.currentTarget.checked) {
-                    // Add user
-                    emit(ClientDeviceEvents.ChangeStage, {
-                      _id: stageId,
-                      soundEditors: [...soundEditorUserIds, userId]
-                    } as ClientDevicePayloads.ChangeStage)
-                  } else {
-                    // Remove user
-                    emit(ClientDeviceEvents.ChangeStage, {
-                      _id: stageId,
-                      soundEditors: soundEditorUserIds.filter(id => id !== userId)
-                    } as ClientDevicePayloads.ChangeStage)
-                  }
-                }}
-              />
-            </label>
-            <label>
-              Admin
-              <Switch
-                round={true}
-                checked={isAdmin}
-                disabled={isAdmin && adminUserIds.length === 1}
-                onChange={e => {
-                  //TODO: Write react callbacks
-                  if (e.currentTarget.checked) {
-                    // Add user
-                    emit(ClientDeviceEvents.ChangeStage, {
-                      _id: stageId,
-                      admins: [...adminUserIds, userId]
-                    } as ClientDevicePayloads.ChangeStage)
-                  } else {
-                    // Remove user
-                    if (!isAdmin || adminUserIds.length > 1) {
+  if (emit) {
+
+    return (
+      <AltListItem>
+        <div className="stageMemberRow">
+          <h5>
+            {username}
+          </h5>
+          {hasAdminRights ? (
+            <div className="stageMemberActions">
+              <label>
+                Global mischen
+                <Switch
+                  round={true}
+                  size="small"
+                  checked={soundEditorUserIds.some(id => id === userId)}
+                  onChange={e => {
+                    //TODO: Write react callbacks
+                    if (e.currentTarget.checked) {
+                      // Add user
                       emit(ClientDeviceEvents.ChangeStage, {
                         _id: stageId,
-                        admins: adminUserIds.filter(id => id !== userId)
+                        soundEditors: [...soundEditorUserIds, userId]
+                      } as ClientDevicePayloads.ChangeStage)
+                    } else {
+                      // Remove user
+                      emit(ClientDeviceEvents.ChangeStage, {
+                        _id: stageId,
+                        soundEditors: soundEditorUserIds.filter(id => id !== userId)
                       } as ClientDevicePayloads.ChangeStage)
                     }
-                  }
-                }}
-              />
-            </label>
-            <button className="small danger" onClick={() => {
-              emit(ClientDeviceEvents.RemoveStageMember, stageMemberId as ClientDevicePayloads.RemoveStageMember)
-            }}>
-              Mitglied entfernen
-            </button>
-          </div>
-        ) : null}
-      </div>
-    </AltListItem>
-  )
+                  }}
+                />
+              </label>
+              <label>
+                Admin
+                <Switch
+                  round={true}
+                  checked={isAdmin}
+                  disabled={isAdmin && adminUserIds.length === 1}
+                  onChange={e => {
+                    //TODO: Write react callbacks
+                    if (e.currentTarget.checked) {
+                      // Add user
+                      emit(ClientDeviceEvents.ChangeStage, {
+                        _id: stageId,
+                        admins: [...adminUserIds, userId]
+                      } as ClientDevicePayloads.ChangeStage)
+                    } else {
+                      // Remove user
+                      if (!isAdmin || adminUserIds.length > 1) {
+                        emit(ClientDeviceEvents.ChangeStage, {
+                          _id: stageId,
+                          admins: adminUserIds.filter(id => id !== userId)
+                        } as ClientDevicePayloads.ChangeStage)
+                      }
+                    }
+                  }}
+                />
+              </label>
+              <button className="small danger" onClick={() => {
+                emit(ClientDeviceEvents.RemoveStageMember, stageMemberId as ClientDevicePayloads.RemoveStageMember)
+              }}>
+                Mitglied entfernen
+              </button>
+            </div>
+          ) : null}
+        </div>
+      </AltListItem>
+    )
+  }
+  return null
 }
 
 
@@ -174,10 +178,10 @@ const StageView = () => {
   const {join} = useStageJoiner()
 
   // Internal state
-  const [inviteCodeRequested, requestInviteCode] = useState<string>(undefined)
-  const [groupEditRequested, requestGroupEdit] = useState<string>(undefined)
+  const [inviteCodeRequested, requestInviteCode] = useState<string | undefined>(undefined)
+  const [groupEditRequested, requestGroupEdit] = useState<string | null | undefined>(undefined)
   const [stageEditRequested, requestStageEdit] = useState<boolean>(false)
-  const [groupRemovalRequested, requestGroupRemoval] = useState<string>(undefined)
+  const [groupRemovalRequested, requestGroupRemoval] = useState<string | undefined>(undefined)
   const [stageRemovalRequested, requestStageRemoval] = useState<boolean>(false)
   const [leaveStageForGoodRequested, requestLeaveStageForGood] = useState<boolean>(false)
 
@@ -299,8 +303,8 @@ const StageView = () => {
                       </div>
                     </div>
                   </AltListItem>
-                  <StageMemberList stageId={stageId} groupId={group._id}
-                                   hasAdminRights={isStageAdmin}/>
+                  {stageId && <StageMemberList stageId={stageId} groupId={group._id}
+                                               hasAdminRights={isStageAdmin}/>}
                 </>
               ))}
             </AltList>
@@ -353,23 +357,23 @@ const StageView = () => {
           onClose={() => requestGroupEdit(undefined)}
           open={groupEditRequested !== undefined}
         />
-        <InviteModal
-          stageId={stageId}
-          groupId={inviteCodeRequested}
-          onClose={() => requestInviteCode(undefined)}
-          open={!!inviteCodeRequested}
-        />
+        {stageId && inviteCodeRequested && <InviteModal
+            stageId={stageId}
+            groupId={inviteCodeRequested}
+            onClose={() => requestInviteCode(undefined)}
+            open={!!inviteCodeRequested}
+        />}
         <LeaveStageForGoodModal
           stageId={stageId}
           onClose={() => requestLeaveStageForGood(false)}
           onLeave={() => replace('/stages')}
-          open={!!leaveStageForGoodRequested}
+          open={leaveStageForGoodRequested}
         />
-        <RemoveGroupModal
-          groupId={groupRemovalRequested}
-          onClose={() => requestGroupRemoval(undefined)}
-          open={!!groupRemovalRequested}
-        />
+        {groupRemovalRequested && <RemoveGroupModal
+            groupId={groupRemovalRequested}
+            onClose={() => requestGroupRemoval(undefined)}
+            open={!!groupRemovalRequested}
+        />}
         <RemoveStageModal
           stageId={stageId}
           onClose={() => requestStageRemoval(false)}

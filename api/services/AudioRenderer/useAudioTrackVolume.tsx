@@ -20,17 +20,18 @@
  * SOFTWARE.
  */
 
-import { useEffect, useState } from 'react'
-import {  DefaultVolumeProperties,
-     VolumeProperties,
+import {useEffect, useState} from 'react'
+import {
+    DefaultVolumeProperties,
+    VolumeProperties,
 } from '@digitalstage/api-types'
-import { useStageSelector } from 'api/redux/selectors/useStageSelector'
+import {useStageSelector} from 'api/redux/selectors/useStageSelector'
 import {useStageDeviceVolume} from "./useStageDeviceVolume";
 
 const useAudioTrackVolume = ({
                                  audioTrackId,
-                                   deviceId,
-                               }: {
+                                 deviceId,
+                             }: {
     audioTrackId: string
     deviceId: string
 }): VolumeProperties => {
@@ -52,22 +53,22 @@ const useAudioTrackVolume = ({
     const customAudioTrackVolume = useStageSelector<number | undefined>(
         (state) =>
             state.customAudioTrackVolumes.byDeviceAndAudioTrack[deviceId] &&
-            state.customAudioTrackVolumes.byDeviceAndAudioTrack[deviceId][audioTrackId] &&
-            state.customAudioTrackVolumes.byId[
-                state.customAudioTrackVolumes.byDeviceAndAudioTrack[deviceId][
-                    audioTrackId
-                    ]
-                ].volume
+            state.customAudioTrackVolumes.byDeviceAndAudioTrack[deviceId][audioTrackId] ?
+                state.customAudioTrackVolumes.byId[
+                    state.customAudioTrackVolumes.byDeviceAndAudioTrack[deviceId][
+                        audioTrackId
+                        ]
+                    ].volume : undefined
     )
     const customAudioTrackMuted = useStageSelector<boolean | undefined>(
         (state) =>
             state.customAudioTrackVolumes.byDeviceAndAudioTrack[deviceId] &&
-            state.customAudioTrackVolumes.byDeviceAndAudioTrack[deviceId][audioTrackId] &&
-            state.customAudioTrackVolumes.byId[
-                state.customAudioTrackVolumes.byDeviceAndAudioTrack[deviceId][
-                    audioTrackId
-                    ]
-                ].muted
+            state.customAudioTrackVolumes.byDeviceAndAudioTrack[deviceId][audioTrackId] ?
+                state.customAudioTrackVolumes.byId[
+                    state.customAudioTrackVolumes.byDeviceAndAudioTrack[deviceId][
+                        audioTrackId
+                        ]
+                    ].muted : undefined
     )
     const stageDeviceId = useStageSelector(state => state.audioTracks.byId[audioTrackId].stageDeviceId)
     const {volume: stageDeviceVolume, muted: stageDeviceMuted} = useStageDeviceVolume({
@@ -77,14 +78,14 @@ const useAudioTrackVolume = ({
 
     // Calculate actual volume
     useEffect(() => {
-        if(audioTrackVolume && stageDeviceVolume) {
+        if (audioTrackVolume && stageDeviceVolume) {
             setState({
                 volume: (customAudioTrackVolume || audioTrackVolume) * stageDeviceVolume,
-                muted: (customAudioTrackMuted ? customAudioTrackMuted :  audioTrackMuted) || stageDeviceMuted
+                muted: (customAudioTrackMuted ? customAudioTrackMuted : audioTrackMuted) || stageDeviceMuted
             })
         }
     }, [audioTrackMuted, audioTrackVolume, customAudioTrackMuted, customAudioTrackVolume, stageDeviceMuted, stageDeviceVolume])
 
     return state
 }
-export { useAudioTrackVolume }
+export {useAudioTrackVolume}

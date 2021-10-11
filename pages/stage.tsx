@@ -21,7 +21,7 @@
  */
 
 import React from 'react'
-import {StageView} from 'components/stage/StageView'
+import {StageView} from 'components/stage2/StageView'
 import {Loading} from "../components/global/Loading";
 import {useStageAvailableOrForward} from "../components/global/useStageAvailableOrForward";
 

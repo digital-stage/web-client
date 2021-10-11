@@ -47,7 +47,7 @@ const PeerConnection = ({
     onRemoteTrack: (stageDeviceId: string, track: MediaStreamTrack) => void
     onStats: (trackId: string, stats: RTCStatsReport) => void
     broker: Broker
-}): JSX.Element => {
+}): JSX.Element | null => {
     const report = useLogServer()
     const ready = useStageSelector(state => state.globals.ready)
     const notify = useNotification()
@@ -81,7 +81,7 @@ const PeerConnection = ({
                     } as ClientDevicePayloads.SendP2PAnswer)
                 }
             }
-            const onCandidate = (iceCandidate: RTCIceCandidate) => {
+            const onCandidate = (iceCandidate: RTCIceCandidate | null) => {
                 trace("Sending candidate")
                 emit(ClientDeviceEvents.SendIceCandidate, {
                     from: localStageDeviceId,
@@ -140,11 +140,11 @@ const PeerConnection = ({
                         message: err,
                     }))
             }
-            const handleDescription = description => {
+            const handleDescription = (description:  RTCSessionDescriptionInit) => {
                 trace("Forwarding remote " + description.type)
                 peerConnection.setDescription(description)
             }
-            const handleCandidate = candidate => {
+            const handleCandidate = (candidate:  RTCIceCandidate) => {
                 trace("Forwarding remote candidate")
                 peerConnection.addCandidate(candidate)
             }
@@ -170,6 +170,7 @@ const PeerConnection = ({
                 receivedTracks.map((track) =>
                     connection.getStats(track).then((stats) => onStats(track.id, stats))
                 )
+                // @ts-ignore
                 connection.getStats(null)
                     .then((stats) => {
                         let formattedStats = {}
@@ -193,13 +194,13 @@ const PeerConnection = ({
     }, [connection, onStats, receivedTracks, report, targetDeviceId])
 
     React.useEffect(() => {
-        if (connection) {
+        if (connection && videoTrack) {
             connection.setVideoTrack(videoTrack)
         }
     }, [connection, videoTrack])
 
     React.useEffect(() => {
-        if (connection) {
+        if (connection && audioTrack) {
             connection.setAudioTrack(audioTrack)
         }
     }, [connection, audioTrack])

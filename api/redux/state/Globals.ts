@@ -43,15 +43,11 @@ interface Globals {
     selectedDeviceId?: string
     selectedMode: 'global' | 'personal'
 
-    /* Video display */
-    showLanes?: boolean
-    showOffline?: boolean
-
     /* WebRTC related */
     turn?: {
         urls: string[],
-        username: string,
-        credential: string
+        username?: string,
+        credential?: string
     }
 }
 

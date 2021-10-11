@@ -48,22 +48,22 @@ const useStageDeviceVolume = ({
     const customStageDeviceVolume = useStageSelector<number | undefined>(
         (state) =>
             state.customStageDeviceVolumes.byDeviceAndStageDevice[deviceId] &&
-            state.customStageDeviceVolumes.byDeviceAndStageDevice[deviceId][stageDeviceId] &&
-            state.customStageDeviceVolumes.byId[
-                state.customStageDeviceVolumes.byDeviceAndStageDevice[deviceId][
-                    stageDeviceId
-                    ]
-                ].volume
+            state.customStageDeviceVolumes.byDeviceAndStageDevice[deviceId][stageDeviceId] ?
+                state.customStageDeviceVolumes.byId[
+                    state.customStageDeviceVolumes.byDeviceAndStageDevice[deviceId][
+                        stageDeviceId
+                        ]
+                    ].volume : undefined
     )
     const customStageDeviceMuted = useStageSelector<boolean | undefined>(
         (state) =>
             state.customStageDeviceVolumes.byDeviceAndStageDevice[deviceId] &&
-            state.customStageDeviceVolumes.byDeviceAndStageDevice[deviceId][stageDeviceId] &&
-            state.customStageDeviceVolumes.byId[
-                state.customStageDeviceVolumes.byDeviceAndStageDevice[deviceId][
-                    stageDeviceId
-                    ]
-                ].muted
+            state.customStageDeviceVolumes.byDeviceAndStageDevice[deviceId][stageDeviceId] ?
+                state.customStageDeviceVolumes.byId[
+                    state.customStageDeviceVolumes.byDeviceAndStageDevice[deviceId][
+                        stageDeviceId
+                        ]
+                    ].muted : undefined
     )
     const stageMemberVolume = useStageSelector<number | undefined>(
         (state) => state.stageDevices.byId[stageDeviceId] && state.stageMembers.byId[state.stageDevices.byId[stageDeviceId].stageMemberId].volume,
@@ -74,54 +74,56 @@ const useStageDeviceVolume = ({
     const customStageMemberVolume = useStageSelector<number | undefined>(
         (state) =>
             state.customStageMemberVolumes.byDeviceAndStageMember[deviceId] &&
-            state.customStageMemberVolumes.byDeviceAndStageMember[deviceId][stageDeviceId] &&
-            state.customStageMemberVolumes.byId[
-                state.customStageMemberVolumes.byDeviceAndStageMember[deviceId][
-                    stageDeviceId
-                    ]
-                ].volume
+            state.customStageMemberVolumes.byDeviceAndStageMember[deviceId][stageDeviceId] ?
+                state.customStageMemberVolumes.byId[
+                    state.customStageMemberVolumes.byDeviceAndStageMember[deviceId][
+                        stageDeviceId
+                        ]
+                    ].volume : undefined
     )
     const customStageMemberMuted = useStageSelector<boolean | undefined>(
         (state) =>
             state.customStageMemberVolumes.byDeviceAndStageMember[deviceId] &&
-            state.customStageMemberVolumes.byDeviceAndStageMember[deviceId][stageDeviceId] &&
-            state.customStageMemberVolumes.byId[
-                state.customStageMemberVolumes.byDeviceAndStageMember[deviceId][
-                    stageDeviceId
-                    ]
-                ].muted
+            state.customStageMemberVolumes.byDeviceAndStageMember[deviceId][stageDeviceId] ?
+                state.customStageMemberVolumes.byId[
+                    state.customStageMemberVolumes.byDeviceAndStageMember[deviceId][
+                        stageDeviceId
+                        ]
+                    ].muted : undefined
     )
     const groupVolume = useStageSelector<number | undefined>(
-        (state) => state.stageDevices.byId[stageDeviceId].groupId && state.groups.byId[state.stageDevices.byId[stageDeviceId].groupId].volume
+        (state) => state.stageDevices.byId[stageDeviceId].groupId ? state.groups.byId[state.stageDevices.byId[stageDeviceId].groupId].volume : undefined
     )
     const groupMuted = useStageSelector<boolean | undefined>(
-        (state) => state.stageDevices.byId[stageDeviceId].groupId && state.groups.byId[state.stageDevices.byId[stageDeviceId].groupId].muted
+        (state) => state.stageDevices.byId[stageDeviceId].groupId ? state.groups.byId[state.stageDevices.byId[stageDeviceId].groupId].muted : undefined
     )
     const customGroupVolume = useStageSelector<number | undefined>(
         (state) =>
             state.customGroupVolumes.byDeviceAndGroup[deviceId] &&
-            state.customGroupVolumes.byDeviceAndGroup[deviceId][stageDeviceId] &&
-            state.customGroupVolumes.byId[
-                state.customGroupVolumes.byDeviceAndGroup[deviceId][
-                    stageDeviceId
-                    ]
-                ].volume
+            state.customGroupVolumes.byDeviceAndGroup[deviceId][stageDeviceId] ?
+                state.customGroupVolumes.byId[
+                    state.customGroupVolumes.byDeviceAndGroup[deviceId][
+                        stageDeviceId
+                        ]
+                    ].volume : undefined
     )
     const customGroupMuted = useStageSelector<boolean | undefined>(
         (state) =>
             state.stageDevices.byId[stageDeviceId]?.groupId &&
             state.customGroupVolumes.byDeviceAndGroup[deviceId] &&
-            state.customGroupVolumes.byDeviceAndGroup[deviceId][state.stageDevices.byId[stageDeviceId].groupId] &&
-            state.customGroupVolumes.byId[
-                state.customGroupVolumes.byDeviceAndGroup[deviceId][state.stageDevices.byId[stageDeviceId].groupId]].muted
+            state.customGroupVolumes.byDeviceAndGroup[deviceId][state.stageDevices.byId[stageDeviceId].groupId] ?
+                state.customGroupVolumes.byId[
+                    state.customGroupVolumes.byDeviceAndGroup[deviceId][state.stageDevices.byId[stageDeviceId].groupId]].muted : undefined
     )
 
     // Calculate position
     React.useEffect(() => {
-        setState({
-            volume: groupVolume * stageMemberVolume * stageDeviceVolume,
-            muted: groupMuted || stageMemberMuted || stageDeviceMuted
-        })
+        if (groupVolume && stageMemberVolume && stageDeviceVolume) {
+            setState({
+                volume: groupVolume * stageMemberVolume * stageDeviceVolume,
+                muted: (groupMuted || stageMemberMuted || stageDeviceMuted) || false
+            })
+        }
     }, [groupMuted, groupVolume, stageDeviceMuted, stageDeviceVolume, stageMemberMuted, stageMemberVolume])
 
     return state

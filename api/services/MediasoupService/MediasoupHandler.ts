@@ -72,8 +72,8 @@ class MediasoupHandler extends EventEmitter {
   private readonly stageId: string
   private readonly routerConnection: ITeckosClient
   private readonly device: MediasoupDevice
-  private sendTransport: MediasoupTransport
-  private receiveTransport: MediasoupTransport
+  private sendTransport: MediasoupTransport | undefined
+  private receiveTransport: MediasoupTransport | undefined
   private producers: ProducersList = {}
   private consumers: ConsumersList = {}
 
@@ -105,6 +105,8 @@ class MediasoupHandler extends EventEmitter {
 
   public async addTrack(track: MediaStreamTrack): Promise<ProducersList> {
     trace('addTrack()')
+    if(!this.sendTransport)
+      throw new Error("Not connected")
     const producer = await createProducer(this.sendTransport, track)
     track.onended = () => {
       producer.close()
@@ -138,7 +140,7 @@ class MediasoupHandler extends EventEmitter {
 
   public async removeTrack(trackId: string): Promise<ProducersList> {
     trace('removeTrack()')
-    const publishedTrackId = Object.keys(this.producers).find(currId => this.producers[currId].track.id === trackId)
+    const publishedTrackId = Object.keys(this.producers).find(currId => this.producers[currId].track?.id === trackId)
     if (publishedTrackId) {
       return this.removeProducer(publishedTrackId)
         .then(() => this.producers)
@@ -148,6 +150,8 @@ class MediasoupHandler extends EventEmitter {
 
   public async consume(publicTrack: MediasoupAudioTrack | MediasoupVideoTrack): Promise<MediasoupConsumer> {
     trace('consume()')
+    if(!this.receiveTransport)
+      throw new Error("Not connected")
     let consumer = await createConsumer(
       this.routerConnection,
       this.device,
@@ -201,7 +205,7 @@ class MediasoupHandler extends EventEmitter {
       await stopProducer(this.routerConnection, producer)
       this.producers = omit(this.producers, publishedTrackId)
       this.emit(Events.ProducerRemoved, producer)
-      await unpublishTrack(this.emitToServer, publishedTrackId, producer.track.kind === 'audio' ? 'audio' : 'video')
+      await unpublishTrack(this.emitToServer, publishedTrackId, producer.track?.kind === 'audio' ? 'audio' : 'video')
     }
   }
 
@@ -232,7 +236,7 @@ class MediasoupHandler extends EventEmitter {
     this.emit(Events.Disconnected)
   }
 
-  private handleError(err: Error) {
+  private handleError(err: any) {
     trace('handleError()')
     this.emit(Events.Error, err)
     console.error(err)
