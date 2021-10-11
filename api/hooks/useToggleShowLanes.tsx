@@ -20,22 +20,21 @@
  * SOFTWARE.
  */
 
-
-import {useEmit, useLocalDeviceId, useShowOffline} from "@digitalstage/api-client-react";
+import {useEmit, useLocalDeviceId, useSelectShowLanes} from "@digitalstage/api-client-react";
 import {useCallback} from "react";
 import {ClientDeviceEvents} from "@digitalstage/api-types";
 
-const useToggleOffline = (): () => void => {
+const useToggleShowLanes = (): () => void => {
   const emit = useEmit()
   const localDeviceId = useLocalDeviceId()
-  const showOffline = useShowOffline()
+  const showLanes = useSelectShowLanes()
   return useCallback(() => {
     if (emit && localDeviceId)
       emit(ClientDeviceEvents.ChangeDevice, {
         _id: localDeviceId,
-        showOffline: !showOffline
+        showLanes: !showLanes
       })
-  }, [emit, localDeviceId, showOffline])
+  }, [emit, localDeviceId, showLanes])
 }
 
-export {useToggleOffline}
+export {useToggleShowLanes}

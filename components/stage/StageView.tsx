@@ -25,21 +25,21 @@ import Image from 'next/image'
 import landscapeIcon from '../../public/icons/landscape.svg'
 import portraitIcon from '../../public/icons/portrait.svg'
 import {
-  useFilteredStageMembers, useShowLanes,
-  useShowOffline,
-  useToggleLanes,
-  useToggleOffline,
+  useSelectStageMemberIds, useSelectShowLanes,
+  useSelectShowOffline,
+  useToggleShowLanes,
+  useToggleShowOfflineMode,
 } from "@digitalstage/api-client-react";
 import {HiFilter, HiOutlineFilter} from "react-icons/hi";
 import {StageMemberView} from './StageMemberView';
 import {ConductorOverlay} from './ConductorOverlay';
 
 const StageView = () => {
-  const showOffline = useShowOffline()
-  const showLanes = useShowLanes()
-  const sortedStageMemberIds = useFilteredStageMembers()
-  const onOfflineToggle = useToggleOffline()
-  const onLaneToggle = useToggleLanes()
+  const showOffline = useSelectShowOffline()
+  const showLanes = useSelectShowLanes()
+  const sortedStageMemberIds = useSelectStageMemberIds()
+  const onOfflineToggle = useToggleShowOfflineMode()
+  const onLaneToggle = useToggleShowLanes()
 
   return (
     <div className={`wrapper stageLayout`}>

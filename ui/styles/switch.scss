@@ -111,5 +111,14 @@ div.switch {
       transform: translateX(20px);
     }
   }
+}
 
+label.switchLabel {
+  width: 100%;
+  display: inline-flex;
+  padding: 16px;
+
+  &.append {
+
+  }
 }

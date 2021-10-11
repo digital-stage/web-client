@@ -22,6 +22,6 @@
 
 import {useStageSelector} from "@digitalstage/api-client-react";
 
-const useShowOffline = (): boolean => useStageSelector<boolean>(state => state.globals.localDeviceId && state.devices.byId[state.globals.localDeviceId].showOffline || false)
+const useSelectShowOffline = (): boolean => useStageSelector<boolean>(state => state.globals.localDeviceId && state.devices.byId[state.globals.localDeviceId].showOffline || false)
 
-export {useShowOffline}
+export {useSelectShowOffline}

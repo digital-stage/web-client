@@ -25,12 +25,11 @@ import {useAuth} from './hooks/useAuth'
 import {useNotification} from './hooks/useNotification'
 import {AppDispatch} from './redux/store'
 import {useStageSelector} from './redux/selectors/useStageSelector'
-import {RootState} from './redux/state'
 import {useAudioContext, useAudioContextDispatch} from './provider/AudioContextProvider'
 import {useAudioLevel} from './provider/AudioLevelProvider'
 import {useStageJoiner} from './hooks/useStageJoiner'
 import {
-  useWebRTCStats,
+    useWebRTCStats,
 } from './services/WebRTCService'
 import {useEmit, useConnection, ConnectionStateContext, EmitFunction} from './services/ConnectionService'
 import {useErrorReporting} from './hooks/useErrorReporting'
@@ -40,47 +39,51 @@ import {useStageAdminSelector} from './redux/selectors/useStageAdminSelector'
 import {useSpatialAudioSelector} from './redux/selectors/useSpatialAudioSelector'
 import {useRemoteVideoTracks} from './hooks/useRemoteVideoTracks'
 import {useRemoteAudioTracks} from './hooks/useRemoteAudioTracks'
-import {useReady} from './hooks/useReady'
+import {useSelectReady} from './redux/selectors/useSelectReady'
 import {useWebcam} from './provider/WebcamProvider'
 import {useMicrophone} from './provider/MicrophoneProvider'
-import {sortStageMembers, useFilteredStageMembers} from './hooks/useFilteredStageMembers'
-import {useShowOffline} from './hooks/useShowOffline'
+import {useSelectStageMemberIds, useSelectStageMemberIdsByGroup} from './redux/selectors/useSelectStageMemberIds'
+import {useSelectShowOffline} from './redux/selectors/useSelectShowOffline'
 import {useLocalDeviceId} from './hooks/useLocalDeviceId'
-import { useShowLanes } from './hooks/useShowLanes'
-import { useToggleLanes } from './hooks/useToggleLanes'
-import { useToggleOffline } from './hooks/useToggleOffline'
+import {useSelectShowLanes} from './redux/selectors/useSelectShowLanes'
+import {useToggleShowLanes} from './hooks/useToggleShowLanes'
+import {useSelectStageDeviceIdsByStageMember} from './redux/selectors/useSelectStageDeviceIdsByStageMember'
+import { useToggleShowOfflineMode } from './hooks/useToggleShowOfflineMode'
+import { RootState } from './redux/RootState'
 
 export * from './redux/actions'
 export * from './redux/state'
+export * from './redux/selectors'
 export type {RootState, AppDispatch, EmitFunction}
 export {
-  useReady,
-  useStageJoiner,
-  useFilteredStageMembers,
-  sortStageMembers,
-  useAudioContext,
-  useAudioContextDispatch,
-  useAudioLevel,
-  useStageSelector,
-  useStageAdminSelector,
-  useCurrentStageAdminSelector,
-  useShowOffline,
-  useShowLanes,
-  useToggleLanes,
-  useToggleOffline,
-  useLocalDeviceId,
-  DigitalStageProvider,
-  useNotification,
-  useEmit,
-  useConnection,
-  useAuth,
-  useWebRTCStats,
-  useWebcam,
-  useMicrophone,
-  useRemoteVideoTracks,
-  useRemoteAudioTracks,
-  useErrorReporting,
-  useSpatialAudioSelector,
-  ConnectionStateContext,
-  logger
+    useSelectReady,
+    useStageJoiner,
+    useSelectStageMemberIds,
+    useSelectStageDeviceIdsByStageMember,
+    useSelectStageMemberIdsByGroup,
+    useAudioContext,
+    useAudioContextDispatch,
+    useAudioLevel,
+    useStageSelector,
+    useStageAdminSelector,
+    useCurrentStageAdminSelector,
+    useSelectShowOffline,
+    useSelectShowLanes,
+    useToggleShowLanes,
+    useToggleShowOfflineMode,
+    useLocalDeviceId,
+    DigitalStageProvider,
+    useNotification,
+    useEmit,
+    useConnection,
+    useAuth,
+    useWebRTCStats,
+    useWebcam,
+    useMicrophone,
+    useRemoteVideoTracks,
+    useRemoteAudioTracks,
+    useErrorReporting,
+    useSpatialAudioSelector,
+    ConnectionStateContext,
+    logger
 }

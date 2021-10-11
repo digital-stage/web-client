@@ -27,6 +27,7 @@ import {AuthLayout} from 'components/account/AuthLayout'
 import {Paragraph} from '../../ui/Paragraph'
 import {Loading} from "../../components/global/Loading";
 import Link from 'next/link'
+import {Heading3} from "../../ui/Heading";
 
 const Reset = () => {
   const {query, push, isReady} = useRouter()
@@ -50,7 +51,7 @@ const Reset = () => {
   if (resetToken) {
     return (
       <AuthLayout>
-        <h3>Passwort zurücksetzen</h3>
+        <Heading3>Passwort zurücksetzen</Heading3>
         <Paragraph kind="micro">
           Das Passwort muss folgendes beinhalten: mindestens eine Zahl, ein kleiner und ein
           großer Buchstabe sowie insgesamt eine Mindestlänge von 8 Zeichen haben.

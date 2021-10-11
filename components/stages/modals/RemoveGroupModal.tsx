@@ -26,6 +26,7 @@ import { Modal, ModalButton, ModalFooter, ModalHeader } from 'ui/Modal'
 import React  from 'react'
 import { NotificationItem } from 'ui/NotificationItem'
 import { Paragraph } from 'ui/Paragraph'
+import { Heading4 } from 'ui/Heading'
 
 const RemoveGroupModal = ({
     groupId,
@@ -63,7 +64,7 @@ const RemoveGroupModal = ({
         return (
             <Modal open={open} onClose={onClose} size="small">
                 <ModalHeader>
-                    <h4>Gruppe {name || groupId} wirklich löschen?</h4>
+                    <Heading4>Gruppe {name || groupId} wirklich löschen?</Heading4>
                 </ModalHeader>
                 <Paragraph kind="micro">
                     Die Gruppen und deren Teilnehmer werden unwiderruflich gelöscht und sind nicht

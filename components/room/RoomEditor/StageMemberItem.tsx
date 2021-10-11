@@ -1,5 +1,5 @@
 import {RoomSelection} from "../../../ui/RoomEditor/RoomSelection";
-import {useEmit, useStageSelector} from "@digitalstage/api-client-react";
+import {useEmit, useSelectStageDeviceIdsByStageMember, useStageSelector} from "@digitalstage/api-client-react";
 import {useCustomStageMemberPosition, useStageMemberPosition} from "./utils";
 import React from "react";
 import {RoomItem, RoomPositionWithAngle} from "../../../ui/RoomEditor";
@@ -7,7 +7,6 @@ import {ClientDeviceEvents, ClientDevicePayloads} from "@digitalstage/api-types"
 import {CenterIcon} from "./icons/CenterIcon";
 import {StageMemberIcon} from "./icons/StageMemberIcon";
 import {StageDeviceItem} from "./StageDeviceItem";
-import {useFilteredStageDevicesOfStageMember} from "../../../api/hooks/useFilteredStageMembers";
 
 const SHOW_STAGE_MEMBER = false
 
@@ -35,7 +34,7 @@ const StageMemberItem = ({stageMemberId, local, selections, onSelect, onDeselect
     })
   }, [customPosition?.rZ, customPosition?.x, customPosition?.y, position.rZ, position.x, position.y])
 
-  const stageDeviceIds = useFilteredStageDevicesOfStageMember(stageMemberId)
+  const stageDeviceIds = useSelectStageDeviceIdsByStageMember(stageMemberId)
   // Stage management only for this item
   const selected = React.useMemo(() => selections.some(selection => selection.id === stageMemberId), [selections, stageMemberId])
   const userName = useStageSelector<string>(

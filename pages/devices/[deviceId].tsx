@@ -29,6 +29,7 @@ import {Container} from '../../ui/Container'
 import {IoIosArrowDropleft} from 'react-icons/io'
 import {Panel} from 'ui/Panel'
 import {Loading} from "../../components/global/Loading";
+import {Heading3} from "../../ui/Heading";
 
 const DevicePage = () => {
   const {isReady, query, replace} = useRouter()
@@ -68,9 +69,9 @@ const DevicePage = () => {
               &nbsp;Zurück zur Übersicht
             </a>
           </Link>
-          <h3 className="heading">
+          <Heading3 className="heading">
             Gerät bearbeiten {localDeviceId === deviceId ? ' (Dieser Webbrowser)' : ''}
-          </h3>
+          </Heading3>
           {deviceId && <DeviceSettings deviceId={deviceId}/>}
         </Panel>
       </Container>

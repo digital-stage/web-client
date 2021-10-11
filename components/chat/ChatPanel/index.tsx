@@ -27,6 +27,7 @@ import {useForceUpdate} from './useForceUpdate'
 import {NotificationItem} from 'ui/NotificationItem'
 import {Panel} from 'ui/Panel'
 import {AiOutlineSend} from 'react-icons/ai'
+import {Heading5} from "../../../ui/Heading";
 
 const convertTime = (time: number): string => {
   const min = (Date.now() - time) / 60000
@@ -80,7 +81,7 @@ const MessagePane = ({
             }`}
           >
             {msg.userId !== localUserId && (
-              <h5 className="chatMessageName">{users.byId[msg.userId]?.name}</h5>
+              <Heading5 className="chatMessageName">{users.byId[msg.userId]?.name}</Heading5>
             )}
             <div className="chatMessage">{msg.message}</div>
             <div className="chatMessageTime">{convertTime(msg.time)}</div>

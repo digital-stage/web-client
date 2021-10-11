@@ -20,7 +20,7 @@
     "test": "jest --watch"
   },
   "dependencies": {
-    "@digitalstage/api-types": "^0.6.0",
+    "@digitalstage/api-types": "^0.6.1",
     "@react-hook/debounce": "^4.0.0",
     "@react-hook/throttle": "^2.2.0",
     "@reduxjs/toolkit": "^1.6.2",
@@ -62,7 +62,7 @@
     "@types/uuid": "^8.3.1",
     "@welldone-software/why-did-you-render": "^6.2.1",
     "babel-jest": "^27.2.5",
-    "eslint": "^8.0.0",
+    "eslint": "^7.32.0",
     "eslint-config-next": "^11.1.2",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",

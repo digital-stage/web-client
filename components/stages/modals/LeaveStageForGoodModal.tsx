@@ -26,6 +26,7 @@ import React from 'react'
 import {Modal, ModalButton, ModalFooter, ModalHeader} from 'ui/Modal'
 import {NotificationItem} from 'ui/NotificationItem'
 import {Paragraph} from 'ui/Paragraph'
+import {Heading4} from "../../../ui/Heading";
 
 const LeaveStageForGoodModal = ({
                                   stageId,
@@ -71,7 +72,7 @@ const LeaveStageForGoodModal = ({
     return (
       <Modal open={open} onClose={onClose} size="small">
         <ModalHeader>
-          <h4>Bühne {stageName || stageId} wirklich endgültig verlassen?</h4>
+          <Heading4>Bühne {stageName || stageId} wirklich endgültig verlassen?</Heading4>
         </ModalHeader>
         <Paragraph kind="micro">
           Die Bühne bleibt bestehen, jedoch bist Du kein Teil mehr davon. Du kannst nur

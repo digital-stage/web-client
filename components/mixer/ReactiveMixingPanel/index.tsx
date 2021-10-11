@@ -21,10 +21,9 @@
  */
 
 import {
-  clientActions,
-  selectMode, sortStageMembers,
+  selectMode,
   useCurrentStageAdminSelector,
-  useEmit, useLocalDeviceId, useShowOffline,
+  useEmit, useLocalDeviceId, useSelectShowOffline,
   useStageSelector,
 } from '@digitalstage/api-client-react'
 import React from 'react'
@@ -33,6 +32,7 @@ import {ClientDeviceEvents, ClientDevicePayloads} from '@digitalstage/api-types'
 import {TextSwitch} from 'ui/TextSwitch'
 import {DefaultVolumeProperties} from '@digitalstage/api-types'
 import {useDispatch} from 'react-redux'
+import {useSelectStageMemberIdsByGroup} from "@digitalstage/api-client-react";
 
 const BiChevronDown = () => (
   <svg
@@ -332,15 +332,7 @@ const StageMemberPanel = ({
 const GroupPanel = ({groupId, deviceId}: { groupId: string; deviceId?: string }) => {
   const emit = useEmit()
   const [expanded, setExpanded] = React.useState<boolean>(true)
-  const stageMemberIds = useStageSelector(state => {
-    if (state.globals.localDeviceId && state.devices.byId[state.globals.localDeviceId].showOffline) {
-      return [...state.stageMembers.byGroup[groupId]].sort((a, b) => sortStageMembers(state.stageMembers.byId[a], state.stageMembers.byId[b]))
-    }
-    if (state.stageMembers.byGroup[groupId]) {
-      return state.stageMembers.byGroup[groupId].filter(id => state.stageMembers.byId[id].active).sort((a, b) => sortStageMembers(state.stageMembers.byId[a], state.stageMembers.byId[b]))
-    }
-    return []
-  })
+  const stageMemberIds = useSelectStageMemberIdsByGroup(groupId)
   const group = useStageSelector((state) => state.groups.byId[groupId])
   const customGroup = useStageSelector((state) =>
     deviceId &&
@@ -514,7 +506,7 @@ const StagePanel = ({stageId}: { stageId: string }) => {
   const selectedMode = useStageSelector((state) => state.globals.selectedMode)
   const isStageAdmin = useCurrentStageAdminSelector()
   const groupIds = useStageSelector((state) => state.groups.byStage[stageId])
-  const showOffline = useShowOffline()
+  const showOffline = useSelectShowOffline()
   const localDeviceId = useLocalDeviceId()
   const emit = useEmit()
   const onOfflineToggle = React.useCallback(() => {

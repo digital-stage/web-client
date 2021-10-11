@@ -43,6 +43,8 @@ import {shallowEqual} from 'react-redux'
 import {IoIosArrowDropleft} from 'react-icons/io'
 import {MdDeleteForever, MdEdit} from 'react-icons/md'
 import {Switch} from 'ui/Switch'
+import {Heading3, Heading5} from "../../ui/Heading";
+import {Paragraph} from "../../ui/Paragraph";
 
 const StageMemberItem = ({
                            stageId,
@@ -62,9 +64,9 @@ const StageMemberItem = ({
     return (
       <AltListItem>
         <div className="stageMemberRow">
-          <h5>
+          <Heading5>
             {username}
-          </h5>
+          </Heading5>
           {hasAdminRights ? (
             <div className="stageMemberActions">
               <label>
@@ -199,14 +201,14 @@ const StageView = () => {
             &nbsp;Zurück zur Übersicht
           </a>
         </Link>
-        <h3 className="title">
+        <Heading3 className="title">
           {stage.name}
           {isStageAdmin ? (
             <button className="" onClick={() => requestStageEdit(true)}>
               <MdEdit/>
             </button>
           ) : null}
-        </h3>
+        </Heading3>
         {isStageAdmin ? (
           <div className="row">
             <div className="stageActions">
@@ -332,12 +334,12 @@ const StageView = () => {
         </div>
         {isStageAdmin ? (
           <div className="dangerZone">
-            <h3>Gefahrenzone</h3>
-            <p className="micro">
+            <Heading3>Gefahrenzone</Heading3>
+            <Paragraph kind="micro">
               Wenn Du die Bühne nicht mehr brauchst, kannst Du sie gerne löschen.
               Hierbei werden alle Mitglieder und Gruppen entfernt. Die Bühne wird
               unwiederuflich gelöscht!
-            </p>
+            </Paragraph>
             <div className="row">
               <button onClick={() => requestStageRemoval(true)} className="danger">
                 Bühne entgültig entfernen

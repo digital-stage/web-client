@@ -26,6 +26,7 @@ import {ConductorButton} from "./ConductorButton";
 import React from "react";
 import {useStageSelector, useWebRTCStats} from "@digitalstage/api-client-react";
 import {AiOutlineAudioMuted} from "react-icons/ai";
+import {Heading5, Heading6} from "ui/Heading";
 
 
 const TrackStatsView = ({trackId}: { trackId: string }): JSX.Element | null => {
@@ -92,16 +93,16 @@ const StageMemberBox = ({
         {userName && <Avatar name={userName} color={groupColor} active={active}/>}
         <div className="names">
           {groupName && (
-            <h6
+            <Heading6
               className="groupName"
               style={{
                 color: groupColor,
               }}
             >
               {groupName}
-            </h6>
+            </Heading6>
           )}
-          {userName && <h5 className="memberName">{userName}</h5>}
+          {userName && <Heading5 className="memberName">{userName}</Heading5>}
           {videoTrackId && <span style={{fontSize: "0.5rem"}}>{videoTrackId}</span>}
           {videoMuted &&
           <span style={{fontSize: "0.6rem", color: "var(---danger)"}}>Schlechte Internetverbindung</span>}

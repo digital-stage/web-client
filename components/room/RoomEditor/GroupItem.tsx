@@ -1,12 +1,12 @@
 import {useCustomGroupPosition, useGroupPosition} from "./utils";
-import {useEmit, useFilteredStageMembers, useStageSelector} from "@digitalstage/api-client-react";
+import {useEmit, useSelectStageMemberIds, useStageSelector} from "@digitalstage/api-client-react";
 import React from "react";
 import {RoomItem, RoomPositionWithAngle} from "../../../ui/RoomEditor";
 import {RoomSelection} from "../../../ui/RoomEditor/RoomSelection";
 import {StageMemberItem} from "./StageMemberItem";
 import {ClientDeviceEvents, ClientDevicePayloads} from "@digitalstage/api-types";
 import { GroupIcon } from "./icons/GroupIcon";
-import {useFilteredStageMembersByGroup} from "../../../api/hooks/useFilteredStageMembers";
+import {useSelectStageMemberIdsByGroup} from "../../../api/redux/selectors/useSelectStageMemberIds";
 
 const SHOW_GROUPS = false
 
@@ -21,7 +21,7 @@ const GroupItem = ({groupId, onSelect, onDeselect, selections}: {
     const customPosition = useCustomGroupPosition(groupId)
     const groupColor = useStageSelector(state => state.groups.byId[groupId].color)
     const localStageMemberId = useStageSelector(state => state.globals.stageMemberId)
-    const stageMemberIds = useFilteredStageMembersByGroup(groupId)
+    const stageMemberIds = useSelectStageMemberIdsByGroup(groupId)
     const [currentPosition, setCurrentPosition] = React.useState<RoomPositionWithAngle>({
         x: customPosition?.x || position.x,
         y: customPosition?.y || position.y,

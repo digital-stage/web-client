@@ -20,8 +20,22 @@
  * SOFTWARE.
  */
 
-import { useStageSelector } from "../redux/selectors/useStageSelector"
 
-const useReady = () => useStageSelector(state => state.globals.ready)
+import {useEmit, useLocalDeviceId, useSelectShowOffline} from "@digitalstage/api-client-react";
+import {useCallback} from "react";
+import {ClientDeviceEvents} from "@digitalstage/api-types";
 
-export {useReady}
+const useToggleShowOfflineMode = (): () => void => {
+  const emit = useEmit()
+  const localDeviceId = useLocalDeviceId()
+  const showOffline = useSelectShowOffline()
+  return useCallback(() => {
+    if (emit && localDeviceId)
+      emit(ClientDeviceEvents.ChangeDevice, {
+        _id: localDeviceId,
+        showOffline: !showOffline
+      })
+  }, [emit, localDeviceId, showOffline])
+}
+
+export {useToggleShowOfflineMode}

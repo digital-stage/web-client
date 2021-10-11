@@ -31,6 +31,7 @@ import {SoundCardSettings} from './SoundCardSettings'
 import {Paragraph} from 'ui/Paragraph'
 import {OptionsList, OptionsListItem} from 'ui/OptionsList'
 import {BrowserDevice} from "@digitalstage/api-types/dist/model/browser";
+import {Heading4} from "../../ui/Heading";
 
 const DeviceSettings = ({deviceId}: { deviceId: string }) => {
   const device = useStageSelector((state) => state.devices.byId[deviceId], shallowEqual)
@@ -55,7 +56,7 @@ const DeviceSettings = ({deviceId}: { deviceId: string }) => {
         <OptionsList>
           {device?.type === 'browser' ? (
             <>
-              <h4>Verbindungseinstellungen</h4>
+              <Heading4>Verbindungseinstellungen</Heading4>
               <OptionsListItem as={<label/>}>
                 Direktverbindungen verwenden (schneller)
                 <Switch
@@ -83,7 +84,7 @@ const DeviceSettings = ({deviceId}: { deviceId: string }) => {
 
           {device?.canVideo ? (
             <>
-              <h4>Videoeinstellungen</h4>
+              <Heading4>Videoeinstellungen</Heading4>
               <OptionsListItem as={<label/>}>
                 Video senden
                 <Switch
@@ -137,7 +138,7 @@ const DeviceSettings = ({deviceId}: { deviceId: string }) => {
           ) : null}
           {device?.canAudio ? (
             <>
-              <h4>Audioeinstellungen</h4>
+              <Heading4>Audioeinstellungen</Heading4>
               <OptionsListItem as={<label/>}>
                 Audio senden
                 <Switch

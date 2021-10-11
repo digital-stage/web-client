@@ -33,6 +33,7 @@ import {Collapse} from 'ui/Collapse'
 import { shallowEqual } from 'react-redux'
 import { Switch } from 'ui/Switch'
 import {Radio} from "../../../ui/Radio";
+import {Heading3, Heading5} from 'ui/Heading'
 
 const StageModal = ({
     open,
@@ -88,7 +89,7 @@ const StageModal = ({
     return (
         <Modal open={open} onClose={onClose} className="stageModal">
             <ModalHeader>
-                <h3>{stage ? 'Bühne bearbeiten' : 'Neue Bühne erstellen'}</h3>
+                <Heading3>{stage ? 'Bühne bearbeiten' : 'Neue Bühne erstellen'}</Heading3>
             </ModalHeader>
             <Formik
                 initialValues={
@@ -141,7 +142,7 @@ const StageModal = ({
                             error={touched.name && errors.name}
                             light
                         />
-                        <h5 className="muted">Audioübertragung</h5>
+                        <Heading5 className="muted">Audioübertragung</Heading5>
                         <div>
                             <label className="radioLabel">
                                 <Field as={Radio} type="radio" name="audioType" value="mediasoup" /> Browser

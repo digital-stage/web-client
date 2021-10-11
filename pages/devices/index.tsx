@@ -22,11 +22,12 @@
 
 import {DevicesList} from '../../components/devices/DevicesList'
 import {Container} from '../../ui/Container'
+import {Heading2} from "../../ui/Heading";
 
 const Index = () => {
     return (
         <Container size="small">
-            <h2>Meine Geräte</h2>
+            <Heading2>Meine Geräte</Heading2>
             <DevicesList />
         </Container>
     )

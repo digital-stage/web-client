@@ -20,8 +20,15 @@
  * SOFTWARE.
  */
 
-import {selectDevice, useEmit, useStageSelector} from '@digitalstage/api-client-react'
-import {shallowEqual, useDispatch} from 'react-redux'
+import {
+  selectAllDeviceIds,
+  selectDevice,
+  selectDeviceById, selectLocalDeviceId,
+  selectSelectedDeviceId,
+  useEmit,
+  useStageSelector
+} from '@digitalstage/api-client-react'
+import {useDispatch} from 'react-redux'
 import React from 'react'
 import Link from 'next/link'
 import {DeleteModal} from './DeleteModal'
@@ -51,8 +58,8 @@ const DeviceEntry = ({
   onSelect: () => void
   onDeleteClicked: () => void
 }) => {
-  const selectedDeviceId = useStageSelector((state) => state.globals.selectedDeviceId)
-  const device = useStageSelector((state) => state.devices.byId[deviceId], shallowEqual)
+  const selectedDeviceId = useStageSelector(selectSelectedDeviceId)
+  const device = useStageSelector(state => selectDeviceById(state, deviceId))
   const selected = React.useMemo(() => {
     return selectedDeviceId === deviceId
   }, [deviceId, selectedDeviceId])
@@ -139,10 +146,10 @@ const DeviceEntry = ({
 }
 
 const DevicesList = (): JSX.Element | null => {
-  const deviceIds = useStageSelector((state) => state.devices.allIds)
-  const localDeviceId = useStageSelector((state) => state.globals.localDeviceId)
+  const deviceIds = useStageSelector(selectAllDeviceIds)
+  const localDeviceId = useStageSelector(selectLocalDeviceId)
   const dispatch = useDispatch()
-  const selectedDeviceId = useStageSelector((state) => state.globals.selectedDeviceId)
+  const selectedDeviceId = useStageSelector(selectSelectedDeviceId)
   const [deleteRequest, requestDelete] = React.useState<string>()
   const {push} = useRouter()
 

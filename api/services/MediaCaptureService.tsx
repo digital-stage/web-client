@@ -28,7 +28,7 @@ import {useMicrophoneDispatch} from "../provider/MicrophoneProvider";
 import {useStageSelector} from '../redux/selectors/useStageSelector';
 import {useEmit} from './ConnectionService';
 import {getAudioTrack} from "../utils/getAudioTrack";
-import {useReady} from '../hooks/useReady';
+import {useSelectReady} from '../redux/selectors/useSelectReady';
 import {logger} from '../logger';
 import {useErrorReporting} from "@digitalstage/api-client-react";
 import {refreshMediaDevices as refreshMediaDevicesSync} from 'api/utils/refreshMediaDevices';
@@ -36,7 +36,7 @@ import {refreshMediaDevices as refreshMediaDevicesSync} from 'api/utils/refreshM
 const {trace} = logger("MediaCaptureService")
 
 const MediaCaptureService = () => {
-  const ready = useReady()
+  const ready = useSelectReady()
   const emit = useEmit()
   const dispatchWebcam = useWebcamDispatch()
   const dispatchMicrophone = useMicrophoneDispatch()

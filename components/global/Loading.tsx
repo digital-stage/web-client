@@ -22,6 +22,7 @@
 
 import {LoadingShaft} from "../../ui/LoadingShaft";
 import React from "react";
+import { Heading2 } from "ui/Heading";
 
 const RandomSentence = [
     "Stimme die Instrumente...",
@@ -46,9 +47,9 @@ const Loading = ({message}: {
     return (
         <div className="topoverlay">
             <LoadingShaft/>
-            <h2>
+            <Heading2>
                 {sentence || null}
-            </h2>
+            </Heading2>
         </div>
     )
 }

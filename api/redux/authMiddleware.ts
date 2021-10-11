@@ -29,7 +29,7 @@ import { getUserByToken } from './actions'
 
 import { batch } from 'react-redux'
 import { logger } from '../logger'
-import { RootState } from './state'
+import { RootState } from './RootState'
 
 const { trace } = logger('authMiddleware')
 

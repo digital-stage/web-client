@@ -26,6 +26,7 @@ import React from 'react'
 import {Modal, ModalButton, ModalFooter, ModalHeader} from 'ui/Modal'
 import {NotificationItem} from 'ui/NotificationItem'
 import {Paragraph} from 'ui/Paragraph'
+import {Heading4} from "../../../ui/Heading";
 
 const RemoveStageModal = ({
                             stageId,
@@ -72,7 +73,7 @@ const RemoveStageModal = ({
     return (
       <Modal open={open} onClose={onClose} size="small">
         <ModalHeader>
-          <h4>Bühne {stageName || stageId} wirklich löschen?</h4>
+          <Heading4>Bühne {stageName || stageId} wirklich löschen?</Heading4>
         </ModalHeader>
         <Paragraph kind="micro">
           Die Bühne und alle Gruppen sowie Teilnehmer werden unwiderruflich gelöscht und

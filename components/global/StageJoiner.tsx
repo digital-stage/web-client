@@ -32,6 +32,7 @@ import {
 import   { Modal,ModalButton, ModalFooter } from 'ui/Modal'
 import { TextInput } from 'ui/TextInput'
 import { useStageJoiner } from '../../api/hooks/useStageJoiner'
+import {Heading4} from "../../ui/Heading";
 
 /**
  * The StageJoiner is a usually hidden component,
@@ -115,13 +116,13 @@ const StageJoiner = (): JSX.Element | null => {
         return (
             <>
                 <Modal size="small" open={notFound} onClose={() => setNotFound(false)}>
-                    <h4>Bühne nicht gefunden</h4>
+                    <Heading4>Bühne nicht gefunden</Heading4>
                     <ModalFooter>
                         <ModalButton onClick={() => setNotFound(false)}>Ok</ModalButton>
                     </ModalFooter>
                 </Modal>
                 <Modal open={groupMissing} onClose={() => setGroupMissing(false)}>
-                    <h4>Bitte wähle eine Gruppe:</h4>
+                    <Heading4>Bitte wähle eine Gruppe:</Heading4>
                     {groups.map((group) => (
                         <button
                             key={group._id}
@@ -150,7 +151,7 @@ const StageJoiner = (): JSX.Element | null => {
                     </ModalFooter>
                 </Modal>
                 <Modal open={wrongPassword} onClose={() => clear()}>
-                    <h4>{retries === 0 ? 'Passwort notwendig' : 'Falsches Passwort'}</h4>
+                    <Heading4>{retries === 0 ? 'Passwort notwendig' : 'Falsches Passwort'}</Heading4>
                     <TextInput
                         id="password"
                         label="Password"

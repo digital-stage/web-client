@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-import {useCurrentStageAdminSelector, useShowLanes, useStageSelector} from '@digitalstage/api-client-react'
+import {useCurrentStageAdminSelector, useSelectShowLanes, useStageSelector} from '@digitalstage/api-client-react'
 import React from 'react'
 import { Panel } from 'ui/Panel'
 import { StageMemberView } from './StageMemberView'
@@ -30,7 +30,7 @@ const ConductorOverlayCompo = () => {
     const conductorIds = useStageSelector<string[]>((state) =>
       state.globals.stageId && state.stageMembers.byStage[state.globals.stageId]?.filter((id) => state.stageMembers.byId[id].isDirector) || []
     )
-    const showLanes = useShowLanes()
+    const showLanes = useSelectShowLanes()
 
     if (!isStageAdmin && conductorIds.length > 0) {
         return (

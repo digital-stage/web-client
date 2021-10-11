@@ -24,14 +24,15 @@ import { SecondaryHeadlineLink  } from 'ui/HeadlineLink'
 import React from 'react'
 import {Container} from 'ui/Container'
 import { Panel } from 'ui/Panel'
+import {Heading4} from "../../ui/Heading";
 
 const SettingsNav = () => (
     <nav className="settingsNav">
         <SecondaryHeadlineLink className="settingsNavItem" href="/settings/device">
-            <h4 className="settingHeading">Gerät</h4>
+            <Heading4 className="settingHeading">Gerät</Heading4>
         </SecondaryHeadlineLink>
         <SecondaryHeadlineLink className="settingsNavItem" href="/settings/profile">
-            <h4 className="settingHeading">Profil</h4>
+            <Heading4 className="settingHeading">Profil</Heading4>
         </SecondaryHeadlineLink>
     </nav>
 )

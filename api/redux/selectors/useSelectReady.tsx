@@ -20,35 +20,8 @@
  * SOFTWARE.
  */
 
-import React from 'react'
+import { useStageSelector } from "./useStageSelector"
 
-export interface SIZE {
-    default: undefined
-    small: 'small'
-}
+const useSelectReady = () => useStageSelector(state => state.globals.ready)
 
-const Switch = ({
-                    size,
-                    round,
-                    className,
-                    ...props
-                }: Omit<React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>,
-    'size'> & {
-    size?: SIZE[keyof SIZE]
-    round?: boolean
-}) => {
-    return (
-        <div className={`switch ${size ? size : ''} ${className || ''}`}>
-            <input type="checkbox" {...props} />
-            <span className={`slider ${round ? 'round' : ''}`}/>
-        </div>
-    )
-}
-
-const SwitchLabel = ({children, append}: { children: React.ReactNode, append?: boolean }) => (
-    <label className={`switchLabel${append ? ` append` : ``}`}>
-        {children}
-    </label>
-)
-
-export {Switch, SwitchLabel}
+export {useSelectReady}

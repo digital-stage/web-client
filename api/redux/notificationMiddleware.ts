@@ -24,9 +24,9 @@ import { Middleware } from 'redux'
 import { ServerDeviceEvents, ServerDevicePayloads } from '@digitalstage/api-types'
 import { v4 as uuidv4 } from 'uuid'
 import omit from 'lodash/omit'
-import { RootState } from './state'
 import { InternalActionTypes } from './actions/InternalActionTypes'
 import {addNotification, AddNotificationPayload, changeNotification, RemoveNotificationPayload } from './actions/clientActions'
+import { RootState } from './RootState'
 
 let timeouts: {
     [id: string]: any

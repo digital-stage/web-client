@@ -30,6 +30,7 @@ import { Modal, ModalButton, ModalFooter, ModalHeader } from 'ui/Modal'
 import {ColorPicker} from 'ui/ColorPicker'
 import { NotificationItem } from 'ui/NotificationItem'
 import { shallowEqual } from 'react-redux'
+import {Heading2, Heading5} from "../../../ui/Heading";
 
 const GroupModal = ({
     open,
@@ -90,7 +91,7 @@ const GroupModal = ({
     return (
         <Modal open={open} onClose={onClose}>
             <ModalHeader>
-                <h2>{group ? 'Gruppe bearbeiten' : 'Neue Gruppe erstellen'}</h2>
+                <Heading2>{group ? 'Gruppe bearbeiten' : 'Neue Gruppe erstellen'}</Heading2>
             </ModalHeader>
             <Formik
                 initialValues={{
@@ -146,7 +147,7 @@ const GroupModal = ({
                         />
                         {values.color && (
                             <div className="vertical">
-                                <h5>Farbe</h5>
+                                <Heading5>Farbe</Heading5>
                                 <ColorPicker
                                     color={values.color}
                                     onChange={(color) => setFieldValue('color', color)}

@@ -20,6 +20,8 @@
  * SOFTWARE.
  */
 
+import React from "react";
+
 export interface KIND {
     default: '',
     micro: 'micro'
@@ -32,6 +34,6 @@ const Paragraph = ({
                    }: {
                        kind?: KIND[keyof KIND]
                    } & React.DetailedHTMLProps<React.HTMLAttributes<HTMLParagraphElement>, HTMLParagraphElement>
-) => <p className={`${kind || ''} ${className || ''}`} {...props}/>
+) => <p className={`paragraph ${kind || ''} ${className || ''}`} {...props}/>
 
 export { Paragraph }

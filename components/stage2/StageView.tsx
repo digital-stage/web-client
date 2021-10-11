@@ -1,22 +1,19 @@
 import {
-    useEmit, useLocalDeviceId, useRemoteVideoTracks,
-    useShowLanes,
-    useShowOffline,
-    useStageSelector, useToggleLanes, useToggleOffline, useWebcam
+    selectGroupIdsOfCurrentStage,
+    selectNumCols,
+     selectShowLanes,
+    useRemoteVideoTracks,
+    useStageSelector, useWebcam
 } from "@digitalstage/api-client-react";
 import React from "react";
-import {HiFilter, HiOutlineFilter} from "react-icons/hi";
-import Image from "next/image";
-import portraitIcon from "../../public/icons/portrait.svg";
-import landscapeIcon from "../../public/icons/landscape.svg";
-import {useFilteredStageMembersByGroup} from "../../api/hooks/useFilteredStageMembers";
+import {useSelectStageMemberIdsByGroup} from "../../api/redux/selectors/useSelectStageMemberIds";
 import {FaMusic} from "react-icons/fa";
-import {ClientDeviceEvents, ClientDevicePayloads} from "@digitalstage/api-types";
 import {VideoPlayer} from "./VideoPlayer";
 import {AiOutlineAudioMuted} from "react-icons/ai";
 import {Avatar} from "./Avatar";
-
-const useNumCols = (): number => useStageSelector<number>(state => state.globals.localDeviceId && state.devices.byId[state.globals.localDeviceId].numCols || 2)
+import {SettingsModal} from "./SettingsModal";
+import {GoSettings} from "react-icons/go";
+import {Heading5, Heading6} from "../../ui/Heading";
 
 
 const Box = ({
@@ -36,8 +33,8 @@ const Box = ({
     online?: boolean,
     muted?: boolean
 }) => {
-    const numCols = useNumCols()
-    const showLanes = useShowLanes()
+    const numCols = useStageSelector(selectNumCols)
+    const showLanes = useStageSelector(selectShowLanes)
 
     const [videoMuted, setVideoMuted] = React.useState<boolean>(track ? track.muted : false)
     React.useEffect(() => {
@@ -54,7 +51,7 @@ const Box = ({
     }, [track])
 
     const width = showLanes
-        ? `calc(${Math.floor((1000 / numCols) * 100) / 1000}vw - 32px - var(--sidebar-width) / ${numCols})`
+        ? `calc(${Math.floor((1000 / numCols) * 100) / 1000}vw - 16px - var(--sidebar-width) / ${numCols})`
         : `${Math.floor((1000 / numCols) * 100) / 1000}%`
     const height = showLanes ? '100%' : 'auto'
     return (
@@ -75,16 +72,16 @@ const Box = ({
                             {name && <Avatar name={name} color={color} active={online}/>}
                             <div className="names">
                                 {groupName && (
-                                    <h6
+                                    <Heading6
                                         className="groupName"
                                         style={{
                                             color: color,
                                         }}
                                     >
                                         {groupName}
-                                    </h6>
+                                    </Heading6>
                                 )}
-                                {name && <h5 className="memberName">{name}</h5>}
+                                {name && <Heading5 className="memberName">{name}</Heading5>}
                                 {videoMuted &&
                                 <span style={{
                                     fontSize: "0.6rem",
@@ -193,8 +190,8 @@ const StageMemberView = ({
 const GroupView = ({groupId, isOnlyGroup}: { groupId: string, isOnlyGroup?: boolean }): JSX.Element | null => {
     const name = useStageSelector(state => state.groups.byId[groupId].name)
     const color = useStageSelector(state => state.groups.byId[groupId].color)
-    const sortedStageMemberIds = useFilteredStageMembersByGroup(groupId)
-    const showLanes = useShowLanes()
+    const sortedStageMemberIds = useSelectStageMemberIdsByGroup(groupId)
+    const showLanes = useStageSelector(selectShowLanes)
 
     if (sortedStageMemberIds.length > 0) {
         return (
@@ -232,36 +229,12 @@ const GroupView = ({groupId, isOnlyGroup}: { groupId: string, isOnlyGroup?: bool
 }
 
 const StageView = (): JSX.Element => {
-    const emit = useEmit()
-    const numCols = useNumCols()
-    const showLanes = useShowLanes()
-    const showOffline = useShowOffline()
-    const localDeviceId = useLocalDeviceId()
-    const groupIds = useStageSelector<string[]>(state => state.globals.stageId ? state.groups.byStage[state.globals.stageId] : [])
+    const showLanes = useStageSelector<boolean>(selectShowLanes)
+    const groupIds = useStageSelector<string[]>(selectGroupIdsOfCurrentStage)
 
-    const onOfflineToggle = useToggleOffline()
-    const onLaneToggle = useToggleLanes()
-
-    const increaseCols = React.useCallback(() => {
-        if (localDeviceId && emit) {
-            const num = numCols + 1
-            emit(ClientDeviceEvents.ChangeDevice, {
-                _id: localDeviceId,
-                numCols: num
-            } as ClientDevicePayloads.ChangeDevice)
-        }
-    }, [emit, localDeviceId, numCols])
-    const decreaseCols = React.useCallback(() => {
-        if (localDeviceId && emit) {
-            const num = Math.max(1, numCols - 1)
-            if (num !== numCols) {
-                emit(ClientDeviceEvents.ChangeDevice, {
-                    _id: localDeviceId,
-                    numCols: num
-                } as ClientDevicePayloads.ChangeDevice)
-            }
-        }
-    }, [emit, localDeviceId, numCols])
+    const [modalVisible, setModalVisible] = React.useState<boolean>(false)
+    const showModal = React.useCallback(() => setModalVisible(true), [])
+    const hideModal = React.useCallback(() => setModalVisible(false), [])
 
     return (
         <>
@@ -269,20 +242,11 @@ const StageView = (): JSX.Element => {
                 {groupIds.map(groupId => <GroupView key={groupId} groupId={groupId}
                                                     isOnlyGroup={groupIds.length > 1}/>)}
                 <div className="control">
-                    <button className="round" onClick={onOfflineToggle}>
-                        {showOffline ? <HiOutlineFilter/> : <HiFilter/>}
-                    </button>
-                    <button className="round" onClick={onLaneToggle}>
-                        {showLanes
-                            ? (<Image src={portraitIcon} alt="Auf Hochkantdarstellung umschalten"/>)
-                            : (<Image src={landscapeIcon} alt="Auf Breitbilddarstellung umschalten"/>)}
+                    <button className="round" onClick={showModal}>
+                        <GoSettings/>
                     </button>
                 </div>
-                <div className="colControl">
-                    <button className="small" onClick={increaseCols}>+</button>
-                    <span>{numCols}</span>
-                    <button className="small" onClick={decreaseCols}>-</button>
-                </div>
+                <SettingsModal open={modalVisible} onClose={hideModal}/>
             </div>
         </>
     )

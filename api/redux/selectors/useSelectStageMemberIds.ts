@@ -20,21 +20,14 @@
  * SOFTWARE.
  */
 
-import {useEmit, useLocalDeviceId, useShowLanes} from "@digitalstage/api-client-react";
-import {useCallback} from "react";
-import {ClientDeviceEvents} from "@digitalstage/api-types";
+import {
+    selectAndFilterStageMemberIds,
+    selectAndFilterStageMemberIdsByGroup,
+    useStageSelector
+} from "@digitalstage/api-client-react";
 
-const useToggleLanes = (): () => void => {
-  const emit = useEmit()
-  const localDeviceId = useLocalDeviceId()
-  const showLanes = useShowLanes()
-  return useCallback(() => {
-    if (emit && localDeviceId)
-      emit(ClientDeviceEvents.ChangeDevice, {
-        _id: localDeviceId,
-        showLanes: !showLanes
-      })
-  }, [emit, localDeviceId, showLanes])
-}
+const useSelectStageMemberIds = () => useStageSelector(selectAndFilterStageMemberIds)
 
-export {useToggleLanes}
+const useSelectStageMemberIdsByGroup = (groupId: string) => useStageSelector(state => selectAndFilterStageMemberIdsByGroup(state, groupId))
+
+export {useSelectStageMemberIds, useSelectStageMemberIdsByGroup}

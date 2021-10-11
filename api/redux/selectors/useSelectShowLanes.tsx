@@ -22,5 +22,5 @@
 
 import {useStageSelector} from "@digitalstage/api-client-react";
 
-const useShowLanes = (): boolean => useStageSelector<boolean>(state => state.globals.localDeviceId && state.devices.byId[state.globals.localDeviceId].showLanes || false)
-export {useShowLanes}
+const useSelectShowLanes = (): boolean => useStageSelector<boolean>(state => state.globals.localDeviceId && state.devices.byId[state.globals.localDeviceId].showLanes || false)
+export {useSelectShowLanes}

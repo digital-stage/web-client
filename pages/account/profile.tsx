@@ -25,13 +25,14 @@ import {ProfileEditor} from 'components/account/ProfileEditor'
 import {Container} from 'ui/Container'
 import {Panel} from '../../ui/Panel'
 import {useForwardToLoginWhenSignedOut} from "../../lib/useForwardToLoginWhenSignedOut";
+import {Heading2} from "../../ui/Heading";
 
 const Profile = () => {
   useForwardToLoginWhenSignedOut()
 
   return (
     <Container>
-      <h2>Mein Benutzerprofil</h2>
+      <Heading2>Mein Benutzerprofil</Heading2>
       <Panel>
         <ProfileEditor/>
       </Panel>

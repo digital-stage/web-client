@@ -24,6 +24,7 @@ import React  from 'react'
 import { OverlayMenu } from 'ui/OverlayMenu'
 import { useStageSelector } from '@digitalstage/api-client-react'
 import Link from 'next/link'
+import {Heading5} from "../../ui/Heading";
 
 const ProfileMenu = () => {
     const [open, setOpen] = React.useState<boolean>(false)
@@ -38,7 +39,7 @@ const ProfileMenu = () => {
                 className="profileMenu"
                 menu={
                     <>
-                        {user ? <h5>{user.name}</h5> : null}
+                        {user ? <Heading5>{user.name}</Heading5> : null}
                         {authUser?.email}
                         <Link href="/account/logout" passHref>
                             <button
