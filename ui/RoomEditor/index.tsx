@@ -107,7 +107,7 @@ const Room = ({children, onClick, width, height, center, rotation, className, fa
                 }
                 .room {
                     position: absolute;
-                    overflow: auto;
+                    overflow: visible;
                     display: inline-flex;
                     top: 50%;
                     left: 50%;
