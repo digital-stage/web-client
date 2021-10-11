@@ -54,7 +54,7 @@ const Box = ({
     }, [track])
 
     const width = showLanes
-        ? `calc(${Math.floor((1000 / numCols) * 100) / 1000}vw - var(--sidebar-width) / ${numCols})`
+        ? `calc(${Math.floor((1000 / numCols) * 100) / 1000}vw - 32px - var(--sidebar-width) / ${numCols})`
         : `${Math.floor((1000 / numCols) * 100) / 1000}%`
     const height = showLanes ? '100%' : 'auto'
     return (
@@ -216,10 +216,7 @@ const GroupView = ({groupId, isOnlyGroup}: { groupId: string, isOnlyGroup?: bool
                             </div>
                         </div>
                     )}
-                    <div className="groupGrid" style={{
-                        borderWidth: isOnlyGroup ? 0 : undefined,
-                        borderColor: isOnlyGroup ? 'transparent' : color,
-                    }}>
+                    <div className={`groupGrid${isOnlyGroup ? ' single' : ''}`}>
                         {sortedStageMemberIds.map(stageMemberId => <StageMemberView key={stageMemberId}
                                                                                     color={!isOnlyGroup ? color : undefined}
                                                                                     stageMemberId={stageMemberId}

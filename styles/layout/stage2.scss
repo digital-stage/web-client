@@ -2,6 +2,7 @@
   display: flex;
   min-height: 100%;
 
+
   &:not(.lanes) {
     width: 100%;
     flex-direction: column;
@@ -11,6 +12,12 @@
     width: auto;
     flex-direction: row;
     overflow-x: scroll;
+    padding-bottom: 64px;
+    max-height: 100vh;
+
+    @include tablet {
+      padding-bottom: 0;
+    }
   }
 
   .control {
@@ -55,6 +62,11 @@
       overflow: hidden;
       background-color: var(---grey-1);
       box-shadow: 0 16px 20px #00000040;
+    }
+
+    &.single {
+      border-width: 0;
+      border-color: transparent;
     }
 
     &:not(.lanes) {
