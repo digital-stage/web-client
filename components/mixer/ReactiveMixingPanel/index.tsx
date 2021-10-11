@@ -196,7 +196,7 @@ const StageDevicePanel = ({
           id={stageDeviceId}
           volume={customStageDevice?.volume || stageDevice.volume}
           muted={customStageDevice ? customStageDevice.muted : stageDevice.muted}
-          name={stageDevice.name}
+          name={stageDevice?.name || stageDeviceId}
           modified={
             (!deviceId && (stageDevice.volume !== 1 || stageDevice.muted)) ||
             !!customStageDevice
