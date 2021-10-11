@@ -162,7 +162,7 @@ export const reportError = (error: Error, stack?: string): ReducerAction =>
         kind: 'error',
         message: `${error.name}: ${error.message}`,
         stack: stack,
-        permanent: true,
+        permanent: false,
         featured: true,
     })
 
