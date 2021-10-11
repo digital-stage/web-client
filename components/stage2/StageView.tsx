@@ -2,7 +2,7 @@ import {
   useEmit, useLocalDeviceId, useRemoteVideoTracks,
   useShowLanes,
   useShowOffline,
-  useStageSelector, useWebcam
+  useStageSelector, useToggleLanes, useToggleOffline, useWebcam
 } from "@digitalstage/api-client-react";
 import React from "react";
 import {HiFilter, HiOutlineFilter} from "react-icons/hi";
@@ -231,21 +231,8 @@ const StageView = (): JSX.Element => {
   const localDeviceId = useLocalDeviceId()
   const groupIds = useStageSelector<string[]>(state => state.globals.stageId ? state.groups.byStage[state.globals.stageId] : [])
 
-  const onOfflineToggle = React.useCallback(() => {
-    if (emit && localDeviceId)
-      emit(ClientDeviceEvents.ChangeDevice, {
-        _id: localDeviceId,
-        showOffline: !showOffline
-      })
-  }, [emit, localDeviceId, showOffline])
-
-  const onLaneToggle = React.useCallback(() => {
-    if (emit && localDeviceId)
-      emit(ClientDeviceEvents.ChangeDevice, {
-        _id: localDeviceId,
-        showLanes: !showLanes
-      })
-  }, [emit, localDeviceId, showLanes])
+  const onOfflineToggle = useToggleOffline()
+  const onLaneToggle = useToggleLanes()
 
   const increaseCols = React.useCallback(() => {
     if (localDeviceId && emit) {
