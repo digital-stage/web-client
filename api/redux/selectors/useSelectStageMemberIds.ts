@@ -21,13 +21,30 @@
  */
 
 import {
-    selectAndFilterStageMemberIds,
-    selectAndFilterStageMemberIdsByGroup,
-    useStageSelector
+  useTrackedSelector
 } from "@digitalstage/api-client-react";
+import React from "react";
+import {sortStageMembers} from "./utils";
 
-const useSelectStageMemberIds = () => useStageSelector(selectAndFilterStageMemberIds)
+const useSelectStageMemberIds = () => {
+  const state = useTrackedSelector()
+  return state.stageMembers.allIds
+}
 
-const useSelectStageMemberIdsByGroup = (groupId: string) => useStageSelector(state => selectAndFilterStageMemberIdsByGroup(state, groupId))
+const useSelectStageMemberIdsByGroup = (groupId: string): string[] => {
+  const state = useTrackedSelector()
+  const showOffline = state.globals.localDeviceId && state.devices.byId[state.globals.localDeviceId].showOffline || false
+  return React.useMemo(() => {
+    if (showOffline) {
+      return state.stageMembers.byGroup[groupId]
+        .filter(id => state.stageMembers.byId[id].active)
+        .sort((a, b) => sortStageMembers(state.stageMembers.byId[a], state.stageMembers.byId[b]))
+    } else {
+      return [...state.stageMembers.byGroup[groupId]]
+        .sort((a, b) => sortStageMembers(state.stageMembers.byId[a], state.stageMembers.byId[b]))
+    }
+
+  }, [groupId, state.stageMembers.byGroup, state.stageMembers.byId, showOffline])
+}
 
 export {useSelectStageMemberIds, useSelectStageMemberIdsByGroup}

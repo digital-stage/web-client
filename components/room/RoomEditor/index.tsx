@@ -24,8 +24,8 @@ import React from "react";
 import {
     selectMode,
     useCurrentStageAdminSelector,
-    useSelectShowOffline,
-    useStageSelector, useToggleShowOfflineMode
+    useStageSelector,
+    useToggleShowOfflineMode, useTrackedSelector
 } from "@digitalstage/api-client-react";
 import {RoomSelection} from "../../../ui/RoomEditor/RoomSelection";
 import {Room, RoomPositionWithAngle} from "../../../ui/RoomEditor";
@@ -90,7 +90,8 @@ const RoomEditor = () => {
     const selectedDeviceId = useStageSelector<string | undefined>((state) => state.globals.selectedMode === "personal" ? state.globals.selectedDeviceId : undefined)
     const selectedMode = useStageSelector<"global" | "personal">((state) => state.globals.selectedMode)
     const dispatch = useDispatch()
-    const showOffline = useSelectShowOffline()
+    const state = useTrackedSelector()
+    const showOffline = state.globals.localDeviceId && state.devices.byId[state.globals.localDeviceId].showOffline || false
     const toggleOffline = useToggleShowOfflineMode()
     const listenerPosition = useListenerPosition()
 

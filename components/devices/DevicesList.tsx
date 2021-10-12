@@ -21,12 +21,8 @@
  */
 
 import {
-  selectAllDeviceIds,
   selectDevice,
-  selectDeviceById, selectLocalDeviceId,
-  selectSelectedDeviceId,
-  useEmit,
-  useStageSelector
+  useEmit
 } from '@digitalstage/api-client-react'
 import {useDispatch} from 'react-redux'
 import React from 'react'
@@ -39,6 +35,7 @@ import {Switch} from 'ui/Switch'
 import {MdEdit, MdMic, MdMicOff, MdVideocam, MdVideocamOff} from 'react-icons/md'
 import {GoBrowser, GoDeviceDesktop} from 'react-icons/go'
 import {FaRaspberryPi, FaTrash} from 'react-icons/fa'
+import {useTrackedSelector} from "../../api/redux/selectors/useTrackedSelector";
 
 const TypeIcons = {
   jammer: <GoDeviceDesktop/>,
@@ -58,14 +55,15 @@ const DeviceEntry = ({
   onSelect: () => void
   onDeleteClicked: () => void
 }) => {
-  const selectedDeviceId = useStageSelector(selectSelectedDeviceId)
-  const device = useStageSelector(state => selectDeviceById(state, deviceId))
+  const state = useTrackedSelector()
+  const selectedDeviceId = state.globals.selectedDeviceId
+  const device = state.globals.selectedDeviceId ? state.stageDevices.byId[state.globals.selectedDeviceId] : undefined
   const selected = React.useMemo(() => {
     return selectedDeviceId === deviceId
   }, [deviceId, selectedDeviceId])
   const emit = useEmit()
 
-  if (emit) {
+  if (emit && device) {
     return (
       <ListItem
         onSelect={onSelect}
@@ -146,10 +144,11 @@ const DeviceEntry = ({
 }
 
 const DevicesList = (): JSX.Element | null => {
-  const deviceIds = useStageSelector(selectAllDeviceIds)
-  const localDeviceId = useStageSelector(selectLocalDeviceId)
+  const state = useTrackedSelector()
+  const deviceIds = state.devices.allIds
+  const localDeviceId = state.globals.localDeviceId
   const dispatch = useDispatch()
-  const selectedDeviceId = useStageSelector(selectSelectedDeviceId)
+  const selectedDeviceId = state.globals.selectedDeviceId
   const [deleteRequest, requestDelete] = React.useState<string>()
   const {push} = useRouter()
 

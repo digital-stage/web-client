@@ -25,35 +25,35 @@ import {BrowserDevice, WebMediaDevice} from '@digitalstage/api-types/dist/model/
 import {getVideoTrack} from "../utils/getVideoTrack";
 import {useWebcamDispatch} from "../provider/WebcamProvider";
 import {useMicrophoneDispatch} from "../provider/MicrophoneProvider";
-import {useStageSelector} from '../redux/selectors/useStageSelector';
 import {useEmit} from './ConnectionService';
 import {getAudioTrack} from "../utils/getAudioTrack";
-import {useSelectReady} from '../redux/selectors/useSelectReady';
 import {logger} from '../logger';
-import {useErrorReporting} from "@digitalstage/api-client-react";
+import {useErrorReporting, useTrackedSelector} from "@digitalstage/api-client-react";
 import {refreshMediaDevices as refreshMediaDevicesSync} from 'api/utils/refreshMediaDevices';
 
 const {trace} = logger("MediaCaptureService")
 
 const MediaCaptureService = () => {
-  const ready = useSelectReady()
   const emit = useEmit()
   const dispatchWebcam = useWebcamDispatch()
   const dispatchMicrophone = useMicrophoneDispatch()
   const reportError = useErrorReporting()
 
-  const localDeviceId = useStageSelector(state => state.globals.localDeviceId)
-  const sendVideo = useStageSelector(state => state.globals.localDeviceId ? state.devices.byId[state.globals.localDeviceId].sendVideo : false)
-  const sendAudio = useStageSelector(state => state.globals.localDeviceId ? state.devices.byId[state.globals.localDeviceId].sendAudio : false)
-  const inputVideoDeviceId = useStageSelector(state => state.globals.localDeviceId ? (state.devices.byId[state.globals.localDeviceId] as BrowserDevice).inputVideoDeviceId : undefined)
-  const inputAudioDeviceId = useStageSelector(state => state.globals.localDeviceId ? (state.devices.byId[state.globals.localDeviceId] as BrowserDevice).inputAudioDeviceId : undefined)
-  const autoGainControl = useStageSelector(state => state.globals.localDeviceId ? (state.devices.byId[state.globals.localDeviceId] as BrowserDevice).autoGainControl : false)
-  const echoCancellation = useStageSelector(state => state.globals.localDeviceId ? (state.devices.byId[state.globals.localDeviceId] as BrowserDevice).echoCancellation : false)
-  const noiseSuppression = useStageSelector(state => state.globals.localDeviceId ? (state.devices.byId[state.globals.localDeviceId] as BrowserDevice).noiseSuppression : false)
-  const sampleRate = useStageSelector(state => state.globals.localDeviceId ? (state.devices.byId[state.globals.localDeviceId] as BrowserDevice).sampleRate : undefined)
-  const inputAudioDevices = useStageSelector(state => state.globals.localDeviceId ? (state.devices.byId[state.globals.localDeviceId] as BrowserDevice).inputAudioDevices : [])
-  const inputVideoDevices = useStageSelector(state => state.globals.localDeviceId ? (state.devices.byId[state.globals.localDeviceId] as BrowserDevice).inputVideoDevices : [])
-  const outputAudioDevices = useStageSelector(state => state.globals.localDeviceId ? (state.devices.byId[state.globals.localDeviceId] as BrowserDevice).outputAudioDevices : [])
+  const state = useTrackedSelector()
+
+  const ready = state.globals.ready
+  const localDeviceId = state.globals.localDeviceId
+  const sendVideo = state.globals.localDeviceId ? state.devices.byId[state.globals.localDeviceId].sendVideo : false
+  const sendAudio = state.globals.localDeviceId ? state.devices.byId[state.globals.localDeviceId].sendAudio : false
+  const inputVideoDeviceId = state.globals.localDeviceId ? (state.devices.byId[state.globals.localDeviceId] as BrowserDevice).inputVideoDeviceId : undefined
+  const inputAudioDeviceId = state.globals.localDeviceId ? (state.devices.byId[state.globals.localDeviceId] as BrowserDevice).inputAudioDeviceId : undefined
+  const autoGainControl = state.globals.localDeviceId ? (state.devices.byId[state.globals.localDeviceId] as BrowserDevice).autoGainControl : false
+  const echoCancellation = state.globals.localDeviceId ? (state.devices.byId[state.globals.localDeviceId] as BrowserDevice).echoCancellation : false
+  const noiseSuppression = state.globals.localDeviceId ? (state.devices.byId[state.globals.localDeviceId] as BrowserDevice).noiseSuppression : false
+  const sampleRate = state.globals.localDeviceId ? (state.devices.byId[state.globals.localDeviceId] as BrowserDevice).sampleRate : undefined
+  const inputAudioDevices = React.useMemo(() => state.globals.localDeviceId ? (state.devices.byId[state.globals.localDeviceId] as BrowserDevice).inputAudioDevices : [], [state.devices.byId, state.globals.localDeviceId])
+  const inputVideoDevices = React.useMemo(() => state.globals.localDeviceId ? (state.devices.byId[state.globals.localDeviceId] as BrowserDevice).inputVideoDevices : [], [state.devices.byId, state.globals.localDeviceId])
+  const outputAudioDevices =  React.useMemo(() => state.globals.localDeviceId ? (state.devices.byId[state.globals.localDeviceId] as BrowserDevice).outputAudioDevices : [], [state.devices.byId, state.globals.localDeviceId])
   const lastInputAudioDevices = React.useRef<WebMediaDevice[]>([])
   const lastInputVideoDevices = React.useRef<WebMediaDevice[]>([])
   const lastOutputAudioDevices = React.useRef<WebMediaDevice[]>([])
@@ -95,7 +95,7 @@ const MediaCaptureService = () => {
               capturedTrack.stop()
             throw new Error("Aborted by user")
           } else {
-            if(capturedTrack) {
+            if (capturedTrack) {
               track = capturedTrack
               dispatchWebcam(track)
             } else {

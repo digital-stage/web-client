@@ -1,31 +1,27 @@
 import {Modal, ModalButton, ModalFooter, ModalHeader} from "../../ui/Modal";
 import {
-    selectDisplayMode,
-    selectLocalDeviceId, selectMode,
-    selectNumBoxes,
-    selectNumLanes, selectShowLanes, selectShowOffline,
     useEmit,
-    useStageSelector
 } from "@digitalstage/api-client-react";
 import {Paragraph} from "../../ui/Paragraph";
-import {Switch, SwitchLabel} from "../../ui/Switch";
+import {Switch} from "../../ui/Switch";
 import {ClientDeviceEvents, ClientDevicePayloads} from "@digitalstage/api-types";
-import React, {ChangeEvent, ChangeEventHandler} from "react";
+import React, {ChangeEvent} from "react";
 import {TextSwitch} from "../../ui/TextSwitch";
-import {Field} from "formik";
 import { OptionsList, OptionsListItem } from "ui/OptionsList";
 import {Heading4} from "../../ui/Heading";
+import {useTrackedSelector} from "@digitalstage/api-client-react";
 
 const SettingsModal = ({open, onClose}: {
     open: boolean,
     onClose: () => void
 }) => {
     const emit = useEmit()
-    const displayMode = useStageSelector<"boxes" | "lanes">(selectDisplayMode)
-    const numLanes = useStageSelector<number>(selectNumLanes)
-    const numBoxes = useStageSelector<number>(selectNumBoxes)
-    const showOffline = useStageSelector<boolean>(selectShowOffline)
-    const localDeviceId = useStageSelector<string | undefined>(selectLocalDeviceId)
+    const state = useTrackedSelector()
+    const localDeviceId = state.globals.localDeviceId
+    const displayMode = localDeviceId && state.devices.byId[localDeviceId].displayMode || "boxes"
+    const numLanes = localDeviceId && state.devices.byId[localDeviceId].numLanes || 3
+    const numBoxes = localDeviceId && state.devices.byId[localDeviceId].numBoxes || 2
+    const showOffline = localDeviceId && state.devices.byId[localDeviceId].showOffline || false
 
     const toggleShowOffline = React.useCallback((e: ChangeEvent<HTMLInputElement>) => {
         if (emit && localDeviceId) {

@@ -20,7 +20,50 @@
  * SOFTWARE.
  */
 
-import {useStageSelector} from "@digitalstage/api-client-react";
+import {RootState} from "@digitalstage/api-client-react";
+import {StageDevice, StageMember} from "@digitalstage/api-types";
 
-const useSelectShowLanes = (): boolean => useStageSelector<boolean>(state => state.globals.localDeviceId && state.devices.byId[state.globals.localDeviceId].showLanes || false)
-export {useSelectShowLanes}
+export const selectId = (state: RootState, id: string) => id
+
+export const sortStageDevices = (a: StageDevice, b: StageDevice): number => {
+  if (a.active === b.active) {
+    if (a.stageMemberId == b.stageMemberId) {
+      if (a._id === b._id) {
+        return 0;
+      } else if (a._id < b._id) {
+        return -1
+      } else {
+        return 1
+      }
+    } else if (a.stageMemberId <= b.stageMemberId) {
+      return -1
+    } else {
+      return 1
+    }
+  } else if (a.active) {
+    return -1
+  } else {
+    return 1
+  }
+}
+export const sortStageMembers = (a: StageMember, b: StageMember): number => {
+  if (a.active === b.active) {
+    if (a.groupId == b.groupId) {
+      if (a._id === b._id) {
+        return 0;
+      } else if (a._id < b._id) {
+        return -1
+      } else {
+        return 1
+      }
+    } else if (a.groupId <= b.groupId) {
+      return -1
+    } else {
+      return 1
+    }
+  } else if (a.active) {
+    return -1
+  } else {
+    return 1
+  }
+}

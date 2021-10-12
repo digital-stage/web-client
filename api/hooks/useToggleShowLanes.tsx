@@ -20,14 +20,15 @@
  * SOFTWARE.
  */
 
-import {useEmit, useLocalDeviceId, useSelectShowLanes} from "@digitalstage/api-client-react";
+import {useEmit, useLocalDeviceId, useTrackedSelector} from "@digitalstage/api-client-react";
 import {useCallback} from "react";
 import {ClientDeviceEvents} from "@digitalstage/api-types";
 
 const useToggleShowLanes = (): () => void => {
   const emit = useEmit()
   const localDeviceId = useLocalDeviceId()
-  const showLanes = useSelectShowLanes()
+  const state = useTrackedSelector()
+  const showLanes = state.globals.localDeviceId && state.devices.byId[state.globals.localDeviceId]?.displayMode === "lanes" || false
   return useCallback(() => {
     if (emit && localDeviceId)
       emit(ClientDeviceEvents.ChangeDevice, {

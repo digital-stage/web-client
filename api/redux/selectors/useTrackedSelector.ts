@@ -20,8 +20,10 @@
  * SOFTWARE.
  */
 
-import {useStageSelector} from "@digitalstage/api-client-react";
+import {useSelector} from 'react-redux';
+import {createTrackedSelector} from 'react-tracked';
+import {RootState} from '../RootState';
 
-const useSelectShowOffline = (): boolean => useStageSelector<boolean>(state => state.globals.localDeviceId && state.devices.byId[state.globals.localDeviceId].showOffline || false)
+const useTrackedSelector = createTrackedSelector<RootState>(useSelector);
 
-export {useSelectShowOffline}
+export {useTrackedSelector}

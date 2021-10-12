@@ -25,18 +25,18 @@ import Image from 'next/image'
 import landscapeIcon from '../../public/icons/landscape.svg'
 import portraitIcon from '../../public/icons/portrait.svg'
 import {
-  useSelectStageMemberIds, useSelectShowLanes,
-  useSelectShowOffline,
+  useSelectStageMemberIds,
   useToggleShowLanes,
-  useToggleShowOfflineMode,
+  useToggleShowOfflineMode, useTrackedSelector,
 } from "@digitalstage/api-client-react";
 import {HiFilter, HiOutlineFilter} from "react-icons/hi";
 import {StageMemberView} from './StageMemberView';
 import {ConductorOverlay} from './ConductorOverlay';
 
 const StageView = () => {
-  const showOffline = useSelectShowOffline()
-  const showLanes = useSelectShowLanes()
+  const state = useTrackedSelector()
+  const showOffline = state.globals.localDeviceId && state.devices.byId[state.globals.localDeviceId].showOffline || false
+  const showLanes = state.globals.localDeviceId && state.devices.byId[state.globals.localDeviceId] || false
   const sortedStageMemberIds = useSelectStageMemberIds()
   const onOfflineToggle = useToggleShowOfflineMode()
   const onLaneToggle = useToggleShowLanes()

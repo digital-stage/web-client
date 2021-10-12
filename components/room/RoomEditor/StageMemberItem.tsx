@@ -1,5 +1,9 @@
 import {RoomSelection} from "../../../ui/RoomEditor/RoomSelection";
-import {useEmit, useSelectStageDeviceIdsByStageMember, useStageSelector} from "@digitalstage/api-client-react";
+import {
+  useEmit,
+  useSelectStageDeviceIdsByStageMember,
+  useStageSelector
+} from "@digitalstage/api-client-react";
 import {useCustomStageMemberPosition, useStageMemberPosition} from "./utils";
 import React from "react";
 import {RoomItem, RoomPositionWithAngle} from "../../../ui/RoomEditor";

@@ -23,8 +23,9 @@
 import {
   selectMode,
   useCurrentStageAdminSelector,
-  useEmit, useLocalDeviceId, useSelectShowOffline,
-  useStageSelector,
+  useEmit,
+  useLocalDeviceId,
+  useStageSelector, useTrackedSelector,
 } from '@digitalstage/api-client-react'
 import React from 'react'
 import {VolumeSlider} from './VolumeSlider'
@@ -502,11 +503,12 @@ const ResetAllButton = ({deviceId}: { deviceId?: string }) => {
 
 const StagePanel = ({stageId}: { stageId: string }) => {
   const dispatch = useDispatch()
+  const state = useTrackedSelector()
   const selectedDeviceId = useStageSelector((state) => state.globals.selectedDeviceId)
   const selectedMode = useStageSelector((state) => state.globals.selectedMode)
   const isStageAdmin = useCurrentStageAdminSelector()
   const groupIds = useStageSelector((state) => state.groups.byStage[stageId])
-  const showOffline = useSelectShowOffline()
+  const showOffline = state.globals.localDeviceId && state.devices.byId[state.globals.localDeviceId].showOffline || false
   const localDeviceId = useLocalDeviceId()
   const emit = useEmit()
   const onOfflineToggle = React.useCallback(() => {
