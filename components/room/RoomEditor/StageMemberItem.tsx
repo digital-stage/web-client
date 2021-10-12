@@ -1,10 +1,10 @@
 import {RoomSelection} from "../../../ui/RoomEditor/RoomSelection";
 import {
+  selectCustomStageMemberPositionByStageMemberId,
+  selectNameOfStageMemberId, selectStageMemberPositionByStageMemberId,
   useEmit,
-  useSelectStageDeviceIdsByStageMember,
-  useStageSelector
+  useSelectStageDeviceIdsByStageMember, useTrackedSelector,
 } from "@digitalstage/api-client-react";
-import {useCustomStageMemberPosition, useStageMemberPosition} from "./utils";
 import React from "react";
 import {RoomItem, RoomPositionWithAngle} from "../../../ui/RoomEditor";
 import {ClientDeviceEvents, ClientDevicePayloads} from "@digitalstage/api-types";
@@ -23,8 +23,9 @@ const StageMemberItem = ({stageMemberId, local, selections, onSelect, onDeselect
   groupColor: string,
   groupPosition: RoomPositionWithAngle
 }) => {
-  const position = useStageMemberPosition(stageMemberId)
-  const customPosition = useCustomStageMemberPosition(stageMemberId)
+  const state = useTrackedSelector()
+  const position = selectStageMemberPositionByStageMemberId(state, stageMemberId)
+  const customPosition = selectCustomStageMemberPositionByStageMemberId(state, stageMemberId)
   const [currentPosition, setCurrentPosition] = React.useState<RoomPositionWithAngle>({
     x: customPosition?.x || position.x,
     y: customPosition?.y || position.y,
@@ -41,12 +42,7 @@ const StageMemberItem = ({stageMemberId, local, selections, onSelect, onDeselect
   const stageDeviceIds = useSelectStageDeviceIdsByStageMember(stageMemberId)
   // Stage management only for this item
   const selected = React.useMemo(() => selections.some(selection => selection.id === stageMemberId), [selections, stageMemberId])
-  const userName = useStageSelector<string>(
-    state =>
-      state.stageMembers.byId[stageMemberId].userId &&
-      state.users.byId[state.stageMembers.byId[stageMemberId].userId]?.name
-      || stageMemberId
-  )
+  const userName =selectNameOfStageMemberId(state, stageMemberId)
   const onClicked = React.useCallback(() => {
     if (selected) {
       if (onDeselect) {
@@ -68,7 +64,7 @@ const StageMemberItem = ({stageMemberId, local, selections, onSelect, onDeselect
   }, [customPosition, onDeselect, onSelect, selected, stageMemberId])
 
   const emit = useEmit()
-  const deviceId = useStageSelector<string | undefined>(state => state.globals.selectedMode === "personal" ? state.globals.selectedDeviceId : undefined)
+  const deviceId = state.globals.selectedMode === "personal" ? state.globals.selectedDeviceId : undefined
   const onFinalChange = React.useCallback((position: RoomPositionWithAngle) => {
     if (emit) {
       if (customPosition || deviceId) {

@@ -40,6 +40,7 @@ const Room = ({children, onClick, width, height, center, rotation, className, fa
     }, [factor, height, rotation, width])
 
     const scrollToCenter = React.useCallback(() => {
+        console.log("scrollToCenter")
         if (ref.current && center) {
             let x = center.x
             let y = center.y
@@ -62,6 +63,11 @@ const Room = ({children, onClick, width, height, center, rotation, className, fa
     }, [center, rotation, actualSize.height, actualSize.width, factor])
 
     React.useEffect(() => {
+        console.log("CENTER CHANGED")
+    }, [center])
+
+    React.useEffect(() => {
+        console.log("scrollToCenter changed")
         scrollToCenter()
     }, [scrollToCenter])
 

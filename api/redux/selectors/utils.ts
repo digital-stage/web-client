@@ -20,10 +20,7 @@
  * SOFTWARE.
  */
 
-import {RootState} from "@digitalstage/api-client-react";
 import {StageDevice, StageMember} from "@digitalstage/api-types";
-
-export const selectId = (state: RootState, id: string) => id
 
 export const sortStageDevices = (a: StageDevice, b: StageDevice): number => {
   if (a.active === b.active) {

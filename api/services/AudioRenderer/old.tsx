@@ -38,10 +38,10 @@ import {useAudioLevelDispatch} from '../../provider/AudioLevelProvider'
 import {shallowEqual} from 'react-redux'
 import {useStageSelector} from '../../redux/selectors/useStageSelector'
 import {logger} from '../../logger'
-import {useSpatialAudioSelector} from '../../redux/selectors/useSpatialAudioSelector'
 import {useRemoteAudioTracks} from "../../hooks/useRemoteAudioTracks";
 import {useLocalAudioTracks} from "../../hooks/useLocalAudioTracks";
 import {useAnimationFrame} from "../../../lib/useAnimationFrame";
+import {selectRender3DAudio, useTrackedSelector} from "@digitalstage/api-client-react";
 
 const {trace} = logger('AudioRendererService')
 
@@ -114,8 +114,9 @@ const AudioTrackRenderer = ({
   destination: AudioNode
   deviceId: string
 }): JSX.Element => {
+  const state = useTrackedSelector()
   const audioTrack = useStageSelector(state => state.audioTracks.byId[audioTrackId])
-  const renderSpatialAudio = useSpatialAudioSelector()
+  const renderSpatialAudio = selectRender3DAudio(state)
   const customVolume = useStageSelector<CustomAudioTrackVolume | undefined>(
     (state) =>
       state.customAudioTrackVolumes.byDeviceAndAudioTrack[deviceId] &&

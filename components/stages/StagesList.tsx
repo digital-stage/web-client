@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-import {useStageAdminSelector, useStageSelector} from '@digitalstage/api-client-react'
+import {selectIsCurrentlyAdmin, useStageSelector, useTrackedSelector} from '@digitalstage/api-client-react'
 import React from 'react'
 import {List, ListItem} from 'ui/List'
 import {StageModal} from './modals/StageModal'
@@ -40,7 +40,8 @@ enum Type {
 
 const StageItem = ({stageId}: { stageId: string }) => {
   const {push} = useRouter()
-  const name = useStageSelector((state) => state.stages.byId[stageId].name)
+    const state = useTrackedSelector()
+  const name = state.stages.byId[stageId].name
   const password = useStageSelector((state) => state.stages.byId[stageId].password)
   const videoType = useStageSelector((state) => state.stages.byId[stageId].videoType as 'mediasoup' | 'jammer' | 'ov')
   const audioType = useStageSelector((state) => state.stages.byId[stageId].audioType as 'mediasoup' | 'jammer' | 'ov')
@@ -48,7 +49,7 @@ const StageItem = ({stageId}: { stageId: string }) => {
   const isActive = useStageSelector(
     (state) => state.globals.stageId && state.globals.stageId === stageId
   )
-  const isStageAdmin = useStageAdminSelector(stageId)
+  const isStageAdmin = selectIsCurrentlyAdmin(state)
   const {join, leave} = useStageJoiner()
   const onListClicked = React.useCallback(() => {
     if (hasGroups) {

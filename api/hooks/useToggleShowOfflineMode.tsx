@@ -21,15 +21,19 @@
  */
 
 
-import {useEmit, useTrackedSelector} from "@digitalstage/api-client-react";
+import {
+  selectLocalDeviceId,
+  selectShowOffline,
+  useEmit,
+  useStageSelector,
+} from "@digitalstage/api-client-react";
 import {useCallback} from "react";
 import {ClientDeviceEvents} from "@digitalstage/api-types";
 
 const useToggleShowOfflineMode = (): () => void => {
   const emit = useEmit()
-  const state = useTrackedSelector()
-  const localDeviceId = state.globals.localDeviceId
-  const showOffline = state.globals.localDeviceId && state.devices.byId[state.globals.localDeviceId]?.showOffline || false
+  const showOffline = useStageSelector(selectShowOffline)
+  const localDeviceId = useStageSelector(selectLocalDeviceId)
   return useCallback(() => {
     if (emit && localDeviceId)
       emit(ClientDeviceEvents.ChangeDevice, {

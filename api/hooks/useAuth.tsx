@@ -23,6 +23,7 @@
 import { AuthUser } from '../redux/state/Auth'
 import { shallowEqual } from 'react-redux'
 import { useStageSelector } from '../redux/selectors/useStageSelector'
+import {selectAuthUser, selectSignedIn, selectSignedOut, selectToken} from 'api/redux/selectors'
 
 interface AuthContextT {
     signedIn: boolean
@@ -31,15 +32,12 @@ interface AuthContextT {
     token?: string
 }
 
+
 const useAuth = (): AuthContextT => {
-    const signedIn = useStageSelector<boolean>(
-        (state) => state.auth.initialized && !!state.auth.token
-    )
-    const signedOut = useStageSelector<boolean>(
-        (state) => state.auth.initialized && !state.auth.token
-    )
-    const user = useStageSelector<AuthUser | undefined>((state) => state.auth.user, shallowEqual)
-    const token = useStageSelector<string | undefined>((state) => state.auth.token)
+    const signedIn = useStageSelector<boolean>(selectSignedIn)
+    const signedOut = useStageSelector<boolean>(selectSignedOut)
+    const user = useStageSelector<AuthUser | undefined>(selectAuthUser, shallowEqual)
+    const token = useStageSelector<string | undefined>(selectToken)
 
     return {
         signedIn,

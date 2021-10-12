@@ -21,7 +21,7 @@
  */
 
 import {
-    useCurrentStageAdminSelector,
+    selectIsCurrentlyAdmin,
     useRemoteVideoTracks,
     useStageSelector, useWebcam,
 } from '@digitalstage/api-client-react'
@@ -113,7 +113,7 @@ const RemoteStageMemberView = ({stageMemberId, hasAdminRights}: { stageMemberId:
 }
 
 const StageMemberView = ({stageMemberId}: { stageMemberId: string }) => {
-    const hasAdminRights = useCurrentStageAdminSelector()
+    const hasAdminRights = useStageSelector(selectIsCurrentlyAdmin)
     const localStageMemberId = useStageSelector(state => state.globals.stageMemberId)
     if (stageMemberId === localStageMemberId) {
         return (<LocalStageMemberView

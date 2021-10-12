@@ -34,15 +34,11 @@ import {
 import {useEmit, useConnection, ConnectionStateContext, EmitFunction} from './services/ConnectionService'
 import {useErrorReporting} from './hooks/useErrorReporting'
 import {logger} from './logger'
-import {useCurrentStageAdminSelector} from './redux/selectors/useCurrentStageAdminSelector'
-import {useStageAdminSelector} from './redux/selectors/useStageAdminSelector'
-import {useSpatialAudioSelector} from './redux/selectors/useSpatialAudioSelector'
 import {useRemoteVideoTracks} from './hooks/useRemoteVideoTracks'
 import {useRemoteAudioTracks} from './hooks/useRemoteAudioTracks'
 import {useWebcam} from './provider/WebcamProvider'
 import {useMicrophone} from './provider/MicrophoneProvider'
 import {useSelectStageMemberIds, useSelectStageMemberIdsByGroup} from './redux/selectors/useSelectStageMemberIds'
-import {useLocalDeviceId} from './hooks/useLocalDeviceId'
 import {useToggleShowLanes} from './hooks/useToggleShowLanes'
 import {useSelectStageDeviceIdsByStageMember} from './redux/selectors/useSelectStageDeviceIdsByStageMember'
 import { useToggleShowOfflineMode } from './hooks/useToggleShowOfflineMode'
@@ -51,6 +47,7 @@ import { useTrackedSelector } from './redux/selectors/useTrackedSelector'
 
 export * from './redux/actions'
 export * from './redux/state'
+export * from "./redux/selectors"
 export type {RootState, AppDispatch, EmitFunction}
 export {
     useStageJoiner,
@@ -62,11 +59,8 @@ export {
     useAudioLevel,
     useStageSelector,
     useTrackedSelector,
-    useStageAdminSelector,
-    useCurrentStageAdminSelector,
     useToggleShowLanes,
     useToggleShowOfflineMode,
-    useLocalDeviceId,
     DigitalStageProvider,
     useNotification,
     useEmit,
@@ -78,7 +72,6 @@ export {
     useRemoteVideoTracks,
     useRemoteAudioTracks,
     useErrorReporting,
-    useSpatialAudioSelector,
     ConnectionStateContext,
     logger
 }

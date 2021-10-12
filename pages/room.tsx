@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-import {useSpatialAudioSelector, useStageSelector} from '@digitalstage/api-client-react'
+import {selectRender3DAudio, useTrackedSelector} from '@digitalstage/api-client-react'
 import {useRouter} from 'next/router'
 import React from 'react'
 import {RoomEditor} from '../components/room/RoomEditor'
@@ -28,9 +28,10 @@ import {Loading} from "../components/global/Loading";
 
 const Room = () => {
     const {isReady, push} = useRouter()
-    const connectionReady = useStageSelector((state) => state.globals.ready)
-    const stageId = useStageSelector<string | undefined>((state) => state.globals.stageId)
-    const renderSpatialAudio = useSpatialAudioSelector()
+    const state = useTrackedSelector()
+    const connectionReady = state.globals.ready
+    const stageId = state.globals.stageId
+    const renderSpatialAudio = selectRender3DAudio(state)
     React.useEffect(() => {
         if (isReady && connectionReady) {
             if (!stageId) {
@@ -44,7 +45,7 @@ const Room = () => {
     if (connectionReady && stageId && renderSpatialAudio) {
         return (
             <div className="roomWrapper">
-                {stageId && process.browser ? <RoomEditor /> : null}
+                {stageId && process.browser ? <RoomEditor/> : null}
             </div>
         )
     }

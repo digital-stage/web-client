@@ -22,45 +22,30 @@
 
 import React from "react";
 import {
+    selectGroupPositionOfListener,
+    selectIsCurrentlyAdmin,
     selectMode,
-    useCurrentStageAdminSelector,
-    useStageSelector,
-    useToggleShowOfflineMode, useTrackedSelector
+    selectSelectedDeviceId,
+    selectSelectMode,
+    selectShowOffline,
+    selectStageDevicePositionOfListener,
+    selectStageMemberPositionOfListener,
+    useToggleShowOfflineMode,
+    useTrackedSelector,
 } from "@digitalstage/api-client-react";
 import {RoomSelection} from "../../../ui/RoomEditor/RoomSelection";
 import {Room, RoomPositionWithAngle} from "../../../ui/RoomEditor";
 import {GroupItem} from "./GroupItem";
-import {
-    selectResultingGroupPosition,
-    selectResultingStageDevicePosition, selectResultingStageMemberPosition,
-} from "./utils";
 import {HiFilter, HiOutlineFilter} from "react-icons/hi";
 import {useDispatch} from "react-redux";
-import { DefaultThreeDimensionalProperties} from "@digitalstage/api-types";
 import {ResetPanel} from "./ResetPanel";
 import {TextSwitch} from "../../../ui/TextSwitch";
 
 const useListenerPosition = (): RoomPositionWithAngle => {
-    const stageDeviceId = useStageSelector<string | undefined>(state =>
-        state.globals.stageId &&
-        state.globals.selectedDeviceId &&
-        state.stageDevices.byStageAndDevice[state.globals.stageId] &&
-        state.stageDevices.byStageAndDevice[state.globals.stageId][state.globals.selectedDeviceId]
-            ? state.stageDevices.byStageAndDevice[state.globals.stageId][state.globals.selectedDeviceId]
-            : undefined
-    )
-    const position = useStageSelector(state => stageDeviceId ? selectResultingStageDevicePosition(stageDeviceId, state) : DefaultThreeDimensionalProperties)
-    const stageMemberPosition = useStageSelector(state =>
-        stageDeviceId &&
-        state.stageDevices.byId[stageDeviceId]
-            ? selectResultingStageMemberPosition(state.stageDevices.byId[stageDeviceId].stageMemberId, state)
-            : DefaultThreeDimensionalProperties)
-    const groupPosition = useStageSelector(state =>
-        stageDeviceId &&
-        state.stageDevices.byId[stageDeviceId]
-            ? selectResultingGroupPosition(state.stageDevices.byId[stageDeviceId].groupId, state)
-            : DefaultThreeDimensionalProperties)
-
+    const state = useTrackedSelector()
+    const groupPosition = selectGroupPositionOfListener(state)
+    const stageMemberPosition = selectStageMemberPositionOfListener(state)
+    const position = selectStageDevicePositionOfListener(state)
     return React.useMemo(() => ({
         x: groupPosition.x + stageMemberPosition.x + position.x,
         y: groupPosition.y + stageMemberPosition.y + position.y,
@@ -69,9 +54,10 @@ const useListenerPosition = (): RoomPositionWithAngle => {
 }
 
 const RoomEditor = () => {
-    const stageWidth = useStageSelector<number>(state => state.globals.stageId ? state.stages.byId[state.globals.stageId].width : 0)
-    const stageHeight = useStageSelector<number>(state => state.globals.stageId ? state.stages.byId[state.globals.stageId].height : 0)
-    const groupIds = useStageSelector<string[]>(state => state.globals.stageId ? state.groups.byStage[state.globals.stageId] : [])
+    const state = useTrackedSelector()
+    const stageWidth = state.globals.stageId ? state.stages.byId[state.globals.stageId].width : 0
+    const stageHeight = state.globals.stageId ? state.stages.byId[state.globals.stageId].height : 0
+    const groupIds = state.globals.stageId ? state.groups.byStage[state.globals.stageId] : []
     const [selections, setSelections] = React.useState<RoomSelection[]>([])
     const onStageClicked = React.useCallback(() => {
         setSelections([])
@@ -86,14 +72,17 @@ const RoomEditor = () => {
         setSelections((prev) => prev.filter(sel => sel.id !== id))
     }, [])
 
-    const isStageAdmin = useCurrentStageAdminSelector()
-    const selectedDeviceId = useStageSelector<string | undefined>((state) => state.globals.selectedMode === "personal" ? state.globals.selectedDeviceId : undefined)
-    const selectedMode = useStageSelector<"global" | "personal">((state) => state.globals.selectedMode)
+    const isStageAdmin = selectIsCurrentlyAdmin(state)
+    const selectedMode = selectSelectMode(state)
+    const selectedDeviceId = selectedMode === "personal" ? selectSelectedDeviceId(state) : undefined
     const dispatch = useDispatch()
-    const state = useTrackedSelector()
-    const showOffline = state.globals.localDeviceId && state.devices.byId[state.globals.localDeviceId].showOffline || false
+    const showOffline = selectShowOffline(state)
     const toggleOffline = useToggleShowOfflineMode()
     const listenerPosition = useListenerPosition()
+
+    React.useEffect(() => {
+
+    }, [])
 
     return (
         <>

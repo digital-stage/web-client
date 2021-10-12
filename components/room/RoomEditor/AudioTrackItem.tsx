@@ -1,8 +1,10 @@
 import {RoomSelection} from "../../../ui/RoomEditor/RoomSelection";
-import {useEmit, useStageSelector} from "@digitalstage/api-client-react";
 import {
-    useAudioTrackPosition, useCustomAudioTrackPosition,
-} from "./utils";
+    selectAudioTrackPositionByAudioTrackId,
+    selectCustomAudioTrackPositionByAudioTrackId,
+    useEmit,
+    useTrackedSelector
+} from "@digitalstage/api-client-react";
 import React from "react";
 import {RoomItem, RoomPositionWithAngle} from "../../../ui/RoomEditor";
 import {ClientDeviceEvents, ClientDevicePayloads} from "@digitalstage/api-types";
@@ -26,8 +28,9 @@ const AudioTrackItem = ({
     groupColor: string,
     stageDevicePosition: RoomPositionWithAngle
 }) => {
-    const position = useAudioTrackPosition(audioTrackId)
-    const customPosition = useCustomAudioTrackPosition(audioTrackId)
+    const state = useTrackedSelector()
+    const position = selectAudioTrackPositionByAudioTrackId(state, audioTrackId)
+    const customPosition = selectCustomAudioTrackPositionByAudioTrackId(state, audioTrackId)
     const [currentPosition, setCurrentPosition] = React.useState<RoomPositionWithAngle>({
         x: customPosition?.x || position.x,
         y: customPosition?.y || position.y,
@@ -43,7 +46,7 @@ const AudioTrackItem = ({
 
     // Stage management only for this item
     const selected = React.useMemo(() => selections.some(selection => selection.id === audioTrackId), [selections, audioTrackId])
-    const muted = useStageSelector<boolean>(state => state.audioTracks.byId[audioTrackId].muted)
+    const muted = state.audioTracks.byId[audioTrackId].muted
     const onClicked = React.useCallback(() => {
         if (selected) {
             if (onDeselect) {
@@ -65,7 +68,7 @@ const AudioTrackItem = ({
     }, [customPosition, onDeselect, onSelect, selected, audioTrackId])
 
     const emit = useEmit()
-    const deviceId = useStageSelector<string | undefined>(state => state.globals.selectedMode === "personal" ? state.globals.selectedDeviceId : undefined)
+    const deviceId = state.globals.selectedMode === "personal" ? state.globals.selectedDeviceId : undefined
     const onFinalChange = React.useCallback((position: RoomPositionWithAngle) => {
         if(emit) {
             if (customPosition || deviceId) {

@@ -20,41 +20,25 @@
  * SOFTWARE.
  */
 
-import {useStageSelector} from "../redux/selectors/useStageSelector";
 import {useConsumers} from "../services/MediasoupService";
 import {useWebRTCRemoteAudioTracks} from "../services/WebRTCService";
 import React from "react";
-import {createSelector} from "@reduxjs/toolkit";
-import {RootState} from "@digitalstage/api-client-react";
-import { selectId } from "api/redux/selectors/utils";
+import {RootState, useTrackedSelector} from "@digitalstage/api-client-react";
 
 export type RemoteAudioTracks = {
     [audioTrackId: string]: MediaStreamTrack
 }
 
-const selectWebRTCAudioTrackId = createSelector(
-  (state: RootState) => state.audioTracks.byId,
-  (state: RootState) => state.audioTracks.byStageDevice,
-  selectId,
-  (byId, byStageDevice, id) => id && byStageDevice[id]?.find(
-    id => byId[id].type === "browser"
-  )
-)
+const selectWebRTCAudioTrackIdByStageDeviceId = (state: RootState,stageDeviceId: string): string | undefined => state.audioTracks.byStageDevice[stageDeviceId]?.find(id => state.audioTracks.byId[id].type === "browser")
+const selectMediasoupAudioTrackIdByStageDeviceId = (state: RootState,stageDeviceId: string): string | undefined => state.audioTracks.byStageDevice[stageDeviceId]?.find(id => state.audioTracks.byId[id].type === "mediasoup")
 
-const selectMediasoupAudioTrackId = createSelector(
-  (state: RootState) => state.audioTracks.byId,
-  (state: RootState) => state.audioTracks.byStageDevice,
-  selectId,
-  (byId, byStageDevice, id) => id && byStageDevice[id]?.find(
-    id => byId[id].type === "mediasoup"
-  )
-)
 
 
 const useRemoteAudioTracks = (stageDeviceId: string): RemoteAudioTracks => {
     // There should be only one audio track for each webrtc or mediasoup per stage device
-    const webRTCAudioTrackId = useStageSelector(state => selectWebRTCAudioTrackId(state, stageDeviceId))
-    const mediasoupAudioTrackId = useStageSelector<string | undefined>(state => selectMediasoupAudioTrackId(state, stageDeviceId))
+    const state = useTrackedSelector()
+    const webRTCAudioTrackId = selectWebRTCAudioTrackIdByStageDeviceId(state, stageDeviceId)
+    const mediasoupAudioTrackId = selectMediasoupAudioTrackIdByStageDeviceId(state, stageDeviceId)
 
     const webRTCAudioTracks = useWebRTCRemoteAudioTracks()
     const mediasoupConsumers = useConsumers()

@@ -1,12 +1,15 @@
-import {useCustomGroupPosition, useGroupPosition} from "./utils";
-import {useEmit, useSelectStageMemberIds, useStageSelector} from "@digitalstage/api-client-react";
+import {
+    selectCustomGroupPositionByGroupId,
+    selectGroupPositionByGroupId,
+    useEmit,
+    useTrackedSelector
+} from "@digitalstage/api-client-react";
 import React from "react";
 import {RoomItem, RoomPositionWithAngle} from "../../../ui/RoomEditor";
 import {RoomSelection} from "../../../ui/RoomEditor/RoomSelection";
 import {StageMemberItem} from "./StageMemberItem";
 import {ClientDeviceEvents, ClientDevicePayloads} from "@digitalstage/api-types";
 import { GroupIcon } from "./icons/GroupIcon";
-import {useSelectStageMemberIdsByGroup} from "../../../api/redux/selectors/useSelectStageMemberIds";
 
 const SHOW_GROUPS = false
 
@@ -17,11 +20,12 @@ const GroupItem = ({groupId, onSelect, onDeselect, selections}: {
     onSelect?: (selection: RoomSelection) => void
     onDeselect?: (selection: RoomSelection) => void
 }) => {
-    const position = useGroupPosition(groupId)
-    const customPosition = useCustomGroupPosition(groupId)
-    const groupColor = useStageSelector(state => state.groups.byId[groupId].color)
-    const localStageMemberId = useStageSelector(state => state.globals.stageMemberId)
-    const stageMemberIds = useSelectStageMemberIdsByGroup(groupId)
+    const state = useTrackedSelector()
+    const position = selectGroupPositionByGroupId(state, groupId)
+    const customPosition = selectCustomGroupPositionByGroupId(state, groupId)
+    const groupColor = state.groups.byId[groupId].color
+    const localStageMemberId = state.globals.stageMemberId
+    const stageMemberIds = state.stageMembers.byGroup[groupId]
     const [currentPosition, setCurrentPosition] = React.useState<RoomPositionWithAngle>({
         x: customPosition?.x || position.x,
         y: customPosition?.y || position.y,
@@ -38,8 +42,8 @@ const GroupItem = ({groupId, onSelect, onDeselect, selections}: {
     // HANDLING GROUP NODE (UNUSED IF SHOW_GROUPS=false)
     const emit = useEmit()
     const selected = React.useMemo(() => selections.some(selection => selection.id === groupId), [groupId, selections])
-    const groupName = useStageSelector(state => state.groups.byId[groupId].name)
-    const deviceId = useStageSelector<string | undefined>(state => state.globals.selectedMode === "personal" ? state.globals.selectedDeviceId : undefined)
+    const groupName = state.groups.byId[groupId].name
+    const deviceId = state.globals.selectedMode === "personal" ? state.globals.selectedDeviceId : undefined
     const onFinalChange = React.useCallback((position: RoomPositionWithAngle) => {
         if(emit) {
             if (customPosition || deviceId) {
