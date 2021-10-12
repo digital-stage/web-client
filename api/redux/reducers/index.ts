@@ -1,3 +1,4 @@
+import {combineReducers} from "redux";
 import {reduceAuth} from "./reduceAuth";
 import {reduceGlobals} from "./reduceGlobals";
 import {reduceChatMessage} from "./reduceChatMessage";
@@ -20,7 +21,6 @@ import {reduceCustomStageDevicePositions} from "./reduceCustomStageDevicePositio
 import {reduceCustomAudioTrackVolumes} from "./reduceCustomAudioTrackVolumes";
 import {reduceCustomAudioTrackPositions} from "./reduceCustomAudioTrackPositions";
 import {reduceNotifications} from "./reduceNotifications";
-import {combineReducers} from "redux";
 
 const rootReducer = combineReducers({
     auth: reduceAuth,

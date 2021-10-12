@@ -22,14 +22,14 @@
 
 import '../scripts/wdyr'
 import React from 'react'
-import './../styles/root.css'
-import './../styles/index.scss'
+import "../styles/root.css"
+import "../styles/index.scss"
 import Head from 'next/head'
 import {AppProps, NextWebVitalsMetric} from 'next/app'
 import {DigitalStageProvider, useStageSelector} from '@digitalstage/api-client-react'
-import {DeviceSelector} from '../components/global/DeviceSelector'
 import {Background} from 'components/global/Background'
 import {Sidebar} from 'components/global/Sidebar'
+import {DeviceSelector} from '../components/global/DeviceSelector'
 import {ConnectionOverlay} from '../components/global/ConnectionOverlay'
 import {ProfileMenu} from '../components/global/ProfileMenu'
 import {PlaybackOverlay} from '../components/global/PlaybackOverlay'

@@ -5,10 +5,10 @@ import {
     useTrackedSelector
 } from "@digitalstage/api-client-react";
 import React from "react";
+import {ClientDeviceEvents, ClientDevicePayloads} from "@digitalstage/api-types";
 import {RoomItem, RoomPositionWithAngle} from "../../../ui/RoomEditor";
 import {RoomSelection} from "../../../ui/RoomEditor/RoomSelection";
 import {StageMemberItem} from "./StageMemberItem";
-import {ClientDeviceEvents, ClientDevicePayloads} from "@digitalstage/api-types";
 import { GroupIcon } from "./icons/GroupIcon";
 
 const SHOW_GROUPS = false
@@ -48,8 +48,8 @@ const GroupItem = ({groupId, onSelect, onDeselect, selections}: {
         if(emit) {
             if (customPosition || deviceId) {
                 emit(ClientDeviceEvents.SetCustomGroupPosition, {
-                    groupId: groupId,
-                    deviceId: deviceId,
+                    groupId,
+                    deviceId,
                     ...position
                 } as ClientDevicePayloads.SetCustomGroupPosition)
             } else {
@@ -70,15 +70,13 @@ const GroupItem = ({groupId, onSelect, onDeselect, selections}: {
                     customId: customPosition && customPosition._id
                 })
             }
-        } else {
-            if (onSelect) {
+        } else if (onSelect) {
                 onSelect({
                     type: 'group',
                     id: groupId,
                     customId: customPosition && customPosition._id
                 })
             }
-        }
     }, [customPosition, groupId, onDeselect, onSelect, selected])
 
     const onChange = React.useCallback((position: RoomPositionWithAngle) => {

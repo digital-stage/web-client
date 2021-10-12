@@ -20,59 +20,58 @@
  * SOFTWARE.
  */
 
-import { useEffect, useState } from 'react'
+import {useEffect, useState} from 'react'
 import {
-    AudioTrack,
-    CustomAudioTrackPosition,
-    DefaultThreeDimensionalProperties,
-    ThreeDimensionalProperties,
+  AudioTrack,
+  DefaultThreeDimensionalProperties,
+  ThreeDimensionalProperties,
 } from '@digitalstage/api-types'
-import { useStageDevicePosition } from './useStageDevicePosition'
-import { useStageSelector } from 'api/redux/selectors/useStageSelector'
-import { shallowEqual } from 'react-redux'
+import {RootState} from 'api/redux/RootState'
+import {useTrackedSelector} from "@digitalstage/api-client-react";
+import {useStageDevicePosition} from './useStageDevicePosition'
+
+const selectCustomAudioTrackPositionByDeviceIdAndAudioTrackId = (state: RootState, deviceId: string, audioTrackId: string) =>
+  state.customAudioTrackPositions.byDeviceAndAudioTrack[deviceId] &&
+  state.customAudioTrackPositions.byDeviceAndAudioTrack[deviceId][audioTrackId]
+    ? state.customAudioTrackPositions.byId[
+      state.customAudioTrackPositions.byDeviceAndAudioTrack[deviceId][
+        audioTrackId
+        ]
+      ]
+    : undefined
 
 const useAudioTrackPosition = ({
-    audioTrack,
-    deviceId,
-}: {
-    audioTrack: AudioTrack
-    deviceId: string
+                                 audioTrack,
+                                 deviceId,
+                               }: {
+  audioTrack: AudioTrack
+  deviceId: string
 }) => {
-    const [position, setPosition] = useState<ThreeDimensionalProperties>(
-        DefaultThreeDimensionalProperties
-    )
-    const stageDevicePosition = useStageDevicePosition({
-        stageDeviceId: audioTrack.stageDeviceId,
-        deviceId,
+  const [position, setPosition] = useState<ThreeDimensionalProperties>(
+    DefaultThreeDimensionalProperties
+  )
+  const stageDevicePosition = useStageDevicePosition({
+    stageDeviceId: audioTrack.stageDeviceId,
+    deviceId,
+  })
+  // Fetch necessary model
+  const state = useTrackedSelector()
+  const customAudioTrackPosition = selectCustomAudioTrackPositionByDeviceIdAndAudioTrackId(state, deviceId, audioTrack._id)
+
+  // Calculate position
+  useEffect(() => {
+    // Only calculate if ready and the default entities are available
+    setPosition({
+      x: stageDevicePosition.x + (customAudioTrackPosition?.x || audioTrack.x),
+      y: stageDevicePosition.y + (customAudioTrackPosition?.y || audioTrack.y),
+      z: stageDevicePosition.z + (customAudioTrackPosition?.z || audioTrack.z),
+      rX: stageDevicePosition.rX + (customAudioTrackPosition?.rX || audioTrack.rX),
+      rY: stageDevicePosition.rY + (customAudioTrackPosition?.rY || audioTrack.rY),
+      rZ: stageDevicePosition.rZ + (customAudioTrackPosition?.rZ || audioTrack.rZ),
+      directivity: customAudioTrackPosition?.directivity || audioTrack.directivity,
     })
-    // Fetch necessary model
-    const customAudioTrackPosition = useStageSelector<CustomAudioTrackPosition | undefined>(
-        (state) =>
-            state.customAudioTrackPositions.byDeviceAndAudioTrack[deviceId] &&
-            state.customAudioTrackPositions.byDeviceAndAudioTrack[deviceId][audioTrack._id]
-                ? state.customAudioTrackPositions.byId[
-                      state.customAudioTrackPositions.byDeviceAndAudioTrack[deviceId][
-                          audioTrack._id
-                      ]
-                  ]
-                : undefined,
-        shallowEqual
-    )
+  }, [stageDevicePosition, customAudioTrackPosition, audioTrack])
 
-    // Calculate position
-    useEffect(() => {
-        // Only calculate if ready and the default entities are available
-        setPosition({
-            x: stageDevicePosition.x + (customAudioTrackPosition?.x || audioTrack.x),
-            y: stageDevicePosition.y + (customAudioTrackPosition?.y || audioTrack.y),
-            z: stageDevicePosition.z + (customAudioTrackPosition?.z || audioTrack.z),
-            rX: stageDevicePosition.rX + (customAudioTrackPosition?.rX || audioTrack.rX),
-            rY: stageDevicePosition.rY + (customAudioTrackPosition?.rY || audioTrack.rY),
-            rZ: stageDevicePosition.rZ + (customAudioTrackPosition?.rZ || audioTrack.rZ),
-            directivity: customAudioTrackPosition?.directivity || audioTrack.directivity,
-        })
-    }, [stageDevicePosition, customAudioTrackPosition, audioTrack])
-
-    return position
+  return position
 }
-export { useAudioTrackPosition }
+export {useAudioTrackPosition}

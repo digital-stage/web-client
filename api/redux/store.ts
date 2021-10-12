@@ -20,6 +20,9 @@
  * SOFTWARE.
  */
 
+import {configureStore} from '@reduxjs/toolkit'
+import {CurriedGetDefaultMiddleware} from "@reduxjs/toolkit/src/getDefaultMiddleware";
+import {Middleware} from "redux";
 import {reduceAuth} from './reducers/reduceAuth'
 import {reduceGlobals} from './reducers/reduceGlobals'
 import {reduceAudioTracks} from './reducers/reduceAudioTracks'
@@ -42,13 +45,10 @@ import {reduceCustomStageMemberVolumes} from './reducers/reduceCustomStageMember
 import {reduceVideoTracks} from './reducers/reduceVideoTracks'
 import {reduceRouters} from './reducers/reduceRouters'
 import {reduceNotifications} from './reducers/reduceNotifications'
-import {configureStore} from '@reduxjs/toolkit'
 import {authMiddleware} from './authMiddleware'
 import {notificationMiddleware} from './notificationMiddleware'
 import {RootState} from './RootState'
 import {ReducerAction} from './actions/ReducerAction'
-import {CurriedGetDefaultMiddleware} from "@reduxjs/toolkit/src/getDefaultMiddleware";
-import {Middleware} from "redux";
 
 const store = configureStore<RootState, ReducerAction, ReadonlyArray<Middleware<{}, RootState>>>({
     reducer: {
@@ -80,7 +80,7 @@ const store = configureStore<RootState, ReducerAction, ReadonlyArray<Middleware<
         getDefaultMiddleware().prepend(authMiddleware, notificationMiddleware),
 })
 
-//export type RootState = ReturnType<typeof store.getState>
+// export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch
 
 export {store}

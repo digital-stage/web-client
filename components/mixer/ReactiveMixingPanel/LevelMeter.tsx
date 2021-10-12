@@ -51,12 +51,12 @@ function calculate(buffer: ArrayBuffer): number {
         const average = getAverageVolume(array)
         if (average > 50) {
             return average / 50 + 0.7
-        } else {
+        } 
             return (average / 50) * 0.7
-        }
-    } else {
+        
+    } 
         return getMaximumVolume(array) * 0.7
-    }
+    
 }
 
 const LevelMeter = ({

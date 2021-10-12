@@ -29,20 +29,20 @@ import {
     useStageSelector,
 } from '@digitalstage/api-client-react'
 import Link from 'next/link'
-import {Loading} from '../../components/global/Loading'
 import {AltList, AltListItem} from 'ui/AltList'
 import {ClientDeviceEvents, ClientDevicePayloads, Group, Stage} from '@digitalstage/api-types'
 import {RemoveStageModal} from 'components/stages/modals/RemoveStageModal'
 import {RemoveGroupModal} from 'components/stages/modals/RemoveGroupModal'
 import {GroupModal} from 'components/stages/modals/GroupModal'
 import {StageModal} from 'components/stages/modals/StageModal'
-import {InviteModal} from '../../components/stages/modals/InviteModal'
 import {Container} from 'ui/Container'
-import {LeaveStageForGoodModal} from '../../components/stages/modals/LeaveStageForGoodModal'
 import {shallowEqual} from 'react-redux'
 import {IoIosArrowDropleft} from 'react-icons/io'
 import {MdDeleteForever, MdEdit} from 'react-icons/md'
 import {Switch} from 'ui/Switch'
+import {LeaveStageForGoodModal} from '../../components/stages/modals/LeaveStageForGoodModal'
+import {InviteModal} from '../../components/stages/modals/InviteModal'
+import {Loading} from '../../components/global/Loading'
 import {Heading3, Heading5} from "../../ui/Heading";
 import {Paragraph} from "../../ui/Paragraph";
 
@@ -72,11 +72,11 @@ const StageMemberItem = ({
                             <label>
                                 Global mischen
                                 <Switch
-                                    round={true}
+                                    round
                                     size="small"
                                     checked={soundEditorUserIds.some(id => id === userId)}
                                     onChange={e => {
-                                        //TODO: Write react callbacks
+                                        // TODO: Write react callbacks
                                         if (e.currentTarget.checked) {
                                             // Add user
                                             emit(ClientDeviceEvents.ChangeStage, {
@@ -96,11 +96,11 @@ const StageMemberItem = ({
                             <label>
                                 Admin
                                 <Switch
-                                    round={true}
+                                    round
                                     checked={isAdmin}
                                     disabled={isAdmin && adminUserIds.length === 1}
                                     onChange={e => {
-                                        //TODO: Write react callbacks
+                                        // TODO: Write react callbacks
                                         if (e.currentTarget.checked) {
                                             // Add user
                                             emit(ClientDeviceEvents.ChangeStage, {

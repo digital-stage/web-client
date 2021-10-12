@@ -36,8 +36,7 @@ const SettingsNav = () => (
         </SecondaryHeadlineLink>
     </nav>
 )
-const SettingsLayout = ({ children }: { children: React.ReactNode }) => {
-    return (
+const SettingsLayout = ({ children }: { children: React.ReactNode }) => (
         <Container size="small">
             <Panel className="settingsPanel">
                 <SettingsNav />
@@ -45,5 +44,4 @@ const SettingsLayout = ({ children }: { children: React.ReactNode }) => {
             </Panel>
         </Container>
     )
-}
 export { SettingsLayout }

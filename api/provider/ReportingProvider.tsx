@@ -22,6 +22,7 @@
 
 import React from 'react'
 import { v4 as uuidv4 } from 'uuid'
+import { useDispatch } from 'react-redux'
 import {
     addNotification as addNotificationAction,
     changeNotification as changeNotificationAction,
@@ -29,7 +30,6 @@ import {
 } from '../redux/actions/clientActions'
 import { Notification } from '../redux/state/Notifications'
 
-import { useDispatch } from 'react-redux'
 import { logger } from '../logger'
 
 const { trace } = logger('NotificationProvider')
@@ -55,14 +55,12 @@ const ReportingProvider = ({ children }: { children: React.ReactNode }) => {
     const [, setTimeouts] = React.useState<any[]>([])
 
     // Clean up timeouts
-    React.useEffect(() => {
-        return () => {
+    React.useEffect(() => () => {
             setTimeouts((prev) => {
                 prev.forEach((timeout) => clearTimeout(timeout))
                 return []
             })
-        }
-    }, [])
+        }, [])
 
     const changeNotification = React.useCallback(
         (id: string, update: Partial<Omit<Notification, 'id'>>) => {
@@ -108,13 +106,11 @@ const ReportingProvider = ({ children }: { children: React.ReactNode }) => {
     )
 
     // Memorize published state
-    const value = React.useMemo(() => {
-        return {
+    const value = React.useMemo(() => ({
             addNotification,
             changeNotification,
             removeNotification,
-        }
-    }, [addNotification, changeNotification, removeNotification])
+        }), [addNotification, changeNotification, removeNotification])
 
     return <ReportingContext.Provider value={value}>{children}</ReportingContext.Provider>
 }

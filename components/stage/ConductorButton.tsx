@@ -39,7 +39,7 @@ const ConductorButton = ({ stageMemberId }: { stageMemberId: string }) => {
         }
     }, [emit, isDirector, stageMemberId])
     return (
-        <button onClick={handleClick} className={`round minimal conductorToggle`}>
+        <button onClick={handleClick} className="round minimal conductorToggle">
             {isDirector ? <AiFillStar /> : <AiOutlineStar />}
         </button>
     )

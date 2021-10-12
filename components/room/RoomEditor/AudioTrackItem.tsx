@@ -1,4 +1,3 @@
-import {RoomSelection} from "../../../ui/RoomEditor/RoomSelection";
 import {
     selectAudioTrackPositionByAudioTrackId,
     selectCustomAudioTrackPositionByAudioTrackId,
@@ -6,10 +5,11 @@ import {
     useTrackedSelector
 } from "@digitalstage/api-client-react";
 import React from "react";
-import {RoomItem, RoomPositionWithAngle} from "../../../ui/RoomEditor";
 import {ClientDeviceEvents, ClientDevicePayloads} from "@digitalstage/api-types";
-import {AudioTrackIcon} from "./icons/AudioTrackIcon";
 import {IoVolumeHigh, IoVolumeMute} from "react-icons/io5";
+import {RoomItem, RoomPositionWithAngle} from "../../../ui/RoomEditor";
+import {AudioTrackIcon} from "./icons/AudioTrackIcon";
+import {RoomSelection} from "../../../ui/RoomEditor/RoomSelection";
 
 const AudioTrackItem = ({
                             audioTrackId,
@@ -46,7 +46,7 @@ const AudioTrackItem = ({
 
     // Stage management only for this item
     const selected = React.useMemo(() => selections.some(selection => selection.id === audioTrackId), [selections, audioTrackId])
-    const muted = state.audioTracks.byId[audioTrackId].muted
+    const {muted} = state.audioTracks.byId[audioTrackId]
     const onClicked = React.useCallback(() => {
         if (selected) {
             if (onDeselect) {
@@ -56,15 +56,13 @@ const AudioTrackItem = ({
                     customId: customPosition && customPosition._id
                 })
             }
-        } else {
-            if (onSelect) {
+        } else if (onSelect) {
                 onSelect({
                     type: 'track',
                     id: audioTrackId,
                     customId: customPosition && customPosition._id
                 })
             }
-        }
     }, [customPosition, onDeselect, onSelect, selected, audioTrackId])
 
     const emit = useEmit()
@@ -73,8 +71,8 @@ const AudioTrackItem = ({
         if(emit) {
             if (customPosition || deviceId) {
                 emit(ClientDeviceEvents.SetCustomAudioTrackPosition, {
-                    audioTrackId: audioTrackId,
-                    deviceId: deviceId,
+                    audioTrackId,
+                    deviceId,
                     ...position
                 } as ClientDevicePayloads.SetCustomAudioTrackPosition)
             } else {
@@ -92,8 +90,8 @@ const AudioTrackItem = ({
         if(emit) {
             if (customPosition && deviceId) {
                 emit(ClientDeviceEvents.SetCustomAudioTrackVolume, {
-                    audioTrackId: audioTrackId,
-                    deviceId: deviceId,
+                    audioTrackId,
+                    deviceId,
                     muted: !muted
                 } as ClientDevicePayloads.SetCustomAudioTrackVolume)
             } else {
@@ -126,7 +124,7 @@ const AudioTrackItem = ({
             onFinalChange={onFinalChange}
         >
             <AudioTrackIcon/>
-            <span onClick={onMuteClicked} className={`muteField`}>{muted ? <IoVolumeMute /> : <IoVolumeHigh/>}</span>
+            <span onClick={onMuteClicked} className="muteField">{muted ? <IoVolumeMute /> : <IoVolumeHigh/>}</span>
             <style jsx>{`
                 .muteField {
                     position: absolute;

@@ -82,9 +82,9 @@ const StageJoiner = (): JSX.Element | null => {
                     if (err) {
                         if (err === ErrorCodes.InvalidPassword) {
                             return setWrongPassword(true)
-                        } else if (err == ErrorCodes.StageNotFound) {
+                        } if (err == ErrorCodes.StageNotFound) {
                             return setNotFound(true)
-                        } else if (err == ErrorCodes.GroupIdMissing) {
+                        } if (err == ErrorCodes.GroupIdMissing) {
                             return setGroupMissing(true)
                         }
                         console.error(err)
@@ -168,7 +168,7 @@ const StageJoiner = (): JSX.Element | null => {
                                 join({
                                     stageId,
                                     groupId,
-                                    password: intPassword ? intPassword : null,
+                                    password: intPassword || null,
                                 })
                             }}
                         >

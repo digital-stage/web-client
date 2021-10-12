@@ -83,7 +83,7 @@ const EnterInviteCodeModal = ({open, onClose}: { open: boolean; onClose: () => v
             </Paragraph>
             <Paragraph kind="micro" className="center">
                 <ReactCodeInput
-                    autoFocus={true}
+                    autoFocus
                     disabled={working}
                     name="Code"
                     inputMode="latin"

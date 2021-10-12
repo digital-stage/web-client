@@ -42,9 +42,7 @@ const RoomItem = ({
     const ref = React.useRef<HTMLDivElement>(null)
     const [dragging, setDragging] = React.useState<boolean>(false)
     const dragged = React.useRef<boolean>(false)
-    const y = React.useMemo<number>(() => {
-        return invertedY * -1
-    }, [invertedY])
+    const y = React.useMemo<number>(() => invertedY * -1, [invertedY])
     const offsetY = React.useMemo<number | undefined>(() => {
         if (invertedOffsetY)
             return invertedOffsetY * -1
@@ -84,11 +82,9 @@ const RoomItem = ({
                             rZ: lastPosition.current.rZ
                         })
                     }
-                } else {
-                    if (onClicked) {
+                } else if (onClicked) {
                         onClicked(e)
                     }
-                }
             }
             const onDragStart = (e: MouseEvent | TouchEvent) => {
                 if (e.cancelable) {
@@ -175,7 +171,7 @@ const RoomItem = ({
                         movementY = rotated.y
                     }
                     // Add offset and movement and check using drag bounce
-                    let positionWithOffset = {
+                    const positionWithOffset = {
                         x: lastPosition.current.x + movementX + xOffset,
                         y: lastPosition.current.y + movementY + yOffset
                     }
@@ -266,7 +262,7 @@ const RoomItem = ({
                     top: 50%;
                     left: 50%;
                     cursor: move;
-                    color: ${color ? color : 'inherit'};
+                    color: ${color || 'inherit'};
                     display: flex;
                     flex-direction: column;
                     align-items: center;

@@ -20,8 +20,8 @@
  * SOFTWARE.
  */
 
-import { Auth } from '../state/Auth'
 import { CombinedState } from 'redux'
+import { Auth } from '../state/Auth'
 import { InternalActionTypes } from '../actions/InternalActionTypes'
 import { ReducerAction } from '../actions/ReducerAction'
 
@@ -42,7 +42,7 @@ const reduceAuth = (
             const { token } = action.payload as { token?: string; staySignedIn?: boolean }
             return {
                 ...state,
-                token: token,
+                token,
             }
         case InternalActionTypes.SET_USER:
             return {

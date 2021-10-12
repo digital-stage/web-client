@@ -30,9 +30,11 @@ class Broker {
     private restartListenersList: {
         [id: string]: RestartListener[]
     } = {}
+
     private descriptionListenersList: {
         [id: string]: DescriptionListener[]
     } = {}
+
     private iceCandidateListenerList: {
         [id: string]: IceCandidateListener[]
     } = {}

@@ -32,11 +32,10 @@ const TextSwitch = ({
     value: string
     onSelect?: (key: React.Key) => any
     children: Array<ReactElement<{ key: React.Key }>>
-}) => {
-    return (
+}) => (
         <div className={`text-switch ${className || ''}`}>
             {Array.isArray(children)
-                ? children.map((child, i) => {
+                ? children.map((child) => {
                       if (!child.key) throw new Error('No key specified')
                       return (
                           <div
@@ -53,5 +52,4 @@ const TextSwitch = ({
                 : null}
         </div>
     )
-}
 export { TextSwitch }

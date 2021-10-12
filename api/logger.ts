@@ -23,7 +23,7 @@
 import debug from 'debug'
 import Pino, {LogFn} from 'pino'
 
-let pinoLogger: Pino.Logger = Pino(
+const pinoLogger: Pino.Logger = Pino(
     {
         level: 'debug',
         base: {

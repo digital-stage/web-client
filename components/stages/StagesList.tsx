@@ -23,14 +23,14 @@
 import {selectIsCurrentlyAdmin, useStageSelector, useTrackedSelector} from '@digitalstage/api-client-react'
 import React from 'react'
 import {List, ListItem} from 'ui/List'
-import {StageModal} from './modals/StageModal'
 import {Tag} from 'ui/Tag'
 import {Paragraph} from 'ui/Paragraph'
-import {EnterInviteCodeModal} from './modals/EnterInviteCodeModal'
-import {useStageJoiner} from '../../api/hooks/useStageJoiner'
 import Link from 'next/link'
 import {useRouter} from 'next/router'
 import {MdEdit, MdMoreHoriz} from 'react-icons/md'
+import {useStageJoiner} from '../../api/hooks/useStageJoiner'
+import {EnterInviteCodeModal} from './modals/EnterInviteCodeModal'
+import {StageModal} from './modals/StageModal'
 
 enum Type {
   mediasoup = 'Web',
@@ -41,7 +41,7 @@ enum Type {
 const StageItem = ({stageId}: { stageId: string }) => {
   const {push} = useRouter()
     const state = useTrackedSelector()
-  const name = state.stages.byId[stageId].name
+  const {name} = state.stages.byId[stageId]
   const password = useStageSelector((state) => state.stages.byId[stageId].password)
   const videoType = useStageSelector((state) => state.stages.byId[stageId].videoType as 'mediasoup' | 'jammer' | 'ov')
   const audioType = useStageSelector((state) => state.stages.byId[stageId].audioType as 'mediasoup' | 'jammer' | 'ov')
@@ -55,9 +55,9 @@ const StageItem = ({stageId}: { stageId: string }) => {
     if (hasGroups) {
       if (isActive) {
         return leave()
-      } else {
-        return join({stageId, password: password})
-      }
+      } 
+        return join({stageId, password})
+      
     }
     push(`/stages/${stageId}`)
   }, [hasGroups, isActive, join, leave, password, push, stageId])

@@ -22,14 +22,14 @@
 
 import React from 'react'
 import {BrowserDevice, WebMediaDevice} from '@digitalstage/api-types/dist/model/browser'
+import {useErrorReporting, useTrackedSelector} from "@digitalstage/api-client-react";
+import {refreshMediaDevices as refreshMediaDevicesSync} from 'api/utils/refreshMediaDevices';
 import {getVideoTrack} from "../utils/getVideoTrack";
 import {useWebcamDispatch} from "../provider/WebcamProvider";
 import {useMicrophoneDispatch} from "../provider/MicrophoneProvider";
 import {useEmit} from './ConnectionService';
 import {getAudioTrack} from "../utils/getAudioTrack";
 import {logger} from '../logger';
-import {useErrorReporting, useTrackedSelector} from "@digitalstage/api-client-react";
-import {refreshMediaDevices as refreshMediaDevicesSync} from 'api/utils/refreshMediaDevices';
 
 const {trace} = logger("MediaCaptureService")
 
@@ -41,8 +41,8 @@ const MediaCaptureService = () => {
 
   const state = useTrackedSelector()
 
-  const ready = state.globals.ready
-  const localDeviceId = state.globals.localDeviceId
+  const {ready} = state.globals
+  const {localDeviceId} = state.globals
   const sendVideo = state.globals.localDeviceId ? state.devices.byId[state.globals.localDeviceId].sendVideo : false
   const sendAudio = state.globals.localDeviceId ? state.devices.byId[state.globals.localDeviceId].sendAudio : false
   const inputVideoDeviceId = state.globals.localDeviceId ? (state.devices.byId[state.globals.localDeviceId] as BrowserDevice).inputVideoDeviceId : undefined
@@ -78,7 +78,7 @@ const MediaCaptureService = () => {
         lastOutputAudioDevices.current,
         emit
       )
-        .catch(err => reportError("Could not access media devices, reason: " + err))
+        .catch(err => reportError(`Could not access media devices, reason: ${  err}`))
     }
     return undefined
   }, [emit, localDeviceId, reportError])
@@ -94,14 +94,12 @@ const MediaCaptureService = () => {
             if (capturedTrack)
               capturedTrack.stop()
             throw new Error("Aborted by user")
-          } else {
-            if (capturedTrack) {
+          } else if (capturedTrack) {
               track = capturedTrack
               dispatchWebcam(track)
             } else {
               throw new Error("User denied access to webcam")
             }
-          }
         })
         .then(() => refreshMediaDevices())
         .catch(err => {
@@ -133,14 +131,12 @@ const MediaCaptureService = () => {
         if (abort) {
           if (capturedTrack)
             capturedTrack.stop()
-        } else {
-          if (capturedTrack) {
+        } else if (capturedTrack) {
             track = capturedTrack
             dispatchMicrophone(track)
           } else {
             throw new Error("User denied access to microphone")
           }
-        }
       })
         .then(() => refreshMediaDevices())
         .catch(err => {

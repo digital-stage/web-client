@@ -20,10 +20,10 @@
  * SOFTWARE.
  */
 
-import {useConsumers} from "../services/MediasoupService";
-import {useWebRTCRemoteAudioTracks} from "../services/WebRTCService";
 import React from "react";
 import {RootState, useTrackedSelector} from "@digitalstage/api-client-react";
+import {useConsumers} from "../services/MediasoupService";
+import {useWebRTCRemoteAudioTracks} from "../services/WebRTCService";
 
 export type RemoteAudioTracks = {
     [audioTrackId: string]: MediaStreamTrack
@@ -52,7 +52,7 @@ const useRemoteAudioTracks = (stageDeviceId: string): RemoteAudioTracks => {
                     [webRTCAudioTrackId]: webRTCAudioTracks[stageDeviceId]
                 }
             } else {
-                console.error("Could not find audio track model for WebRTC audio track " + webRTCAudioTracks[stageDeviceId].id)
+                console.error(`Could not find audio track model for WebRTC audio track ${  webRTCAudioTracks[stageDeviceId].id}`)
             }
         }
         if(mediasoupAudioTrackId && mediasoupConsumers[mediasoupAudioTrackId]) {

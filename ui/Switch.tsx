@@ -36,14 +36,12 @@ const Switch = ({
     'size'> & {
     size?: SIZE[keyof SIZE]
     round?: boolean
-}) => {
-    return (
-        <div className={`switch ${size ? size : ''} ${className || ''}`}>
+}) => (
+        <div className={`switch ${size || ''} ${className || ''}`}>
             <input type="checkbox" {...props} />
             <span className={`slider ${round ? 'round' : ''}`}/>
         </div>
     )
-}
 
 const SwitchLabel = ({children, append}: { children: React.ReactNode, append?: boolean }) => (
     <label className={`switchLabel${append ? ` append` : ``}`}>

@@ -33,13 +33,12 @@ import {
 } from '@digitalstage/api-types'
 import {Device} from 'mediasoup-client/lib/Device'
 import {SocketEvent} from 'teckos-client/dist/types'
-import {logger} from '../../logger'
 import {ClientMediasoupCallbacks} from "@digitalstage/api-types/dist/ClientMediasoupCallbacks";
+import {logger} from '../../logger'
 
 const {trace, reportError} = logger('MediasoupService:utils')
 
-export const getRTPCapabilities = (routerConnection: ITeckosClient) => {
-    return new Promise<mediasoupClient.types.RtpCapabilities>((resolve, reject) => {
+export const getRTPCapabilities = (routerConnection: ITeckosClient) => new Promise<mediasoupClient.types.RtpCapabilities>((resolve, reject) => {
         const callback: ClientMediasoupCallbacks.GetRTPCapabilities<mediasoupClient.types.RtpCapabilities> =
             (error, retrievedRtpCapabilities) => {
                 if (error) {
@@ -56,7 +55,6 @@ export const getRTPCapabilities = (routerConnection: ITeckosClient) => {
             callback
         )
     })
-}
 
 export const createWebRTCTransport = (
     routerConnection: ITeckosClient,
@@ -213,7 +211,7 @@ export const createConsumer = (
                   // Avoid calling pause() on consumer for safari (refer to: https://mediasoup.discourse.group/t/producer-pause-still-uploading-streams/167/4)
                   return resumeConsumer(socket, consumer)
                     .then(consumer => resolve(consumer))
-                }*/
+                } */
                 return resolve(consumer)
             })
         }
@@ -237,7 +235,7 @@ export const resumeConsumer = (
         return new Promise<mediasoupClient.types.Consumer>((resolve, reject) =>
             routerConnection.emit(ClientMediasoupEvents.ResumeConsumer, consumer.id as ClientMediasoupPayloads.ResumeConsumer, (error?: string) => {
                 if (error) return reject(error)
-                //consumer.resume()
+                // consumer.resume()
                 trace(`Resumed consumer ${consumer.id}`)
                 return resolve(consumer)
             })

@@ -29,14 +29,12 @@ import {
     selectStageDeviceIdsByStageMemberIdAndFilter,
     useEmit,
     useTrackedSelector
-} from '@digitalstage/api-client-react'
+,useSelectStageMemberIdsByGroup, selectLocalDeviceId} from '@digitalstage/api-client-react'
 import React from 'react'
-import {VolumeSlider} from './VolumeSlider'
-import {ClientDeviceEvents, ClientDevicePayloads} from '@digitalstage/api-types'
+import {ClientDeviceEvents, ClientDevicePayloads,DefaultVolumeProperties} from '@digitalstage/api-types'
 import {TextSwitch} from 'ui/TextSwitch'
-import {DefaultVolumeProperties} from '@digitalstage/api-types'
 import {useDispatch} from 'react-redux'
-import {useSelectStageMemberIdsByGroup, selectLocalDeviceId} from "@digitalstage/api-client-react";
+import {VolumeSlider} from './VolumeSlider'
 
 const BiChevronDown = () => (
     <svg
@@ -373,7 +371,7 @@ const GroupPanel = ({groupId, deviceId}: { groupId: string; deviceId?: string })
                 color: group.color,
             }}
         >
-            <div className={`sliderRow sliderRowExpandable`}>
+            <div className="sliderRow sliderRowExpandable">
                 <VolumeSlider
                     id={groupId}
                     volume={customGroup?.volume || group.volume}

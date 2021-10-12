@@ -23,10 +23,10 @@
 import {ChatMessage, ClientDeviceEvents, ClientDevicePayloads} from '@digitalstage/api-types'
 import React from 'react'
 import {useEmit, Users, useStageSelector} from '@digitalstage/api-client-react'
-import {useForceUpdate} from './useForceUpdate'
 import {NotificationItem} from 'ui/NotificationItem'
 import {Panel} from 'ui/Panel'
 import {AiOutlineSend} from 'react-icons/ai'
+import {useForceUpdate} from './useForceUpdate'
 import {Heading5} from "../../../ui/Heading";
 
 const convertTime = (time: number): string => {
@@ -71,8 +71,7 @@ const MessagePane = ({
 
   return (
     <div className={`chatMessages ${hasErrors ? 'chatMessagesWithError' : ''}`}>
-      {messages.map((msg, index) => {
-        return (
+      {messages.map((msg, index) => (
           <div
             /* eslint-disable-next-line react/no-array-index-key */
             key={`${msg.time}${index}`}
@@ -86,8 +85,7 @@ const MessagePane = ({
             <div className="chatMessage">{msg.message}</div>
             <div className="chatMessageTime">{convertTime(msg.time)}</div>
           </div>
-        )
-      })}
+        ))}
       <div ref={messagesEndRef}/>
     </div>
   )
@@ -138,13 +136,13 @@ const ChatPanel = () => {
         >
           <input autoFocus ref={messageRef} type="text" className="chatInput"/>
           <button
-            className={`chatMobileSendButton round small`}
+            className="chatMobileSendButton round small"
             type="submit"
             onClick={onSendClicked}
           >
             <AiOutlineSend/>
           </button>
-          <button className={`chatSendButton small`} type="submit" onClick={onSendClicked}>
+          <button className="chatSendButton small" type="submit" onClick={onSendClicked}>
             Nachricht senden
           </button>
         </form>

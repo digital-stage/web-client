@@ -20,13 +20,13 @@
  * SOFTWARE.
  */
 
-import {VideoPlayer} from "./VideoPlayer";
-import {Avatar} from "./Avatar";
-import {ConductorButton} from "./ConductorButton";
 import React from "react";
 import {useStageSelector, useWebRTCStats} from "@digitalstage/api-client-react";
 import {AiOutlineAudioMuted} from "react-icons/ai";
 import {Heading5, Heading6} from "ui/Heading";
+import {ConductorButton} from "./ConductorButton";
+import {Avatar} from "./Avatar";
+import {VideoPlayer} from "./VideoPlayer";
 
 
 const TrackStatsView = ({trackId}: { trackId: string }): JSX.Element | null => {
@@ -109,7 +109,7 @@ const StageMemberBox = ({
         </div>
         {track && <TrackStatsView trackId={track.id}/>}
       </div>
-      {!!conductorId ? <ConductorButton stageMemberId={conductorId}/> : null}
+      {conductorId ? <ConductorButton stageMemberId={conductorId}/> : null}
     </div>
   )
 }

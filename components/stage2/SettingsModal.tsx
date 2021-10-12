@@ -1,15 +1,14 @@
-import {Modal, ModalButton, ModalFooter, ModalHeader} from "../../ui/Modal";
 import {
     useEmit,
-} from "@digitalstage/api-client-react";
-import {Paragraph} from "../../ui/Paragraph";
-import {Switch} from "../../ui/Switch";
+useTrackedSelector} from "@digitalstage/api-client-react";
 import {ClientDeviceEvents, ClientDevicePayloads} from "@digitalstage/api-types";
 import React, {ChangeEvent} from "react";
-import {TextSwitch} from "../../ui/TextSwitch";
 import { OptionsList, OptionsListItem } from "ui/OptionsList";
+import {Modal, ModalButton, ModalFooter, ModalHeader} from "../../ui/Modal";
+import {Paragraph} from "../../ui/Paragraph";
+import {Switch} from "../../ui/Switch";
+import {TextSwitch} from "../../ui/TextSwitch";
 import {Heading4} from "../../ui/Heading";
-import {useTrackedSelector} from "@digitalstage/api-client-react";
 
 const SettingsModal = ({open, onClose}: {
     open: boolean,
@@ -17,7 +16,7 @@ const SettingsModal = ({open, onClose}: {
 }) => {
     const emit = useEmit()
     const state = useTrackedSelector()
-    const localDeviceId = state.globals.localDeviceId
+    const {localDeviceId} = state.globals
     const displayMode = localDeviceId && state.devices.byId[localDeviceId].displayMode || "boxes"
     const numLanes = localDeviceId && state.devices.byId[localDeviceId].numLanes || 3
     const numBoxes = localDeviceId && state.devices.byId[localDeviceId].numBoxes || 2
@@ -127,7 +126,7 @@ const SettingsModal = ({open, onClose}: {
             <ModalFooter>
                 <ModalButton
                     onClick={onClose}
-                    autoFocus={true}
+                    autoFocus
                 >
                     Fertig
                 </ModalButton>

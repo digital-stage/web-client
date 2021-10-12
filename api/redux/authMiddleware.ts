@@ -22,12 +22,12 @@
 
 import {Dispatch, Middleware } from 'redux'
 import { ServerDeviceEvents, ServerDevicePayloads } from '@digitalstage/api-types'
+import Cookie from 'js-cookie'
+import { batch } from 'react-redux'
 import { setInitialized, setToken, setUser } from './actions/clientActions'
 import { InternalActionTypes } from './actions/InternalActionTypes'
-import Cookie from 'js-cookie'
 import { getUserByToken } from './actions'
 
-import { batch } from 'react-redux'
 import { logger } from '../logger'
 import { RootState } from './RootState'
 

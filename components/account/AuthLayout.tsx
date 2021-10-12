@@ -44,8 +44,7 @@ const AuthNav = () => (
   </nav>
 )
 
-const AuthLayout = ({children, showMenu}: { children: React.ReactNode; showMenu?: boolean }) => {
-  return (
+const AuthLayout = ({children, showMenu}: { children: React.ReactNode; showMenu?: boolean }) => (
     <Container className="authLayout" size="tiny">
       <AuthLogo/>
       <Panel kind="black">
@@ -54,7 +53,6 @@ const AuthLayout = ({children, showMenu}: { children: React.ReactNode; showMenu?
       </Panel>
     </Container>
   )
-}
 AuthLayout.defaultProps = {
   showMenu: undefined,
 }

@@ -81,7 +81,7 @@ const RemoveStageModal = ({
         </Paragraph>
         {error ? <NotificationItem kind="error">{error}</NotificationItem> : null}
         <ModalFooter>
-          <ModalButton autoFocus={true} onClick={onClose}>Nein</ModalButton>
+          <ModalButton autoFocus onClick={onClose}>Nein</ModalButton>
           <ModalButton disabled={isDeleting} className="danger" onClick={removeStage}>
             Ja, Bühne wirklich löschen
           </ModalButton>

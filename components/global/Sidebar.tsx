@@ -25,7 +25,6 @@ import React from 'react'
 import {useOpenState} from 'ui/useOpenState'
 import {Backdrop} from 'ui/Backdrop'
 import Image from 'next/image'
-import logo from '../../public/logo.svg'
 import Link from 'next/link'
 import {selectRender3DAudio, selectSignedIn, useTrackedSelector} from '@digitalstage/api-client-react'
 import {GoBroadcast, GoListUnordered, GoSettings} from 'react-icons/go'
@@ -33,6 +32,7 @@ import {BiChat, BiCube, BiDevices} from 'react-icons/bi'
 import {FaBug, FaTools} from 'react-icons/fa'
 import {MdMoreHoriz} from 'react-icons/md'
 import {IoIosNotifications} from 'react-icons/io'
+import logo from '../../public/logo.svg'
 
 const SidebarItem = ({
                          children,
@@ -78,7 +78,7 @@ const Sidebar = () => {
             {signedIn ? (
                 <button
                     onClick={() => setOpen((prev) => !prev)}
-                    className={`secondary round sidebarBurgerButton`}
+                    className="secondary round sidebarBurgerButton"
                 >
                     <MdMoreHoriz/>
                 </button>

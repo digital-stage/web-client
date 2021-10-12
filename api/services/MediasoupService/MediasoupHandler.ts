@@ -29,6 +29,12 @@ import {
 } from "@digitalstage/api-types";
 import {Device as MediasoupDevice} from "mediasoup-client"
 import {EventEmitter} from "events";
+import {Transport as MediasoupTransport} from "mediasoup-client/lib/Transport";
+import {Producer as MediasoupProducer} from "mediasoup-client/lib/Producer";
+import omit from "lodash/omit";
+import {Consumer as MediasoupConsumer} from "mediasoup-client/lib/Consumer";
+import {logger} from "api/logger";
+import {publishTrack, unpublishTrack} from "api/utils/trackPublishing";
 import {
   closeConsumer,
   createConsumer,
@@ -38,12 +44,6 @@ import {
   resumeConsumer,
   stopProducer,
 } from "./util";
-import {Transport as MediasoupTransport} from "mediasoup-client/lib/Transport";
-import {Producer as MediasoupProducer} from "mediasoup-client/lib/Producer";
-import omit from "lodash/omit";
-import {Consumer as MediasoupConsumer} from "mediasoup-client/lib/Consumer";
-import {logger} from "api/logger";
-import {publishTrack, unpublishTrack} from "api/utils/trackPublishing";
 
 const {trace} = logger('MediasoupHandler')
 
@@ -69,12 +69,19 @@ export enum Events {
 
 class MediasoupHandler extends EventEmitter {
   private readonly emitToServer: (event: SocketEvent, ...args: any[]) => boolean
+
   private readonly stageId: string
+
   private readonly routerConnection: ITeckosClient
+
   private readonly device: MediasoupDevice
+
   private sendTransport: MediasoupTransport | undefined
+
   private receiveTransport: MediasoupTransport | undefined
+
   private producers: ProducersList = {}
+
   private consumers: ConsumersList = {}
 
   public emit(eventName: Events, ...args: any[]): boolean {
@@ -86,7 +93,7 @@ class MediasoupHandler extends EventEmitter {
     trace(`constructor(${token}, ${routerUrl}, ${stageId}, ...)`)
     this.stageId = stageId
     this.routerConnection = new TeckosClientWithJWT(routerUrl, {reconnection: true, debug: true}, token, {
-      stageId: stageId
+      stageId
     })
     this.device = new MediasoupDevice()
     this.emitToServer = emit
@@ -117,7 +124,7 @@ class MediasoupHandler extends EventEmitter {
       const capabilities = track.getCapabilities && track.getCapabilities()
       const publishedTrack = await publishTrack(this.emitToServer, this.stageId, kind, {
         producerId: producer.id,
-        capabilities: capabilities,
+        capabilities,
         ...settings,
         type: "mediasoup",
       }) as MediasoupVideoTrack | MediasoupAudioTrack
@@ -215,7 +222,7 @@ class MediasoupHandler extends EventEmitter {
       // Get RTP capabilities
       const routerRtpCapabilities = await getRTPCapabilities(this.routerConnection)
       // Tell device
-      await this.device.load({routerRtpCapabilities: routerRtpCapabilities})
+      await this.device.load({routerRtpCapabilities})
       // Create send transport
       trace("Creating send transport")
       this.sendTransport = await createWebRTCTransport(this.routerConnection, this.device, "send")
@@ -260,14 +267,14 @@ class MediasoupHandler extends EventEmitter {
           .catch(this.handleError)
       }
     })
-    this.routerConnection.on(ServerMediasoupEvents.TransportClosed, (id: ServerMediasoupPayloads.TransportClosed) => {
+    this.routerConnection.on(ServerMediasoupEvents.TransportClosed, (_: ServerMediasoupPayloads.TransportClosed) => {
       // TODO: Try to reconnect specific transport or close if failing
     })
     this.routerConnection.on(ServerMediasoupEvents.TransportPaused, (id: ServerMediasoupPayloads.TransportPaused) => {
       if (this.sendTransport && this.sendTransport.id === id) {
       }
     })
-    this.routerConnection.on(ServerMediasoupEvents.TransportResumed, (id: ServerMediasoupPayloads.TransportResumed) => {
+    this.routerConnection.on(ServerMediasoupEvents.TransportResumed, (_: ServerMediasoupPayloads.TransportResumed) => {
 
     })
   }

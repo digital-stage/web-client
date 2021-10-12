@@ -1,4 +1,3 @@
-import {RoomSelection} from "../../../ui/RoomEditor/RoomSelection";
 import {
   selectCustomStageMemberPositionByStageMemberId,
   selectNameOfStageMemberId, selectStageMemberPositionByStageMemberId,
@@ -6,8 +5,9 @@ import {
   useSelectStageDeviceIdsByStageMember, useTrackedSelector,
 } from "@digitalstage/api-client-react";
 import React from "react";
-import {RoomItem, RoomPositionWithAngle} from "../../../ui/RoomEditor";
 import {ClientDeviceEvents, ClientDevicePayloads} from "@digitalstage/api-types";
+import {RoomItem, RoomPositionWithAngle} from "../../../ui/RoomEditor";
+import {RoomSelection} from "../../../ui/RoomEditor/RoomSelection";
 import {CenterIcon} from "./icons/CenterIcon";
 import {StageMemberIcon} from "./icons/StageMemberIcon";
 import {StageDeviceItem} from "./StageDeviceItem";
@@ -52,15 +52,13 @@ const StageMemberItem = ({stageMemberId, local, selections, onSelect, onDeselect
           customId: customPosition && customPosition._id
         })
       }
-    } else {
-      if (onSelect) {
+    } else if (onSelect) {
         onSelect({
           type: 'member',
           id: stageMemberId,
           customId: customPosition && customPosition._id
         })
       }
-    }
   }, [customPosition, onDeselect, onSelect, selected, stageMemberId])
 
   const emit = useEmit()
@@ -69,8 +67,8 @@ const StageMemberItem = ({stageMemberId, local, selections, onSelect, onDeselect
     if (emit) {
       if (customPosition || deviceId) {
         emit(ClientDeviceEvents.SetCustomStageMemberPosition, {
-          stageMemberId: stageMemberId,
-          deviceId: deviceId,
+          stageMemberId,
+          deviceId,
           ...position
         } as ClientDevicePayloads.SetCustomStageMemberPosition)
       } else {

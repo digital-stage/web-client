@@ -1,4 +1,3 @@
-import {RoomSelection} from "../../../ui/RoomEditor/RoomSelection";
 import {
     selectCustomStageDevicePositionByStageDeviceId,
     selectDeviceNameByStageDeviceId,
@@ -7,8 +6,9 @@ import {
     useTrackedSelector
 } from "@digitalstage/api-client-react";
 import React from "react";
-import {RoomItem, RoomPositionWithAngle} from "../../../ui/RoomEditor";
 import {ClientDeviceEvents, ClientDevicePayloads} from "@digitalstage/api-types";
+import {RoomItem, RoomPositionWithAngle} from "../../../ui/RoomEditor";
+import {RoomSelection} from "../../../ui/RoomEditor/RoomSelection";
 import {CenterIcon} from "./icons/CenterIcon";
 import {StageDeviceIcon} from "./icons/StageDeviceIcon";
 import {AudioTrackItem} from "./AudioTrackItem";
@@ -64,15 +64,13 @@ const StageDeviceItem = ({
                     customId: customPosition && customPosition._id
                 })
             }
-        } else {
-            if (onSelect) {
+        } else if (onSelect) {
                 onSelect({
                     type: 'device',
                     id: stageDeviceId,
                     customId: customPosition && customPosition._id
                 })
             }
-        }
     }, [customPosition, onDeselect, onSelect, selected, stageDeviceId])
 
     const emit = useEmit()
@@ -81,8 +79,8 @@ const StageDeviceItem = ({
         if (emit) {
             if (customPosition || deviceId) {
                 emit(ClientDeviceEvents.SetCustomStageDevicePosition, {
-                    stageDeviceId: stageDeviceId,
-                    deviceId: deviceId,
+                    stageDeviceId,
+                    deviceId,
                     ...position
                 } as ClientDevicePayloads.SetCustomStageDevicePosition)
             } else {

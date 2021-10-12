@@ -33,11 +33,11 @@ import {
     useToggleShowOfflineMode,
     useTrackedSelector,
 } from "@digitalstage/api-client-react";
+import {HiFilter, HiOutlineFilter} from "react-icons/hi";
+import {useDispatch} from "react-redux";
 import {RoomSelection} from "../../../ui/RoomEditor/RoomSelection";
 import {Room, RoomPositionWithAngle} from "../../../ui/RoomEditor";
 import {GroupItem} from "./GroupItem";
-import {HiFilter, HiOutlineFilter} from "react-icons/hi";
-import {useDispatch} from "react-redux";
 import {ResetPanel} from "./ResetPanel";
 import {TextSwitch} from "../../../ui/TextSwitch";
 

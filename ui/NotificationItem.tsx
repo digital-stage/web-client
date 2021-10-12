@@ -57,7 +57,7 @@ const NotificationItem = ({
     onClose?: () => any
 } & React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLDivElement>, HTMLDivElement>) => (
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions
-    <div className={`notification ${kind ? kind : ''} ${className || ''}`} {...props}>
+    <div className={`notification ${kind || ''} ${className || ''}`} {...props}>
         <div>{children}</div>
         {closeable && (
             <button className="button round small close" onClick={closeable && onClose}>

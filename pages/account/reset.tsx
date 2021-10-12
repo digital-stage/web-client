@@ -24,9 +24,9 @@ import React from 'react'
 import {useRouter} from 'next/router'
 import {ResetPasswordForm} from 'components/account/ResetPasswordForm'
 import {AuthLayout} from 'components/account/AuthLayout'
+import Link from 'next/link'
 import {Paragraph} from '../../ui/Paragraph'
 import {Loading} from "../../components/global/Loading";
-import Link from 'next/link'
 import {Heading3} from "../../ui/Heading";
 
 const Reset = () => {

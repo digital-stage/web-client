@@ -51,7 +51,7 @@ const LocalStageMemberView = ({hasAdminRights}: { hasAdminRights: boolean }) => 
                 userName={userName}
                 groupName={groupName}
                 groupColor={groupColor}
-                active={true}
+                active
                 conductorId={hasAdminRights ? localStageMemberId : undefined}
                 track={localTrack}
                 videoTrackId={videoTrackId}
@@ -62,7 +62,7 @@ const LocalStageMemberView = ({hasAdminRights}: { hasAdminRights: boolean }) => 
                 userName={userName}
                 groupName={groupName}
                 groupColor={groupColor}
-                active={true}
+                active
                 conductorId={hasAdminRights ? localStageMemberId : undefined}
                 track={remoteTracks[videoTrackId]}
                 videoTrackId={videoTrackId}
@@ -101,7 +101,7 @@ const RemoteStageMemberView = ({stageMemberId, hasAdminRights}: { stageMemberId:
                     userName={userName}
                     groupName={groupName}
                     groupColor={groupColor}
-                    active={true}
+                    active
                     conductorId={hasAdminRights ? stageMemberId : undefined}
                     videoTrackId={videoTrackId}
                     track={videoTracks[videoTrackId]}

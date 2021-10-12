@@ -20,9 +20,9 @@
  * SOFTWARE.
  */
 
-import {LoadingShaft} from "../../ui/LoadingShaft";
 import React from "react";
 import { Heading2 } from "ui/Heading";
+import {LoadingShaft} from "../../ui/LoadingShaft";
 
 const RandomSentence = [
     "Stimme die Instrumente...",

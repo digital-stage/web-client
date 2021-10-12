@@ -20,24 +20,21 @@
  * SOFTWARE.
  */
 
-import {useEmit, useStageSelector, useTrackedSelector} from '@digitalstage/api-client-react'
+import {useEmit, useTrackedSelector} from '@digitalstage/api-client-react'
 import {ClientDeviceEvents, ClientDevicePayloads} from '@digitalstage/api-types'
 import React from 'react'
-import {shallowEqual} from 'react-redux'
 import {LiveInput} from 'ui/LiveInput'
 import {Switch} from 'ui/Switch'
 import {Select} from 'ui/Select'
-import {SoundCardSettings} from './SoundCardSettings'
 import {Paragraph} from 'ui/Paragraph'
 import {OptionsList, OptionsListItem} from 'ui/OptionsList'
 import {BrowserDevice} from "@digitalstage/api-types/dist/model/browser";
+import {SoundCardSettings} from './SoundCardSettings'
 import {Heading4} from "../../ui/Heading";
 
 const DeviceSettings = ({deviceId}: { deviceId: string }) => {
   const state = useTrackedSelector()
-  const device = React.useMemo(() => {
-    return state.devices.byId[deviceId]
-  }, [state.devices.byId, deviceId])
+  const device = React.useMemo(() => state.devices.byId[deviceId], [state.devices.byId, deviceId])
   const emit = useEmit()
   const browserDevice = state.devices.byId[deviceId].type === "browser" && device as BrowserDevice
   if (emit) {
@@ -63,7 +60,7 @@ const DeviceSettings = ({deviceId}: { deviceId: string }) => {
               <OptionsListItem as={<label/>}>
                 Direktverbindungen verwenden (schneller)
                 <Switch
-                  round={true}
+                  round
                   checked={!!state.devices.byId[deviceId].useP2P}
                   onChange={(e) =>
                     emit(ClientDeviceEvents.ChangeDevice, {
@@ -91,7 +88,7 @@ const DeviceSettings = ({deviceId}: { deviceId: string }) => {
               <OptionsListItem as={<label/>}>
                 Video senden
                 <Switch
-                  round={true}
+                  round
                   checked={state.devices.byId[deviceId].sendVideo}
                   onChange={(e) =>
                     emit(ClientDeviceEvents.ChangeDevice, {
@@ -104,7 +101,7 @@ const DeviceSettings = ({deviceId}: { deviceId: string }) => {
               <OptionsListItem as={<label/>}>
                 Video empfangen
                 <Switch
-                  round={true}
+                  round
                   checked={state.devices.byId[deviceId].receiveVideo}
                   onChange={(e) =>
                     emit(ClientDeviceEvents.ChangeDevice, {
@@ -145,7 +142,7 @@ const DeviceSettings = ({deviceId}: { deviceId: string }) => {
               <OptionsListItem as={<label/>}>
                 Audio senden
                 <Switch
-                  round={true}
+                  round
                   checked={state.devices.byId[deviceId].sendAudio}
                   onChange={(e) =>
                     emit(ClientDeviceEvents.ChangeDevice, {
@@ -158,7 +155,7 @@ const DeviceSettings = ({deviceId}: { deviceId: string }) => {
               <OptionsListItem as={<label/>}>
                 Audio empfangen
                 <Switch
-                  round={true}
+                  round
                   checked={state.devices.byId[deviceId].receiveAudio}
                   onChange={(e) =>
                     emit(ClientDeviceEvents.ChangeDevice, {

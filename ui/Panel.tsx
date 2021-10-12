@@ -36,8 +36,7 @@ const Panel = ({
                }: {
     kind?: KIND[keyof KIND]
     fixed?: boolean
-} & React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>) => {
-    return (
+} & React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>) => (
         <div
             className={`panel ${kind || ''} ${
                 fixed ? 'fixed' : ''
@@ -48,5 +47,4 @@ const Panel = ({
             {children}
         </div>
     )
-}
 export { Panel }

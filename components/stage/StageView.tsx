@@ -22,14 +22,14 @@
 
 import React from 'react'
 import Image from 'next/image'
-import landscapeIcon from '../../public/icons/landscape.svg'
-import portraitIcon from '../../public/icons/portrait.svg'
 import {
   useSelectStageMemberIds,
   useToggleShowLanes,
   useToggleShowOfflineMode, useTrackedSelector,
 } from "@digitalstage/api-client-react";
 import {HiFilter, HiOutlineFilter} from "react-icons/hi";
+import landscapeIcon from '../../public/icons/landscape.svg'
+import portraitIcon from '../../public/icons/portrait.svg'
 import {StageMemberView} from './StageMemberView';
 import {ConductorOverlay} from './ConductorOverlay';
 
@@ -42,7 +42,7 @@ const StageView = () => {
   const onLaneToggle = useToggleShowLanes()
 
   return (
-    <div className={`wrapper stageLayout`}>
+    <div className="wrapper stageLayout">
       <div className={`membersGrid ${showLanes ? 'lanes' : ''}`}>
         {sortedStageMemberIds
           .map(stageMemberId => <StageMemberView key={stageMemberId} stageMemberId={stageMemberId}/>)}

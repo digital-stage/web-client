@@ -22,11 +22,11 @@
 
 import {Producer} from 'mediasoup-client/lib/Producer'
 import {Consumer} from 'mediasoup-client/lib/Consumer'
+import {v4 as uuidv4} from 'uuid'
 import {Notification} from '../state/Notifications'
 import {AuthUser} from '../state/Auth'
 import {ReducerAction} from './ReducerAction'
 import {InternalActionTypes} from './InternalActionTypes'
-import {v4 as uuidv4} from 'uuid'
 
 export const init = (): ReducerAction => ({
     type: InternalActionTypes.INIT,
@@ -161,7 +161,7 @@ export const reportError = (error: Error, stack?: string): ReducerAction =>
         date: new Date().getTime(),
         kind: 'error',
         message: `${error.name}: ${error.message}`,
-        stack: stack,
+        stack,
         permanent: false,
         featured: true,
     })

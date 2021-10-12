@@ -21,19 +21,23 @@
  */
 
 import React from 'react'
-import {ClientDeviceEvents, ClientDevicePayloads, User} from '@digitalstage/api-types'
+import {ClientDeviceEvents, ClientDevicePayloads} from '@digitalstage/api-types'
 import {NotificationItem} from 'ui/NotificationItem'
 import {LiveInput} from 'ui/LiveInput'
-import {requestPasswordReset, useEmit, useStageSelector} from '@digitalstage/api-client-react'
+import {
+  requestPasswordReset,
+  selectAuthUser, selectLocalUser,
+  useEmit,
+  useTrackedSelector
+} from '@digitalstage/api-client-react'
 import {Paragraph} from 'ui/Paragraph'
 import {OptionsList, OptionsListItem} from 'ui/OptionsList'
 
 const ProfileEditor = () => {
   const emit = useEmit()
-  const authUser = useStageSelector((state) => state.auth.user)
-  const localUser = useStageSelector<User | undefined>((state) =>
-    state.globals.localUserId ? state.users.byId[state.globals.localUserId] : undefined
-  )
+  const state = useTrackedSelector()
+  const authUser = selectAuthUser(state)
+  const localUser = selectLocalUser(state)
   const [message, setMessage] = React.useState<string>()
   const [error, setError] = React.useState<string>()
 

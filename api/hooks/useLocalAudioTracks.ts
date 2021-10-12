@@ -20,9 +20,9 @@
  * SOFTWARE.
  */
 
-import {useMicrophone} from "../provider/MicrophoneProvider";
 import React from "react";
 import {useTrackedSelector} from "@digitalstage/api-client-react";
+import {useMicrophone} from "../provider/MicrophoneProvider";
 
 const useLocalAudioTracks = (): {
     [audioTrackId: string]: MediaStreamTrack

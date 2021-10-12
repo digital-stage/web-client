@@ -33,16 +33,16 @@ const getAudioTrack = ({
                          echoCancellation,
                          deviceId,
                          noiseSuppression,
-                       }: AudioOptions): Promise<MediaStreamTrack | undefined> => {
-  return navigator.mediaDevices
+                       }: AudioOptions): Promise<MediaStreamTrack | undefined> => 
+   navigator.mediaDevices
     .getUserMedia({
       video: false,
       audio: {
-        deviceId: deviceId,
-        //sampleRate: sampleRate,
-        autoGainControl: autoGainControl,
-        echoCancellation: echoCancellation,
-        noiseSuppression: noiseSuppression,
+        deviceId,
+        // sampleRate: sampleRate,
+        autoGainControl,
+        echoCancellation,
+        noiseSuppression,
         latency: 0,
       } as any,
     })
@@ -56,6 +56,6 @@ const getAudioTrack = ({
         })
       }
       return track
-    })*/
-}
+    }) */
+
 export {getAudioTrack}

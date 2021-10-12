@@ -33,11 +33,9 @@ const Backdrop = React.forwardRef(
             open: OpenState[keyof OpenState]
         } & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
         ref: ForwardedRef<HTMLDivElement>
-    ) => {
-        return (
+    ) => (
             <div ref={ref} className={`backdrop ${open} ${className || ''}`} {...props} />
         )
-    }
 )
 Backdrop.displayName = 'Backdrop'
 export { Backdrop }

@@ -86,10 +86,9 @@ const refreshMediaDevices = (
     inputVideoDevices: WebMediaDevice[],
     outputAudioDevices: WebMediaDevice[],
     emit: (event: SocketEvent, ...args: any[]) => boolean
-): Promise<boolean> => {
-    return enumerateDevices().then((devices) => {
+): Promise<boolean> => enumerateDevices().then((devices) => {
         // Sync and update if necessary
-        let shouldUpdate: boolean = false
+        let shouldUpdate = false
         const update: ClientDevicePayloads.ChangeDevice = {_id: deviceId}
         if (inputAudioDevices !== devices.inputAudioDevices) {
             shouldUpdate = true
@@ -108,5 +107,4 @@ const refreshMediaDevices = (
         }
         return false
     })
-}
 export {refreshMediaDevices}

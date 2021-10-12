@@ -121,7 +121,7 @@ const InviteModal = ({
                                         )
                                     )
                             }}
-                            autoFocus={true}
+                            autoFocus
                         >
                             Code kopieren
                         </button>

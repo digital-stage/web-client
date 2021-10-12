@@ -22,12 +22,11 @@
 
 import React, {useCallback} from 'react'
 import {Field, Form, Formik, FormikProps} from 'formik'
-import {getUserByToken, signInWithEmailAndPassword} from '@digitalstage/api-client-react'
+import {getUserByToken, signInWithEmailAndPassword,InternalActionTypes} from '@digitalstage/api-client-react'
 import * as Yup from 'yup'
 import {TextInput} from 'ui/TextInput'
 import {NotificationItem} from 'ui/NotificationItem'
 import {batch, useDispatch} from 'react-redux'
-import {InternalActionTypes} from '@digitalstage/api-client-react'
 import {translateError} from './translateError'
 import {Switch} from "../../ui/Switch";
 
@@ -48,7 +47,7 @@ const LoginForm = (): JSX.Element => {
             dispatch({
               type: InternalActionTypes.SET_TOKEN,
               payload: {
-                token: token,
+                token,
                 staySignedIn: values.staySignedIn,
               },
             })
@@ -100,7 +99,7 @@ const LoginForm = (): JSX.Element => {
             maxLength={20}
           />
           <label className="staySignedInLabel">
-            <Field id="staySignedIn" name="staySignedIn" type="checkbox" as={Switch} size="small" round={true} />
+            <Field id="staySignedIn" name="staySignedIn" type="checkbox" as={Switch} size="small" round />
             Angemeldet bleiben
           </label>
           {error && <NotificationItem kind="error">{error}</NotificationItem>}

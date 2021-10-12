@@ -23,8 +23,8 @@
 import {useEmit, useTrackedSelector} from '@digitalstage/api-client-react'
 import React from 'react'
 import {ClientDeviceEvents, ClientDevicePayloads} from '@digitalstage/api-types'
-import {RoomSelection} from '../../../ui/RoomEditor/RoomSelection'
 import {BiReset} from 'react-icons/bi'
+import {RoomSelection} from '../../../ui/RoomEditor/RoomSelection'
 
 const SelectionToGlobal = {
     group: ClientDeviceEvents.ChangeGroup,

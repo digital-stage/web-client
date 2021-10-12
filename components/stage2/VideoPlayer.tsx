@@ -48,7 +48,7 @@ const UnmemorizedVideoPlayer = ({track, className}: { track: MediaStreamTrack; c
                 <video autoPlay muted playsInline controls={false} ref={videoRef}/>
                 <button
                     onClick={() => setMirrored((prev) => !prev)}
-                    className={`small round white mirrorToggle`}
+                    className="small round white mirrorToggle"
                 >
                     <GoMirror/>
                 </button>

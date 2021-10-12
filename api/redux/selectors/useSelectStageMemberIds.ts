@@ -40,10 +40,10 @@ const useSelectStageMemberIdsByGroup = (groupId: string): string[] => {
       return state.stageMembers.byGroup[groupId]
         .filter(id => state.stageMembers.byId[id].active)
         .sort((a, b) => sortStageMembers(state.stageMembers.byId[a], state.stageMembers.byId[b]))
-    } else {
+    } 
       return [...state.stageMembers.byGroup[groupId]]
         .sort((a, b) => sortStageMembers(state.stageMembers.byId[a], state.stageMembers.byId[b]))
-    }
+    
 
   }, [groupId, state.stageMembers.byGroup, state.stageMembers.byId, showOffline])
 }

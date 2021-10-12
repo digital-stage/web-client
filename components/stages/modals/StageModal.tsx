@@ -32,8 +32,8 @@ import { TextInput } from 'ui/TextInput'
 import {Collapse} from 'ui/Collapse'
 import { shallowEqual } from 'react-redux'
 import { Switch } from 'ui/Switch'
-import {Radio} from "../../../ui/Radio";
 import {Heading3, Heading5} from 'ui/Heading'
+import {Radio} from "../../../ui/Radio";
 
 const StageModal = ({
     open,
@@ -273,7 +273,7 @@ const StageModal = ({
                                 disabled={isSubmitting || !!error}
                                 className="danger"
                                 type="submit"
-                                autoFocus={true}
+                                autoFocus
                             >
                                 {stage ? 'Speichern' : 'Neue Bühne erstellen'}
                             </ModalButton>

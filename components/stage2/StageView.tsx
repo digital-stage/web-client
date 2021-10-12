@@ -1,15 +1,16 @@
 import {
+  selectCurrentStageMemberId,
   useRemoteVideoTracks,
-  useStageSelector, useTrackedSelector, useWebcam
-} from "@digitalstage/api-client-react";
+  useTrackedSelector,
+  useWebcam
+,useSelectStageMemberIdsByGroup} from "@digitalstage/api-client-react";
 import React from "react";
-import {useSelectStageMemberIdsByGroup} from "@digitalstage/api-client-react";
 import {FaMusic} from "react-icons/fa";
-import {VideoPlayer} from "./VideoPlayer";
 import {AiOutlineAudioMuted} from "react-icons/ai";
+import {GoSettings} from "react-icons/go";
+import {VideoPlayer} from "./VideoPlayer";
 import {Avatar} from "./Avatar";
 import {SettingsModal} from "./SettingsModal";
-import {GoSettings} from "react-icons/go";
 import {Heading5, Heading6} from "../../ui/Heading";
 
 
@@ -18,7 +19,6 @@ const Box = ({
                color,
                groupName,
                track,
-               videoTrackId,
                online,
                muted
              }: {
@@ -31,7 +31,7 @@ const Box = ({
   muted?: boolean
 }) => {
   const state = useTrackedSelector()
-  const localDeviceId = state.globals.localDeviceId
+  const {localDeviceId} = state.globals
   const displayMode = localDeviceId ? state.devices.byId[localDeviceId].displayMode : "boxes"
   const numCols = localDeviceId ?
     displayMode === "lanes"
@@ -61,13 +61,13 @@ const Box = ({
   return (
     <>
       <div className="box" style={{
-        width: width,
+        width,
         flexBasis: width,
-        height: height,
+        height,
       }}>
         <div className="ratio" style={{
           paddingTop: showLanes ? 0 : '56.25%',
-          height: height,
+          height,
         }}>
           <div className="inner">
             {track && <VideoPlayer track={track}/>}
@@ -79,7 +79,7 @@ const Box = ({
                   <Heading6
                     className="groupName"
                     style={{
-                      color: color,
+                      color,
                     }}
                   >
                     {groupName}
@@ -101,19 +101,19 @@ const Box = ({
 }
 
 const LocalStageMemberView = ({color, groupName}: { color?: string, groupName?: string }): JSX.Element | null => {
-  const localStageMemberId = useStageSelector(state => state.globals.stageMemberId)
-  const userName = useStageSelector<string>(state => state.globals.localUserId && state.users.byId[state.globals.localUserId]?.name || "Local user")
+  const state = useTrackedSelector()
+  const localStageMemberId = selectCurrentStageMemberId(state)
+  const userName = state.globals.localUserId && state.users.byId[state.globals.localUserId]?.name || "Local user"
 
   // Gather all tracks together
   const remoteTracks = useRemoteVideoTracks(localStageMemberId)
   const localTrack = useWebcam()
-  const videoTrackId = useStageSelector<string | undefined>(state =>
-    state.globals.localStageDeviceId &&
-    state.videoTracks.byStageDevice[state.globals.localStageDeviceId] &&
-    state.videoTracks.byStageDevice[state.globals.localStageDeviceId]?.length > 0
-      ? state.videoTracks.byStageDevice[state.globals.localStageDeviceId][0]
-      : undefined)
-  const hasAudioTracks = useStageSelector<boolean>(state => state.globals.localStageDeviceId && state.audioTracks.byStageDevice[state.globals.localStageDeviceId]?.length > 0 || false)
+  const videoTrackId = state.globals.localStageDeviceId &&
+  state.videoTracks.byStageDevice[state.globals.localStageDeviceId] &&
+  state.videoTracks.byStageDevice[state.globals.localStageDeviceId]?.length > 0
+    ? state.videoTracks.byStageDevice[state.globals.localStageDeviceId][0]
+    : undefined
+  const hasAudioTracks = state.globals.localStageDeviceId && state.audioTracks.byStageDevice[state.globals.localStageDeviceId]?.length > 0 || false
 
   return (
     <>
@@ -125,7 +125,7 @@ const LocalStageMemberView = ({color, groupName}: { color?: string, groupName?: 
         track={localTrack}
         videoTrackId={videoTrackId}
         muted={!hasAudioTracks}
-        online={true}
+        online
       />
       {Object.keys(remoteTracks).map(videoTrackId =>
         <Box
@@ -134,7 +134,7 @@ const LocalStageMemberView = ({color, groupName}: { color?: string, groupName?: 
           groupName={groupName}
           color={color}
           muted={!hasAudioTracks}
-          online={true}
+          online
         />
       )}
     </>
@@ -144,9 +144,10 @@ const RemoteStageMemberView = ({
                                  stageMemberId,
                                  color, groupName
                                }: { stageMemberId: string, color?: string, groupName?: string }): JSX.Element => {
-  const online = useStageSelector<boolean>(state => state.stageMembers.byId[stageMemberId].active)
-  const userName = useStageSelector<string>(state => state.stageMembers.byId[stageMemberId].userId && state.users.byId[state.stageMembers.byId[stageMemberId].userId]?.name || stageMemberId)
-  const hasAudioTracks = useStageSelector<boolean>(state => state.audioTracks.byStageMember[stageMemberId] && state.audioTracks.byStageMember[stageMemberId].length > 0)
+  const state = useTrackedSelector()
+  const online = state.stageMembers.byId[stageMemberId].active
+  const userName = state.stageMembers.byId[stageMemberId].userId && state.users.byId[state.stageMembers.byId[stageMemberId].userId]?.name || stageMemberId
+  const hasAudioTracks = state.audioTracks.byStageMember[stageMemberId] && state.audioTracks.byStageMember[stageMemberId].length > 0
   const videoTracks = useRemoteVideoTracks(stageMemberId)
 
   if (Object.keys(videoTracks).length > 0) {
@@ -184,7 +185,8 @@ const StageMemberView = ({
                            color,
                            groupName
                          }: { stageMemberId: string, color?: string, groupName?: string }): JSX.Element => {
-  const isLocal = useStageSelector<boolean>(state => state.globals.stageMemberId === stageMemberId)
+  const state = useTrackedSelector()
+  const isLocal = state.globals.stageMemberId === stageMemberId
   if (isLocal) {
     return <LocalStageMemberView color={color} groupName={groupName}/>
   }
@@ -193,8 +195,8 @@ const StageMemberView = ({
 
 const GroupView = ({groupId, isOnlyGroup}: { groupId: string, isOnlyGroup?: boolean }): JSX.Element | null => {
   const state = useTrackedSelector()
-  const name = state.groups.byId[groupId].name
-  const color = state.groups.byId[groupId].color
+  const {name} = state.groups.byId[groupId]
+  const {color} = state.groups.byId[groupId]
   const sortedStageMemberIds = useSelectStageMemberIdsByGroup(groupId)
   const showLanes = state.globals.localDeviceId && state.devices.byId[state.globals.localDeviceId].displayMode === "lanes" || false
 

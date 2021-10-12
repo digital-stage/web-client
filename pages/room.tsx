@@ -30,7 +30,7 @@ const Room = () => {
     const {isReady, push} = useRouter()
     const state = useTrackedSelector()
     const connectionReady = state.globals.ready
-    const stageId = state.globals.stageId
+    const {stageId} = state.globals
     const renderSpatialAudio = selectRender3DAudio(state)
     React.useEffect(() => {
         if (isReady && connectionReady) {

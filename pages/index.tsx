@@ -21,11 +21,11 @@
  */
 
 import Head from 'next/head'
-import {Container, SIZE} from '../ui/Container'
 import { useStageSelector } from '@digitalstage/api-client-react'
 import React from 'react'
 import { useRouter } from 'next/router'
 import { Loading } from 'components/global/Loading'
+import {Container, SIZE} from '../ui/Container'
 
 
 const Index = () => {

@@ -20,14 +20,14 @@
  * SOFTWARE.
  */
 
-import {DeviceSettings} from '../../components/devices/DeviceSettings'
 import {useRouter} from 'next/router'
 import React from 'react'
 import Link from 'next/link'
 import {useStageSelector} from '@digitalstage/api-client-react'
-import {Container} from '../../ui/Container'
 import {IoIosArrowDropleft} from 'react-icons/io'
 import {Panel} from 'ui/Panel'
+import {Container} from '../../ui/Container'
+import {DeviceSettings} from '../../components/devices/DeviceSettings'
 import {Loading} from "../../components/global/Loading";
 import {Heading3} from "../../ui/Heading";
 

@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-import React, {useEffect} from 'react'
+import React from 'react'
 import {useRouter} from 'next/router'
 import Link from 'next/link'
 import {ActivationForm} from 'components/account/ActivationForm'

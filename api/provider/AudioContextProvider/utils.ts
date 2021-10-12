@@ -24,9 +24,9 @@
 /**
  * Create audio buffer with fallback for safari
  */
-const createBuffer = (sampleRate?: number): AudioContext => {
-    return new AudioContext({
-        latencyHint: 0, //'interactive',
+const createBuffer = (sampleRate?: number): AudioContext => 
+     new AudioContext({
+        latencyHint: 0, // 'interactive',
         sampleRate
     })
     /*
@@ -47,8 +47,8 @@ const createBuffer = (sampleRate?: number): AudioContext => {
             })
         }
     }
-    return context*/
-}
+    return context */
+
 
 const startAudioContext = async (
     audioContext: AudioContext,

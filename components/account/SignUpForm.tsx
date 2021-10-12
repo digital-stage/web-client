@@ -25,12 +25,12 @@ import {Field, Form, Formik, FormikProps} from 'formik'
 import * as Yup from 'yup'
 import {NotificationItem} from 'ui/NotificationItem'
 import {TextInput} from 'ui/TextInput'
-import {translateError} from './translateError'
 import {
   AuthError,
   createUserWithEmailAndPassword,
   useNotification,
 } from '@digitalstage/api-client-react'
+import {translateError} from './translateError'
 
 const SignUpForm = ({onSignedUp}: { onSignedUp: () => void }) => {
   const [error, setError] = React.useState<string>()

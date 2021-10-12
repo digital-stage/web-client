@@ -30,25 +30,43 @@ const {trace, reportError} = logger('WebRTCService:PeerNegotiation')
 
 class PeerNegotiation {
     private readonly remoteId: string
+
     private readonly configuration?: RTCConfiguration
+
     private readonly onTrack: (track: MediaStreamTrack) => void
+
     private readonly onDescription: (description: RTCSessionDescriptionInit) => void
+
     private readonly onCandidate: (iceCandidate: RTCIceCandidate | null) => void
+
     private readonly onRestart: () => void
+
     private readonly polite: boolean
+
     private makingOffer: boolean = false
+
     private isSettingRemoteAnswerPending: boolean = false
+
     private retryCount: number = 0
+
     private peerConnection?: RTCPeerConnection
+
     private candidates: RTCIceCandidate[] = []
+
     private videoSender?: RTCRtpSender
+
     private audioSender?: RTCRtpSender
+
     private report?: LogServerReportFn
 
     private _onnegotiationneeded?: (this: RTCPeerConnection, ev: RTCPeerConnectionEventMap["negotiationneeded"]) => any
+
     private _onicecandidate?: (this: RTCPeerConnection, ev: RTCPeerConnectionEventMap["icecandidate"]) => any
+
     private _onconnectionstatechange?: (this: RTCPeerConnection, ev: RTCPeerConnectionEventMap["connectionstatechange"]) => any
+
     private _ontrack?: (this: RTCPeerConnection, ev: RTCPeerConnectionEventMap["track"]) => any
+
     private _iceconnectionstatechange?: (this: RTCPeerConnection, ev: RTCPeerConnectionEventMap["iceconnectionstatechange"]) => any
 
     constructor({
@@ -118,15 +136,15 @@ class PeerNegotiation {
         trace(`${this.remoteId} setDescription(${description.type})`)
         try {
             if (this.ignore(description)) {
-                trace(this.remoteId + " Ignoring incoming description")
+                trace(`${this.remoteId  } Ignoring incoming description`)
                 return
             }
 
-            trace(this.remoteId + " Set remote description")
+            trace(`${this.remoteId  } Set remote description`)
             await this.setRemoteDescription(description)
 
             if (description.type === 'offer') {
-                trace(this.remoteId + " Set local descriptions, since this is an offer")
+                trace(`${this.remoteId  } Set local descriptions, since this is an offer`)
                 await this.setLocalDescription(await this.peerConnection.createAnswer())
             }
         } catch (error) {
@@ -148,7 +166,7 @@ class PeerNegotiation {
     public async createOffer() {
         if (!this.peerConnection)
             throw new Error("Not connected")
-        trace(this.remoteId + " createOffer()")
+        trace(`${this.remoteId  } createOffer()`)
         if (!this.readyToMakeOffer) return
 
         try {
@@ -219,25 +237,25 @@ class PeerNegotiation {
     }
 
     private initiateManualRollback() {
-        trace(this.remoteId + " initiateManualRollback()")
+        trace(`${this.remoteId  } initiateManualRollback()`)
         this.restart()
 
         this.onRestart()
     }
 
     public restart() {
-        trace(this.remoteId + " restart()")
+        trace(`${this.remoteId  } restart()`)
         this.stop()
         this.start()
     }
 
     private start() {
-        trace(this.remoteId + " start()")
+        trace(`${this.remoteId  } start()`)
         this.setupPeerConnection()
     }
 
     public stop() {
-        trace(this.remoteId + " stop()")
+        trace(`${this.remoteId  } stop()`)
         this.makingOffer = false
         this.isSettingRemoteAnswerPending = false
         this.candidates = []
@@ -255,7 +273,7 @@ class PeerNegotiation {
     }
 
     private setupPeerConnection() {
-        trace(this.remoteId + " setupPeerConnection()")
+        trace(`${this.remoteId  } setupPeerConnection()`)
 
         this.peerConnection = new RTCPeerConnection(this.configuration)
         if (this.report) {
@@ -265,16 +283,16 @@ class PeerNegotiation {
         }
 
         this._onnegotiationneeded = () => {
-            trace(this.remoteId + " _onnegotiationneeded()")
+            trace(`${this.remoteId  } _onnegotiationneeded()`)
             this.createOffer()
         }
 
         this._onicecandidate = ({candidate}) => this.onCandidate(candidate)
 
-        this._onconnectionstatechange = (event) => {
+        this._onconnectionstatechange = () => {
             if (!this.peerConnection)
                 throw new Error("Not connected")
-            trace(this.remoteId + " _onconnectionstatechange(" + this.peerConnection.connectionState + ")")
+            trace(`${this.remoteId  } _onconnectionstatechange(${  this.peerConnection.connectionState  })`)
             switch (this.peerConnection.connectionState) {
                 case "connected": {
                     this.retryCount = 0
@@ -287,20 +305,20 @@ class PeerNegotiation {
                 case "disconnected": {
                     if (this.report)
                         this.report(ClientLogEvents.PeerDisconnected, {targetDeviceId: this.remoteId})
-                    return
+                    
                 }
             }
         }
 
         this._ontrack = (event) => {
-            trace(this.remoteId + " _ontrack(" + event.track.id + ")")
+            trace(`${this.remoteId  } _ontrack(${  event.track.id  })`)
             this.onTrack(event.track)
         }
 
-        this._iceconnectionstatechange = (event) => {
+        this._iceconnectionstatechange = () => {
             if (!this.peerConnection)
                 throw new Error("Not connected")
-            trace(this.remoteId + " _iceconnectionstatechange(" + this.peerConnection.iceConnectionState + ")")
+            trace(`${this.remoteId  } _iceconnectionstatechange(${  this.peerConnection.iceConnectionState  })`)
             if (this.peerConnection.iceConnectionState === "failed") {
                 if (this.report)
                     this.report(ClientLogEvents.PeerIceFailed, {targetDeviceId: this.remoteId})

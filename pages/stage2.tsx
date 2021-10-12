@@ -23,7 +23,5 @@
 import React from 'react'
 import {StageView} from 'components/stage/StageView'
 
-const Stage = () => {
-    return <StageView/>
-}
+const Stage = () => <StageView/>
 export default Stage

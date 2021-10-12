@@ -36,8 +36,7 @@ const AltListItem = ({
     onSelect?: React.MouseEventHandler<HTMLAnchorElement>
     selectable?: boolean
     selected?: boolean
-} & React.DetailedHTMLProps<React.LiHTMLAttributes<HTMLLIElement>, HTMLLIElement>) => {
-    return (
+} & React.DetailedHTMLProps<React.LiHTMLAttributes<HTMLLIElement>, HTMLLIElement>) => (
         <li {...props}>
             {href ? (
                 <Link href={href}>
@@ -73,18 +72,15 @@ const AltListItem = ({
             )}
         </li>
     )
-}
 
 const AltList = ({
     children,
     className,
     ...props
-}: React.DetailedHTMLProps<React.HTMLAttributes<HTMLUListElement>, HTMLUListElement>) => {
-    return (
+}: React.DetailedHTMLProps<React.HTMLAttributes<HTMLUListElement>, HTMLUListElement>) => (
         <ul className={`altList ${className || ''}`} {...props}>
             {children}
         </ul>
     )
-}
 export { AltListItem }
 export { AltList }

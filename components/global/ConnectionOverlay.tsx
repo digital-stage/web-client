@@ -20,17 +20,18 @@
  * SOFTWARE.
  */
 
-import { useStageSelector } from '@digitalstage/api-client-react'
+import {selectReady, selectSignedIn, useTrackedSelector} from '@digitalstage/api-client-react'
 import React from 'react'
 import {Loading} from "./Loading";
 
-const ConnectionOverlay = ({ children }: { children: React.ReactNode }): JSX.Element => {
-    const signedIn = useStageSelector((state) => state.auth.initialized && !!state.auth.token)
-    const connected = useStageSelector((state) => state.globals.ready)
+const ConnectionOverlay = ({children}: { children: React.ReactNode }): JSX.Element => {
+  const state = useTrackedSelector()
+  const signedIn = selectSignedIn(state)
+  const connected = selectReady(state)
 
-    if (signedIn && !connected) {
-        return <Loading message="Verbinde ..." />
-    }
-    return <>{children}</>
+  if (signedIn && !connected) {
+    return <Loading message="Verbinde ..."/>
+  }
+  return <>{children}</>
 }
-export { ConnectionOverlay }
+export {ConnectionOverlay}

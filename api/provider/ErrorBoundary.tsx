@@ -52,7 +52,7 @@ class ErrorBoundaryWithRedux extends React.Component<Props> {
             scope.setExtras(errorInfo);
             const eventId = Sentry.captureException(error);
             this.setState({ eventId, errorInfo });
-        });*/
+        }); */
         this.setState({errorInfo});
     }
 

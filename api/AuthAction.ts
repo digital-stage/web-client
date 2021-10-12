@@ -102,9 +102,7 @@ const signInWithEmailAndPassword = (
             throw new AuthError(res.status, res.statusText)
         })
 
-const signInWithToken = (token: string) => {
-    return getUserByToken(token)
-}
+const signInWithToken = (token: string) => getUserByToken(token)
 
 const requestPasswordReset = (email: string) =>
     fetch(`${process.env.NEXT_PUBLIC_AUTH_URL}/forgot`, {

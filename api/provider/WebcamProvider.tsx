@@ -21,9 +21,8 @@
  */
 
 import React from "react";
-import {useErrorReporting, useStageSelector} from "@digitalstage/api-client-react";
+import {RootState, useErrorReporting, useTrackedSelector} from "@digitalstage/api-client-react";
 import {VideoTrack} from "@digitalstage/api-types";
-
 
 type State = MediaStreamTrack | undefined
 type Dispatch = React.Dispatch<React.SetStateAction<State>>
@@ -31,9 +30,13 @@ type Dispatch = React.Dispatch<React.SetStateAction<State>>
 const WebcamStateContext = React.createContext<State | null>(null)
 const WebcamDispatchContext = React.createContext<Dispatch | null>(null)
 
+const selectLocalVideoTracks = (state: RootState): VideoTrack[] => state.globals.localStageDeviceId &&
+  state.videoTracks.byStageDevice[state.globals.localStageDeviceId]?.map(id => state.videoTracks.byId[id]) || []
+
 const WebcamProvider = ({children}: { children: React.ReactNode }) => {
   const [state, dispatch] = React.useState<MediaStreamTrack>()
-  const videoTracks = useStageSelector<VideoTrack[]>(state => state.globals.localStageDeviceId && state.videoTracks.byStageDevice[state.globals.localStageDeviceId]?.map(id => state.videoTracks.byId[id]) || [])
+  const store = useTrackedSelector()
+  const videoTracks = selectLocalVideoTracks(store)
   const reportError = useErrorReporting()
 
   React.useEffect(() => {
@@ -50,20 +53,6 @@ const WebcamProvider = ({children}: { children: React.ReactNode }) => {
       }
     }
   }, [state, reportError, videoTracks])
-
-  /*
-  React.useEffect(() => {
-    if (state) {
-      const handler = () => {
-        console.error("FIX ME")
-        throw new Error("FIX ME")
-      }
-      state.addEventListener("ended", handler)
-      return () => {
-        state.removeEventListener("ended", handler)
-      }
-    }
-  }, [state])*/
 
   return (
     <WebcamStateContext.Provider value={state}>

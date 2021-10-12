@@ -14,10 +14,10 @@ const useSelectStageDeviceIdsByStageMember = (stageMemberId: string): string[] =
         return state.stageDevices.byStageMember[stageMemberId]
             .filter(id => state.stageDevices.byId[id].active)
             .sort((a, b) => sortStageDevices(state.stageDevices.byId[a], state.stageDevices.byId[b]))
-      } else {
+      } 
         return [...state.stageDevices.byStageMember[stageMemberId]]
             .sort((a, b) => sortStageDevices(state.stageDevices.byId[a], state.stageDevices.byId[b]))
-      }
+      
     }
     return []
   }, [stageMemberId, state.stageDevices.byStageMember, state.stageDevices.byId, showOffline])

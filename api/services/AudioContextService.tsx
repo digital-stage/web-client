@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 2021 Tobias Hegemann
  *
@@ -21,56 +20,58 @@
  * SOFTWARE.
  */
 
-import { logger } from '../logger'
-import { useAudioContextDispatch } from '../provider/AudioContextProvider'
-import { useAudioContext } from '../provider/AudioContextProvider'
-import { useStageSelector } from '../redux/selectors/useStageSelector'
 import React from 'react'
-import { startAudioContext } from '../provider/AudioContextProvider/utils'
+import {BrowserDevice} from "@digitalstage/api-types";
+import {logger} from '../logger'
+import {useAudioContextDispatch,useAudioContext} from '../provider/AudioContextProvider'
+import {startAudioContext} from '../provider/AudioContextProvider/utils'
+import { RootState } from '../redux/RootState'
+import { useTrackedSelector } from '../redux/selectors/useTrackedSelector'
 
-const { trace, warn } = logger('AudioContextService')
+const {trace, warn} = logger('AudioContextService')
+
+const selectOutputAudioDeviceId = (state: RootState): string | undefined => state.globals.localDeviceId
+  ? ((state.devices.byId[state.globals.localDeviceId] as BrowserDevice).outputAudioDeviceId)
+  : undefined
 
 const AudioContextService = () => {
-    const { audioContext, player, running } = useAudioContext()
-    const dispatch = useAudioContextDispatch()
-    const sinkId = useStageSelector<string | undefined>((state) =>
-        state.globals.localDeviceId
-            ? (state.devices.byId[state.globals.localDeviceId].outputAudioDeviceId as never)
-            : undefined
-    )
+  const {audioContext, player, running} = useAudioContext()
+  const dispatch = useAudioContextDispatch()
+  const state = useTrackedSelector()
+  const sinkId = selectOutputAudioDeviceId(state)
 
-    React.useEffect(() => {
-        dispatch({ type: 'start', dispatch })
-    }, [dispatch])
+  React.useEffect(() => {
+    dispatch({type: 'start', dispatch})
+  }, [dispatch])
 
-    React.useEffect(() => {
-        if (sinkId) {
-            dispatch({ type: 'setSinkId', sinkId })
-        }
-    }, [dispatch, sinkId])
+  React.useEffect(() => {
+    if (sinkId) {
+      dispatch({type: 'setSinkId', sinkId})
+    }
+  }, [dispatch, sinkId])
 
-    /**
-     * Try to start audio context with touch gesture on mobile devices
-     */
-    React.useEffect(() => {
-        if (audioContext && player && !running) {
-            trace('Adding touch handler to start audio context')
-            const resume = () =>
-                startAudioContext(audioContext, player)
-                    .then(() => trace('Started audio context via touch gesture'))
-                    .catch((err) => warn(err))
+  /**
+   * Try to start audio context with touch gesture on mobile devices
+   */
+  React.useEffect(() => {
+    if (audioContext && player && !running) {
+      trace('Adding touch handler to start audio context')
+      const resume = () =>
+        startAudioContext(audioContext, player)
+          .then(() => trace('Started audio context via touch gesture'))
+          .catch((err) => warn(err))
 
-            document.body.addEventListener('touchstart', resume, false)
-            document.body.addEventListener('touchend', resume, false)
-            return () => {
-                trace('Removed touch handler to start audio context')
-                document.body.removeEventListener('touchstart', resume)
-                document.body.removeEventListener('touchend', resume)
-            }
-        }
-        return undefined
-    }, [audioContext, player, running])
+      document.body.addEventListener('touchstart', resume, false)
+      document.body.addEventListener('touchend', resume, false)
+      return () => {
+        trace('Removed touch handler to start audio context')
+        document.body.removeEventListener('touchstart', resume)
+        document.body.removeEventListener('touchend', resume)
+      }
+    }
+    return undefined
+  }, [audioContext, player, running])
 
-    return null
+  return null
 }
-export { AudioContextService }
+export {AudioContextService}

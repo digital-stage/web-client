@@ -24,12 +24,10 @@ import {DevicesList} from '../../components/devices/DevicesList'
 import {Container} from '../../ui/Container'
 import {Heading2} from "../../ui/Heading";
 
-const Index = () => {
-    return (
+const Index = () => (
         <Container size="small">
             <Heading2>Meine Geräte</Heading2>
             <DevicesList />
         </Container>
     )
-}
 export default Index
