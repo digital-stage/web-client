@@ -30,15 +30,6 @@ const SettingsModal = ({open, onClose}: {
             })
         }
     }, [emit, localDeviceId])
-    const toggleDisplayMode = React.useCallback((e: ChangeEvent<HTMLInputElement>) => {
-        if (emit && localDeviceId) {
-            const mode = e.currentTarget.checked ? "lanes" : "boxes"
-            emit(ClientDeviceEvents.ChangeDevice, {
-                _id: localDeviceId,
-                displayMode: mode
-            })
-        }
-    }, [emit, localDeviceId])
     const setDisplayMode = React.useCallback((key: React.Key) => {
         if (emit && localDeviceId) {
             const mode = key === "lanes" ? "lanes" : "boxes"
@@ -102,11 +93,7 @@ const SettingsModal = ({open, onClose}: {
                         Zeige inaktive Nutzer
                         <Switch round checked={showOffline} onChange={toggleShowOffline} />
                     </OptionsListItem>
-                    <OptionsListItem as={<label/>}>
-                        Verwende Lane-Darstellung
-                        <Switch round checked={displayMode === "lanes"} onChange={toggleDisplayMode} />
-                    </OptionsListItem>
-                    <OptionsListItem>
+                    <OptionsListItem className="displayModeToggle">
                         <TextSwitch
                             value={displayMode}
                             onSelect={setDisplayMode}

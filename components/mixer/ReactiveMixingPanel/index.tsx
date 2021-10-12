@@ -29,7 +29,8 @@ import {
     selectStageDeviceIdsByStageMemberIdAndFilter,
     useEmit,
     useTrackedSelector
-,useSelectStageMemberIdsByGroup, selectLocalDeviceId} from '@digitalstage/api-client-react'
+    , useSelectStageMemberIdsByGroup, selectLocalDeviceId, selectGroupIdsByStageId
+} from '@digitalstage/api-client-react'
 import React from 'react'
 import {ClientDeviceEvents, ClientDevicePayloads,DefaultVolumeProperties} from '@digitalstage/api-types'
 import {TextSwitch} from 'ui/TextSwitch'
@@ -471,7 +472,7 @@ const StagePanel = ({stageId}: { stageId: string }) => {
     const selectedDeviceId = selectSelectedDeviceId(state)
     const selectedMode = selectSelectMode(state)
     const isStageAdmin = selectIsCurrentlyAdmin(state)
-    const groupIds = state.groups.byStage[stageId]
+    const groupIds = selectGroupIdsByStageId(state, stageId)
     const showOffline = selectShowOffline(state)
     const localDeviceId = selectLocalDeviceId(state)
     const emit = useEmit()

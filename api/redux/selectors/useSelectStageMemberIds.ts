@@ -37,14 +37,12 @@ const useSelectStageMemberIdsByGroup = (groupId: string): string[] => {
   const showOffline = selectShowOffline(state)
   return React.useMemo(() => {
     if (showOffline) {
-      return state.stageMembers.byGroup[groupId]
-        .filter(id => state.stageMembers.byId[id].active)
-        .sort((a, b) => sortStageMembers(state.stageMembers.byId[a], state.stageMembers.byId[b]))
-    } 
       return [...state.stageMembers.byGroup[groupId]]
         .sort((a, b) => sortStageMembers(state.stageMembers.byId[a], state.stageMembers.byId[b]))
-    
-
+    }
+    return state.stageMembers.byGroup[groupId]
+      .filter(id => state.stageMembers.byId[id].active)
+      .sort((a, b) => sortStageMembers(state.stageMembers.byId[a], state.stageMembers.byId[b]))
   }, [groupId, state.stageMembers.byGroup, state.stageMembers.byId, showOffline])
 }
 

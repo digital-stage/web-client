@@ -34,7 +34,7 @@ import {
   selectGroupById,
   selectGroupIdsByStageId,
   selectLocalDeviceId,
-  selectLocalStageDeviceId,
+  selectLocalStageDeviceId, selectReady,
   selectRender3DAudio,
   selectStageDeviceById,
   selectStageDeviceIdsByStageMemberId,
@@ -82,7 +82,7 @@ const useLevelPublishing = (
   )
   useEffect(() => {
     if (id && dispatch && array && enabled) {
-      trace(`Registering level for ${  id}`)
+      trace(`Registering level for ${id}`)
       dispatch({type: 'add', id, level: array.buffer})
       return () => {
         dispatch({type: 'remove', id})
@@ -173,14 +173,14 @@ const AudioTrackRenderer = ({
           pannerNode.disconnect(gainNode)
           sourceNode.disconnect(pannerNode)
         }
-      } 
-        sourceNode.connect(gainNode)
-        gainNode.connect(destination)
-        return () => {
-          gainNode.disconnect(destination)
-          sourceNode.disconnect(gainNode)
-        }
-      
+      }
+      sourceNode.connect(gainNode)
+      gainNode.connect(destination)
+      return () => {
+        gainNode.disconnect(destination)
+        sourceNode.disconnect(gainNode)
+      }
+
     }
     return undefined
   }, [sourceNode, pannerNode, gainNode, destination])
@@ -273,6 +273,7 @@ const StageDeviceRenderer = ({
   destination: AudioNode
   deviceId: string
 }): JSX.Element => {
+  console.log("RERENDER StageDeviceRenderer")
   const state = useTrackedSelector()
   const stageDevice = selectStageDeviceById(state, stageDeviceId)
   const customVolume = selectCustomStageDeviceVolumeByStageDeviceId(state, stageDeviceId)
@@ -363,15 +364,15 @@ const StageDeviceRenderer = ({
   return (
     <>
       {Object.keys(audioTracks).map((audioTrackId) => (
-          <AudioTrackRenderer
-            key={audioTrackId}
-            audioTrackId={audioTrackId}
-            track={audioTracks[audioTrackId]}
-            audioContext={audioContext}
-            destination={gainNode}
-            deviceId={deviceId}
-          />
-        ))}
+        <AudioTrackRenderer
+          key={audioTrackId}
+          audioTrackId={audioTrackId}
+          track={audioTracks[audioTrackId]}
+          audioContext={audioContext}
+          destination={gainNode}
+          deviceId={deviceId}
+        />
+      ))}
     </>
   )
 }
@@ -560,6 +561,7 @@ const StageRenderer = ({
   deviceId: string
   useReverb: boolean
 }): JSX.Element => {
+  console.log("RERENDER StageRenderer")
   const state = useTrackedSelector()
   const groupIds = selectGroupIdsByStageId(state, stageId)
   const localStageDeviceId = selectLocalStageDeviceId(state)
@@ -613,9 +615,8 @@ const StageRenderer = ({
 
 const AudioRenderService = () => {
   const state = useTrackedSelector()
-  const stageId = selectCurrentStageId(state)
+  const ready = selectReady(state)
   const {audioContext} = useAudioContext()
-  const localDeviceId = selectLocalDeviceId(state)
 
   useEffect(() => {
     trace("AudioRendering Engine started")
@@ -624,15 +625,20 @@ const AudioRenderService = () => {
     }
   }, [])
 
-  if (stageId && localDeviceId && audioContext) {
-    return (
-      <StageRenderer
-        stageId={stageId}
-        audioContext={audioContext}
-        deviceId={localDeviceId}
-        useReverb={false}
-      />
-    )
+  if (ready && audioContext) {
+    const stageId = selectCurrentStageId(state)
+    const localDeviceId = selectLocalDeviceId(state)
+
+    if (stageId && localDeviceId) {
+      return (
+        <StageRenderer
+          stageId={stageId}
+          audioContext={audioContext}
+          deviceId={localDeviceId}
+          useReverb={false}
+        />
+      )
+    }
   }
   return null
 }

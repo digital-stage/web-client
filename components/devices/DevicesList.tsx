@@ -57,7 +57,7 @@ const DeviceEntry = ({
 }) => {
   const state = useTrackedSelector()
   const {selectedDeviceId} = state.globals
-  const device = state.globals.selectedDeviceId ? state.stageDevices.byId[state.globals.selectedDeviceId] : undefined
+  const device = state.devices.byId[deviceId]
   const selected = React.useMemo(() => selectedDeviceId === deviceId, [deviceId, selectedDeviceId])
   const emit = useEmit()
 

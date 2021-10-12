@@ -21,21 +21,21 @@
  */
 
 import {useRouter} from "next/router";
-import {useStageSelector} from "@digitalstage/api-client-react";
+import {useStageSelector, useTrackedSelector} from "@digitalstage/api-client-react";
 import React from "react";
 
 const useStageAvailableOrForward = (): boolean => {
-  const {isReady, replace} = useRouter()
-  const insideStage = useStageSelector<boolean>((state) =>
-    state.globals.ready ? !!state.globals.stageId : false
-  )
+  const {replace} = useRouter()
+  const state = useTrackedSelector()
+  const isReady = state.globals.ready
+  const stageAvailable = !!state.globals.stageId
 
   React.useEffect(() => {
-    if (isReady && !insideStage) {
+    if (isReady && !stageAvailable) {
       replace('/stages')
     }
-  }, [isReady, insideStage, replace])
+  }, [isReady, stageAvailable, replace])
 
-  return insideStage
+  return React.useMemo(() => stageAvailable, [stageAvailable])
 }
 export {useStageAvailableOrForward}

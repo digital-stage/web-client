@@ -39,11 +39,12 @@ const UnmemorizedVideoPlayer = ({track, className}: { track: MediaStreamTrack; c
     }, [track, videoRef])
 
     return (
-        <div
-            className={`videoView ${mirrored ? 'mirrored' : ''} ${
-                landscape ? 'landscape' : 'portrait'
-            } ${className || ''}`}
-        >
+        <>
+            <div
+                className={`videoView ${mirrored ? 'mirrored' : ''} ${
+                    landscape ? 'landscape' : 'portrait'
+                } ${className || ''}`}
+            >
                 <video autoPlay muted playsInline controls={false} ref={videoRef}/>
                 <button
                     onClick={() => setMirrored((prev) => !prev)}
@@ -51,7 +52,35 @@ const UnmemorizedVideoPlayer = ({track, className}: { track: MediaStreamTrack; c
                 >
                     <GoMirror/>
                 </button>
-        </div>
+            </div>
+            <style jsx>{`
+            .videoView {
+                position: absolute;
+                width: 100%;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                height: auto;
+                overflow: hidden;
+            }
+            .videoView video {
+              position: relative;
+              width: 100%;
+              height: 100%;
+              object-fit: cover;
+            }
+            .videoView.mirrored video {
+              transform: scaleX(-1)
+            }
+            .mirrorToggle {
+              position: absolute;
+              bottom: 8px;
+              right: 8px;
+            }
+            `}</style>
+
+        </>
     )
 }
 
