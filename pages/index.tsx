@@ -24,8 +24,8 @@ import Head from 'next/head'
 import React from 'react'
 import { useRouter } from 'next/router'
 import { Loading } from 'components/global/Loading'
-import {Container, SIZE} from '../ui/Container'
 import {useTrackedSelector} from "@digitalstage/api-client-react";
+import {Container, SIZE} from '../ui/Container'
 
 
 const Index = () => {

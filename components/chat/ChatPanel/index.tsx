@@ -98,7 +98,7 @@ const ChatPanel = () => {
   const messageRef = React.useRef<HTMLInputElement>(null)
   const emit = useEmit()
   const localUserId = selectLocalUserId(state)
-  const users = state.users
+  const {users} = state
 
   const onSendClicked = React.useCallback(() => {
     if (messageRef.current && emit) {

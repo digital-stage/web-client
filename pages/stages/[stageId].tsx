@@ -54,7 +54,7 @@ const StageMemberItem = ({
     const state = useTrackedSelector()
     const adminUserIds = state.stages.byId[stageId].admins
     const soundEditorUserIds = state.stages.byId[stageId].soundEditors
-    const userId = state.stageMembers.byId[stageMemberId].userId
+    const {userId} = state.stageMembers.byId[stageMemberId]
     const username = state.stageMembers.byId[stageMemberId].userId && state.users.byId[state.stageMembers.byId[stageMemberId].userId]?.name
     const emit = useEmit()
 

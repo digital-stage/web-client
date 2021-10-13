@@ -27,7 +27,7 @@ import {DeviceSettings} from '../../components/devices/DeviceSettings'
 
 const DeviceSettingsPage = () => {
   const state = useTrackedSelector()
-  const selectedDeviceId = state.globals.selectedDeviceId
+  const {selectedDeviceId} = state.globals
   if (selectedDeviceId) {
     return (
       <SettingsLayout>

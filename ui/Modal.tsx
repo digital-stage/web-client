@@ -90,7 +90,7 @@ const Modal = (
 
   React.useEffect(() => {
     if (open) {
-      const keyListener = (e: any) => {
+      const keyListener = (e: KeyboardEvent) => {
         switch (e.keyCode) {
           // Escape
           case 27: {

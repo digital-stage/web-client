@@ -44,7 +44,7 @@ const getAudioTrack = ({
         echoCancellation,
         noiseSuppression,
         latency: 0,
-      } as any,
+      } as never,
     })
     .then((stream) => stream.getAudioTracks().pop())
     /*

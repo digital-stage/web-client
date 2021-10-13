@@ -23,8 +23,8 @@
 import React  from 'react'
 import { OverlayMenu } from 'ui/OverlayMenu'
 import Link from 'next/link'
-import {Heading5} from "../../ui/Heading";
 import {selectAuthUser, selectLocalUser, selectSignedIn, useTrackedSelector} from "@digitalstage/api-client-react";
+import {Heading5} from "../../ui/Heading";
 
 const ProfileMenu = () => {
     const [open, setOpen] = React.useState<boolean>(false)

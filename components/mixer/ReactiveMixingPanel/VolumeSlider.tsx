@@ -39,7 +39,7 @@ const UPPER_BASE = 3
 /**
  * Range input settings
  */
-//const MIN = 0
+// const MIN = 0
 const MAX = 100
 const NULL_VALUE = 70
 

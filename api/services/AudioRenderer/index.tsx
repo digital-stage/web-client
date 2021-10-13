@@ -121,8 +121,8 @@ const LocalStageDeviceRenderer = () => {
 }
 
 const RemoteStageDeviceRenderer = ({stageDeviceId}: { stageDeviceId: string }) => {
-  //const {audioContext} = useAudioContext()
-  //const analyserNode = React.useMemo<AnalyserNode | undefined>(() => audioContext && audioContext.createAnalyser(), [audioContext])
+  // const {audioContext} = useAudioContext()
+  // const analyserNode = React.useMemo<AnalyserNode | undefined>(() => audioContext && audioContext.createAnalyser(), [audioContext])
   const remoteAudioTracks = useRemoteAudioTracks(stageDeviceId)
 
   return (

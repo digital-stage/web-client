@@ -1,12 +1,12 @@
 import {selectSignedOut, useTrackedSelector} from "@digitalstage/api-client-react";
 import {useRouter} from "next/router";
-import React, {useEffect} from "react";
+import React from "react";
 
 const useForwardToLoginWhenSignedOut = () => {
   const {isReady, pathname, replace} = useRouter()
   const state = useTrackedSelector()
   const signedOut = selectSignedOut(state)
-  useEffect(() => {
+  React.useEffect(() => {
     if (isReady && signedOut && !pathname.startsWith('/account')) {
       replace('/account/login')
     }

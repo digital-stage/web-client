@@ -4,7 +4,7 @@ const moduleExports = {
     reactStrictMode: true,
     experimental: {esmExternals: true},
     eslint: {
-        dirs: ['api', 'components', 'pages', 'ui'],
+        dirs: ['api', 'components', 'lib', 'pages', 'ui'],
     },
 }
 

@@ -29,7 +29,7 @@ import {
 } from "@digitalstage/api-types";
 
 const publishTrack = (
-  emit: (event: SocketEvent, ...args: any[]) => boolean,
+  emit: (event: SocketEvent, ...args: unknown[]) => boolean,
   stageId: string,
   kind: 'video' | 'audio',
   additionalPayload?: Partial<Omit<VideoTrack, "_id" | "userId" | "deviceId" | "stageMemberId" | "stageDeviceId">>
@@ -72,7 +72,7 @@ const publishTrack = (
   })
 
 const unpublishTrack = (
-  emit: (event: SocketEvent, ...args: any[]) => boolean,
+  emit: (event: SocketEvent, ...args: unknown[]) => boolean,
   publishedId: string,
   kind: 'video' | 'audio'
 ) =>

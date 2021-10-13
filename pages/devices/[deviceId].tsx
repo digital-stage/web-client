@@ -25,11 +25,11 @@ import React from 'react'
 import Link from 'next/link'
 import {IoIosArrowDropleft} from 'react-icons/io'
 import {Panel} from 'ui/Panel'
+import {selectLocalDeviceId, useTrackedSelector} from "@digitalstage/api-client-react";
 import {Container} from '../../ui/Container'
 import {DeviceSettings} from '../../components/devices/DeviceSettings'
 import {Loading} from "../../components/global/Loading";
 import {Heading3} from "../../ui/Heading";
-import {selectLocalDeviceId, useTrackedSelector} from "@digitalstage/api-client-react";
 
 const DevicePage = () => {
   const {isReady, query, replace} = useRouter()

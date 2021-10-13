@@ -42,7 +42,7 @@ export const useSvgImage = (
                 if (color) {
                     svg = svg.replaceAll('currentColor', color)
                 }
-                let blob = new Blob([svg], { type: 'image/svg+xml' })
+                const blob = new Blob([svg], { type: 'image/svg+xml' })
                 setLocalUrl(URL.createObjectURL(blob))
             })
     }, [url, color])

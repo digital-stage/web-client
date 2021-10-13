@@ -21,9 +21,9 @@
  */
 
 import {logger, RootState, useTrackedSelector} from "@digitalstage/api-client-react";
+import React from "react";
 import {useConsumers} from "../services/MediasoupService";
 import {useWebRTCRemoteVideos} from "../services/WebRTCService";
-import React from "react";
 
 const {trace} = logger('useRemoteVideoTracks')
 

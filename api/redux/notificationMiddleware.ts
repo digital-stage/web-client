@@ -29,6 +29,7 @@ import {addNotification, AddNotificationPayload, changeNotification, RemoveNotif
 import { RootState } from './RootState'
 
 let timeouts: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [id: string]: any
 } = {}
 

@@ -36,6 +36,7 @@ const ListItem = ({
     selected?: boolean
     onSelect?: () => void
 } & React.DetailedHTMLProps<React.LiHTMLAttributes<HTMLLIElement>, HTMLLIElement>) => (
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions
     <li
         className={`entry ${selected ? 'selected' : ''} ${className || ''}`}
         onClick={onSelect}

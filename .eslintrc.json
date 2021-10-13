@@ -1,13 +1,26 @@
 {
-  "plugins": ["@typescript-eslint"],
+  "plugins": [
+    "@typescript-eslint"
+  ],
   "extends": [
-    "next/core-web-vitals",
+    //"airbnb",
+    //"airbnb/hooks",
+    //"airbnb-typescript",
     "plugin:@typescript-eslint/recommended",
+    "next/core-web-vitals",
     "prettier"
   ],
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
   "rules": {
-    "@typescript-eslint/no-explicit-any": "off"
-    //"@typescript-eslint/no-unused-vars": "error"
-    //"@typescript-eslint/no-explicit-any": "warn"
+    // We don't use PropTypes
+    "react/require-default-props": "off",
+    // We essentially are using prop spreading for our UI
+    "react/jsx-props-no-spreading": "off",
+    // We need underscore dangle for our data model
+    "no-underscore-dangle": "off",
+    // No, use explicit exports when possible
+    "import/prefer-default-export": "off"
   }
 }

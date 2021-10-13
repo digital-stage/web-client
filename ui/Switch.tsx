@@ -37,16 +37,11 @@ const Switch = ({
     size?: SIZE[keyof SIZE]
     round?: boolean
 }) => (
-        <div className={`switch ${size || ''} ${className || ''}`}>
-            <input type="checkbox" {...props} />
-            <span className={`slider ${round ? 'round' : ''}`}/>
-        </div>
-    )
-
-const SwitchLabel = ({children, append}: { children: React.ReactNode, append?: boolean }) => (
-    <label className={`switchLabel${append ? ` append` : ``}`}>
-        {children}
-    </label>
+    <div className={`switch ${size || ''} ${className || ''}`}>
+        <input type="checkbox" {...props} />
+        <span className={`slider ${round ? 'round' : ''}`}/>
+    </div>
 )
 
-export {Switch, SwitchLabel}
+
+export {Switch}

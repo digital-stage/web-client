@@ -70,7 +70,7 @@ const LoginForm = (): JSX.Element => {
         staySignedIn: Yup.boolean(),
       })}
     >
-      {(props: FormikProps<any>) => (
+      {(props: FormikProps<{email: string, password: string}>) => (
         <Form
           onReset={props.handleReset}
           onSubmit={props.handleSubmit}

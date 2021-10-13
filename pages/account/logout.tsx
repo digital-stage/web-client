@@ -29,8 +29,8 @@ import {useRouter} from "next/router";
 const Logout = (): JSX.Element => {
     const dispatch = useDispatch()
     const state = useTrackedSelector()
-    const initialized = state.auth.initialized
-    const token = state.auth.token
+    const {initialized} = state.auth
+    const {token} = state.auth
     const {isReady, replace} = useRouter()
     const signedOut = state.auth.initialized && !state.auth.user
     React.useEffect(() => {

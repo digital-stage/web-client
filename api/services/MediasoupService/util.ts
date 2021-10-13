@@ -95,7 +95,7 @@ export const createWebRTCTransport = (
                             rtpParameters: producer.rtpParameters,
                             appData: producer.appData,
                         } as ClientMediasoupPayloads.CreateProducer<mediasoupClient.types.RtpParameters>,
-                        (produceError: string | undefined, payload: any) => {
+                        (produceError: string | undefined, payload: { id: string }) => {
                             if (produceError) {
                                 reportError(produceError)
                                 return errCallback(produceError)

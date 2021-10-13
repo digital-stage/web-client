@@ -30,7 +30,7 @@ const TextSwitch = ({
 }: {
     className?: string
     value: string
-    onSelect?: (key: React.Key) => any
+    onSelect?: (key: React.Key) => void
     children: Array<ReactElement<{ key: React.Key }>>
 }) => (
         <div className={`text-switch ${className || ''}`}>

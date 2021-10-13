@@ -85,7 +85,7 @@ const refreshMediaDevices = (
     inputAudioDevices: WebMediaDevice[],
     inputVideoDevices: WebMediaDevice[],
     outputAudioDevices: WebMediaDevice[],
-    emit: (event: SocketEvent, ...args: any[]) => boolean
+    emit: (event: SocketEvent, ...args: unknown[]) => boolean
 ): Promise<boolean> => enumerateDevices().then((devices) => {
         // Sync and update if necessary
         let shouldUpdate = false
