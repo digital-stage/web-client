@@ -60,7 +60,6 @@ const useRemoteVideoTracks = (stageMemberId?: string): RemoteVideoTracks => {
                 }
             } else if (type === "browser") {
                 if (webRTCVideos[stageDeviceId]) {
-                    console.log("Found WebRTC video for video track")
                     return {
                         ...prev,
                         [_id]: webRTCVideos[stageDeviceId]

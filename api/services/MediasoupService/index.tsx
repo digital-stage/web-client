@@ -123,10 +123,8 @@ const MediasoupService = () => {
   const localVideoTrack = useWebcam()
   React.useEffect(() => {
     if (handler && videoType === 'mediasoup' && !useP2P && localVideoTrack) {
-      console.log("Produce video")
       handler.addTrack(localVideoTrack)
       return () => {
-        console.log("Cleaning up video producer")
         handler.removeTrack(localVideoTrack.id)
       }
     }

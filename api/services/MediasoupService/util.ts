@@ -183,7 +183,6 @@ export const createConsumer = (
     producerId: string
 ): Promise<mediasoupClient.types.Consumer> =>
     new Promise<mediasoupClient.types.Consumer>((resolve, reject) => {
-        console.log(device.rtpCapabilities)
         const callback: ClientMediasoupCallbacks.CreateConsumer<mediasoupClient.types.RtpParameters> = (error, data) => {
             if (error) {
                 reportError(error)
