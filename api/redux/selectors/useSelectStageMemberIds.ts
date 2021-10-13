@@ -21,29 +21,32 @@
  */
 
 import {
-  selectShowOffline,
-  useTrackedSelector
+    selectShowOffline,
+    useTrackedSelector
 } from "@digitalstage/api-client-react";
 import React from "react";
 import {sortStageMembers} from "./utils";
 
 const useSelectStageMemberIds = () => {
-  const state = useTrackedSelector()
-  return state.stageMembers.allIds
+    const state = useTrackedSelector()
+    return state.stageMembers.allIds
 }
 
 const useSelectStageMemberIdsByGroup = (groupId: string): string[] => {
-  const state = useTrackedSelector()
-  const showOffline = selectShowOffline(state)
-  return React.useMemo(() => {
-    if (showOffline) {
-      return [...state.stageMembers.byGroup[groupId]]
-        .sort((a, b) => sortStageMembers(state.stageMembers.byId[a], state.stageMembers.byId[b]))
-    }
-    return state.stageMembers.byGroup[groupId]
-      .filter(id => state.stageMembers.byId[id].active)
-      .sort((a, b) => sortStageMembers(state.stageMembers.byId[a], state.stageMembers.byId[b]))
-  }, [groupId, state.stageMembers.byGroup, state.stageMembers.byId, showOffline])
+    const state = useTrackedSelector()
+    const showOffline = selectShowOffline(state)
+    return React.useMemo(() => {
+        if (state.stageMembers.byGroup[groupId]) {
+            if (showOffline) {
+                return [...state.stageMembers.byGroup[groupId]]
+                    .sort((a, b) => sortStageMembers(state.stageMembers.byId[a], state.stageMembers.byId[b]))
+            }
+            return state.stageMembers.byGroup[groupId]
+                .filter(id => state.stageMembers.byId[id].active)
+                .sort((a, b) => sortStageMembers(state.stageMembers.byId[a], state.stageMembers.byId[b]))
+        }
+        return []
+    }, [groupId, state.stageMembers.byGroup, state.stageMembers.byId, showOffline])
 }
 
 export {useSelectStageMemberIds, useSelectStageMemberIdsByGroup}
