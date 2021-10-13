@@ -67,7 +67,7 @@
   }
 }
 
-.stagesList {
+ul.stagesList {
   .stagesListActions {
     display: inline-flex;
     flex-wrap: wrap;
@@ -79,7 +79,7 @@
     }
   }
   .stageItemActive {
-    border: 1px solid var(---warn)
+    border: 1px solid var(---warn);
   }
   .stageItemName {
     flex-grow: 1;
