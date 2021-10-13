@@ -76,7 +76,7 @@ const SignUpForm = ({onSignedUp}: { onSignedUp: () => void }) => {
           .required('Ein Name wird benötigt'),
       })}
     >
-      {(props: FormikProps<any>) => (
+      {(props: FormikProps<{email: string, password: string, passwordRepeat: string, name: string}>) => (
         <Form onReset={props.handleReset} onSubmit={props.handleSubmit} autoComplete="on">
           <Field
             as={TextInput}

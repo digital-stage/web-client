@@ -59,15 +59,15 @@ class PeerNegotiation {
 
     private report?: LogServerReportFn
 
-    private _onnegotiationneeded?: (this: RTCPeerConnection, ev: RTCPeerConnectionEventMap["negotiationneeded"]) => any
+    private _onnegotiationneeded?: (this: RTCPeerConnection, ev: RTCPeerConnectionEventMap["negotiationneeded"]) => void
 
-    private _onicecandidate?: (this: RTCPeerConnection, ev: RTCPeerConnectionEventMap["icecandidate"]) => any
+    private _onicecandidate?: (this: RTCPeerConnection, ev: RTCPeerConnectionEventMap["icecandidate"]) => void
 
-    private _onconnectionstatechange?: (this: RTCPeerConnection, ev: RTCPeerConnectionEventMap["connectionstatechange"]) => any
+    private _onconnectionstatechange?: (this: RTCPeerConnection, ev: RTCPeerConnectionEventMap["connectionstatechange"]) => void
 
-    private _ontrack?: (this: RTCPeerConnection, ev: RTCPeerConnectionEventMap["track"]) => any
+    private _ontrack?: (this: RTCPeerConnection, ev: RTCPeerConnectionEventMap["track"]) => void
 
-    private _iceconnectionstatechange?: (this: RTCPeerConnection, ev: RTCPeerConnectionEventMap["iceconnectionstatechange"]) => any
+    private _iceconnectionstatechange?: (this: RTCPeerConnection, ev: RTCPeerConnectionEventMap["iceconnectionstatechange"]) => void
 
     constructor({
                     remoteId,
@@ -172,6 +172,7 @@ class PeerNegotiation {
         try {
             this.makingOffer = true
             await this.setLocalDescription(await this.peerConnection.createOffer())
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             reportError(error)
         } finally {
