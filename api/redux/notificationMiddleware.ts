@@ -65,6 +65,30 @@ const notificationMiddleware: Middleware<
             }
             break
         }
+        case ServerDeviceEvents.StageJoined: {
+          // Check if the local stage device has an valid order needed for ov clients
+          // Otherwise inform user
+          const { stageDevices } =
+            action.payload as ServerDevicePayloads.StageJoined
+          if(prevState.globals.localDeviceId) {
+            const localStageDevice = stageDevices.find(
+              (stageDevice) => stageDevice.deviceId === prevState.globals.localDeviceId
+            )
+            if(localStageDevice?.order === -1) {
+              dispatch(
+                addNotification({
+                  id: uuidv4(),
+                  date: new Date().getTime(),
+                  kind: 'info',
+                  message: `The number of ov clients per stage exceeded and you won't be able to share or receive audio`,
+                  permanent: true,
+                  featured: true,
+                })
+              )
+            }
+          }
+          break;
+        }
         case ServerDeviceEvents.ChatMessageSend: {
             // Resolve username
             const chatMessage = action.payload as ServerDevicePayloads.ChatMessageSend
