@@ -5,7 +5,6 @@ import {ClientDeviceEvents, ClientDevicePayloads} from "@digitalstage/api-types"
 import React, {ChangeEvent} from "react";
 import { OptionsList, OptionsListItem } from "ui/OptionsList";
 import {Modal, ModalButton, ModalFooter, ModalHeader} from "../../ui/Modal";
-import {Paragraph} from "../../ui/Paragraph";
 import {Switch} from "../../ui/Switch";
 import {TextSwitch} from "../../ui/TextSwitch";
 import {Heading4} from "../../ui/Heading";
