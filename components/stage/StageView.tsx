@@ -18,7 +18,6 @@ const Box = ({
                name,
                color,
                groupName,
-               videoTrackId,
                track,
                online,
                muted
@@ -86,7 +85,6 @@ const Box = ({
                     {groupName}
                   </Heading6>
                 )}
-                {videoTrackId && <Heading6>{videoTrackId}</Heading6>}
                 {name && <Heading5 className="memberName">{name}</Heading5>}
                 {videoMuted &&
                 <span style={{
