@@ -21,14 +21,15 @@
  */
 
 import React from 'react'
-import {useStageSelector} from '@digitalstage/api-client-react'
+import {selectSignedIn, useTrackedSelector} from '@digitalstage/api-client-react'
 import {useRouter} from 'next/router'
 import {SignUpForm} from 'components/account/SignUpForm'
 import {AuthLayout} from 'components/account/AuthLayout'
 
 const SignUp = () => {
   const {isReady, push, replace} = useRouter()
-  const signedIn = useStageSelector((state) => state.auth.initialized && !!state.auth.token)
+  const state = useTrackedSelector()
+  const signedIn = selectSignedIn(state)
 
   const onSignedIn = React.useCallback(() => {
     push("/account/activate")

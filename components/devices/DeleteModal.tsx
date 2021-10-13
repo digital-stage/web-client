@@ -56,7 +56,7 @@ const DeleteModal = ({deviceId, onClose}: { deviceId: string; onClose: () => voi
       </Paragraph>
       {error ? <NotificationItem kind="error">{error}</NotificationItem> : null}
       <ModalFooter>
-        <ModalButton autoFocus={true} onClick={onClose}>Abbrechen</ModalButton>
+        <ModalButton autoFocus onClick={onClose}>Abbrechen</ModalButton>
         <ModalButton className="danger" onClick={deleteDevice}>Löschen</ModalButton>
       </ModalFooter>
     </Modal>

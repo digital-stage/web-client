@@ -24,7 +24,7 @@ ul.list {
   margin: 0;
   padding: 0;
 
-  li.entry {
+  & > .entry {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;

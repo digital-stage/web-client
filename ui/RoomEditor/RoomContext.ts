@@ -1,6 +1,6 @@
 import React from "react";
 
-export const FACTOR: number = 100
+export const FACTOR = 100
 
 export type RoomState = {
     room: HTMLDivElement | null,

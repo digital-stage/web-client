@@ -20,12 +20,12 @@
  * SOFTWARE.
  */
 
-import {ReactiveMixingPanel} from '../components/mixer/ReactiveMixingPanel'
 import Head from 'next/head'
 import React from 'react'
 import {Container} from 'ui/Container'
-import {useStageAvailableOrForward} from "../components/global/useStageAvailableOrForward";
 import { Loading } from 'components/global/Loading';
+import {useStageAvailableOrForward} from "../components/global/useStageAvailableOrForward";
+import {ReactiveMixingPanel} from '../components/mixer/ReactiveMixingPanel'
 
 const Mixer = () => {
     const stageAvailable = useStageAvailableOrForward()

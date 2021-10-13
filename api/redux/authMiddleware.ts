@@ -22,14 +22,14 @@
 
 import {Dispatch, Middleware } from 'redux'
 import { ServerDeviceEvents, ServerDevicePayloads } from '@digitalstage/api-types'
+import Cookie from 'js-cookie'
+import { batch } from 'react-redux'
 import { setInitialized, setToken, setUser } from './actions/clientActions'
 import { InternalActionTypes } from './actions/InternalActionTypes'
-import Cookie from 'js-cookie'
 import { getUserByToken } from './actions'
 
-import { batch } from 'react-redux'
 import { logger } from '../logger'
-import { RootState } from './state'
+import { RootState } from './RootState'
 
 const { trace } = logger('authMiddleware')
 
@@ -53,7 +53,7 @@ const initializeApplication: any = (token?: string) => async (dispatch: Dispatch
 }
 
 const authMiddleware: Middleware<
-    {}, // Most middleware do not modify the dispatch return value
+    unknown, // Most middleware do not modify the dispatch return value
     RootState
 > = (storeApi) => (next) => (action) => {
     const { dispatch } = storeApi

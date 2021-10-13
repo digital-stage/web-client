@@ -62,14 +62,25 @@ const Rotator = ({
                 onChange(angle)
                 lastRz.current = angle
             }
-            let nodePos: { x: number, y: number } | null = null
-            const handleTouchMove = (e: any) => {
+            //const nodePos: { x: number, y: number } | null = null
+            const handleTouchMove = (e: TouchEvent) => {
                 e.preventDefault()
                 e.stopPropagation()
                 if (e.touches.length === 1) {
+                    /*
                     if (!nodePos) {
-                        if (e.touches[0].target && e.touches[0].target.parentElement) {
-                            const rect = (e.touches[0].target.parentElement as HTMLDivElement).getBoundingClientRect()
+                        const target = ref.current
+                        if(target && target.parentElement) {
+                            const rect = (target.parentElement as HTMLDivElement).getBoundingClientRect()
+                            nodePos = {
+                                x: rect.x + (rect.width / 2),
+                                y: rect.y + (rect.height / 2)
+                            }
+                        }/*
+                        // Alternative
+                        const target = e.touches[0].target
+                        if (target && target.parentElement) {
+                            const rect = (target.parentElement as HTMLDivElement).getBoundingClientRect()
                             nodePos = {
                                 x: rect.x + (rect.width / 2),
                                 y: rect.y + (rect.height / 2)
@@ -78,6 +89,13 @@ const Rotator = ({
                     }
                     if (nodePos) {
                         const angle = Math.atan2(e.touches[0].pageX - nodePos.x, -(e.touches[0].pageY - nodePos.y)) * (180 / Math.PI)
+                        handleDrag(angle - (roomRotation || 0))
+                    }*/
+                    if(ref.current && ref.current.parentElement) {
+                        const rect = ref.current.parentElement.getBoundingClientRect()
+                        const originX = rect.x + (rect.width / 2)
+                        const originY = rect.y + (rect.height / 2)
+                        const angle = Math.atan2(e.touches[0].pageX - originX, -(e.touches[0].pageY - originY)) * (180 / Math.PI)
                         handleDrag(angle - (roomRotation || 0))
                     }
                 }

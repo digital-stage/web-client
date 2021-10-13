@@ -20,12 +20,12 @@
  * SOFTWARE.
  */
 
-import { shallowEqual, useSelector } from 'react-redux'
-import { RootState } from '../state'
+import { useSelector } from 'react-redux'
+import { RootState } from '../RootState'
 
 const useStageSelector = <T>(
     selector: (state: RootState) => T,
     equalityFn?: (left: T, right: T) => boolean
-): T => useSelector<RootState, T>(selector, equalityFn ? equalityFn : shallowEqual)
+): T => useSelector<RootState, T>(selector, equalityFn)
 
 export { useStageSelector }

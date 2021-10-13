@@ -26,12 +26,13 @@ import {AuthLayout} from 'components/account/AuthLayout'
 import {ForgetPasswordForm} from 'components/account/ForgetPasswordForm'
 import {Paragraph} from '../../ui/Paragraph'
 import {useForwardToStagesWhenSignedIn} from "../../lib/useForwardToStagesWhenSignedIn";
+import {Heading3} from "../../ui/Heading";
 
 const Forgot = () => {
   useForwardToStagesWhenSignedIn()
   return (
     <AuthLayout>
-      <h3>Passwort vergessen?</h3>
+      <Heading3>Passwort vergessen?</Heading3>
       <Paragraph kind="micro">
         Bitte gebe Deine E-Mail Adresse unten ein und wir senden Dir einen Link zur Vergabe
         eines neuen Passwortes zu!

@@ -23,7 +23,12 @@
 import * as React from 'react'
 import {Formik, Field, FormikHelpers, Form} from 'formik'
 import * as Yup from 'yup'
-import {AuthError, requestPasswordReset, useStageSelector} from '@digitalstage/api-client-react'
+import {
+  AuthError,
+  requestPasswordReset,
+  selectAuthUser,
+  useTrackedSelector
+} from '@digitalstage/api-client-react'
 import {NotificationItem, KIND} from 'ui/NotificationItem'
 import {TextInput} from 'ui/TextInput'
 import {translateError} from './translateError'
@@ -34,8 +39,8 @@ interface Values {
 }
 
 const ForgetPasswordForm = (): JSX.Element => {
-  const user = useStageSelector((state) => state.auth.user)
-
+  const state = useTrackedSelector()
+  const user = selectAuthUser(state)
   const [msg, setMsg] = React.useState<| {
     kind: KIND[keyof KIND]
     label: string

@@ -20,12 +20,13 @@
  * SOFTWARE.
  */
 
-import {useEmit, useStageSelector} from '@digitalstage/api-client-react'
+import {useEmit, useTrackedSelector} from '@digitalstage/api-client-react'
 import {ClientDeviceEvents, ClientDevicePayloads} from '@digitalstage/api-types'
 import React from 'react'
 import {Modal, ModalButton, ModalFooter, ModalHeader} from 'ui/Modal'
 import {NotificationItem} from 'ui/NotificationItem'
 import {Paragraph} from 'ui/Paragraph'
+import {Heading4} from "../../../ui/Heading";
 
 const LeaveStageForGoodModal = ({
                                   stageId,
@@ -39,9 +40,8 @@ const LeaveStageForGoodModal = ({
   onClose: () => void
 }) => {
   const emit = useEmit()
-  const stageName = useStageSelector((state) =>
-    stageId ? state.stages.byId[stageId]?.name : undefined
-  )
+    const state = useTrackedSelector()
+  const stageName = stageId ? state.stages.byId[stageId]?.name : undefined
   const [isLeaving, setLeaving] = React.useState<boolean>(false)
   const [error, setError] = React.useState<string>()
 
@@ -71,7 +71,7 @@ const LeaveStageForGoodModal = ({
     return (
       <Modal open={open} onClose={onClose} size="small">
         <ModalHeader>
-          <h4>Bühne {stageName || stageId} wirklich endgültig verlassen?</h4>
+          <Heading4>Bühne {stageName || stageId} wirklich endgültig verlassen?</Heading4>
         </ModalHeader>
         <Paragraph kind="micro">
           Die Bühne bleibt bestehen, jedoch bist Du kein Teil mehr davon. Du kannst nur
@@ -79,7 +79,7 @@ const LeaveStageForGoodModal = ({
         </Paragraph>
         {error ? <NotificationItem kind="error">{error}</NotificationItem> : null}
         <ModalFooter>
-          <ModalButton autoFocus={true} onClick={onClose}>Nein</ModalButton>
+          <ModalButton autoFocus onClick={onClose}>Nein</ModalButton>
           <ModalButton
             disabled={isLeaving}
             className="danger"

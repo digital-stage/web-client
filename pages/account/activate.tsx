@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-import React, {useEffect} from 'react'
+import React from 'react'
 import {useRouter} from 'next/router'
 import Link from 'next/link'
 import {ActivationForm} from 'components/account/ActivationForm'
@@ -28,6 +28,7 @@ import {AuthLayout} from 'components/account/AuthLayout'
 import {Paragraph} from '../../ui/Paragraph'
 import {useForwardToStagesWhenSignedIn} from "../../lib/useForwardToStagesWhenSignedIn";
 import {Loading} from "../../components/global/Loading";
+import {Heading3} from "../../ui/Heading";
 
 const Activate = () => {
   useForwardToStagesWhenSignedIn()
@@ -48,7 +49,7 @@ const Activate = () => {
   if(isReady) {
     return (
       <AuthLayout>
-        <h3>Konto aktivieren</h3>
+        <Heading3>Konto aktivieren</Heading3>
         <Paragraph kind="micro">
           Bitte gebe den Aktivierungscode ein, welchen Du per E-Mail von uns erhalten hast:
         </Paragraph>

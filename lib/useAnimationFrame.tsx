@@ -1,7 +1,7 @@
 import {DependencyList, useEffect, useRef} from "react";
 
 // Reusable component that also takes dependencies
-const useAnimationFrame = (cb: (params: { time: number, delta: number }) => any, deps?: DependencyList) => {
+const useAnimationFrame = (cb: (params: { time: number, delta: number }) => unknown, deps?: DependencyList) => {
     const frame = useRef<number>();
     const last = useRef<number>(performance.now());
     const init = useRef<number>(performance.now());

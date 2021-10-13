@@ -21,7 +21,7 @@
  */
 
 import { useAnimationFrame } from 'lib/useAnimationFrame'
-import React, { CanvasHTMLAttributes, useRef } from 'react'
+import React from 'react'
 
 const USE_MAX = true
 
@@ -51,19 +51,19 @@ function calculate(buffer: ArrayBuffer): number {
         const average = getAverageVolume(array)
         if (average > 50) {
             return average / 50 + 0.7
-        } else {
+        } 
             return (average / 50) * 0.7
-        }
-    } else {
+        
+    } 
         return getMaximumVolume(array) * 0.7
-    }
+    
 }
 
 const LevelMeter = ({
     vertical,
     buffer,
     ...other
-}: CanvasHTMLAttributes<HTMLCanvasElement> & {
+}: React.CanvasHTMLAttributes<HTMLCanvasElement> & {
     buffer: ArrayBuffer
     vertical?: boolean
 }): JSX.Element => {

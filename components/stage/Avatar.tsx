@@ -22,7 +22,7 @@
 
 import React from 'react'
 
-const Avatar = ({ name, color, active }: { name?: string; color?: string; active?: boolean }) => (
+const Avatar = ({ name, color, active }: { name: string; color?: string; active?: boolean }) => (
     <div
         className={`avatar ${active ? 'active' : ''}`}
         style={{

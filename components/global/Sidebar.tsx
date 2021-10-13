@@ -25,14 +25,14 @@ import React from 'react'
 import {useOpenState} from 'ui/useOpenState'
 import {Backdrop} from 'ui/Backdrop'
 import Image from 'next/image'
-import logo from '../../public/logo.svg'
 import Link from 'next/link'
-import {useSpatialAudioSelector, useStageSelector} from '@digitalstage/api-client-react'
+import {selectRender3DAudio, selectSignedIn, useTrackedSelector} from '@digitalstage/api-client-react'
 import {GoBroadcast, GoListUnordered, GoSettings} from 'react-icons/go'
 import {BiChat, BiCube, BiDevices} from 'react-icons/bi'
 import {FaBug, FaTools} from 'react-icons/fa'
 import {MdMoreHoriz} from 'react-icons/md'
 import {IoIosNotifications} from 'react-icons/io'
+import logo from '../../public/logo.svg'
 
 const SidebarItem = ({
                          children,
@@ -57,15 +57,14 @@ const SidebarItem = ({
 }
 
 const Sidebar = () => {
+    const state = useTrackedSelector()
     const [open, setOpen] = React.useState<boolean>(false)
     const openState = useOpenState(open)
-    const signedIn = useStageSelector<boolean>((state) => !!state.auth.token)
-    const insideStage = useStageSelector<boolean>((state) => !!state.globals.stageId)
-    const deviceCount = useStageSelector<number>((state) => state.devices.allIds.length)
-    const hasNotifications = useStageSelector<boolean>(
-        (state) => state.notifications.allIds.length > 0
-    )
-    const renderSpatialAudio = useSpatialAudioSelector()
+    const signedIn = selectSignedIn(state)
+    const insideStage = !!state.globals.stageId
+    const deviceCount = state.devices.allIds.length
+    const hasNotifications = state.notifications.allIds.length > 0
+    const renderSpatialAudio = selectRender3DAudio(state)
 
     return (
         <>
@@ -79,7 +78,7 @@ const Sidebar = () => {
             {signedIn ? (
                 <button
                     onClick={() => setOpen((prev) => !prev)}
-                    className={`secondary round sidebarBurgerButton`}
+                    className="secondary round sidebarBurgerButton"
                 >
                     <MdMoreHoriz/>
                 </button>

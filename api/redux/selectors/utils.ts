@@ -20,10 +20,47 @@
  * SOFTWARE.
  */
 
-import { useStageSelector } from './useStageSelector'
+import {StageDevice, StageMember} from "@digitalstage/api-types";
 
-const useSpatialAudioSelector = (): boolean =>
-    useStageSelector<boolean>((state) =>
-        state.globals.stageId ? state.stages.byId[state.globals.stageId].render3DAudio : false
-    )
-export { useSpatialAudioSelector }
+export const sortStageDevices = (a: StageDevice, b: StageDevice): number => {
+  if (a.active === b.active) {
+    if (a.stageMemberId == b.stageMemberId) {
+      if (a._id === b._id) {
+        return 0;
+      } if (a._id < b._id) {
+        return -1
+      } 
+        return 1
+      
+    } if (a.stageMemberId <= b.stageMemberId) {
+      return -1
+    } 
+      return 1
+    
+  } if (a.active) {
+    return -1
+  } 
+    return 1
+  
+}
+export const sortStageMembers = (a: StageMember, b: StageMember): number => {
+  if (a.active === b.active) {
+    if (a.groupId == b.groupId) {
+      if (a._id === b._id) {
+        return 0;
+      } if (a._id < b._id) {
+        return -1
+      } 
+        return 1
+      
+    } if (a.groupId <= b.groupId) {
+      return -1
+    } 
+      return 1
+    
+  } if (a.active) {
+    return -1
+  } 
+    return 1
+  
+}

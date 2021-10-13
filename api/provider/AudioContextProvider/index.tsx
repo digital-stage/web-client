@@ -44,10 +44,10 @@ const AudioContextDispatchContext = React.createContext<Dispatch | null>(null)
 function audioContextReducer(prevState: State, action: Action): State {
     switch (action.type) {
         case 'start': {
-            trace('Starting audio context with sample rate of ' + action.sampleRate)
-            let audioContext = prevState.audioContext
-            let destination = prevState.destination
-            let player = prevState.player || new Audio()
+            trace(`Starting audio context with sample rate of ${  action.sampleRate}`)
+            let {audioContext} = prevState
+            let {destination} = prevState
+            const player = prevState.player || new Audio()
             if (
                 !audioContext ||
                 (audioContext && action.sampleRate && audioContext.sampleRate !== action.sampleRate)

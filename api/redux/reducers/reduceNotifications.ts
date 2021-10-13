@@ -20,6 +20,8 @@
  * SOFTWARE.
  */
 
+import omit from 'lodash/omit'
+import without from 'lodash/without'
 import { InternalActionTypes } from '../actions/InternalActionTypes'
 import { Notifications } from '../state/Notifications'
 import {
@@ -27,8 +29,6 @@ import {
     ChangeNotificationPayload,
     RemoveNotificationPayload,
 } from '../actions/clientActions'
-import omit from 'lodash/omit'
-import without from 'lodash/without'
 import {ReducerAction} from "../actions/ReducerAction";
 
 function reduceNotifications(

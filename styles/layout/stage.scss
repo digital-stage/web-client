@@ -1,346 +1,263 @@
-/*!
- * Copyright (c) 2021 Tobias Hegemann
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
-
-@use "sass:math";
-
-$width: 14;
-$height: 9;
-$landscapeAspectRatio: math.div($height, $width);
-$portraitAspectRatio: math.div($width, $height);
-
-.stageLayout {
-  position: relative;
-  width: 100%;
-  min-height: 100vh;
+.stageGrid {
   display: flex;
   flex-direction: column;
-  padding-bottom: 64px;
-
-  @include tablet {
-    padding-bottom: 80px;
-  }
-
-  /* Common */
-  .avatar {
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    color: var(---text);
-    border-width: 4px;
-    border-style: solid;
-    border-color: var(---danger);
-
-    &.active {
-      border-color: var(---success);
-    }
-  }
+  width: 100%;
+  min-height: 100%;
 
   .control {
     position: fixed;
-    top: 48px;
-    right: 8px;
+    top: 8px;
+    right: 48px;
   }
 
-  .videoView {
-    position: absolute;
-    width: 100%;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: auto;
-    overflow: hidden;
-
-
-    video, img {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    &.portrait {
-      img {
-        object-fit: contain;
-      }
-    }
-
-    &.landscape {
-      img {
-        object-fit: contain;
-      }
-    }
-
-    &.mirrored {
-      video, img {
-        transform: scaleX(-1)
-      }
-    }
-
-    .mirrorToggle {
-      position: absolute;
-      bottom: 8px;
-      right: 8px;
-    }
-  }
-
-  .conductorView {
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    width: 100%;
-    height: 100%;
-    padding: 16px;
-  }
-
-  /* MEMBERS GRID */
-  .membersGrid {
+  /* Group representation */
+  .group {
     position: relative;
+    width: auto;
+    padding: 8px;
     display: flex;
-    width: 100%;
-    flex-grow: 1;
-    flex-direction: row;
-    flex-wrap: wrap;
+    flex-direction: column;
 
-    /* MEMBER VIEW */
-    .memberView {
-      flex-grow: 0;
+    /* GROUP GRID */
+    .groupGrid {
       position: relative;
+      width: auto;
+      display: flex;
+      flex-direction: row;
+      border-width: 8px;
       border-style: solid;
-      border-width: 4px;
-      width: 50%;
+      border-color: transparent;
+      border-radius: 16px;
+      overflow: hidden;
+      background-color: var(---grey-1);
+      box-shadow: 0 16px 20px #00000040;
+      // Non lane mode
+      flex-wrap: wrap;
+      flex-grow: 0;
+    }
 
-      @include desktop {
-        width: 25%;
-      }
+    &.single {
+      border-width: 0;
+      border-color: transparent;
+    }
 
-      &:before {
+    /* GROUP NAME */
+    & > .groupInfo {
+      position: relative;
+      display: block;
+      padding-left: 4px;
+      padding-right: 4px;
+      flex-grow: 0;
+
+      & .groupName {
         position: relative;
-        width: 100%;
         display: block;
-        content: '';
-        padding-top: $landscapeAspectRatio * 100%;
-      }
+        width: 100%;
+        font-size: 0.7rem;
+        font-weight: bold;
+        border-bottom-style: solid;
+        border-bottom-width: 2px;
+        padding: 4px;
 
-      .muted {
-        position: absolute;
-        bottom: 12px;
-        right: 48px;
-        color: var(---danger)
-      }
-
-      .info {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        background-color: #12121299;
-        padding-left: 4px;
-        padding-right: 4px;
-        padding-top: 2px;
-        border-top-right-radius: 18px;
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: flex-start;
-        flex-wrap: wrap;
-        margin-right: 36px;
-
-        &.centered {
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background-color: transparent;
-          bottom: unset;
-          right: unset;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-
-          .status {
-            margin-top: 8px;
-          }
-
-          .names {
-            align-items: center;
-
-            .groupName {
-              margin-top: 8px;
-            }
-
-            .memberName {
-              margin-top: 4px;
-            }
-          }
-        }
-
-        .status {
-          width: 0.75rem;
-          height: 0.75rem;
-          border-radius: 50%;
-          background-color: var(---danger);
-          transition-property: background-color;
-          transition-duration: 200ms;
-          transition-timing-function: cubic-bezier(0.2, 0.8, 0.4, 1);
-          margin: 0 4px;
-
-          &.online {
-            background-color: var(---success);
-          }
-        }
-
-        .names {
-          display: flex;
-          flex-direction: column;
-
-          .groupName {
-            padding: 0;
-            margin: 0;
-            font-size: xx-small;
-            font-weight: lighter;
-            text-shadow: 0 0 10px var(---text);
-          }
-
-          .memberName {
-            padding: 0;
-            margin: 0;
-            font-weight: bold;
-            color: white;
-          }
-        }
-
-        .stats {
-          display: inline-flex;
-          flex-wrap: wrap;
-          font-size: 0.6rem;
-          color: var(---muted);
-          padding: 4px;
-
-          span {
-            display: inline-flex;
-            padding-left: 2px;
-            padding-right: 2px;
-          }
+        .groupIcon {
+          display: none;
         }
       }
-
-
-      .conductorToggle {
+      /* Overlay, deprecated: */
+      &.usingOverlay {
         position: absolute;
         top: 8px;
         left: 8px;
-        font-size: 2rem;
-      }
-    }
+        display: inline-flex;
+        flex-direction: column;
+        width: auto;
+        align-items: center;
+        z-index: 1000; // try to order elements instead, this is just for compatibility with new arrangement
 
-    /* 1 members */
-    .memberView:first-of-type:last-of-type {
-      flex-grow: 1;
+        .groupIcon {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          color: var(---text);
+          text-align: center;
+          font-size: 32px;
+          width: 64px;
+          height: 64px;
+          border-radius: 50%;
+        }
+      }
+      /* end of deprecated overlay */
+    }
+  }
+
+  /* Single stage member box */
+  .box {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 0;
+    flex-shrink: 0;
+    background-image: url("/user_background.svg");
+
+    .ratio {
+      position: relative;
       width: 100%;
-      max-height: calc(100vh - 64px);
-      overflow: hidden;
 
-      img {
-        object-fit: contain;
-      }
-
-      @include tablet {
-        max-height: calc(100vh - 80px);
+      .inner {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
       }
     }
 
-    /* 2 members */
-    .memberView:first-of-type:nth-last-of-type(2),
-    .memberView:nth-of-type(2):nth-last-of-type(1) {
-      flex-grow: 1;
-      width: 100%;
-      max-height: calc(100vh - 64px);
-      overflow: hidden;
-
-      @media (orientation: landscape) {
-        width: 50%;
-      }
-      @include tablet {
-        max-height: calc(100vh - 80px);
-      }
+    .muted {
+      position: absolute;
+      bottom: 12px;
+      right: 48px;
+      color: var(---danger)
     }
 
-    &.lanes {
-      .memberView:first-of-type:nth-last-of-type(2),
-      .memberView:nth-of-type(2):nth-last-of-type(1) {
-        width: 50%;
-      }
-    }
+    .info {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      background-color: #12121299;
+      padding-left: 4px;
+      padding-right: 4px;
+      padding-top: 2px;
+      border-top-right-radius: 18px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-start;
+      flex-wrap: wrap;
+      margin-right: 36px;
 
-    &.lanes {
-      .memberView {
-        width: 33.333333333%;
+      &.centered {
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: transparent;
+        bottom: unset;
+        right: unset;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
 
-        @include desktop {
-          width: 16.6666666667%;
+        .status {
+          margin-top: 8px;
         }
 
-        &:before {
-          padding-top: $portraitAspectRatio * 100%;
-        }
+        .names {
+          align-items: center;
 
-        .videoView {
-          video, img {
-            object-fit: cover;
+          .groupName {
+            margin-top: 8px;
+          }
+
+          .memberName {
+            margin-top: 4px;
           }
         }
       }
+
+      .avatar {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        color: var(---text);
+        border-width: 4px;
+        border-style: solid;
+        border-color: var(---danger);
+
+        &.active {
+          border-color: var(---success);
+        }
+      }
+
+      .status {
+        width: 0.75rem;
+        height: 0.75rem;
+        border-radius: 50%;
+        background-color: var(---danger);
+        transition-property: background-color;
+        transition-duration: 200ms;
+        transition-timing-function: cubic-bezier(0.2, 0.8, 0.4, 1);
+        margin: 0 4px;
+
+        &.online {
+          background-color: var(---success);
+        }
+      }
+
+      .names {
+        display: flex;
+        flex-direction: column;
+
+        .groupName {
+          padding: 0;
+          margin: 0;
+          font-size: xx-small;
+          font-weight: lighter;
+          text-shadow: 0 0 10px var(---text);
+        }
+
+        .memberName {
+          padding: 0;
+          margin: 0;
+          font-weight: bold;
+          color: white;
+        }
+      }
+
+      .stats {
+        display: inline-flex;
+        flex-wrap: wrap;
+        font-size: 0.6rem;
+        color: var(---muted);
+        padding: 4px;
+
+        span {
+          display: inline-flex;
+          padding-left: 2px;
+          padding-right: 2px;
+        }
+      }
+    }
+  }
+
+  &.lanes {
+    width: auto;
+    flex-direction: row;
+    overflow-x: auto;
+    padding-bottom: 64px;
+    max-height: 100vh;
+
+    @include tablet {
+      padding-bottom: 0;
+    }
+
+    .group {
+      flex-wrap: nowrap;
+      flex-grow: 1;
+
+      .groupGrid {
+        overflow-x: auto;
+        height: 100%;
+        flex-wrap: nowrap;
+        flex-grow: 1;
+
+      }
     }
   }
 }
 
-.inviteModal {
-  .inviteCodeWrapper {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .actionWrapper {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding-bottom: 2px;
-
-    .copy {
-      padding-right: 8px;
-    }
-  }
-}
-
-.enterInviteCodeModal {
-  .center {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
+.displayModeToggle {
+  align-content: center;
 }

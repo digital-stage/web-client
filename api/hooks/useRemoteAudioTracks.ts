@@ -20,21 +20,25 @@
  * SOFTWARE.
  */
 
-import {useStageSelector} from "../redux/selectors/useStageSelector";
+import React from "react";
+import {RootState, useTrackedSelector} from "@digitalstage/api-client-react";
 import {useConsumers} from "../services/MediasoupService";
 import {useWebRTCRemoteAudioTracks} from "../services/WebRTCService";
-import React from "react";
 
 export type RemoteAudioTracks = {
     [audioTrackId: string]: MediaStreamTrack
 }
 
+const selectWebRTCAudioTrackIdByStageDeviceId = (state: RootState,stageDeviceId: string): string | undefined => state.audioTracks.byStageDevice[stageDeviceId]?.find(id => state.audioTracks.byId[id].type === "browser")
+const selectMediasoupAudioTrackIdByStageDeviceId = (state: RootState,stageDeviceId: string): string | undefined => state.audioTracks.byStageDevice[stageDeviceId]?.find(id => state.audioTracks.byId[id].type === "mediasoup")
+
+
+
 const useRemoteAudioTracks = (stageDeviceId: string): RemoteAudioTracks => {
     // There should be only one audio track for each webrtc or mediasoup per stage device
-    const webRTCAudioTrackId = useStageSelector(state => state.audioTracks
-        .byStageDevice[stageDeviceId]?.find(id => state.audioTracks.byId[id].type === "browser"))
-    const mediasoupAudioTrackId = useStageSelector(state => state.audioTracks
-        .byStageDevice[stageDeviceId]?.find(id => state.audioTracks.byId[id].type === "mediasoup"))
+    const state = useTrackedSelector()
+    const webRTCAudioTrackId = selectWebRTCAudioTrackIdByStageDeviceId(state, stageDeviceId)
+    const mediasoupAudioTrackId = selectMediasoupAudioTrackIdByStageDeviceId(state, stageDeviceId)
 
     const webRTCAudioTracks = useWebRTCRemoteAudioTracks()
     const mediasoupConsumers = useConsumers()
@@ -48,7 +52,7 @@ const useRemoteAudioTracks = (stageDeviceId: string): RemoteAudioTracks => {
                     [webRTCAudioTrackId]: webRTCAudioTracks[stageDeviceId]
                 }
             } else {
-                console.error("Could not find audio track model for WebRTC audio track " + webRTCAudioTracks[stageDeviceId].id)
+                console.error(`Could not find audio track model for WebRTC audio track ${  webRTCAudioTracks[stageDeviceId].id}`)
             }
         }
         if(mediasoupAudioTrackId && mediasoupConsumers[mediasoupAudioTrackId]) {

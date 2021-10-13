@@ -20,11 +20,11 @@
  * SOFTWARE.
  */
 
-import {useEmit, useStageSelector} from '@digitalstage/api-client-react'
+import {useEmit, useTrackedSelector} from '@digitalstage/api-client-react'
 import React from 'react'
 import {ClientDeviceEvents, ClientDevicePayloads} from '@digitalstage/api-types'
+import {BiReset} from 'react-icons/bi'
 import {RoomSelection} from '../../../ui/RoomEditor/RoomSelection'
-import { BiReset } from 'react-icons/bi'
 
 const SelectionToGlobal = {
     group: ClientDeviceEvents.ChangeGroup,
@@ -47,30 +47,27 @@ const DEFAULT_POSITION = {
 
 const ResetPanel = ({deviceId, selections}: { deviceId?: string; selections: RoomSelection[] }) => {
     const emit = useEmit()
-    const groupIds = useStageSelector((state) => state.groups.allIds)
-    const stageMemberIds = useStageSelector((state) => state.stageMembers.allIds)
-    const stageDeviceIds = useStageSelector((state) => state.stageDevices.allIds)
-    const audioTracksIds = useStageSelector((state) => state.audioTracks.allIds)
-    const customGroupIds = useStageSelector((state) =>
+    const state = useTrackedSelector()
+    const customGroupIds = React.useMemo(() =>
         deviceId && state.customGroupPositions.byDevice[deviceId]
             ? state.customGroupPositions.byDevice[deviceId]
-            : []
-    )
-    const customStageMemberIds = useStageSelector((state) =>
-        deviceId && state.customStageMemberPositions.byDevice[deviceId]
-            ? state.customStageMemberPositions.byDevice[deviceId]
-            : []
-    )
-    const customStageDeviceIds = useStageSelector((state) =>
-        deviceId && state.customStageDevicePositions.byDevice[deviceId]
-            ? state.customStageDevicePositions.byDevice[deviceId]
-            : []
-    )
-    const customAudioTrackIds = useStageSelector((state) =>
-        deviceId && state.customAudioTrackPositions.byDevice[deviceId]
-            ? state.customAudioTrackPositions.byDevice[deviceId]
-            : []
-    )
+            : [], [deviceId, state.customGroupPositions.byDevice])
+
+    const customStageMemberIds = React.useMemo(() =>
+            deviceId && state.customStageMemberPositions.byDevice[deviceId]
+                ? state.customStageMemberPositions.byDevice[deviceId]
+                : []
+        , [deviceId, state.customStageMemberPositions.byDevice])
+    const customStageDeviceIds = React.useMemo(() =>
+            deviceId && state.customStageDevicePositions.byDevice[deviceId]
+                ? state.customStageDevicePositions.byDevice[deviceId]
+                : []
+        , [deviceId, state.customStageDevicePositions.byDevice])
+    const customAudioTrackIds = React.useMemo(() =>
+            deviceId && state.customAudioTrackPositions.byDevice[deviceId]
+                ? state.customAudioTrackPositions.byDevice[deviceId]
+                : []
+        , [deviceId, state.customAudioTrackPositions.byDevice])
     const resetAll = React.useCallback(() => {
         if (emit) {
             if (deviceId) {
@@ -85,25 +82,25 @@ const ResetPanel = ({deviceId, selections}: { deviceId?: string; selections: Roo
                     emit(ClientDeviceEvents.RemoveCustomAudioTrackPosition, id)
                 )
             } else {
-                groupIds.map((id) =>
+                state.groups.allIds.map((id) =>
                     emit(ClientDeviceEvents.ChangeGroup, {
                         _id: id,
                         ...DEFAULT_POSITION,
                     } as ClientDevicePayloads.ChangeGroup)
                 )
-                stageMemberIds.map((id) =>
+                state.stageMembers.allIds.map((id) =>
                     emit(ClientDeviceEvents.ChangeStageMember, {
                         _id: id,
                         ...DEFAULT_POSITION,
                     })
                 )
-                stageDeviceIds.map((id) =>
+                state.stageDevices.allIds.map((id) =>
                     emit(ClientDeviceEvents.ChangeStageDevice, {
                         _id: id,
                         ...DEFAULT_POSITION,
                     })
                 )
-                audioTracksIds.map((id) =>
+                state.audioTracks.allIds.map((id) =>
                     emit(ClientDeviceEvents.ChangeAudioTrack, {
                         _id: id,
                         ...DEFAULT_POSITION,
@@ -111,25 +108,16 @@ const ResetPanel = ({deviceId, selections}: { deviceId?: string; selections: Roo
                 )
             }
         }
-    }, [
-        audioTracksIds,
-        customAudioTrackIds,
-        customGroupIds,
-        customStageDeviceIds,
-        customStageMemberIds,
-        deviceId,
-        emit,
-        groupIds,
-        stageDeviceIds,
-        stageMemberIds,
-    ])
+    }, [customAudioTrackIds, customGroupIds, customStageDeviceIds, customStageMemberIds, deviceId, emit, state.audioTracks.allIds, state.groups.allIds, state.stageDevices.allIds, state.stageMembers.allIds])
     const resetSelection = React.useCallback(() => {
         if (emit) {
+            console.log("resetSelection c", selections)
             if (deviceId) {
                 selections.map((selection) => {
-                    emit(SelectionToCustom[selection.type], selection.id)
+                    emit(SelectionToCustom[selection.type], selection.customId)
                 })
             } else {
+                console.log("resetSelection s", selections)
                 selections.map((selection) =>
                     emit(SelectionToGlobal[selection.type], {
                         _id: selection.id,
@@ -144,7 +132,7 @@ const ResetPanel = ({deviceId, selections}: { deviceId?: string; selections: Roo
         <div className="resetPanel">
             {selections.length > 0 ? (
                 <button className="small" onClick={resetSelection}>
-                   <BiReset/>&nbsp;&nbsp;Auswahl
+                    <BiReset/>&nbsp;&nbsp;Auswahl
                 </button>
             ) : null}
             <button className="small" onClick={resetAll}>

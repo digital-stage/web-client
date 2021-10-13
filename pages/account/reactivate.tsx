@@ -26,13 +26,14 @@ import {ResendActivationForm} from 'components/account/ResendActivationForm'
 import {AuthLayout} from 'components/account/AuthLayout'
 import {Paragraph} from '../../ui/Paragraph'
 import {useForwardToStagesWhenSignedIn} from "../../lib/useForwardToStagesWhenSignedIn";
+import {Heading4} from "../../ui/Heading";
 
 const ReActivate = () => {
   useForwardToStagesWhenSignedIn()
 
     return (
         <AuthLayout>
-            <h4>Aktivierungscode erneut senden</h4>
+            <Heading4>Aktivierungscode erneut senden</Heading4>
             <Paragraph kind="micro">
                 Gibt Deine E-Mail-Adresse ein, um erneut einen Aktivierungscode zu beantragen
             </Paragraph>

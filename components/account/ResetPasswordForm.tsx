@@ -25,8 +25,8 @@ import {Formik, Field, FormikHelpers, Form} from 'formik'
 import * as Yup from 'yup'
 import {NotificationItem, KIND} from 'ui/NotificationItem'
 import {TextInput} from 'ui/TextInput'
-import {translateError} from './translateError'
 import {AuthError, resetPassword} from '@digitalstage/api-client-react'
+import {translateError} from './translateError'
 
 interface Values {
   password?: string

@@ -22,12 +22,13 @@
 
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react'
-import { useStageSelector } from '@digitalstage/api-client-react'
+import {selectCurrentStageId, useTrackedSelector} from "@digitalstage/api-client-react";
 
 const Background = (
     props: React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>
 ) => {
-    const insideStage = useStageSelector<boolean>((state) => !!state.globals.stageId)
+    const state = useTrackedSelector()
+    const insideStage = !!selectCurrentStageId(state)
     const { className, ...other } = props
     return (
         <div

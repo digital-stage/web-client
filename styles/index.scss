@@ -20,6 +20,8 @@
  * SOFTWARE.
  */
 
+@import "reset";
+
 $tablet-width: 768px !default;
 $desktop-width: 1024px !default;
 
@@ -50,7 +52,6 @@ $desktop-width: 1024px !default;
 @import "layout/room";
 @import "layout/settings";
 @import "layout/stage";
-@import "layout/stage2";
 @import "layout/stages";
 
 html,

@@ -20,19 +20,20 @@
  * SOFTWARE.
  */
 
-import {useMicrophone} from "../provider/MicrophoneProvider";
-import {useStageSelector} from "../redux/selectors/useStageSelector";
 import React from "react";
-
+import {useTrackedSelector} from "@digitalstage/api-client-react";
+import {useMicrophone} from "../provider/MicrophoneProvider";
 
 const useLocalAudioTracks = (): {
     [audioTrackId: string]: MediaStreamTrack
 } => {
     const track = useMicrophone()
-    const audioTrackId = useStageSelector(state =>
-        state.globals.localStageDeviceId && state.audioTracks.byStageDevice[state.globals.localStageDeviceId]?.find(
-        id => state.audioTracks.byId[id].type === "browser" || state.audioTracks.byId[id].type === "mediasoup"
-    ))
+    const state = useTrackedSelector()
+    const audioTrackId =
+      state.globals.localStageDeviceId &&
+      state.audioTracks.byStageDevice[state.globals.localStageDeviceId]?.filter(id => state.audioTracks.byId[id].type === "browser" || state.audioTracks.byId[id].type === "mediasoup").shift() || undefined
+
+    console.log("RERENDER useLocalAudioTracks")
 
     return React.useMemo(() => {
         if (track && audioTrackId) {

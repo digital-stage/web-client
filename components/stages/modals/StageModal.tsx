@@ -21,7 +21,7 @@
  */
 
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import { useEmit, useStageSelector } from '@digitalstage/api-client-react'
+import {selectStageById, useEmit, useTrackedSelector} from '@digitalstage/api-client-react'
 import { ClientDeviceEvents, ClientDevicePayloads, Stage } from '@digitalstage/api-types'
 import React from 'react'
 import { Field, Form, Formik } from 'formik'
@@ -30,8 +30,8 @@ import { Modal, ModalButton, ModalFooter, ModalHeader } from 'ui/Modal'
 import { NotificationItem } from 'ui/NotificationItem'
 import { TextInput } from 'ui/TextInput'
 import {Collapse} from 'ui/Collapse'
-import { shallowEqual } from 'react-redux'
 import { Switch } from 'ui/Switch'
+import {Heading3, Heading5} from 'ui/Heading'
 import {Radio} from "../../../ui/Radio";
 
 const StageModal = ({
@@ -45,12 +45,11 @@ const StageModal = ({
 }) => {
     const [error, setError] = React.useState<string>()
     const emit = useEmit()
-    const stage = useStageSelector<Stage | undefined>(
-        (state) => (stageId ? state.stages.byId[stageId] : undefined),
-        shallowEqual
-    )
+    const state = useTrackedSelector()
+    const stage = stageId ? selectStageById(state, stageId) : undefined
 
     const save = React.useCallback(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         ({ _id, ...values }: Partial<Stage>) => {
             if (emit) {
                 return new Promise<void>((resolve, reject) => {
@@ -88,7 +87,7 @@ const StageModal = ({
     return (
         <Modal open={open} onClose={onClose} className="stageModal">
             <ModalHeader>
-                <h3>{stage ? 'Bühne bearbeiten' : 'Neue Bühne erstellen'}</h3>
+                <Heading3>{stage ? 'Bühne bearbeiten' : 'Neue Bühne erstellen'}</Heading3>
             </ModalHeader>
             <Formik
                 initialValues={
@@ -141,7 +140,7 @@ const StageModal = ({
                             error={touched.name && errors.name}
                             light
                         />
-                        <h5 className="muted">Audioübertragung</h5>
+                        <Heading5 className="muted">Audioübertragung</Heading5>
                         <div>
                             <label className="radioLabel">
                                 <Field as={Radio} type="radio" name="audioType" value="mediasoup" /> Browser
@@ -272,7 +271,7 @@ const StageModal = ({
                                 disabled={isSubmitting || !!error}
                                 className="danger"
                                 type="submit"
-                                autoFocus={true}
+                                autoFocus
                             >
                                 {stage ? 'Speichern' : 'Neue Bühne erstellen'}
                             </ModalButton>

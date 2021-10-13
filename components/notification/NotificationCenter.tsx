@@ -21,13 +21,12 @@
  */
 
 import { NotificationItem } from 'ui/NotificationItem'
-import { useStageSelector } from '@digitalstage/api-client-react'
+import {useTrackedSelector} from '@digitalstage/api-client-react'
 import React from "react";
 
 const NotificationCenter = () => {
-    const notifications = useStageSelector((state) =>
-        state.notifications.allIds.map((id) => state.notifications.byId[id])
-    )
+    const state = useTrackedSelector()
+    const notifications = state.notifications.allIds.map((id) => state.notifications.byId[id])
     return (
         <div className="notificationCenter">
             {notifications.map(({id, kind, date, message, stack}) => (

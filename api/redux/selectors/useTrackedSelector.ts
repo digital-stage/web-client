@@ -20,22 +20,10 @@
  * SOFTWARE.
  */
 
+import {useSelector} from 'react-redux';
+import {createTrackedSelector} from 'react-tracked';
+import {RootState} from '../RootState';
 
-import {useEmit, useLocalDeviceId, useShowOffline} from "@digitalstage/api-client-react";
-import {useCallback} from "react";
-import {ClientDeviceEvents} from "@digitalstage/api-types";
+const useTrackedSelector = createTrackedSelector<RootState>(useSelector);
 
-const useToggleOffline = (): () => void => {
-  const emit = useEmit()
-  const localDeviceId = useLocalDeviceId()
-  const showOffline = useShowOffline()
-  return useCallback(() => {
-    if (emit && localDeviceId)
-      emit(ClientDeviceEvents.ChangeDevice, {
-        _id: localDeviceId,
-        showOffline: !showOffline
-      })
-  }, [emit, localDeviceId, showOffline])
-}
-
-export {useToggleOffline}
+export {useTrackedSelector}

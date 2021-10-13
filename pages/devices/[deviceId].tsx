@@ -20,20 +20,22 @@
  * SOFTWARE.
  */
 
-import {DeviceSettings} from '../../components/devices/DeviceSettings'
 import {useRouter} from 'next/router'
 import React from 'react'
 import Link from 'next/link'
-import {useStageSelector} from '@digitalstage/api-client-react'
-import {Container} from '../../ui/Container'
 import {IoIosArrowDropleft} from 'react-icons/io'
 import {Panel} from 'ui/Panel'
+import {selectLocalDeviceId, useTrackedSelector} from "@digitalstage/api-client-react";
+import {Container} from '../../ui/Container'
+import {DeviceSettings} from '../../components/devices/DeviceSettings'
 import {Loading} from "../../components/global/Loading";
+import {Heading3} from "../../ui/Heading";
 
 const DevicePage = () => {
   const {isReady, query, replace} = useRouter()
   const [deviceId, setDeviceId] = React.useState<string>()
-  const localDeviceId = useStageSelector((state) => state.globals.localDeviceId)
+  const state = useTrackedSelector()
+  const localDeviceId = selectLocalDeviceId(state)
 
   React.useEffect(() => {
     if (isReady) {
@@ -46,7 +48,7 @@ const DevicePage = () => {
     }
   }, [isReady, replace, query])
 
-  const deviceFound = useStageSelector<boolean>(state => state.globals.ready && deviceId ? !!state.devices.byId[deviceId] : false)
+  const deviceFound = state.globals.ready && deviceId ? !!state.devices.byId[deviceId] : false
   React.useEffect(() => {
     if (!deviceFound) {
       replace("/devices")
@@ -68,9 +70,9 @@ const DevicePage = () => {
               &nbsp;Zurück zur Übersicht
             </a>
           </Link>
-          <h3 className="heading">
+          <Heading3 className="heading">
             Gerät bearbeiten {localDeviceId === deviceId ? ' (Dieser Webbrowser)' : ''}
-          </h3>
+          </Heading3>
           {deviceId && <DeviceSettings deviceId={deviceId}/>}
         </Panel>
       </Container>

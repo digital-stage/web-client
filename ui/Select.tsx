@@ -27,8 +27,7 @@ const Select = ({
     ...props
 }: React.DetailedHTMLProps<React.SelectHTMLAttributes<HTMLSelectElement>, HTMLSelectElement> & {
     label?: string
-}) => {
-    return (
+}) => (
         <label className="select">
             {label && <span>{label}</span>}
             <select {...props} />
@@ -49,5 +48,4 @@ const Select = ({
             </svg>
         </label>
     )
-}
 export { Select }

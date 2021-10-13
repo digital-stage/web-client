@@ -27,6 +27,7 @@ export interface KIND {
   sub: 'sub'
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const OptionsListItem = ({as: is, kind, ...props}: { kind: KIND[keyof KIND], as?: React.DetailedReactHTMLElement<any, HTMLElement>, children: React.ReactNode } & any) => is ? React.cloneElement(is, {
   className: `${is.props?.className ||''} optionsListItem ${kind || ''}`,
   ...props

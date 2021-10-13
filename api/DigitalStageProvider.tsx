@@ -21,8 +21,8 @@
  */
 
 import {Provider} from 'react-redux'
-import {store} from './redux/store'
 import * as React from 'react'
+import {store} from './redux/store'
 import {AudioContextProvider} from './provider/AudioContextProvider'
 import {ConnectionProvider} from './services/ConnectionService'
 import {AudioLevelProvider} from './provider/AudioLevelProvider'

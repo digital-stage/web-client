@@ -1,13 +1,15 @@
-import {RoomSelection} from "../../../ui/RoomEditor/RoomSelection";
-import {useEmit, useStageSelector} from "@digitalstage/api-client-react";
 import {
-    useAudioTrackPosition, useCustomAudioTrackPosition,
-} from "./utils";
+    selectAudioTrackPositionByAudioTrackId,
+    selectCustomAudioTrackPositionByAudioTrackId,
+    useEmit,
+    useTrackedSelector
+} from "@digitalstage/api-client-react";
 import React from "react";
-import {RoomItem, RoomPositionWithAngle} from "../../../ui/RoomEditor";
 import {ClientDeviceEvents, ClientDevicePayloads} from "@digitalstage/api-types";
-import {AudioTrackIcon} from "./icons/AudioTrackIcon";
 import {IoVolumeHigh, IoVolumeMute} from "react-icons/io5";
+import {RoomItem, RoomPositionWithAngle} from "../../../ui/RoomEditor";
+import {AudioTrackIcon} from "./icons/AudioTrackIcon";
+import {RoomSelection} from "../../../ui/RoomEditor/RoomSelection";
 
 const AudioTrackItem = ({
                             audioTrackId,
@@ -26,8 +28,9 @@ const AudioTrackItem = ({
     groupColor: string,
     stageDevicePosition: RoomPositionWithAngle
 }) => {
-    const position = useAudioTrackPosition(audioTrackId)
-    const customPosition = useCustomAudioTrackPosition(audioTrackId)
+    const state = useTrackedSelector()
+    const position = selectAudioTrackPositionByAudioTrackId(state, audioTrackId)
+    const customPosition = selectCustomAudioTrackPositionByAudioTrackId(state, audioTrackId)
     const [currentPosition, setCurrentPosition] = React.useState<RoomPositionWithAngle>({
         x: customPosition?.x || position.x,
         y: customPosition?.y || position.y,
@@ -43,7 +46,7 @@ const AudioTrackItem = ({
 
     // Stage management only for this item
     const selected = React.useMemo(() => selections.some(selection => selection.id === audioTrackId), [selections, audioTrackId])
-    const muted = useStageSelector<boolean>(state => state.audioTracks.byId[audioTrackId].muted)
+    const {muted} = state.audioTracks.byId[audioTrackId]
     const onClicked = React.useCallback(() => {
         if (selected) {
             if (onDeselect) {
@@ -53,25 +56,23 @@ const AudioTrackItem = ({
                     customId: customPosition && customPosition._id
                 })
             }
-        } else {
-            if (onSelect) {
+        } else if (onSelect) {
                 onSelect({
                     type: 'track',
                     id: audioTrackId,
                     customId: customPosition && customPosition._id
                 })
             }
-        }
     }, [customPosition, onDeselect, onSelect, selected, audioTrackId])
 
     const emit = useEmit()
-    const deviceId = useStageSelector<string | undefined>(state => state.globals.selectedMode === "personal" ? state.globals.selectedDeviceId : undefined)
+    const deviceId = state.globals.selectedMode === "personal" ? state.globals.selectedDeviceId : undefined
     const onFinalChange = React.useCallback((position: RoomPositionWithAngle) => {
         if(emit) {
             if (customPosition || deviceId) {
                 emit(ClientDeviceEvents.SetCustomAudioTrackPosition, {
-                    audioTrackId: audioTrackId,
-                    deviceId: deviceId,
+                    audioTrackId,
+                    deviceId,
                     ...position
                 } as ClientDevicePayloads.SetCustomAudioTrackPosition)
             } else {
@@ -89,8 +90,8 @@ const AudioTrackItem = ({
         if(emit) {
             if (customPosition && deviceId) {
                 emit(ClientDeviceEvents.SetCustomAudioTrackVolume, {
-                    audioTrackId: audioTrackId,
-                    deviceId: deviceId,
+                    audioTrackId,
+                    deviceId,
                     muted: !muted
                 } as ClientDevicePayloads.SetCustomAudioTrackVolume)
             } else {
@@ -123,7 +124,7 @@ const AudioTrackItem = ({
             onFinalChange={onFinalChange}
         >
             <AudioTrackIcon/>
-            <span onClick={onMuteClicked} className={`muteField`}>{muted ? <IoVolumeMute /> : <IoVolumeHigh/>}</span>
+            <span onClick={onMuteClicked} className="muteField">{muted ? <IoVolumeMute /> : <IoVolumeHigh/>}</span>
             <style jsx>{`
                 .muteField {
                     position: absolute;

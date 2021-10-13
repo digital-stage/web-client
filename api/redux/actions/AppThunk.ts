@@ -21,7 +21,7 @@
  */
 
 import { ThunkAction } from '@reduxjs/toolkit'
-import { RootState } from '../state'
+import { RootState } from '../RootState'
 import { ReducerAction } from './ReducerAction'
 
 export type AppThunk<ReturnType = void> = ThunkAction<ReturnType, RootState, unknown, ReducerAction>

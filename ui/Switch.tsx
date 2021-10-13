@@ -28,23 +28,20 @@ export interface SIZE {
 }
 
 const Switch = ({
-    size,
-    round,
-    className,
-    ...props
-}: Omit<
-    React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>,
-    'size'
-> & {
+                    size,
+                    round,
+                    className,
+                    ...props
+                }: Omit<React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>,
+    'size'> & {
     size?: SIZE[keyof SIZE]
     round?: boolean
-}) => {
-    return (
-        <div className={`switch ${size ? size : ''} ${className || ''}`}>
-            <input type="checkbox" {...props} />
-            <span className={`slider ${round ? 'round' : ''}`} />
-        </div>
-    )
-}
+}) => (
+    <div className={`switch ${size || ''} ${className || ''}`}>
+        <input type="checkbox" {...props} />
+        <span className={`slider ${round ? 'round' : ''}`}/>
+    </div>
+)
 
-export { Switch }
+
+export {Switch}

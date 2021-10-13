@@ -1,9 +1,9 @@
 import React from "react";
+import {MdMyLocation} from "react-icons/md";
 import {DragBounceFunc, RoomItem} from "./RoomItem";
 import {RoomPosition, RoomPositionWithAngle} from "./types";
 import {FACTOR, RoomContext} from "./RoomContext";
 import {calculateActualSize, rotatePointAroundOrigin} from "./utils";
-import {MdMyLocation} from "react-icons/md";
 
 const Room = ({children, onClick, width, height, center, rotation, className, factor = FACTOR}: {
     children: React.ReactNode,
@@ -40,9 +40,10 @@ const Room = ({children, onClick, width, height, center, rotation, className, fa
     }, [factor, height, rotation, width])
 
     const scrollToCenter = React.useCallback(() => {
+        console.log("scrollToCenter")
         if (ref.current && center) {
-            let x = center.x
-            let y = center.y
+            let {x} = center
+            let {y} = center
             if(rotation) {
                 const normalizedCenter = rotatePointAroundOrigin(x, y, 180 - rotation)
                 x = normalizedCenter.x
@@ -55,13 +56,18 @@ const Room = ({children, onClick, width, height, center, rotation, className, fa
             ref.current.scrollTop = top
             ref.current.scrollTo({
                 behavior: "smooth",
-                top: top,
-                left: left
+                top,
+                left
             })
         }
     }, [center, rotation, actualSize.height, actualSize.width, factor])
 
     React.useEffect(() => {
+        console.log("CENTER CHANGED")
+    }, [center])
+
+    React.useEffect(() => {
+        console.log("scrollToCenter changed")
         scrollToCenter()
     }, [scrollToCenter])
 

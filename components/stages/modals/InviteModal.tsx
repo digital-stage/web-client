@@ -28,6 +28,7 @@ import  { Modal,ModalButton, ModalFooter, ModalHeader } from 'ui/Modal'
 import {TextInput} from 'ui/TextInput'
 import { BiReset } from 'react-icons/bi'
 import { Paragraph } from 'ui/Paragraph'
+import {Heading3, Heading4} from 'ui/Heading'
 
 const InviteModal = ({
     open,
@@ -94,7 +95,7 @@ const InviteModal = ({
     return (
         <Modal size="small" open={open} onClose={onClose} className="inviteModal">
             <ModalHeader>
-                <h3>Einladen</h3>
+                <Heading3>Einladen</Heading3>
             </ModalHeader>
             <div className="inviteCodeWrapper">
                 {code ? (
@@ -120,7 +121,7 @@ const InviteModal = ({
                                         )
                                     )
                             }}
-                            autoFocus={true}
+                            autoFocus
                         >
                             Code kopieren
                         </button>
@@ -151,7 +152,7 @@ const InviteModal = ({
 
             <Modal size="small" open={resetOpen} onClose={() => setResetOpen(false)}>
                 <ModalHeader>
-                    <h4>Code neu generieren</h4>
+                    <Heading4>Code neu generieren</Heading4>
                 </ModalHeader>
                 <Paragraph kind="micro">
                     Möchtest Du den Code wirklich neu generieren?

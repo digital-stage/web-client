@@ -20,37 +20,38 @@
  * SOFTWARE.
  */
 
-import { NotificationItem } from 'ui/NotificationItem'
-import { changeNotification, useStageSelector } from '@digitalstage/api-client-react'
-import { useDispatch } from 'react-redux'
+import {NotificationItem} from 'ui/NotificationItem'
+import {changeNotification, RootState, useTrackedSelector} from '@digitalstage/api-client-react'
+import {useDispatch} from 'react-redux'
+
+const selectFeaturedNotifications = (state: RootState) => state.notifications.allIds
+  .map((id) => state.notifications.byId[id])
+  .filter((notification) => notification.featured || notification.permanent)
 
 const NotificationBar = () => {
-    const dispatch = useDispatch()
-    const featuredNotifications = useStageSelector((state) =>
-        state.notifications.allIds
-            .map((id) => state.notifications.byId[id])
-            .filter((notification) => notification.featured || notification.permanent)
-    )
-    return (
-        <>
-            {featuredNotifications.map((notification) => (
-                <NotificationItem
-                    closeable={!notification.permanent}
-                    onClose={() =>
-                        dispatch(
-                            changeNotification({
-                                id: notification.id,
-                                featured: false,
-                            })
-                        )
-                    }
-                    key={notification.id}
-                    kind={notification.kind}
-                >
-                    {notification.message}
-                </NotificationItem>
-            ))}
-        </>
-    )
+  const dispatch = useDispatch()
+  const state = useTrackedSelector()
+  const featuredNotifications = selectFeaturedNotifications(state)
+  return (
+    <>
+      {featuredNotifications.map((notification) => (
+        <NotificationItem
+          closeable={!notification.permanent}
+          onClose={() =>
+            dispatch(
+              changeNotification({
+                id: notification.id,
+                featured: false,
+              })
+            )
+          }
+          key={notification.id}
+          kind={notification.kind}
+        >
+          {notification.message}
+        </NotificationItem>
+      ))}
+    </>
+  )
 }
-export { NotificationBar }
+export {NotificationBar}

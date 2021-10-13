@@ -22,11 +22,12 @@
 
 import {ChatMessage, ClientDeviceEvents, ClientDevicePayloads} from '@digitalstage/api-types'
 import React from 'react'
-import {useEmit, Users, useStageSelector} from '@digitalstage/api-client-react'
-import {useForceUpdate} from './useForceUpdate'
+import {selectLocalUserId, useEmit, Users, useTrackedSelector} from '@digitalstage/api-client-react'
 import {NotificationItem} from 'ui/NotificationItem'
 import {Panel} from 'ui/Panel'
 import {AiOutlineSend} from 'react-icons/ai'
+import {useForceUpdate} from './useForceUpdate'
+import {Heading5} from "../../../ui/Heading";
 
 const convertTime = (time: number): string => {
   const min = (Date.now() - time) / 60000
@@ -70,8 +71,7 @@ const MessagePane = ({
 
   return (
     <div className={`chatMessages ${hasErrors ? 'chatMessagesWithError' : ''}`}>
-      {messages.map((msg, index) => {
-        return (
+      {messages.map((msg, index) => (
           <div
             /* eslint-disable-next-line react/no-array-index-key */
             key={`${msg.time}${index}`}
@@ -80,13 +80,12 @@ const MessagePane = ({
             }`}
           >
             {msg.userId !== localUserId && (
-              <h5 className="chatMessageName">{users.byId[msg.userId]?.name}</h5>
+              <Heading5 className="chatMessageName">{users.byId[msg.userId]?.name}</Heading5>
             )}
             <div className="chatMessage">{msg.message}</div>
             <div className="chatMessageTime">{convertTime(msg.time)}</div>
           </div>
-        )
-      })}
+        ))}
       <div ref={messagesEndRef}/>
     </div>
   )
@@ -94,11 +93,12 @@ const MessagePane = ({
 
 const ChatPanel = () => {
   const [error, setError] = React.useState<string>()
-  const messages = useStageSelector<ChatMessage[]>((state) => state.chatMessages)
+  const state = useTrackedSelector()
+  const messages = state.chatMessages
   const messageRef = React.useRef<HTMLInputElement>(null)
   const emit = useEmit()
-  const localUserId = useStageSelector<string | undefined>((state) => state.globals.localUserId)
-  const users = useStageSelector<Users>((state) => state.users)
+  const localUserId = selectLocalUserId(state)
+  const {users} = state
 
   const onSendClicked = React.useCallback(() => {
     if (messageRef.current && emit) {
@@ -137,13 +137,13 @@ const ChatPanel = () => {
         >
           <input autoFocus ref={messageRef} type="text" className="chatInput"/>
           <button
-            className={`chatMobileSendButton round small`}
+            className="chatMobileSendButton round small"
             type="submit"
             onClick={onSendClicked}
           >
             <AiOutlineSend/>
           </button>
-          <button className={`chatSendButton small`} type="submit" onClick={onSendClicked}>
+          <button className="chatSendButton small" type="submit" onClick={onSendClicked}>
             Nachricht senden
           </button>
         </form>

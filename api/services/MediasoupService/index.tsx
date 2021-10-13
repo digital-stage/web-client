@@ -22,9 +22,11 @@
 
 import React from 'react'
 import {MediasoupAudioTrack, MediasoupVideoTrack} from '@digitalstage/api-types'
+import {RootState} from 'api/redux/RootState'
+import {useTrackedSelector} from 'api/redux/selectors/useTrackedSelector'
+import {selectCurrentAudioType, selectCurrentStageId, selectCurrentVideoType, selectToken} from "api/redux/selectors";
 import {useEmit} from '../ConnectionService'
 import {useErrorReporting} from '../../hooks/useErrorReporting'
-import {useStageSelector} from '../../redux/selectors/useStageSelector'
 import {useWebcam} from '../../provider/WebcamProvider'
 import {useMicrophone} from '../../provider/MicrophoneProvider'
 import {ConsumersList, Events, MediasoupHandler} from "./MediasoupHandler";
@@ -45,35 +47,50 @@ const MediasoupProvider = ({children}: { children: React.ReactNode }) => {
 
 const useConsumers = (): ConsumersList => {
   const state = React.useContext<ConsumersList | null>(ConsumersListContext)
-  if(state === null)
+  if (state === null)
     throw new Error('useConsumers must be used within a MediasoupProvider')
   return state
 }
 
+const selectRouterUrl = (state: RootState) => {
+  if (state.globals.stageId) {
+    const {audioType, videoType, mediasoup} = state.stages.byId[state.globals.stageId]
+    if ((videoType === 'mediasoup' || audioType === 'mediasoup') && mediasoup?.url && mediasoup?.port) {
+      return `${mediasoup.url}:${mediasoup.port}`
+    }
+  }
+  return undefined
+}
+const selectCurrentMediasoupVideoTracks = (state: RootState) =>
+  state.globals.stageId && state.globals.localStageDeviceId && state.videoTracks.byStage[state.globals.stageId]
+    ? (state.videoTracks.byStage[state.globals.stageId]
+      .map((id) => state.videoTracks.byId[id])
+      .filter(
+        (track) =>
+          track.type === 'mediasoup' && track.stageDeviceId !== state.globals.localStageDeviceId
+      ) as MediasoupVideoTrack[])
+    : []
+const selectCurrentMediasoupAudioTracks = (state: RootState) =>
+  state.globals.stageId && state.globals.localStageDeviceId && state.audioTracks.byStage[state.globals.stageId]
+    ? (state.audioTracks.byStage[state.globals.stageId]
+      .map((id) => state.audioTracks.byId[id])
+      .filter(
+        (track) =>
+          track.type === 'mediasoup' && track.stageDeviceId !== state.globals.localStageDeviceId
+      ) as MediasoupAudioTrack[])
+    : []
+
 const MediasoupService = () => {
   const emit = useEmit()
-  const token = useStageSelector(state => state.auth.token)
+  const state = useTrackedSelector()
+  const token = selectToken(state)
   const reportError = useErrorReporting()
-  const localStageDeviceId = useStageSelector<string | undefined>((state) => state.globals.localStageDeviceId)
-  const useP2P = useStageSelector<boolean>(state => state.globals.localDeviceId ? state.devices.byId[state.globals.localDeviceId].useP2P : undefined)
-  const stageId = useStageSelector<string | undefined>((state) => state.globals.stageId)
-  const routerUrl = useStageSelector<string | undefined>((state) => {
-    if (state.globals.stageId) {
-      const {audioType, videoType, mediasoup} = state.stages.byId[state.globals.stageId]
-      if ((videoType === 'mediasoup' || audioType === 'mediasoup') && mediasoup?.url && mediasoup?.port) {
-        return `${mediasoup.url}:${mediasoup.port}`
-      }
-    }
-    return undefined
-  })
-  const audioType = useStageSelector((state) =>
-    state.globals.stageId ? state.stages.byId[state.globals.stageId].audioType : undefined
-  )
-  const videoType = useStageSelector((state) =>
-    state.globals.stageId ? state.stages.byId[state.globals.stageId].videoType : undefined
-  )
+  const useP2P = state.globals.localDeviceId ? state.devices.byId[state.globals.localDeviceId].useP2P : undefined
+  const stageId = selectCurrentStageId(state)
+  const routerUrl = selectRouterUrl(state)
+  const audioType = selectCurrentAudioType(state)
+  const videoType = selectCurrentVideoType(state)
   const [handler, setHandler] = React.useState<MediasoupHandler>()
-
 
   // Creating connection to router
   React.useEffect(() => {
@@ -90,26 +107,8 @@ const MediasoupService = () => {
     }
   }, [routerUrl, emit, token, stageId, reportError,])
 
-  const videoTracks = useStageSelector<MediasoupVideoTrack[]>((state) =>
-    state.globals.stageId && state.videoTracks.byStage[state.globals.stageId]
-      ? (state.videoTracks.byStage[state.globals.stageId]
-        .map((id) => state.videoTracks.byId[id])
-        .filter(
-          (track) =>
-            track.type === 'mediasoup' && track.stageDeviceId !== localStageDeviceId
-        ) as MediasoupVideoTrack[])
-      : []
-  )
-  const audioTracks = useStageSelector<MediasoupAudioTrack[]>((state) =>
-    state.globals.stageId && state.audioTracks.byStage[state.globals.stageId]
-      ? (state.audioTracks.byStage[state.globals.stageId]
-        .map((id) => state.audioTracks.byId[id])
-        .filter(
-          (track) =>
-            track.type === 'mediasoup' && track.stageDeviceId !== localStageDeviceId
-        ) as MediasoupAudioTrack[])
-      : []
-  )
+  const videoTracks = selectCurrentMediasoupVideoTracks(state)
+  const audioTracks = selectCurrentMediasoupAudioTracks(state)
   const setConsumers = React.useContext<DispatchConsumersList | null>(DispatchConsumersListContext)
   // Sync video tracks by creating consumers
   React.useEffect(() => {
@@ -124,10 +123,8 @@ const MediasoupService = () => {
   const localVideoTrack = useWebcam()
   React.useEffect(() => {
     if (handler && videoType === 'mediasoup' && !useP2P && localVideoTrack) {
-      console.log("Produce video")
       handler.addTrack(localVideoTrack)
       return () => {
-        console.log("Cleaning up video producer")
         handler.removeTrack(localVideoTrack.id)
       }
     }

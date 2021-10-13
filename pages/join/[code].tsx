@@ -21,10 +21,11 @@
  */
 
 import {
+  selectReady,
   useEmit,
   useNotification,
   useStageJoiner,
-  useStageSelector,
+  useTrackedSelector,
 } from '@digitalstage/api-client-react'
 import {useRouter} from 'next/router'
 import React from 'react'
@@ -36,7 +37,8 @@ const JoinPage = () => {
   const {join} = useStageJoiner()
   const notify = useNotification()
   const emit = useEmit()
-  const ready = useStageSelector((state) => state.globals.ready)
+  const state = useTrackedSelector()
+  const ready = selectReady(state)
 
   React.useEffect(() => {
     if (emit && isReady && ready && notify) {

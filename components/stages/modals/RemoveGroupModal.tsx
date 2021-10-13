@@ -20,12 +20,13 @@
  * SOFTWARE.
  */
 
-import { useEmit, useStageSelector } from '@digitalstage/api-client-react'
+import {useEmit, useTrackedSelector} from '@digitalstage/api-client-react'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
 import { Modal, ModalButton, ModalFooter, ModalHeader } from 'ui/Modal'
 import React  from 'react'
 import { NotificationItem } from 'ui/NotificationItem'
 import { Paragraph } from 'ui/Paragraph'
+import { Heading4 } from 'ui/Heading'
 
 const RemoveGroupModal = ({
     groupId,
@@ -37,9 +38,8 @@ const RemoveGroupModal = ({
     onClose: () => void
 }) => {
     const emit = useEmit()
-    const name = useStageSelector((state) =>
-        groupId ? state.groups.byId[groupId]?.name : undefined
-    )
+    const state = useTrackedSelector()
+    const name = groupId ? state.groups.byId[groupId]?.name : undefined
     const [error, setError] = React.useState<string>()
     const [isDeleting, setDeleting] = React.useState<boolean>(false)
     const removeStage = React.useCallback(() => {
@@ -63,7 +63,7 @@ const RemoveGroupModal = ({
         return (
             <Modal open={open} onClose={onClose} size="small">
                 <ModalHeader>
-                    <h4>Gruppe {name || groupId} wirklich löschen?</h4>
+                    <Heading4>Gruppe {name || groupId} wirklich löschen?</Heading4>
                 </ModalHeader>
                 <Paragraph kind="micro">
                     Die Gruppen und deren Teilnehmer werden unwiderruflich gelöscht und sind nicht
@@ -71,7 +71,7 @@ const RemoveGroupModal = ({
                 </Paragraph>
                 {error ? <NotificationItem kind="error">{error}</NotificationItem> : null}
                 <ModalFooter>
-                    <ModalButton onClick={onClose} autoFocus={true}>Nein</ModalButton>
+                    <ModalButton onClick={onClose} autoFocus>Nein</ModalButton>
                     <ModalButton disabled={isDeleting} className="danger" onClick={removeStage}>
                         Ja, Gruppe wirklich löschen
                     </ModalButton>

@@ -23,9 +23,9 @@
 import { useDebounceCallback } from '@react-hook/debounce'
 import { useThrottleCallback } from '@react-hook/throttle'
 import React from 'react'
-import {LevelMeter} from './LevelMeter'
 import { useAudioLevel } from '@digitalstage/api-client-react'
 import { BiReset } from 'react-icons/bi'
+import {LevelMeter} from './LevelMeter'
 
 /**
  * Base for the logarithmic ratio below 0db
@@ -39,7 +39,7 @@ const UPPER_BASE = 3
 /**
  * Range input settings
  */
-const MIN = 0
+// const MIN = 0
 const MAX = 100
 const NULL_VALUE = 70
 
@@ -186,7 +186,7 @@ const VolumeSlider = ({
             </button>
             <div className="slider">
                 {levels[id] ? (
-                    <LevelMeter className="levelMeter" buffer={levels[id]} vertical={true} />
+                    <LevelMeter className="levelMeter" buffer={levels[id]} vertical />
                 ) : null}
                 {name ? <label>{name}</label> : null}
                 <div className="value">{dbValue} db</div>

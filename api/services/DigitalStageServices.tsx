@@ -30,8 +30,7 @@ import {ConnectionService} from './ConnectionService'
 import {AudioContextService} from "./AudioContextService";
 import {MediaCaptureService} from "./MediaCaptureService";
 
-const DigitalStageServices = () => {
-    return (
+const DigitalStageServices = () => (
         <>
             <ConnectionService/>
             <AutoLoginService/>
@@ -42,7 +41,6 @@ const DigitalStageServices = () => {
             <WebRTCService/>
         </>
     )
-}
 
 const MemoizedDigitalStageServices = React.memo(DigitalStageServices)
 

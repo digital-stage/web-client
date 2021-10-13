@@ -25,6 +25,7 @@ import React from 'react'
 import {SecondaryHeadlineLink} from 'ui/HeadlineLink'
 import {Container} from 'ui/Container'
 import {Panel} from 'ui/Panel'
+import {Heading4} from "../../ui/Heading";
 
 const AuthLogo = () => (
   <div className="authLogo">
@@ -35,16 +36,15 @@ const AuthLogo = () => (
 const AuthNav = () => (
   <nav className="authNav">
     <SecondaryHeadlineLink className="authNavItem" href="/account/login">
-      <h4>Login</h4>
+      <Heading4>Login</Heading4>
     </SecondaryHeadlineLink>
     <SecondaryHeadlineLink className="authNavItem" href="/account/signup">
-      <h4>Registrieren</h4>
+      <Heading4>Registrieren</Heading4>
     </SecondaryHeadlineLink>
   </nav>
 )
 
-const AuthLayout = ({children, showMenu}: { children: React.ReactNode; showMenu?: boolean }) => {
-  return (
+const AuthLayout = ({children, showMenu}: { children: React.ReactNode; showMenu?: boolean }) => (
     <Container className="authLayout" size="tiny">
       <AuthLogo/>
       <Panel kind="black">
@@ -53,7 +53,6 @@ const AuthLayout = ({children, showMenu}: { children: React.ReactNode; showMenu?
       </Panel>
     </Container>
   )
-}
 AuthLayout.defaultProps = {
   showMenu: undefined,
 }

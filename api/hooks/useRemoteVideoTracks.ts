@@ -20,64 +20,57 @@
  * SOFTWARE.
  */
 
-import {useStageSelector} from "../redux/selectors/useStageSelector";
+import {logger, RootState, useTrackedSelector} from "@digitalstage/api-client-react";
+import React from "react";
 import {useConsumers} from "../services/MediasoupService";
 import {useWebRTCRemoteVideos} from "../services/WebRTCService";
 
-/*
-const useRemoteVideoStreamTracks = (stageMemberId: string): MediaStreamTrack[] => {
-  const webRTCVideos = useWebRTCRemoteVideos()
-  const stageDeviceIds = useStageSelector(state => state.stageDevices.byStageMember[stageMemberId] || [])
-  const videoTrackIds = useStageSelector(state => state.videoTracks.byStageMember[stageMemberId] || [])
-  const mediasoupConsumers = useConsumers()
-  return React.useMemo<MediaStreamTrack[]>(() => {
-    return [
-      ...stageDeviceIds.reduce((prev, stageDeviceId) => {
-        if (webRTCVideos[stageDeviceId]) {
-          return [...prev, webRTCVideos[stageDeviceId]]
-        }
-        return prev
-      }, []),
-      ...videoTrackIds.reduce((prev, videoTrackId) => {
-        if (mediasoupConsumers[videoTrackId]) {
-          return [...prev, mediasoupConsumers[videoTrackId].track]
-        }
-        return prev
-      }, [])
-    ]
-  }, [mediasoupConsumers, stageDeviceIds, videoTrackIds, webRTCVideos])
-}*/
+const {trace} = logger('useRemoteVideoTracks')
 
 export type RemoteVideoTracks = {
-  [videoTrackId: string]: MediaStreamTrack
+    [videoTrackId: string]: MediaStreamTrack
 }
 
-const useRemoteVideoTracks = (stageMemberId?: string): RemoteVideoTracks => {
-  const webRTCVideos = useWebRTCRemoteVideos()
-  const mediasoupConsumers = useConsumers()
-  const videoTracks = useStageSelector(state => stageMemberId && state.videoTracks.byStageMember[stageMemberId]?.map(id => {
+const selectRemoteVideoTracks = (state: RootState, stageMemberId?: string): {
+    _id: string,
+    type: string,
+    producerId?: string,
+    stageDeviceId: string
+}[] => stageMemberId && state.videoTracks.byStageMember[stageMemberId]?.map(id => {
     const {_id, type, producerId, stageDeviceId} = state.videoTracks.byId[id]
     return {_id, type, producerId, stageDeviceId}
-  }) || [])
-  //TODO: Discuss if we should wrap this with React.useMemo ...
-  return videoTracks.reduce<RemoteVideoTracks>((prev, {_id, type, stageDeviceId}) => {
-    if (type === "mediasoup") {
-      if (mediasoupConsumers[_id]) {
-        return {
-          ...prev,
-          [_id]: mediasoupConsumers[_id].track
-        }
-      }
-    } else if (type === "browser") {
-      if (webRTCVideos[stageDeviceId]) {
-        return {
-          ...prev,
-          [_id]: webRTCVideos[stageDeviceId]
-        }
-      }
-    }
-    return prev
-  }, {})
+}) || []
+
+const useRemoteVideoTracks = (stageMemberId?: string): RemoteVideoTracks => {
+    const state = useTrackedSelector()
+    const webRTCVideos = useWebRTCRemoteVideos()
+    const mediasoupConsumers = useConsumers()
+    const videoTracks = selectRemoteVideoTracks(state, stageMemberId)
+    trace("videoTracks", videoTracks)
+    trace("webRTCVideos", webRTCVideos)
+    const tracks = React.useMemo<RemoteVideoTracks>(() => {
+        trace("Reducing tracks")
+        return videoTracks.reduce<RemoteVideoTracks>((prev, {_id, type, stageDeviceId}) => {
+            if (type === "mediasoup") {
+                if (mediasoupConsumers[_id]) {
+                    return {
+                        ...prev,
+                        [_id]: mediasoupConsumers[_id].track
+                    }
+                }
+            } else if (type === "browser") {
+                if (webRTCVideos[stageDeviceId]) {
+                    return {
+                        ...prev,
+                        [_id]: webRTCVideos[stageDeviceId]
+                    }
+                }
+            }
+            return prev
+        }, {})
+    }, [mediasoupConsumers, videoTracks, webRTCVideos])
+    trace("Resulting remote tracks", tracks)
+    return tracks
 }
 
 export {useRemoteVideoTracks}

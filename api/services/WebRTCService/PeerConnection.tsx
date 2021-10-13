@@ -21,14 +21,19 @@
  */
 
 import React from 'react'
-import {config} from './config'
 import {logger} from 'api/logger'
-import {Broker} from './Broker'
 import {ClientDeviceEvents, ClientDevicePayloads, ClientLogEvents} from "@digitalstage/api-types";
-import {PeerNegotiation} from "./PeerNegotiation";
-import {useStageSelector} from 'api/redux/selectors/useStageSelector';
-import {useEmit} from '../ConnectionService';
 import {useNotification} from 'api/hooks/useNotification';
+import {
+    selectLocalStageDeviceId,
+    selectReady, selectTurnCredential,
+    selectTurnServers, selectTurnUsername,
+    useTrackedSelector
+} from "@digitalstage/api-client-react";
+import {config} from './config'
+import {Broker} from './Broker'
+import {PeerNegotiation} from "./PeerNegotiation";
+import {useEmit} from '../ConnectionService';
 import {useLogServer} from "../../hooks/useLogServer";
 
 const {trace} = logger('WebRTCService:PeerConnection')
@@ -48,25 +53,26 @@ const PeerConnection = ({
     onStats: (trackId: string, stats: RTCStatsReport) => void
     broker: Broker
 }): JSX.Element | null => {
+    const state = useTrackedSelector()
     const report = useLogServer()
-    const ready = useStageSelector(state => state.globals.ready)
+    const ready = selectReady(state)
     const notify = useNotification()
     const emit = useEmit()
-    const localStageDeviceId = useStageSelector((state) => state.globals.localStageDeviceId)
-    const targetDeviceId = useStageSelector(state => state.stageDevices.byId[stageDeviceId].deviceId)
+    const localStageDeviceId = selectLocalStageDeviceId(state)
+    const targetDeviceId = state.stageDevices.byId[stageDeviceId].deviceId
     const [receivedTracks, setReceivedTracks] = React.useState<MediaStreamTrack[]>([])
-    const turnServers = useStageSelector(state => state.globals.turn?.urls || [])
-    const turnUsername = useStageSelector(state => state.globals.turn?.username)
-    const turnCredential = useStageSelector(state => state.globals.turn?.credential)
+    const turnServers = selectTurnServers(state)
+    const turnUsername = selectTurnUsername(state)
+    const turnCredential = selectTurnCredential(state)
     const [connection, setConnection] = React.useState<PeerNegotiation>()
 
     React.useEffect(() => {
         if (ready && notify && emit && localStageDeviceId && targetDeviceId && stageDeviceId && onRemoteTrack && broker && onStats && report) {
-            trace('Created new peer connection ' + stageDeviceId)
+            trace(`Created new peer connection ${stageDeviceId}`)
             trace(turnServers.length > 0 ? 'Using TURN servers' : 'Fallback to public STUN servers')
 
             const onDescription = (description: RTCSessionDescriptionInit) => {
-                trace("Sending " + description.type)
+                trace(`Sending ${description.type}`)
                 if (description.type === "offer") {
                     emit(ClientDeviceEvents.SendP2POffer, {
                         from: localStageDeviceId,
@@ -86,7 +92,7 @@ const PeerConnection = ({
                 emit(ClientDeviceEvents.SendIceCandidate, {
                     from: localStageDeviceId,
                     to: stageDeviceId,
-                    iceCandidate: iceCandidate,
+                    iceCandidate,
                 } as ClientDevicePayloads.SendIceCandidate)
             }
             const onRestart = () => {
@@ -130,7 +136,7 @@ const PeerConnection = ({
                 onCandidate,
                 onRestart,
                 polite,
-                report: report
+                report
             })
             const handleRestart = () => {
                 peerConnection.restart()
@@ -140,11 +146,11 @@ const PeerConnection = ({
                         message: err,
                     }))
             }
-            const handleDescription = (description:  RTCSessionDescriptionInit) => {
-                trace("Forwarding remote " + description.type)
+            const handleDescription = (description: RTCSessionDescriptionInit) => {
+                trace(`Forwarding remote ${description.type}`)
                 peerConnection.setDescription(description)
             }
-            const handleCandidate = (candidate:  RTCIceCandidate) => {
+            const handleCandidate = (candidate: RTCIceCandidate) => {
                 trace("Forwarding remote candidate")
                 peerConnection.addCandidate(candidate)
             }
@@ -153,7 +159,7 @@ const PeerConnection = ({
             broker.addIceCandidateListener(stageDeviceId, handleCandidate)
             setConnection(peerConnection)
             return () => {
-                trace('Closing peer connection ' + stageDeviceId)
+                trace(`Closing peer connection ${stageDeviceId}`)
                 broker.removeRestartListener(stageDeviceId, handleRestart)
                 broker.removeDescriptionListener(stageDeviceId, handleDescription)
                 broker.removeIceCandidateListener(stageDeviceId, handleCandidate)
@@ -164,33 +170,32 @@ const PeerConnection = ({
     }, [stageDeviceId, turnServers, turnUsername, turnCredential, localStageDeviceId, emit, onRemoteTrack, onStats, broker, notify, ready, targetDeviceId, report])
 
     React.useEffect(() => {
-        //if (process.env.NODE_ENV !== 'production') {
-        const id = setInterval(() => {
-            if (connection) {
-                receivedTracks.map((track) =>
-                    connection.getStats(track).then((stats) => onStats(track.id, stats))
-                )
-                // @ts-ignore
-                connection.getStats(null)
-                    .then((stats) => {
-                        let formattedStats = {}
-                        stats.forEach((v,k) => {
-                            formattedStats = {
-                                ...formattedStats,
-                                [k]: v
-                            }
+        if (process.env.NODE_ENV !== 'production') {
+            const id = setInterval(() => {
+                if (connection) {
+                    receivedTracks.map((track) =>
+                        connection.getStats(track).then((stats) => onStats(track.id, stats))
+                    )
+                    connection.getStats(null)
+                        .then((stats) => {
+                            let formattedStats = {}
+                            stats.forEach((v, k) => {
+                                formattedStats = {
+                                    ...formattedStats,
+                                    [k]: v
+                                }
+                            })
+                            report(ClientLogEvents.PeerStats, {
+                                targetDeviceId,
+                                stats: formattedStats
+                            })
                         })
-                        report(ClientLogEvents.PeerStats, {
-                            targetDeviceId: targetDeviceId,
-                            stats: formattedStats
-                        })
-                    })
+                }
+            }, 5000)
+            return () => {
+                clearInterval(id)
             }
-        }, 5000)
-        return () => {
-            clearInterval(id)
         }
-        //}
     }, [connection, onStats, receivedTracks, report, targetDeviceId])
 
     React.useEffect(() => {

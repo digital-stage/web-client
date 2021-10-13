@@ -26,8 +26,8 @@ import {
     ServerDeviceEvents,
     ServerDevicePayloads,
 } from '@digitalstage/api-types'
-import { actions } from './actions'
 import { BrowserDevice } from '@digitalstage/api-types/dist/model/browser'
+import { actions } from './actions'
 import { AppDispatch } from './store'
 
 const registerSocketHandler = (dispatch: AppDispatch, socket: ITeckosClient): ITeckosClient => {

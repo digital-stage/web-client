@@ -20,11 +20,13 @@
  * SOFTWARE.
  */
 
-import {selectDevice, useEmit, useStageSelector} from '@digitalstage/api-client-react'
-import {shallowEqual, useDispatch} from 'react-redux'
+import {
+  selectDevice,
+  useEmit
+} from '@digitalstage/api-client-react'
+import {useDispatch} from 'react-redux'
 import React from 'react'
 import Link from 'next/link'
-import {DeleteModal} from './DeleteModal'
 import {useRouter} from 'next/router'
 import {ClientDeviceEvents, ClientDevicePayloads} from '@digitalstage/api-types'
 import {List, ListItem} from 'ui/List'
@@ -32,6 +34,8 @@ import {Switch} from 'ui/Switch'
 import {MdEdit, MdMic, MdMicOff, MdVideocam, MdVideocamOff} from 'react-icons/md'
 import {GoBrowser, GoDeviceDesktop} from 'react-icons/go'
 import {FaRaspberryPi, FaTrash} from 'react-icons/fa'
+import {DeleteModal} from './DeleteModal'
+import {useTrackedSelector} from "../../api/redux/selectors/useTrackedSelector";
 
 const TypeIcons = {
   jammer: <GoDeviceDesktop/>,
@@ -51,14 +55,13 @@ const DeviceEntry = ({
   onSelect: () => void
   onDeleteClicked: () => void
 }) => {
-  const selectedDeviceId = useStageSelector((state) => state.globals.selectedDeviceId)
-  const device = useStageSelector((state) => state.devices.byId[deviceId], shallowEqual)
-  const selected = React.useMemo(() => {
-    return selectedDeviceId === deviceId
-  }, [deviceId, selectedDeviceId])
+  const state = useTrackedSelector()
+  const {selectedDeviceId} = state.globals
+  const device = state.devices.byId[deviceId]
+  const selected = React.useMemo(() => selectedDeviceId === deviceId, [deviceId, selectedDeviceId])
   const emit = useEmit()
 
-  if (emit) {
+  if (emit && device) {
     return (
       <ListItem
         onSelect={onSelect}
@@ -84,7 +87,7 @@ const DeviceEntry = ({
               P2P&nbsp;
               <Switch
                 size="small"
-                round={true}
+                round
                 checked={device.useP2P}
                 onChange={(e) =>
                   emit(ClientDeviceEvents.ChangeDevice, {
@@ -139,10 +142,11 @@ const DeviceEntry = ({
 }
 
 const DevicesList = (): JSX.Element | null => {
-  const deviceIds = useStageSelector((state) => state.devices.allIds)
-  const localDeviceId = useStageSelector((state) => state.globals.localDeviceId)
+  const state = useTrackedSelector()
+  const deviceIds = state.devices.allIds
+  const {localDeviceId} = state.globals
   const dispatch = useDispatch()
-  const selectedDeviceId = useStageSelector((state) => state.globals.selectedDeviceId)
+  const {selectedDeviceId} = state.globals
   const [deleteRequest, requestDelete] = React.useState<string>()
   const {push} = useRouter()
 

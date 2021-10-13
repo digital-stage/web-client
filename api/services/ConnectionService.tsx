@@ -23,14 +23,15 @@
 import {ITeckosClient, TeckosClientWithJWT} from 'teckos-client'
 import React from 'react'
 import {useDispatch} from 'react-redux'
-import {getInitialDevice} from '../utils/getInitialDevice'
-import {registerSocketHandler} from '../redux/registerSocketHandler'
 import Cookie from 'js-cookie'
 import {SocketEvent} from 'teckos-client/dist/types'
+import {getInitialDevice} from '../utils/getInitialDevice'
+import {registerSocketHandler} from '../redux/registerSocketHandler'
 import {logger} from '../logger'
-import {useStageSelector} from '../redux/selectors/useStageSelector'
 import {useNotification} from '../hooks/useNotification'
 import {clientActions} from '../redux/actions'
+import {useTrackedSelector} from '../redux/selectors/useTrackedSelector'
+import {selectToken} from '../redux/selectors'
 
 const {trace} = logger('ConnectionService')
 
@@ -43,103 +44,103 @@ const ConnectionDispatchContext = React.createContext<ConnectionDispatch | null>
 const ConnectionStateContext = React.createContext<ConnectionState | null>(null)
 
 const ConnectionProvider = ({children}: { children: React.ReactNode }): JSX.Element => {
-    const [connection, setConnection] = React.useState<ConnectionState>()
-    return (
-        <ConnectionDispatchContext.Provider value={setConnection}>
-            <ConnectionStateContext.Provider value={connection}>
-                {children}
-            </ConnectionStateContext.Provider>
-        </ConnectionDispatchContext.Provider>
-    )
+  const [connection, setConnection] = React.useState<ConnectionState>()
+  return (
+    <ConnectionDispatchContext.Provider value={setConnection}>
+      <ConnectionStateContext.Provider value={connection}>
+        {children}
+      </ConnectionStateContext.Provider>
+    </ConnectionDispatchContext.Provider>
+  )
 }
 const useConnection = (): ConnectionState => {
-    const state = React.useContext(ConnectionStateContext)
-    if(state === null)
-        throw new Error('useConnection must be used within a ConnectionProvider')
-    return state
+  const state = React.useContext(ConnectionStateContext)
+  if (state === null)
+    throw new Error('useConnection must be used within a ConnectionProvider')
+  return state
 }
 const useEmit = (): EmitFunction | undefined => {
-    const connection = useConnection()
-    return connection?.emit
+  const connection = useConnection()
+  return connection?.emit
 }
 
 const ConnectionService = (): JSX.Element | null => {
-    trace('RENDER')
-    const userId = useStageSelector<string | undefined>((state) => state.auth.user?._id)
-    const token = useStageSelector<string | undefined>((state) => state.auth.token)
-    const dispatch = useDispatch()
-    const setConnection = React.useContext(ConnectionDispatchContext)
-    const notify = useNotification()
+  const state = useTrackedSelector()
+  const userId = state.auth.user?._id
+  const token = selectToken(state)
+  const dispatch = useDispatch()
+  const setConnection = React.useContext(ConnectionDispatchContext)
+  const notify = useNotification()
 
-    React.useEffect(() => {
-        if (setConnection && token && userId && notify) {
-            let isActive = true
-            let conn: ITeckosClient
+  React.useEffect(() => {
+    if (setConnection && token && userId && notify) {
+      let isActive = true
+      let conn: ITeckosClient
 
-            const uuid = Cookie.get(userId)
-            getInitialDevice(true, uuid)
-                .then((initialDevice) => {
-                    if (isActive) {
-                        trace('Creating new connection to API server')
-                        if (!process.env.NEXT_PUBLIC_API_URL) {
-                            throw new Error("NEXT_PUBLIC_API_UR is not defined")
-                        }
-                        return new TeckosClientWithJWT(
-                            process.env.NEXT_PUBLIC_API_URL,
-                            {
-                                reconnection: true,
-                                debug: true,
-                            },
-                            token,
-                            {
-                                device: initialDevice,
-                            }
-                        )
-                    }
-                    throw new Error("Aborted by user")
-                })
-                .then((conn) => {
-                    if (conn && isActive) {
-                        registerSocketHandler(dispatch, conn)
-                        return conn
-                    }
-                    throw new Error("Aborted by user")
-                })
-                .then((conn) => {
-                    if (isActive) {
-                        conn.on('reconnect', () => {
-                            trace('RECONNECT')
-                            //setConnection(conn)
-                        })
-                        conn.on('connect', () => {
-                            trace('CONNECTED?')
-                        })
-                        conn.on('disconnect', () => {
-                            //setConnection(undefined)
-                        })
-                        setConnection(conn)
-                        conn.connect()
-                    }
-                })
-                .catch((err) => {
-                    notify({
-                        kind: 'error',
-                        message: err,
-                    })
-                    console.error(err)
-                })
-            return () => {
-                isActive = false
-                if (conn) {
-                    trace('Closing connection to API server')
-                    conn.disconnect()
-                }
-                setConnection(undefined)
-                dispatch(clientActions.reset())
+      const uuid = Cookie.get(userId)
+      getInitialDevice(true, uuid)
+        .then((initialDevice) => {
+          if (isActive) {
+            trace('Creating new connection to API server')
+            if (!process.env.NEXT_PUBLIC_API_URL) {
+              throw new Error("NEXT_PUBLIC_API_UR is not defined")
             }
+            return new TeckosClientWithJWT(
+              process.env.NEXT_PUBLIC_API_URL,
+              {
+                reconnection: true,
+                debug: true,
+              },
+              token,
+              {
+                device: initialDevice,
+              }
+            )
+          }
+          throw new Error("Aborted by user")
+        })
+        .then((conn) => {
+          if (conn && isActive) {
+            registerSocketHandler(dispatch, conn)
+            return conn
+          }
+          throw new Error("Aborted by user")
+        })
+        .then((conn) => {
+          if (isActive) {
+            conn.on('reconnect', () => {
+              trace('RECONNECT')
+              // setConnection(conn)
+            })
+            conn.on('connect', () => {
+              trace('CONNECTED?')
+            })
+            conn.on('disconnect', () => {
+              // setConnection(undefined)
+            })
+            setConnection(conn)
+            conn.connect()
+          }
+        })
+        .catch((err) => {
+          notify({
+            kind: 'error',
+            message: err,
+          })
+          console.error(err)
+        })
+      return () => {
+        isActive = false
+        if (conn) {
+          trace('Closing connection to API server')
+          conn.disconnect()
         }
-    }, [dispatch, notify, setConnection, token, userId])
+        setConnection(undefined)
+        dispatch(clientActions.reset())
+      }
+    }
+  }, [dispatch, notify, setConnection, token, userId])
 
-    return null
+  return null
 }
 export {ConnectionProvider, ConnectionService, useConnection, useEmit, ConnectionStateContext}

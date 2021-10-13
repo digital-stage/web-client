@@ -24,16 +24,17 @@ import { Middleware } from 'redux'
 import { ServerDeviceEvents, ServerDevicePayloads } from '@digitalstage/api-types'
 import { v4 as uuidv4 } from 'uuid'
 import omit from 'lodash/omit'
-import { RootState } from './state'
 import { InternalActionTypes } from './actions/InternalActionTypes'
 import {addNotification, AddNotificationPayload, changeNotification, RemoveNotificationPayload } from './actions/clientActions'
+import { RootState } from './RootState'
 
 let timeouts: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [id: string]: any
 } = {}
 
 const notificationMiddleware: Middleware<
-    {}, // Most middleware do not modify the dispatch return value
+    unknown, // Most middleware do not modify the dispatch return value
     RootState
 > = (storeApi) => (next) => (action) => {
     const { dispatch } = storeApi

@@ -1,15 +1,16 @@
-import {RoomSelection} from "../../../ui/RoomEditor/RoomSelection";
-import {useEmit, useStageSelector} from "@digitalstage/api-client-react";
 import {
-    useCustomStageDevicePosition,
-    useStageDevicePosition,
-} from "./utils";
+    selectCustomStageDevicePositionByStageDeviceId,
+    selectDeviceNameByStageDeviceId,
+    selectStageDevicePositionByStageDeviceId,
+    useEmit,
+    useTrackedSelector
+} from "@digitalstage/api-client-react";
 import React from "react";
-import {RoomItem, RoomPositionWithAngle} from "../../../ui/RoomEditor";
 import {ClientDeviceEvents, ClientDevicePayloads} from "@digitalstage/api-types";
+import {RoomItem, RoomPositionWithAngle} from "../../../ui/RoomEditor";
+import {RoomSelection} from "../../../ui/RoomEditor/RoomSelection";
 import {CenterIcon} from "./icons/CenterIcon";
 import {StageDeviceIcon} from "./icons/StageDeviceIcon";
-import {BrowserDevice} from "@digitalstage/api-types/dist/model/browser";
 import {AudioTrackItem} from "./AudioTrackItem";
 
 const StageDeviceItem = ({
@@ -29,12 +30,13 @@ const StageDeviceItem = ({
     groupColor: string,
     stageMemberPosition: RoomPositionWithAngle
 }) => {
-    const isMine = useStageSelector<boolean>(state => state.stageDevices.byId[stageDeviceId].userId === state.globals.localUserId)
-    const isCurrent = useStageSelector<boolean>(state => state.stageDevices.byId[stageDeviceId].deviceId === state.globals.selectedDeviceId)
-    const isLocal = useStageSelector<boolean>(state => stageDeviceId === state.globals.localStageDeviceId)
+    const state = useTrackedSelector()
+    const isMine = state.stageDevices.byId[stageDeviceId].userId === state.globals.localUserId
+    const isCurrent = state.stageDevices.byId[stageDeviceId].deviceId === state.globals.selectedDeviceId
+    const isLocal = stageDeviceId === state.globals.localStageDeviceId
 
-    const position = useStageDevicePosition(stageDeviceId)
-    const customPosition = useCustomStageDevicePosition(stageDeviceId)
+    const position = selectStageDevicePositionByStageDeviceId(state, stageDeviceId)
+    const customPosition = selectCustomStageDevicePositionByStageDeviceId(state, stageDeviceId)
     const [currentPosition, setCurrentPosition] = React.useState<RoomPositionWithAngle>({
         x: customPosition?.x || position.x,
         y: customPosition?.y || position.y,
@@ -48,20 +50,11 @@ const StageDeviceItem = ({
         })
     }, [customPosition?.rZ, customPosition?.x, customPosition?.y, position.rZ, position.x, position.y])
 
-    const audioTrackIds = useStageSelector<string[]>((state) => state.audioTracks.byStageDevice[stageDeviceId] || [])
+    const audioTrackIds = state.audioTracks.byStageDevice[stageDeviceId] || []
 
     // Stage management only for this item
     const selected = React.useMemo(() => selections.some(selection => selection.id === stageDeviceId), [selections, stageDeviceId])
-    const deviceName = useStageSelector<string>(state => {
-        const device = state.stageDevices.byId[stageDeviceId]
-        if (device.userId === state.globals.localUserId && device.type === "browser") {
-            // Use device instead of stage device for naming
-            const browserDevice = state.devices.byId[device.deviceId] as BrowserDevice
-            if (browserDevice.browser)
-                return browserDevice.name || `${browserDevice.browser} (${browserDevice.os})`
-        }
-        return device.name
-    })
+    const deviceName = selectDeviceNameByStageDeviceId(state, stageDeviceId)
     const onClicked = React.useCallback(() => {
         if (selected) {
             if (onDeselect) {
@@ -71,25 +64,23 @@ const StageDeviceItem = ({
                     customId: customPosition && customPosition._id
                 })
             }
-        } else {
-            if (onSelect) {
+        } else if (onSelect) {
                 onSelect({
                     type: 'device',
                     id: stageDeviceId,
                     customId: customPosition && customPosition._id
                 })
             }
-        }
     }, [customPosition, onDeselect, onSelect, selected, stageDeviceId])
 
     const emit = useEmit()
-    const deviceId = useStageSelector<string | undefined>(state => state.globals.selectedMode === "personal" ? state.globals.selectedDeviceId : undefined)
+    const deviceId = state.globals.selectedMode === "personal" ? state.globals.selectedDeviceId : undefined
     const onFinalChange = React.useCallback((position: RoomPositionWithAngle) => {
         if (emit) {
             if (customPosition || deviceId) {
                 emit(ClientDeviceEvents.SetCustomStageDevicePosition, {
-                    stageDeviceId: stageDeviceId,
-                    deviceId: deviceId,
+                    stageDeviceId,
+                    deviceId,
                     ...position
                 } as ClientDevicePayloads.SetCustomStageDevicePosition)
             } else {

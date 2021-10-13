@@ -24,39 +24,31 @@ import mediasoupClient from 'mediasoup-client'
 import {ITeckosClient} from 'teckos-client'
 
 import {
-    AudioTrack,
-    ClientDeviceEvents,
-    ClientDevicePayloads, ClientMediasoupEvents, ClientMediasoupPayloads,
-    MediasoupAudioTrack,
-    MediasoupVideoTrack,
-    VideoTrack,
+    ClientMediasoupEvents, ClientMediasoupPayloads,
 } from '@digitalstage/api-types'
 import {Device} from 'mediasoup-client/lib/Device'
-import {SocketEvent} from 'teckos-client/dist/types'
-import {logger} from '../../logger'
 import {ClientMediasoupCallbacks} from "@digitalstage/api-types/dist/ClientMediasoupCallbacks";
+import {logger} from '../../logger'
 
 const {trace, reportError} = logger('MediasoupService:utils')
 
-export const getRTPCapabilities = (routerConnection: ITeckosClient) => {
-    return new Promise<mediasoupClient.types.RtpCapabilities>((resolve, reject) => {
-        const callback: ClientMediasoupCallbacks.GetRTPCapabilities<mediasoupClient.types.RtpCapabilities> =
-            (error, retrievedRtpCapabilities) => {
-                if (error) {
-                    reject(new Error(error))
-                }
-                if (retrievedRtpCapabilities)
-                    resolve(retrievedRtpCapabilities)
-                else
-                    reject(new Error("No capabilities received"))
+export const getRTPCapabilities = (routerConnection: ITeckosClient) => new Promise<mediasoupClient.types.RtpCapabilities>((resolve, reject) => {
+    const callback: ClientMediasoupCallbacks.GetRTPCapabilities<mediasoupClient.types.RtpCapabilities> =
+        (error, retrievedRtpCapabilities) => {
+            if (error) {
+                reject(new Error(error))
             }
-        routerConnection.emit(
-            ClientMediasoupEvents.GetRTPCapabilities,
-            undefined as ClientMediasoupPayloads.GetRTPCapabilities,
-            callback
-        )
-    })
-}
+            if (retrievedRtpCapabilities)
+                resolve(retrievedRtpCapabilities)
+            else
+                reject(new Error("No capabilities received"))
+        }
+    routerConnection.emit(
+        ClientMediasoupEvents.GetRTPCapabilities,
+        undefined as ClientMediasoupPayloads.GetRTPCapabilities,
+        callback
+    )
+})
 
 export const createWebRTCTransport = (
     routerConnection: ITeckosClient,
@@ -69,7 +61,7 @@ export const createWebRTCTransport = (
             if (error) {
                 return reject(error)
             }
-            if(!transportOptions)
+            if (!transportOptions)
                 return reject("Missing transport options")
             const transport: mediasoupClient.types.Transport =
                 direction === 'send'
@@ -103,7 +95,7 @@ export const createWebRTCTransport = (
                             rtpParameters: producer.rtpParameters,
                             appData: producer.appData,
                         } as ClientMediasoupPayloads.CreateProducer<mediasoupClient.types.RtpParameters>,
-                        (produceError: string | undefined, payload: any) => {
+                        (produceError: string | undefined, payload: { id: string }) => {
                             if (produceError) {
                                 reportError(produceError)
                                 return errCallback(produceError)
@@ -191,13 +183,12 @@ export const createConsumer = (
     producerId: string
 ): Promise<mediasoupClient.types.Consumer> =>
     new Promise<mediasoupClient.types.Consumer>((resolve, reject) => {
-        console.log(device.rtpCapabilities)
         const callback: ClientMediasoupCallbacks.CreateConsumer<mediasoupClient.types.RtpParameters> = (error, data) => {
             if (error) {
                 reportError(error)
                 return reject(error)
             }
-            if(!data) {
+            if (!data) {
                 return reject("No data received from server")
             }
             trace(
@@ -213,7 +204,7 @@ export const createConsumer = (
                   // Avoid calling pause() on consumer for safari (refer to: https://mediasoup.discourse.group/t/producer-pause-still-uploading-streams/167/4)
                   return resumeConsumer(socket, consumer)
                     .then(consumer => resolve(consumer))
-                }*/
+                } */
                 return resolve(consumer)
             })
         }
@@ -237,7 +228,7 @@ export const resumeConsumer = (
         return new Promise<mediasoupClient.types.Consumer>((resolve, reject) =>
             routerConnection.emit(ClientMediasoupEvents.ResumeConsumer, consumer.id as ClientMediasoupPayloads.ResumeConsumer, (error?: string) => {
                 if (error) return reject(error)
-                //consumer.resume()
+                // consumer.resume()
                 trace(`Resumed consumer ${consumer.id}`)
                 return resolve(consumer)
             })

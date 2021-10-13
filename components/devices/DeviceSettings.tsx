@@ -20,22 +20,23 @@
  * SOFTWARE.
  */
 
-import {useEmit, useStageSelector} from '@digitalstage/api-client-react'
+import {useEmit, useTrackedSelector} from '@digitalstage/api-client-react'
 import {ClientDeviceEvents, ClientDevicePayloads} from '@digitalstage/api-types'
 import React from 'react'
-import {shallowEqual} from 'react-redux'
 import {LiveInput} from 'ui/LiveInput'
 import {Switch} from 'ui/Switch'
 import {Select} from 'ui/Select'
-import {SoundCardSettings} from './SoundCardSettings'
 import {Paragraph} from 'ui/Paragraph'
 import {OptionsList, OptionsListItem} from 'ui/OptionsList'
 import {BrowserDevice} from "@digitalstage/api-types/dist/model/browser";
+import {SoundCardSettings} from './SoundCardSettings'
+import {Heading4} from "../../ui/Heading";
 
 const DeviceSettings = ({deviceId}: { deviceId: string }) => {
-  const device = useStageSelector((state) => state.devices.byId[deviceId], shallowEqual)
+  const state = useTrackedSelector()
+  const device = React.useMemo(() => state.devices.byId[deviceId], [state.devices.byId, deviceId])
   const emit = useEmit()
-  const browserDevice = device.type === "browser" && device as BrowserDevice
+  const browserDevice = state.devices.byId[deviceId].type === "browser" && device as BrowserDevice
   if (emit) {
     return (
       <>
@@ -49,18 +50,18 @@ const DeviceSettings = ({deviceId}: { deviceId: string }) => {
           label="Name"
           value={
             device?.name ||
-            (device?.type === 'browser' ? `${device.os}: ${device.browser}` : device?._id)
+            (device?.type === 'browser' ? `${state.devices.byId[deviceId].os}: ${state.devices.byId[deviceId].browser}` : device?._id)
           }
         />
         <OptionsList>
           {device?.type === 'browser' ? (
             <>
-              <h4>Verbindungseinstellungen</h4>
+              <Heading4>Verbindungseinstellungen</Heading4>
               <OptionsListItem as={<label/>}>
                 Direktverbindungen verwenden (schneller)
                 <Switch
-                  round={true}
-                  checked={!!device.useP2P}
+                  round
+                  checked={!!state.devices.byId[deviceId].useP2P}
                   onChange={(e) =>
                     emit(ClientDeviceEvents.ChangeDevice, {
                       _id: deviceId,
@@ -83,12 +84,12 @@ const DeviceSettings = ({deviceId}: { deviceId: string }) => {
 
           {device?.canVideo ? (
             <>
-              <h4>Videoeinstellungen</h4>
+              <Heading4>Videoeinstellungen</Heading4>
               <OptionsListItem as={<label/>}>
                 Video senden
                 <Switch
-                  round={true}
-                  checked={device.sendVideo}
+                  round
+                  checked={state.devices.byId[deviceId].sendVideo}
                   onChange={(e) =>
                     emit(ClientDeviceEvents.ChangeDevice, {
                       _id: deviceId,
@@ -100,8 +101,8 @@ const DeviceSettings = ({deviceId}: { deviceId: string }) => {
               <OptionsListItem as={<label/>}>
                 Video empfangen
                 <Switch
-                  round={true}
-                  checked={device.receiveVideo}
+                  round
+                  checked={state.devices.byId[deviceId].receiveVideo}
                   onChange={(e) =>
                     emit(ClientDeviceEvents.ChangeDevice, {
                       _id: deviceId,
@@ -114,10 +115,10 @@ const DeviceSettings = ({deviceId}: { deviceId: string }) => {
                 <OptionsListItem as={<label/>}>
                   Video-Eingabegerät
                   <Select
-                    value={device.inputVideoDeviceId}
+                    value={state.devices.byId[deviceId].inputVideoDeviceId}
                     onChange={(event) =>
                       emit(ClientDeviceEvents.ChangeDevice, {
-                        _id: device._id,
+                        _id: state.devices.byId[deviceId]._id,
                         inputVideoDeviceId: event.currentTarget.value,
                       })
                     }
@@ -137,12 +138,12 @@ const DeviceSettings = ({deviceId}: { deviceId: string }) => {
           ) : null}
           {device?.canAudio ? (
             <>
-              <h4>Audioeinstellungen</h4>
+              <Heading4>Audioeinstellungen</Heading4>
               <OptionsListItem as={<label/>}>
                 Audio senden
                 <Switch
-                  round={true}
-                  checked={device.sendAudio}
+                  round
+                  checked={state.devices.byId[deviceId].sendAudio}
                   onChange={(e) =>
                     emit(ClientDeviceEvents.ChangeDevice, {
                       _id: deviceId,
@@ -154,8 +155,8 @@ const DeviceSettings = ({deviceId}: { deviceId: string }) => {
               <OptionsListItem as={<label/>}>
                 Audio empfangen
                 <Switch
-                  round={true}
-                  checked={device.receiveAudio}
+                  round
+                  checked={state.devices.byId[deviceId].receiveAudio}
                   onChange={(e) =>
                     emit(ClientDeviceEvents.ChangeDevice, {
                       _id: deviceId,
@@ -170,10 +171,10 @@ const DeviceSettings = ({deviceId}: { deviceId: string }) => {
                   <OptionsListItem as={<label/>}>
                     Audio-Eingabegerät
                     <Select
-                      value={device.inputAudioDeviceId}
+                      value={state.devices.byId[deviceId].inputAudioDeviceId}
                       onChange={(event) =>
                         emit(ClientDeviceEvents.ChangeDevice, {
-                          _id: device._id,
+                          _id: state.devices.byId[deviceId]._id,
                           inputAudioDeviceId: event.currentTarget.value,
                         })
                       }
@@ -193,10 +194,10 @@ const DeviceSettings = ({deviceId}: { deviceId: string }) => {
                     <Switch
                       size="small"
                       round
-                      checked={device.autoGainControl || false}
+                      checked={state.devices.byId[deviceId].autoGainControl || false}
                       onChange={(event) =>
                         emit(ClientDeviceEvents.ChangeDevice, {
-                          _id: device._id,
+                          _id: state.devices.byId[deviceId]._id,
                           autoGainControl: event.currentTarget.checked,
                         })
                       }
@@ -207,10 +208,10 @@ const DeviceSettings = ({deviceId}: { deviceId: string }) => {
                     <Switch
                       size="small"
                       round
-                      checked={device.echoCancellation || false}
+                      checked={state.devices.byId[deviceId].echoCancellation || false}
                       onChange={(event) =>
                         emit(ClientDeviceEvents.ChangeDevice, {
-                          _id: device._id,
+                          _id: state.devices.byId[deviceId]._id,
                           echoCancellation: event.currentTarget.checked,
                         })
                       }
@@ -221,10 +222,10 @@ const DeviceSettings = ({deviceId}: { deviceId: string }) => {
                     <Switch
                       size="small"
                       round
-                      checked={device.noiseSuppression || false}
+                      checked={state.devices.byId[deviceId].noiseSuppression || false}
                       onChange={(event) =>
                         emit(ClientDeviceEvents.ChangeDevice, {
-                          _id: device._id,
+                          _id: state.devices.byId[deviceId]._id,
                           noiseSuppression: event.currentTarget.checked,
                         })
                       }
@@ -233,10 +234,10 @@ const DeviceSettings = ({deviceId}: { deviceId: string }) => {
                   <OptionsListItem as={<label/>} kind="sub">
                     Audio-Ausgabegerät
                     <Select
-                      value={device.outputAudioDeviceId}
+                      value={state.devices.byId[deviceId].outputAudioDeviceId}
                       onChange={(event) =>
                         emit(ClientDeviceEvents.ChangeDevice, {
-                          _id: device._id,
+                          _id: state.devices.byId[deviceId]._id,
                           outputAudioDeviceId: event.currentTarget.value,
                         })
                       }

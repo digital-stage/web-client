@@ -21,10 +21,10 @@
  */
 
 import {useCallback} from 'react'
-import {KIND} from '../redux/state/Notifications'
 import {useDispatch} from 'react-redux'
-import {addNotification} from '../redux/actions/clientActions'
 import {v4 as uuidv4} from 'uuid'
+import {KIND} from '../redux/state/Notifications'
+import {addNotification} from '../redux/actions/clientActions'
 
 type NotificationContextT = (report: {
     kind?: KIND[keyof KIND]
@@ -53,9 +53,9 @@ const useNotification = (): NotificationContextT => {
                     addNotification({
                         id: uuidv4(),
                         date: new Date().getTime(),
-                        kind: kind,
-                        link: link,
-                        message: message,
+                        kind,
+                        link,
+                        message,
                         permanent: (permanent || false),
                         featured: true,
                     })
@@ -65,8 +65,8 @@ const useNotification = (): NotificationContextT => {
                     addNotification({
                         id: uuidv4(),
                         date: new Date().getTime(),
-                        kind: kind,
-                        link: link,
+                        kind,
+                        link,
                         message: message.toString(),
                         permanent: (permanent || false),
                         featured: true,

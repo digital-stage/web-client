@@ -24,9 +24,9 @@ import React from 'react'
 import {Field, Form, Formik, FormikHelpers} from 'formik'
 import * as Yup from 'yup'
 import {activate, AuthError} from '@digitalstage/api-client-react'
-import {translateError} from './translateError'
 import {TextInput} from 'ui/TextInput'
 import {KIND, NotificationItem} from 'ui/NotificationItem'
+import {translateError} from './translateError'
 
 export interface Values {
   code: string
@@ -85,7 +85,7 @@ const ActivationForm = ({initialCode, onActivated}: { initialCode?: string, onAc
         })}
         onSubmit={onSubmit}
       >
-        {({errors, touched, handleSubmit, handleReset, dirty, initialValues, values}) => (
+        {({errors, touched, handleSubmit, handleReset, dirty,  values}) => (
           <Form onReset={handleReset} onSubmit={handleSubmit} autoComplete="on">
             <Field
               as={TextInput}

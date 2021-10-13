@@ -21,17 +21,17 @@
  */
 
 import React from 'react'
-import { useRouter } from 'next/router'
-import { useEmit, useNotification, useStageSelector } from '@digitalstage/api-client-react'
+import {useRouter} from 'next/router'
+import {selectReady, useEmit, useNotification, useTrackedSelector} from '@digitalstage/api-client-react'
 import {
     ClientDeviceEvents,
     ClientDevicePayloads,
     ErrorCodes,
-    Group,
 } from '@digitalstage/api-types'
-import   { Modal,ModalButton, ModalFooter } from 'ui/Modal'
-import { TextInput } from 'ui/TextInput'
-import { useStageJoiner } from '../../api/hooks/useStageJoiner'
+import {Modal, ModalButton, ModalFooter} from 'ui/Modal'
+import {TextInput} from 'ui/TextInput'
+import {useStageJoiner} from '../../api/hooks/useStageJoiner'
+import {Heading4} from "../../ui/Heading";
 
 /**
  * The StageJoiner is a usually hidden component,
@@ -40,17 +40,17 @@ import { useStageJoiner } from '../../api/hooks/useStageJoiner'
  * @constructor
  */
 const StageJoiner = (): JSX.Element | null => {
-    const ready = useStageSelector((state) => state.globals.ready)
-    const { join, resetJoin } = useStageJoiner()
-    const { stageId, groupId, password } = useStageSelector((state) =>
+    const state = useTrackedSelector()
+    const ready = selectReady(state)
+    const {join, resetJoin} = useStageJoiner()
+    const {stageId, groupId, password} =
         state.globals.request
             ? state.globals.request
             : {
-                  stageId: undefined,
-                  groupId: undefined,
-                  password: undefined,
-              }
-    )
+                stageId: undefined,
+                groupId: undefined,
+                password: undefined,
+            }
     const emit = useEmit()
     const [retries, setRetries] = React.useState<number>(0)
     const [wrongPassword, setWrongPassword] = React.useState<boolean>(false)
@@ -76,14 +76,16 @@ const StageJoiner = (): JSX.Element | null => {
         if (emit && stageId && notify) {
             emit(
                 ClientDeviceEvents.JoinStage,
-                { stageId, groupId, password } as ClientDevicePayloads.JoinStage,
+                {stageId, groupId, password} as ClientDevicePayloads.JoinStage,
                 (err: string | null) => {
                     if (err) {
                         if (err === ErrorCodes.InvalidPassword) {
                             return setWrongPassword(true)
-                        } else if (err == ErrorCodes.StageNotFound) {
+                        }
+                        if (err == ErrorCodes.StageNotFound) {
                             return setNotFound(true)
-                        } else if (err == ErrorCodes.GroupIdMissing) {
+                        }
+                        if (err == ErrorCodes.GroupIdMissing) {
                             return setGroupMissing(true)
                         }
                         console.error(err)
@@ -105,23 +107,21 @@ const StageJoiner = (): JSX.Element | null => {
         }
     }, [ready, handleJoinRequest])
 
-    const groups = useStageSelector<Group[]>((state) =>
-        stageId && state.groups.byStage[stageId]
-            ? state.groups.byStage[stageId].map((id) => state.groups.byId[id])
-            : []
-    )
+    const groups = stageId && state.groups.byStage[stageId]
+        ? state.groups.byStage[stageId].map((id) => state.groups.byId[id])
+        : []
 
     if (stageId)
         return (
             <>
                 <Modal size="small" open={notFound} onClose={() => setNotFound(false)}>
-                    <h4>Bühne nicht gefunden</h4>
+                    <Heading4>Bühne nicht gefunden</Heading4>
                     <ModalFooter>
                         <ModalButton onClick={() => setNotFound(false)}>Ok</ModalButton>
                     </ModalFooter>
                 </Modal>
                 <Modal open={groupMissing} onClose={() => setGroupMissing(false)}>
-                    <h4>Bitte wähle eine Gruppe:</h4>
+                    <Heading4>Bitte wähle eine Gruppe:</Heading4>
                     {groups.map((group) => (
                         <button
                             key={group._id}
@@ -150,7 +150,7 @@ const StageJoiner = (): JSX.Element | null => {
                     </ModalFooter>
                 </Modal>
                 <Modal open={wrongPassword} onClose={() => clear()}>
-                    <h4>{retries === 0 ? 'Passwort notwendig' : 'Falsches Passwort'}</h4>
+                    <Heading4>{retries === 0 ? 'Passwort notwendig' : 'Falsches Passwort'}</Heading4>
                     <TextInput
                         id="password"
                         label="Password"
@@ -167,7 +167,7 @@ const StageJoiner = (): JSX.Element | null => {
                                 join({
                                     stageId,
                                     groupId,
-                                    password: intPassword ? intPassword : null,
+                                    password: intPassword || null,
                                 })
                             }}
                         >
@@ -180,4 +180,4 @@ const StageJoiner = (): JSX.Element | null => {
     return null
 }
 
-export { StageJoiner }
+export {StageJoiner}

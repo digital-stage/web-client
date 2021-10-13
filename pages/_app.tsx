@@ -22,14 +22,14 @@
 
 import '../scripts/wdyr'
 import React from 'react'
-import './../styles/root.css'
-import './../styles/index.scss'
+import "../styles/root.css"
+import "../styles/index.scss"
 import Head from 'next/head'
 import {AppProps, NextWebVitalsMetric} from 'next/app'
-import {DigitalStageProvider, useStageSelector} from '@digitalstage/api-client-react'
-import {DeviceSelector} from '../components/global/DeviceSelector'
+import {DigitalStageProvider, useTrackedSelector} from '@digitalstage/api-client-react'
 import {Background} from 'components/global/Background'
 import {Sidebar} from 'components/global/Sidebar'
+import {DeviceSelector} from '../components/global/DeviceSelector'
 import {ConnectionOverlay} from '../components/global/ConnectionOverlay'
 import {ProfileMenu} from '../components/global/ProfileMenu'
 import {PlaybackOverlay} from '../components/global/PlaybackOverlay'
@@ -48,9 +48,8 @@ export function reportWebVitals(metric: NextWebVitalsMetric) {
 }
 
 const TitleProvider = (): JSX.Element => {
-  const name = useStageSelector((state) =>
-    state.globals.stageId ? state.stages.byId[state.globals.stageId].name : undefined
-  )
+  const state = useTrackedSelector()
+  const name = state.globals.ready && state.globals.stageId ? state.stages.byId[state.globals.stageId].name : undefined
   return (
     <Head>
       <title>{name || 'Digital Stage'}</title>

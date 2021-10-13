@@ -22,13 +22,12 @@
 
 import {StagesList} from '../../components/stages/StagesList'
 import {Container} from '../../ui/Container'
+import {Heading2} from "../../ui/Heading";
 
-const StagesPage = () => {
-    return (
+const StagesPage = () => (
         <Container size="small">
-            <h2>Meine Bühnen</h2>
+            <Heading2>Meine Bühnen</Heading2>
             <StagesList />
         </Container>
     )
-}
 export default StagesPage
