@@ -23,14 +23,16 @@
 import React from 'react'
 
 import {
+    selectSignedIn,
     useAudioContext,
     useAudioContextDispatch,
-    useStageSelector,
+    useTrackedSelector,
 } from '@digitalstage/api-client-react'
 import { FaPlay } from 'react-icons/fa'
 
 const PlaybackOverlay = (): JSX.Element | null => {
-    const signedIn = useStageSelector((state) => state.auth.initialized && !!state.auth.token)
+    const state = useTrackedSelector()
+    const signedIn = selectSignedIn(state)
     const { running } = useAudioContext()
     const dispatch = useAudioContextDispatch()
 

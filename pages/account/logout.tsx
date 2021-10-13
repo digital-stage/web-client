@@ -21,19 +21,18 @@
  */
 
 import * as React from 'react'
-import {logout, useStageSelector, InternalActionTypes} from '@digitalstage/api-client-react'
+import {logout, InternalActionTypes, useTrackedSelector} from '@digitalstage/api-client-react'
 import {batch, useDispatch} from 'react-redux'
 import {Loading} from 'components/global/Loading';
 import {useRouter} from "next/router";
 
 const Logout = (): JSX.Element => {
     const dispatch = useDispatch()
-    const initialized = useStageSelector((state) => state.auth.initialized)
-    const token = useStageSelector((state) => state.auth.token)
+    const state = useTrackedSelector()
+    const initialized = state.auth.initialized
+    const token = state.auth.token
     const {isReady, replace} = useRouter()
-    const signedOut = useStageSelector<boolean>(
-        (state) => state.auth.initialized && !state.auth.user
-    )
+    const signedOut = state.auth.initialized && !state.auth.user
     React.useEffect(() => {
         if (isReady && signedOut) {
             replace('/account/login')

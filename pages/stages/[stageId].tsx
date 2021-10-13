@@ -23,20 +23,20 @@
 import React, {useMemo, useState} from 'react'
 import {useRouter} from 'next/router'
 import {
-    selectIsCurrentlyAdmin,
+    selectCurrentGroupId,
+    selectCurrentStageId, selectGroupsByStageId,
+    selectIsCurrentlyAdmin, selectStageById, selectStageMemberIdsByGroupId,
     useEmit,
-    useStageJoiner,
-    useStageSelector,
+    useStageJoiner, useTrackedSelector,
 } from '@digitalstage/api-client-react'
 import Link from 'next/link'
 import {AltList, AltListItem} from 'ui/AltList'
-import {ClientDeviceEvents, ClientDevicePayloads, Group, Stage} from '@digitalstage/api-types'
+import {ClientDeviceEvents, ClientDevicePayloads} from '@digitalstage/api-types'
 import {RemoveStageModal} from 'components/stages/modals/RemoveStageModal'
 import {RemoveGroupModal} from 'components/stages/modals/RemoveGroupModal'
 import {GroupModal} from 'components/stages/modals/GroupModal'
 import {StageModal} from 'components/stages/modals/StageModal'
 import {Container} from 'ui/Container'
-import {shallowEqual} from 'react-redux'
 import {IoIosArrowDropleft} from 'react-icons/io'
 import {MdDeleteForever, MdEdit} from 'react-icons/md'
 import {Switch} from 'ui/Switch'
@@ -51,10 +51,11 @@ const StageMemberItem = ({
                              stageMemberId,
                              hasAdminRights
                          }: { stageId: string, stageMemberId: string, hasAdminRights: boolean }) => {
-    const adminUserIds = useStageSelector(state => state.stages.byId[stageId].admins)
-    const soundEditorUserIds = useStageSelector(state => state.stages.byId[stageId].soundEditors)
-    const userId = useStageSelector(state => state.stageMembers.byId[stageMemberId].userId)
-    const username = useStageSelector(state => state.stageMembers.byId[stageMemberId].userId && state.users.byId[state.stageMembers.byId[stageMemberId].userId]?.name)
+    const state = useTrackedSelector()
+    const adminUserIds = state.stages.byId[stageId].admins
+    const soundEditorUserIds = state.stages.byId[stageId].soundEditors
+    const userId = state.stageMembers.byId[stageMemberId].userId
+    const username = state.stageMembers.byId[stageMemberId].userId && state.users.byId[state.stageMembers.byId[stageMemberId].userId]?.name
     const emit = useEmit()
 
     const isAdmin = adminUserIds.some(id => id === userId)
@@ -139,8 +140,8 @@ const StageMemberList = ({
                              groupId,
                              hasAdminRights
                          }: { stageId: string, groupId: string, hasAdminRights: boolean }) => {
-    const stageMemberIds = useStageSelector(state => state.stageMembers.byGroup[groupId] || [])
-
+    const state = useTrackedSelector()
+    const stageMemberIds = selectStageMemberIdsByGroupId(state, groupId)
     return (
         <>
             {stageMemberIds.map(stageMemberId => <StageMemberItem key={stageMemberId}
@@ -162,21 +163,12 @@ const StageView = () => {
         return undefined
     }, [isReady, query])
     const emit = useEmit()
-    const {currentStageId, currentGroupId} = useStageSelector((state) =>
-        state.globals.stageId
-            ? {currentStageId: state.globals.stageId, currentGroupId: state.globals.groupId}
-            : {currentStageId: undefined, currentGroupId: undefined}
-    )
-    const stage = useStageSelector<Stage | undefined>(
-        (state) => (stageId && !Array.isArray(stageId) ? state.stages.byId[stageId] : undefined),
-        shallowEqual
-    )
-    const groups = useStageSelector<Group[]>((state) =>
-        stage && state.groups.byStage[stage._id]
-            ? state.groups.byStage[stage._id].map((id) => state.groups.byId[id])
-            : []
-    )
-    const isStageAdmin = useStageSelector(selectIsCurrentlyAdmin)
+    const state = useTrackedSelector()
+    const currentStageId = selectCurrentStageId(state)
+    const currentGroupId = selectCurrentGroupId(state)
+    const stage = stageId ? selectStageById(state, stageId) : undefined
+    const groups = stageId ? selectGroupsByStageId(state, stageId) : []
+    const isStageAdmin = selectIsCurrentlyAdmin(state)
     const {join} = useStageJoiner()
 
     // Internal state

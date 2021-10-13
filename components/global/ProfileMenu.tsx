@@ -22,17 +22,16 @@
 
 import React  from 'react'
 import { OverlayMenu } from 'ui/OverlayMenu'
-import { useStageSelector } from '@digitalstage/api-client-react'
 import Link from 'next/link'
 import {Heading5} from "../../ui/Heading";
+import {selectAuthUser, selectLocalUser, selectSignedIn, useTrackedSelector} from "@digitalstage/api-client-react";
 
 const ProfileMenu = () => {
     const [open, setOpen] = React.useState<boolean>(false)
-    const signedIn = useStageSelector((state) => state.auth.initialized && !!state.auth.token)
-    const authUser = useStageSelector((state) => state.auth.user)
-    const user = useStageSelector(
-        (state) => state.globals.localUserId && state.users.byId[state.globals.localUserId]
-    )
+    const state = useTrackedSelector()
+    const signedIn = selectSignedIn(state)
+    const authUser = selectAuthUser(state)
+    const user = selectLocalUser(state)
     if (signedIn) {
         return (
             <OverlayMenu

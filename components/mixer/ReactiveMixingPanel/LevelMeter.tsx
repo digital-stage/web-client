@@ -21,7 +21,7 @@
  */
 
 import { useAnimationFrame } from 'lib/useAnimationFrame'
-import React, { CanvasHTMLAttributes, useRef } from 'react'
+import React from 'react'
 
 const USE_MAX = true
 
@@ -63,7 +63,7 @@ const LevelMeter = ({
     vertical,
     buffer,
     ...other
-}: CanvasHTMLAttributes<HTMLCanvasElement> & {
+}: React.CanvasHTMLAttributes<HTMLCanvasElement> & {
     buffer: ArrayBuffer
     vertical?: boolean
 }): JSX.Element => {

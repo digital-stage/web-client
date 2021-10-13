@@ -20,7 +20,12 @@
  * SOFTWARE.
  */
 
-import {selectIsCurrentlyAdmin, useStageSelector, useTrackedSelector} from '@digitalstage/api-client-react'
+import {
+    selectAllStageIds, selectAudioTypeByStageId, selectGroupIdsByStageId,
+    selectIsCurrentlyAdmin,
+    selectStageById, selectVideoTypeByStageId,
+    useTrackedSelector
+} from '@digitalstage/api-client-react'
 import React from 'react'
 import {List, ListItem} from 'ui/List'
 import {Tag} from 'ui/Tag'
@@ -33,91 +38,89 @@ import {EnterInviteCodeModal} from './modals/EnterInviteCodeModal'
 import {StageModal} from './modals/StageModal'
 
 enum Type {
-  mediasoup = 'Web',
-  jammer = 'Jammer',
-  ov = 'OV',
+    mediasoup = 'Web',
+    jammer = 'Jammer',
+    ov = 'OV',
 }
 
 const StageItem = ({stageId}: { stageId: string }) => {
-  const {push} = useRouter()
+    const {push} = useRouter()
     const state = useTrackedSelector()
-  const {name} = state.stages.byId[stageId]
-  const password = useStageSelector((state) => state.stages.byId[stageId].password)
-  const videoType = useStageSelector((state) => state.stages.byId[stageId].videoType as 'mediasoup' | 'jammer' | 'ov')
-  const audioType = useStageSelector((state) => state.stages.byId[stageId].audioType as 'mediasoup' | 'jammer' | 'ov')
-  const hasGroups = useStageSelector((state) => state.groups.byStage[stageId]?.length > 0)
-  const isActive = useStageSelector(
-    (state) => state.globals.stageId && state.globals.stageId === stageId
-  )
-  const isStageAdmin = selectIsCurrentlyAdmin(state)
-  const {join, leave} = useStageJoiner()
-  const onListClicked = React.useCallback(() => {
-    if (hasGroups) {
-      if (isActive) {
-        return leave()
-      } 
-        return join({stageId, password})
-      
-    }
-    push(`/stages/${stageId}`)
-  }, [hasGroups, isActive, join, leave, password, push, stageId])
-  return (
-    <ListItem className={isActive ? 'stageItemActive' : ''} onSelect={onListClicked}>
-      <a className="stageItemName">
-        {name}
-        <Tag kind="success">{Type[videoType]}</Tag>
-        <Tag kind="warn">{Type[audioType]}</Tag>
-      </a>
-      <span onClick={(e) => e.stopPropagation()}>
+    const {name, password} = selectStageById(state, stageId)
+    const videoType = selectVideoTypeByStageId(state, stageId)
+    const audioType = selectAudioTypeByStageId(state, stageId)
+    const hasGroups = selectGroupIdsByStageId(state, stageId).length > 0
+    const isActive = state.globals.stageId && state.globals.stageId === stageId
+    const isStageAdmin = selectIsCurrentlyAdmin(state)
+    const {join, leave} = useStageJoiner()
+    const onListClicked = React.useCallback(() => {
+        if (hasGroups) {
+            if (isActive) {
+                return leave()
+            }
+            return join({stageId, password})
+
+        }
+        push(`/stages/${stageId}`)
+    }, [hasGroups, isActive, join, leave, password, push, stageId])
+    return (
+        <ListItem className={isActive ? 'stageItemActive' : ''} onSelect={onListClicked}>
+            <a className="stageItemName">
+                {name}
+                <Tag kind="success">{Type[videoType]}</Tag>
+                <Tag kind="warn">{Type[audioType]}</Tag>
+            </a>
+            <span onClick={(e) => e.stopPropagation()}>
                 <Link href={`/stages/${stageId}`} passHref>
                     <button className="small">
                         {isStageAdmin ? (
-                          <>
-                            <MdEdit/>
-                            <span className="stageItemHideOnMobile">&nbsp;Editieren</span>
-                          </>
+                            <>
+                                <MdEdit/>
+                                <span className="stageItemHideOnMobile">&nbsp;Editieren</span>
+                            </>
                         ) : (
-                          <>
-                            <MdMoreHoriz/>
-                            <span className="stageItemHideOnMobile">&nbsp;Details</span>
-                          </>
+                            <>
+                                <MdMoreHoriz/>
+                                <span className="stageItemHideOnMobile">&nbsp;Details</span>
+                            </>
                         )}
                     </button>
                 </Link>
             </span>
-    </ListItem>
-  )
+        </ListItem>
+    )
 }
 
 const StagesList = () => {
-  const [enterCodeRequested, requestEnterCode] = React.useState<boolean>(false)
-  const [createStageRequested, requestStageCreation] = React.useState<boolean>(false)
-  const stageIds = useStageSelector((state) => state.stages.allIds)
+    const state = useTrackedSelector()
+    const [enterCodeRequested, requestEnterCode] = React.useState<boolean>(false)
+    const [createStageRequested, requestStageCreation] = React.useState<boolean>(false)
+    const stageIds = selectAllStageIds(state)
 
-  return (
-    <List className="stagesList">
-      {stageIds.map((stageId) => (
-        <StageItem key={stageId} stageId={stageId}/>
-      ))}
-      <Paragraph kind="micro" className="stagesListLabel">
-        Legende:
-        <Tag kind="success">Videoübertragung</Tag>
-        <Tag kind="warn">Audioübertragung</Tag>
-      </Paragraph>
-      <div className="stagesListActions">
-        <button className="tertiary" onClick={() => requestStageCreation(true)}>
-          Neue Bühne erstellen
-        </button>
-        <button className="tertiary" onClick={() => requestEnterCode(true)}>
-          Einladungscode eingeben
-        </button>
-      </div>
-      <EnterInviteCodeModal
-        open={enterCodeRequested}
-        onClose={() => requestEnterCode(false)}
-      />
-      <StageModal open={createStageRequested} onClose={() => requestStageCreation(false)}/>
-    </List>
-  )
+    return (
+        <List className="stagesList">
+            {stageIds.map((stageId) => (
+                <StageItem key={stageId} stageId={stageId}/>
+            ))}
+            <Paragraph kind="micro" className="stagesListLabel">
+                Legende:
+                <Tag kind="success">Videoübertragung</Tag>
+                <Tag kind="warn">Audioübertragung</Tag>
+            </Paragraph>
+            <div className="stagesListActions">
+                <button className="tertiary" onClick={() => requestStageCreation(true)}>
+                    Neue Bühne erstellen
+                </button>
+                <button className="tertiary" onClick={() => requestEnterCode(true)}>
+                    Einladungscode eingeben
+                </button>
+            </div>
+            <EnterInviteCodeModal
+                open={enterCodeRequested}
+                onClose={() => requestEnterCode(false)}
+            />
+            <StageModal open={createStageRequested} onClose={() => requestStageCreation(false)}/>
+        </List>
+    )
 }
 export {StagesList}

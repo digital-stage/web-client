@@ -53,7 +53,7 @@ const initializeApplication: any = (token?: string) => async (dispatch: Dispatch
 }
 
 const authMiddleware: Middleware<
-    {}, // Most middleware do not modify the dispatch return value
+    unknown, // Most middleware do not modify the dispatch return value
     RootState
 > = (storeApi) => (next) => (action) => {
     const { dispatch } = storeApi

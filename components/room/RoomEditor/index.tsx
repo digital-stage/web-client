@@ -80,10 +80,6 @@ const RoomEditor = () => {
     const toggleOffline = useToggleShowOfflineMode()
     const listenerPosition = useListenerPosition()
 
-    React.useEffect(() => {
-
-    }, [])
-
     return (
         <>
             <Room

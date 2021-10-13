@@ -124,10 +124,10 @@ class PeerNegotiation {
         }
     }
 
-    public async getStats(track: MediaStreamTrack): Promise<RTCStatsReport> {
+    public async getStats(selector?: MediaStreamTrack | null): Promise<RTCStatsReport> {
         if (!this.peerConnection)
             throw new Error("Not connected")
-        return await this.peerConnection.getStats(track)
+        return await this.peerConnection.getStats(selector)
     }
 
     public async setDescription(description: RTCSessionDescriptionInit) {

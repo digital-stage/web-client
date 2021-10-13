@@ -50,7 +50,7 @@ import {notificationMiddleware} from './notificationMiddleware'
 import {RootState} from './RootState'
 import {ReducerAction} from './actions/ReducerAction'
 
-const store = configureStore<RootState, ReducerAction, ReadonlyArray<Middleware<{}, RootState>>>({
+const store = configureStore<RootState, ReducerAction, ReadonlyArray<Middleware<unknown, RootState>>>({
     reducer: {
         auth: reduceAuth,
         globals: reduceGlobals,

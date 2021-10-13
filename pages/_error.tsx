@@ -48,8 +48,7 @@ MyError.getInitialProps = async ({res, err, asPath}: NextPageContext) => {
 
   // Workaround for https://github.com/vercel/next.js/issues/8592, mark when
   // getInitialProps has run
-  // @ts-ignore
-  errorInitialProps.hasGetInitialPropsRun = true
+  //errorInitialProps.hasGetInitialPropsRun = true
 
   // Running on the server, the response object (`res`) is available.
   //

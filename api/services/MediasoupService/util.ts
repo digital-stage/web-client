@@ -24,37 +24,31 @@ import mediasoupClient from 'mediasoup-client'
 import {ITeckosClient} from 'teckos-client'
 
 import {
-    AudioTrack,
-    ClientDeviceEvents,
-    ClientDevicePayloads, ClientMediasoupEvents, ClientMediasoupPayloads,
-    MediasoupAudioTrack,
-    MediasoupVideoTrack,
-    VideoTrack,
+    ClientMediasoupEvents, ClientMediasoupPayloads,
 } from '@digitalstage/api-types'
 import {Device} from 'mediasoup-client/lib/Device'
-import {SocketEvent} from 'teckos-client/dist/types'
 import {ClientMediasoupCallbacks} from "@digitalstage/api-types/dist/ClientMediasoupCallbacks";
 import {logger} from '../../logger'
 
 const {trace, reportError} = logger('MediasoupService:utils')
 
 export const getRTPCapabilities = (routerConnection: ITeckosClient) => new Promise<mediasoupClient.types.RtpCapabilities>((resolve, reject) => {
-        const callback: ClientMediasoupCallbacks.GetRTPCapabilities<mediasoupClient.types.RtpCapabilities> =
-            (error, retrievedRtpCapabilities) => {
-                if (error) {
-                    reject(new Error(error))
-                }
-                if (retrievedRtpCapabilities)
-                    resolve(retrievedRtpCapabilities)
-                else
-                    reject(new Error("No capabilities received"))
+    const callback: ClientMediasoupCallbacks.GetRTPCapabilities<mediasoupClient.types.RtpCapabilities> =
+        (error, retrievedRtpCapabilities) => {
+            if (error) {
+                reject(new Error(error))
             }
-        routerConnection.emit(
-            ClientMediasoupEvents.GetRTPCapabilities,
-            undefined as ClientMediasoupPayloads.GetRTPCapabilities,
-            callback
-        )
-    })
+            if (retrievedRtpCapabilities)
+                resolve(retrievedRtpCapabilities)
+            else
+                reject(new Error("No capabilities received"))
+        }
+    routerConnection.emit(
+        ClientMediasoupEvents.GetRTPCapabilities,
+        undefined as ClientMediasoupPayloads.GetRTPCapabilities,
+        callback
+    )
+})
 
 export const createWebRTCTransport = (
     routerConnection: ITeckosClient,
@@ -67,7 +61,7 @@ export const createWebRTCTransport = (
             if (error) {
                 return reject(error)
             }
-            if(!transportOptions)
+            if (!transportOptions)
                 return reject("Missing transport options")
             const transport: mediasoupClient.types.Transport =
                 direction === 'send'
@@ -195,7 +189,7 @@ export const createConsumer = (
                 reportError(error)
                 return reject(error)
             }
-            if(!data) {
+            if (!data) {
                 return reject("No data received from server")
             }
             trace(

@@ -20,13 +20,14 @@
  * SOFTWARE.
  */
 
-import {useStageSelector} from '@digitalstage/api-client-react'
+import {useTrackedSelector} from '@digitalstage/api-client-react'
 import React from 'react'
 import {SettingsLayout} from 'components/settings/SettingsLayout'
 import {DeviceSettings} from '../../components/devices/DeviceSettings'
 
 const DeviceSettingsPage = () => {
-  const selectedDeviceId = useStageSelector<string | undefined>((state) => state.globals.selectedDeviceId)
+  const state = useTrackedSelector()
+  const selectedDeviceId = state.globals.selectedDeviceId
   if (selectedDeviceId) {
     return (
       <SettingsLayout>

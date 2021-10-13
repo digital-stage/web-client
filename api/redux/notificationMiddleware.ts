@@ -33,7 +33,7 @@ let timeouts: {
 } = {}
 
 const notificationMiddleware: Middleware<
-    {}, // Most middleware do not modify the dispatch return value
+    unknown, // Most middleware do not modify the dispatch return value
     RootState
 > = (storeApi) => (next) => (action) => {
     const { dispatch } = storeApi

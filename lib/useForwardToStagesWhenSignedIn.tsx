@@ -1,10 +1,11 @@
-import {useStageSelector} from "@digitalstage/api-client-react";
+import {selectSignedIn, useTrackedSelector} from "@digitalstage/api-client-react";
 import {useRouter} from "next/router";
 import React from "react";
 
 const useForwardToStagesWhenSignedIn = () => {
   const {isReady, push, prefetch} = useRouter()
-  const signedIn = useStageSelector((state) => state.auth.initialized && !!state.auth.token)
+  const state = useTrackedSelector()
+  const signedIn = selectSignedIn(state)
   React.useEffect(() => {
     prefetch("/")
   }, [prefetch])

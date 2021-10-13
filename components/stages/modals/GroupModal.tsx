@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-import { useEmit, useStageSelector } from '@digitalstage/api-client-react'
+import {selectGroupById, useEmit, useTrackedSelector} from '@digitalstage/api-client-react'
 import { ClientDeviceEvents, ClientDevicePayloads, Group } from '@digitalstage/api-types'
 import React, { useCallback } from 'react'
 import { Field, Form, Formik } from 'formik'
@@ -29,7 +29,6 @@ import { TextInput } from 'ui/TextInput'
 import { Modal, ModalButton, ModalFooter, ModalHeader } from 'ui/Modal'
 import {ColorPicker} from 'ui/ColorPicker'
 import { NotificationItem } from 'ui/NotificationItem'
-import { shallowEqual } from 'react-redux'
 import {Heading2, Heading5} from "../../../ui/Heading";
 
 const GroupModal = ({
@@ -45,21 +44,19 @@ const GroupModal = ({
 }) => {
     const [error, setError] = React.useState<string>()
     const emit = useEmit()
-    const group = useStageSelector<Group | undefined>(
-        (state) => (groupId ? state.groups.byId[groupId] : undefined),
-        shallowEqual
-    )
+    const state = useTrackedSelector()
+    const group = groupId ? selectGroupById(state, groupId) : undefined
 
     const save = useCallback(
         (values: Partial<Group>) => {
             if (emit) {
                 return new Promise<void>((resolve, reject) => {
-                    if (group) {
+                    if (groupId) {
                         // Update stage
                         emit(
                             ClientDeviceEvents.ChangeGroup,
                             {
-                                _id: group._id,
+                                _id: groupId,
                                 ...values,
                             } as ClientDevicePayloads.ChangeGroup,
                             (eventError: string | null) => {
@@ -85,7 +82,7 @@ const GroupModal = ({
             }
             throw new Error('Nicht verbunden')
         },
-        [emit, group, stageId]
+        [emit, groupId, stageId]
     )
 
     return (

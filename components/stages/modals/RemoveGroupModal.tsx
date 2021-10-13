@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-import { useEmit, useStageSelector } from '@digitalstage/api-client-react'
+import {useEmit, useTrackedSelector} from '@digitalstage/api-client-react'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
 import { Modal, ModalButton, ModalFooter, ModalHeader } from 'ui/Modal'
 import React  from 'react'
@@ -38,9 +38,8 @@ const RemoveGroupModal = ({
     onClose: () => void
 }) => {
     const emit = useEmit()
-    const name = useStageSelector((state) =>
-        groupId ? state.groups.byId[groupId]?.name : undefined
-    )
+    const state = useTrackedSelector()
+    const name = groupId ? state.groups.byId[groupId]?.name : undefined
     const [error, setError] = React.useState<string>()
     const [isDeleting, setDeleting] = React.useState<boolean>(false)
     const removeStage = React.useCallback(() => {

@@ -21,7 +21,7 @@
  */
 
 import {useRouter} from "next/router";
-import {useStageSelector, useTrackedSelector} from "@digitalstage/api-client-react";
+import {useTrackedSelector} from "@digitalstage/api-client-react";
 import React from "react";
 
 const useStageAvailableOrForward = (): boolean => {

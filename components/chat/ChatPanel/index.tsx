@@ -22,7 +22,7 @@
 
 import {ChatMessage, ClientDeviceEvents, ClientDevicePayloads} from '@digitalstage/api-types'
 import React from 'react'
-import {useEmit, Users, useStageSelector} from '@digitalstage/api-client-react'
+import {selectLocalUserId, useEmit, Users, useTrackedSelector} from '@digitalstage/api-client-react'
 import {NotificationItem} from 'ui/NotificationItem'
 import {Panel} from 'ui/Panel'
 import {AiOutlineSend} from 'react-icons/ai'
@@ -93,11 +93,12 @@ const MessagePane = ({
 
 const ChatPanel = () => {
   const [error, setError] = React.useState<string>()
-  const messages = useStageSelector<ChatMessage[]>((state) => state.chatMessages)
+  const state = useTrackedSelector()
+  const messages = state.chatMessages
   const messageRef = React.useRef<HTMLInputElement>(null)
   const emit = useEmit()
-  const localUserId = useStageSelector<string | undefined>((state) => state.globals.localUserId)
-  const users = useStageSelector<Users>((state) => state.users)
+  const localUserId = selectLocalUserId(state)
+  const users = state.users
 
   const onSendClicked = React.useCallback(() => {
     if (messageRef.current && emit) {
