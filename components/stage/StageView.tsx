@@ -18,6 +18,7 @@ const Box = ({
                name,
                color,
                groupName,
+               videoTrackId,
                track,
                online,
                muted
@@ -85,6 +86,7 @@ const Box = ({
                     {groupName}
                   </Heading6>
                 )}
+                {videoTrackId && <Heading6>{videoTrackId}</Heading6>}
                 {name && <Heading5 className="memberName">{name}</Heading5>}
                 {videoMuted &&
                 <span style={{
@@ -108,7 +110,7 @@ const LocalStageMemberView = ({color, groupName}: { color?: string, groupName?: 
   // Gather all tracks together
   const remoteTracks = useRemoteVideoTracks(localStageMemberId)
   const localTrack = useWebcam()
-  const videoTrackId = state.globals.localStageDeviceId &&
+  const localVideoTrackId = state.globals.localStageDeviceId &&
   state.videoTracks.byStageDevice[state.globals.localStageDeviceId] &&
   state.videoTracks.byStageDevice[state.globals.localStageDeviceId]?.length > 0
     ? state.videoTracks.byStageDevice[state.globals.localStageDeviceId][0]
@@ -118,12 +120,12 @@ const LocalStageMemberView = ({color, groupName}: { color?: string, groupName?: 
   return (
     <>
       <Box
-        key={videoTrackId}
+        key={localVideoTrackId}
         name={userName}
         groupName={groupName}
         color={color}
         track={localTrack}
-        videoTrackId={videoTrackId}
+        videoTrackId={localVideoTrackId}
         muted={!hasAudioTracks}
         online
       />
@@ -133,6 +135,8 @@ const LocalStageMemberView = ({color, groupName}: { color?: string, groupName?: 
           name={userName}
           groupName={groupName}
           color={color}
+          videoTrackId={videoTrackId}
+          track={remoteTracks[videoTrackId]}
           muted={!hasAudioTracks}
           online
         />

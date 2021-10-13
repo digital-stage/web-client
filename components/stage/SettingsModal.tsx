@@ -87,7 +87,6 @@ const SettingsModal = ({open, onClose}: {
             <ModalHeader>
                 <Heading4>Darstellung anpassen</Heading4>
             </ModalHeader>
-            <Paragraph>
                 <OptionsList>
                     <OptionsListItem as={<label/>}>
                         Zeige inaktive Nutzer
@@ -109,7 +108,6 @@ const SettingsModal = ({open, onClose}: {
                         <button className="small" onClick={increaseCols}>+</button>
                     </OptionsListItem>
                 </OptionsList>
-            </Paragraph>
             <ModalFooter>
                 <ModalButton
                     onClick={onClose}

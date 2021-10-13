@@ -20,47 +20,58 @@
  * SOFTWARE.
  */
 
-import {RootState, useTrackedSelector} from "@digitalstage/api-client-react";
+import {logger, RootState, useTrackedSelector} from "@digitalstage/api-client-react";
 import {useConsumers} from "../services/MediasoupService";
 import {useWebRTCRemoteVideos} from "../services/WebRTCService";
+import React from "react";
+
+const {trace} = logger('useRemoteVideoTracks')
 
 export type RemoteVideoTracks = {
-  [videoTrackId: string]: MediaStreamTrack
+    [videoTrackId: string]: MediaStreamTrack
 }
 
 const selectRemoteVideoTracks = (state: RootState, stageMemberId?: string): {
-  _id: string,
-  type: string,
-  producerId?: string,
-  stageDeviceId: string
+    _id: string,
+    type: string,
+    producerId?: string,
+    stageDeviceId: string
 }[] => stageMemberId && state.videoTracks.byStageMember[stageMemberId]?.map(id => {
-  const {_id, type, producerId, stageDeviceId} = state.videoTracks.byId[id]
-  return {_id, type, producerId, stageDeviceId}
+    const {_id, type, producerId, stageDeviceId} = state.videoTracks.byId[id]
+    return {_id, type, producerId, stageDeviceId}
 }) || []
 
 const useRemoteVideoTracks = (stageMemberId?: string): RemoteVideoTracks => {
-  const webRTCVideos = useWebRTCRemoteVideos()
-  const mediasoupConsumers = useConsumers()
-  const state = useTrackedSelector()
-  const videoTracks = selectRemoteVideoTracks(state, stageMemberId)
-  return videoTracks.reduce<RemoteVideoTracks>((prev, {_id, type, stageDeviceId}) => {
-    if (type === "mediasoup") {
-      if (mediasoupConsumers[_id]) {
-        return {
-          ...prev,
-          [_id]: mediasoupConsumers[_id].track
-        }
-      }
-    } else if (type === "browser") {
-      if (webRTCVideos[stageDeviceId]) {
-        return {
-          ...prev,
-          [_id]: webRTCVideos[stageDeviceId]
-        }
-      }
-    }
-    return prev
-  }, {})
+    const state = useTrackedSelector()
+    const webRTCVideos = useWebRTCRemoteVideos()
+    const mediasoupConsumers = useConsumers()
+    const videoTracks = selectRemoteVideoTracks(state, stageMemberId)
+    trace("videoTracks", videoTracks)
+    trace("webRTCVideos", webRTCVideos)
+    const tracks = React.useMemo<RemoteVideoTracks>(() => {
+        trace("Reducing tracks")
+        return videoTracks.reduce<RemoteVideoTracks>((prev, {_id, type, stageDeviceId}) => {
+            if (type === "mediasoup") {
+                if (mediasoupConsumers[_id]) {
+                    return {
+                        ...prev,
+                        [_id]: mediasoupConsumers[_id].track
+                    }
+                }
+            } else if (type === "browser") {
+                if (webRTCVideos[stageDeviceId]) {
+                    console.log("Found WebRTC video for video track")
+                    return {
+                        ...prev,
+                        [_id]: webRTCVideos[stageDeviceId]
+                    }
+                }
+            }
+            return prev
+        }, {})
+    }, [mediasoupConsumers, videoTracks, webRTCVideos])
+    trace("Resulting remote tracks", tracks)
+    return tracks
 }
 
 export {useRemoteVideoTracks}

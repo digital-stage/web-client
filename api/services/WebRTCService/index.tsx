@@ -286,15 +286,22 @@ const WebRTCService = (): JSX.Element | null => {
           ...prev,
           [stageDeviceId]: track,
         }))
-        const onEndTrack = () => {
-          dispatch((prev) => omit(prev, stageDeviceId))
-          track.removeEventListener('mute', onEndTrack)
-          track.removeEventListener('ended', onEndTrack)
+        const onTrackMuted = () => {
+          trace(`Track ${track.id} muted`)
         }
-        track.addEventListener('mute', onEndTrack)
-        track.addEventListener('ended', onEndTrack)
-      } else {
-        console.error("Dispatch is still null...")
+        const onTrackUnmuted = () => {
+          trace(`Track ${track.id} unmuted`)
+        }
+        const onTrackEnded = () => {
+          trace("Track ended, removing it from internal lit")
+          dispatch((prev) => omit(prev, stageDeviceId))
+          track.addEventListener('mute', onTrackMuted)
+          track.addEventListener('unmute', onTrackUnmuted)
+          track.addEventListener('ended', onTrackEnded)
+        }
+        track.addEventListener('mute', onTrackMuted)
+        track.addEventListener('unmute', onTrackUnmuted)
+        track.addEventListener('ended', onTrackEnded)
       }
     },
     [setRemoteAudioTracks, setRemoteVideoTracks]
