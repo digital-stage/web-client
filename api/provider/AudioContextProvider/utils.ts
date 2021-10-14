@@ -21,11 +21,18 @@
  * SOFTWARE.
  */
 
+declare global {
+    interface Window {
+        webkitAudioContext: typeof AudioContext
+    }
+}
+
 /**
  * Create audio buffer with fallback for safari
  */
-const createBuffer = (sampleRate?: number): AudioContext => 
-     new AudioContext({
+const SupportedAudioContext = window.AudioContext || window.webkitAudioContext
+const createBuffer = (sampleRate?: number): AudioContext =>
+     new SupportedAudioContext({
         latencyHint: 0, // 'interactive',
         sampleRate
     })
