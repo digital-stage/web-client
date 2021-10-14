@@ -25,59 +25,54 @@ import React from 'react'
 import Link from 'next/link'
 import {IoIosArrowDropleft} from 'react-icons/io'
 import {Panel} from 'ui/Panel'
-import {selectLocalDeviceId, useTrackedSelector} from "@digitalstage/api-client-react";
+import {selectLocalDeviceId, selectReady, useTrackedSelector} from "@digitalstage/api-client-react";
 import {Container} from '../../ui/Container'
 import {DeviceSettings} from '../../components/devices/DeviceSettings'
 import {Loading} from "../../components/global/Loading";
 import {Heading3} from "../../ui/Heading";
 
 const DevicePage = () => {
-  const {isReady, query, replace} = useRouter()
-  const [deviceId, setDeviceId] = React.useState<string>()
-  const state = useTrackedSelector()
-  const localDeviceId = selectLocalDeviceId(state)
+    const {isReady: isRouterReady, query, replace} = useRouter()
+    const [deviceId, setDeviceId] = React.useState<string | undefined>(undefined)
+    const state = useTrackedSelector()
+    const localDeviceId = selectLocalDeviceId(state)
+    const isApiReady = selectReady(state)
 
-  React.useEffect(() => {
-    if (isReady) {
-      const id = Array.isArray(query.deviceId) ? query.deviceId[0] : query.deviceId
-      if (id) {
-        setDeviceId(id)
-      } else {
-        replace("/devices")
-      }
+    React.useEffect(() => {
+        if (isRouterReady && isApiReady) {
+            const id = Array.isArray(query.deviceId) ? query.deviceId[0] : query.deviceId
+            if (id && state.devices.byId[id]) {
+                setDeviceId(id)
+            } else {
+                replace("/devices")
+            }
+        }
+    }, [isRouterReady, isApiReady, replace, query, state.devices.byId])
+
+
+    if (!!deviceId) {
+        return (
+            <Container size="small">
+                <Panel className="devicePanel">
+                    <Link href="/devices">
+                        <a
+                            style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                            }}
+                        >
+                            <IoIosArrowDropleft/>
+                            &nbsp;Zurück zur Übersicht
+                        </a>
+                    </Link>
+                    <Heading3 className="heading">
+                        Gerät bearbeiten {localDeviceId === deviceId ? ' (Dieser Webbrowser)' : ''}
+                    </Heading3>
+                    {deviceId && <DeviceSettings deviceId={deviceId}/>}
+                </Panel>
+            </Container>
+        )
     }
-  }, [isReady, replace, query])
-
-  const deviceFound = state.globals.ready && deviceId ? !!state.devices.byId[deviceId] : false
-  React.useEffect(() => {
-    if (!deviceFound) {
-      replace("/devices")
-    }
-  }, [deviceFound, replace])
-
-  if (deviceFound) {
-    return (
-      <Container size="small">
-        <Panel className="devicePanel">
-          <Link href="/devices">
-            <a
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-              }}
-            >
-              <IoIosArrowDropleft/>
-              &nbsp;Zurück zur Übersicht
-            </a>
-          </Link>
-          <Heading3 className="heading">
-            Gerät bearbeiten {localDeviceId === deviceId ? ' (Dieser Webbrowser)' : ''}
-          </Heading3>
-          {deviceId && <DeviceSettings deviceId={deviceId}/>}
-        </Panel>
-      </Container>
-    )
-  }
-  return <Loading message="Lade Geräteeinstellungen..."/>
+    return <Loading message="Lade Geräteeinstellungen..."/>
 }
 export default DevicePage

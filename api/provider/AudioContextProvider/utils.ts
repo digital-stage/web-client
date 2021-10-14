@@ -21,18 +21,14 @@
  * SOFTWARE.
  */
 
-declare global {
-    interface Window {
-        webkitAudioContext: typeof AudioContext
-    }
-}
-
 /**
  * Create audio buffer with fallback for safari
  */
 const createBuffer = (sampleRate?: number): AudioContext => {
-    const SupportedAudioContext = window.AudioContext || window.webkitAudioContext
-    return new SupportedAudioContext({
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const AudioContext = window.AudioContext || window.webkitAudioContext
+    return new AudioContext({
         latencyHint: 0, // 'interactive',
         sampleRate
     })

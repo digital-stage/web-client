@@ -41,16 +41,16 @@ const webclientReport = debug("webclient")
 
 interface Debugger {
     trace: debug.Debugger,
-    warn: Pino.LogFn
-    reportError: Pino.LogFn
+    warn: (msg: string, ...args: unknown[]) => void,
+    reportError: (msg: string, ...args: unknown[]) => void
 }
 
 function logger(namespace: string, delimiter?: string): Debugger {
     const specializedReport = webclientReport.extend(namespace, delimiter)
     return {
         trace: specializedReport,
-        warn: pinoLogger.warn,
-        reportError: pinoLogger.error
+        warn: (msg: string, ...args: unknown[]) => pinoLogger.warn(msg, args),
+        reportError: (msg: string, ...args: unknown[]) => pinoLogger.error(msg, args)
     }
 }
 

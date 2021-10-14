@@ -42,6 +42,7 @@ export const selectIsCurrentlyAdmin = (state: RootState) => state.globals.stageI
     : false
 export const selectCurrentAudioType = (state: RootState) => state.globals.stageId && state.stages.byId[state.globals.stageId].audioType || undefined
 export const selectCurrentVideoType = (state: RootState) => state.globals.stageId && state.stages.byId[state.globals.stageId].videoType || undefined
+export const selectCurrentStateRenderReverb = (state: RootState): boolean => state.globals.stageId && state.stages.byId[state.globals.stageId].renderReverb || false
 export const selectTurnServers = (state: RootState) => state.globals.turn?.urls || []
 export const selectTurnUsername = (state: RootState) => state.globals.turn?.username
 export const selectTurnCredential = (state: RootState) => state.globals.turn?.credential
