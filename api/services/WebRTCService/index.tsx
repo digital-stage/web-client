@@ -44,7 +44,7 @@ import {useErrorReporting} from '../../hooks/useErrorReporting'
 import {useWebcam} from '../../provider/WebcamProvider'
 import {publishTrack, unpublishTrack} from "../../utils/trackPublishing";
 
-const {trace} = logger('WebRTCService')
+const {trace, reportError: printError} = logger('WebRTCService')
 
 type TrackMap = { [trackId: string]: MediaStreamTrack }
 type DispatchTrackMapContext = React.Dispatch<React.SetStateAction<TrackMap>>
@@ -221,7 +221,8 @@ const WebRTCService = (): JSX.Element | null => {
         if (publishedId) {
           unpublishTrack(emit, publishedId, "video")
             .then(() => trace(`Un-published local video track ${track.id} published as video ${publishedId}`))
-            .catch(error => reportError(`Could not un-publish local video track ${track?.id} published as video ${publishedId}. Reason: ${error}`))
+              //FIXME: Currently just reporting to the console and NOT throwing, but sometimes tracks wasn't published for any reason
+            .catch(error => printError(`Could not un-publish local video track ${track?.id} published as video ${publishedId}. Reason: ${error}`))
         }
         if (track) {
           track.stop()
@@ -263,7 +264,8 @@ const WebRTCService = (): JSX.Element | null => {
         if (publishedId) {
           unpublishTrack(emit, publishedId, "audio")
             .then(() => trace(`Un-published local audio track ${track.id} published as audio ${publishedId}`))
-            .catch((error) => reportError(`Could not un-publish local audio track ${track?.id} published as audio ${publishedId}. Reason: ${error}`))
+              //FIXME: Currently just reporting to the console and NOT throwing, but sometimes tracks wasn't published for any reason
+            .catch((error) => printError(`Could not un-publish local audio track ${track?.id} published as audio ${publishedId}. Reason: ${error}`))
         }
         setPublishedAudioTrack(undefined)
         if (track) {
