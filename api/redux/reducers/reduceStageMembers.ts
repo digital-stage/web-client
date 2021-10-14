@@ -132,24 +132,27 @@ function reduceStageMembers(
         }
         case ServerDeviceEvents.StageMemberRemoved: {
             const id = action.payload as string
-            const { stageId, groupId, userId } = prev.byId[id]
-            return {
-                ...prev,
-                byId: omit(prev.byId, id),
-                byStage: {
-                    ...prev.byStage,
-                    [stageId]: without<string>(prev.byStage[stageId], action.payload),
-                },
-                byGroup: {
-                    ...prev.byGroup,
-                    [groupId]: without<string>(prev.byGroup[groupId], action.payload),
-                },
-                byUser: {
-                    ...prev.byUser,
-                    [userId]: without<string>(prev.byUser[userId], action.payload),
-                },
-                allIds: without<string>(prev.allIds, id),
+            if(prev.byId[id]) {
+                const { stageId, groupId, userId } = prev.byId[id]
+                return {
+                    ...prev,
+                    byId: omit(prev.byId, id),
+                    byStage: {
+                        ...prev.byStage,
+                        [stageId]: without<string>(prev.byStage[stageId], action.payload),
+                    },
+                    byGroup: {
+                        ...prev.byGroup,
+                        [groupId]: without<string>(prev.byGroup[groupId], action.payload),
+                    },
+                    byUser: {
+                        ...prev.byUser,
+                        [userId]: without<string>(prev.byUser[userId], action.payload),
+                    },
+                    allIds: without<string>(prev.allIds, id),
+                }
             }
+            return prev
         }
         default:
             return prev
