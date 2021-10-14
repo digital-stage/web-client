@@ -21,7 +21,7 @@
  */
 
 import debug from 'debug'
-import Pino, {LogFn} from 'pino'
+import Pino from 'pino'
 
 const pinoLogger: Pino.Logger = Pino(
     {
@@ -41,16 +41,16 @@ const webclientReport = debug("webclient")
 
 interface Debugger {
     trace: debug.Debugger,
-    warn: LogFn
-    reportError: LogFn
+    warn: Pino.LogFn
+    reportError: Pino.LogFn
 }
 
 function logger(namespace: string, delimiter?: string): Debugger {
     const specializedReport = webclientReport.extend(namespace, delimiter)
     return {
         trace: specializedReport,
-        warn: (msg: string, ...args: any[]) => pinoLogger.warn(msg, args),
-        reportError: (msg: string, ...args: any[]) => pinoLogger.error(msg, args)
+        warn: pinoLogger.warn,
+        reportError: pinoLogger.error
     }
 }
 

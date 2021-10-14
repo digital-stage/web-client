@@ -30,9 +30,9 @@ declare global {
 /**
  * Create audio buffer with fallback for safari
  */
-const SupportedAudioContext = window.AudioContext || window.webkitAudioContext
-const createBuffer = (sampleRate?: number): AudioContext =>
-     new SupportedAudioContext({
+const createBuffer = (sampleRate?: number): AudioContext => {
+    const SupportedAudioContext = window.AudioContext || window.webkitAudioContext
+    return new SupportedAudioContext({
         latencyHint: 0, // 'interactive',
         sampleRate
     })
@@ -55,7 +55,7 @@ const createBuffer = (sampleRate?: number): AudioContext =>
         }
     }
     return context */
-
+}
 
 const startAudioContext = async (
     audioContext: AudioContext,
