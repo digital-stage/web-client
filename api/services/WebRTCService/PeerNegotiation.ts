@@ -133,6 +133,15 @@ class PeerNegotiation {
         return this.peerConnection.getStats(selector)
     }
 
+    private handleNegotiationFail() {
+        if (this.retryCount <= RETRY_LIMIT) {
+            this.initiateManualRollback()
+            this.retryCount++
+        } else {
+            reportError(`Negotiation failed after ${this.retryCount} retries`)
+        }
+    }
+
     public async setDescription(description: RTCSessionDescriptionInit) {
         if (!this.peerConnection)
             throw new Error("Not connected")
@@ -151,12 +160,8 @@ class PeerNegotiation {
                 await this.setLocalDescription(await this.peerConnection.createAnswer())
             }
         } catch (error) {
-            if (this.retryCount <= RETRY_LIMIT) {
-                this.initiateManualRollback()
-                this.retryCount++
-            } else {
-                reportError(`Negotiation failed after ${this.retryCount} retries`)
-            }
+            reportError(`Could not set ${description.type}: ${error}`)
+            this.handleNegotiationFail()
         }
     }
 
@@ -326,6 +331,7 @@ class PeerNegotiation {
             if (this.peerConnection.iceConnectionState === "failed") {
                 if (this.report)
                     this.report(ClientLogEvents.PeerIceFailed, {targetDeviceId: this.remoteId})
+                this.handleNegotiationFail()
             }
         }
 
