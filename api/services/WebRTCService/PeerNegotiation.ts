@@ -23,10 +23,13 @@
 import {logger} from "api/logger"
 import {ClientLogEvents} from "@digitalstage/api-types";
 import {LogServerReportFn} from "../../hooks/useLogServer";
+import adapter from "webrtc-adapter";
 
 const RETRY_LIMIT = 10
 
 const {trace, reportError} = logger('WebRTCService:PeerNegotiation')
+
+trace("Applying webRTC shim for " + adapter.browserDetails.browser)
 
 class PeerNegotiation {
     private readonly remoteId: string
@@ -136,15 +139,15 @@ class PeerNegotiation {
         trace(`${this.remoteId} setDescription(${description.type})`)
         try {
             if (this.ignore(description)) {
-                trace(`${this.remoteId  } Ignoring incoming description`)
+                trace(`${this.remoteId} Ignoring incoming description`)
                 return
             }
 
-            trace(`${this.remoteId  } Set remote description`)
+            trace(`${this.remoteId} Set remote description`)
             await this.setRemoteDescription(description)
 
             if (description.type === 'offer') {
-                trace(`${this.remoteId  } Set local descriptions, since this is an offer`)
+                trace(`${this.remoteId} Set local descriptions, since this is an offer`)
                 await this.setLocalDescription(await this.peerConnection.createAnswer())
             }
         } catch (error) {
@@ -166,7 +169,7 @@ class PeerNegotiation {
     public async createOffer() {
         if (!this.peerConnection)
             throw new Error("Not connected")
-        trace(`${this.remoteId  } createOffer()`)
+        trace(`${this.remoteId} createOffer()`)
         if (!this.readyToMakeOffer) return
 
         try {
@@ -238,25 +241,25 @@ class PeerNegotiation {
     }
 
     private initiateManualRollback() {
-        trace(`${this.remoteId  } initiateManualRollback()`)
+        trace(`${this.remoteId} initiateManualRollback()`)
         this.restart()
 
         this.onRestart()
     }
 
     public restart() {
-        trace(`${this.remoteId  } restart()`)
+        trace(`${this.remoteId} restart()`)
         this.stop()
         this.start()
     }
 
     private start() {
-        trace(`${this.remoteId  } start()`)
+        trace(`${this.remoteId} start()`)
         this.setupPeerConnection()
     }
 
     public stop() {
-        trace(`${this.remoteId  } stop()`)
+        trace(`${this.remoteId} stop()`)
         this.makingOffer = false
         this.isSettingRemoteAnswerPending = false
         this.candidates = []
@@ -274,7 +277,7 @@ class PeerNegotiation {
     }
 
     private setupPeerConnection() {
-        trace(`${this.remoteId  } setupPeerConnection()`)
+        trace(`${this.remoteId} setupPeerConnection()`)
 
         this.peerConnection = new RTCPeerConnection(this.configuration)
         if (this.report) {
@@ -284,7 +287,7 @@ class PeerNegotiation {
         }
 
         this._onnegotiationneeded = () => {
-            trace(`${this.remoteId  } _onnegotiationneeded()`)
+            trace(`${this.remoteId} _onnegotiationneeded()`)
             this.createOffer()
         }
 
@@ -293,7 +296,7 @@ class PeerNegotiation {
         this._onconnectionstatechange = () => {
             if (!this.peerConnection)
                 throw new Error("Not connected")
-            trace(`${this.remoteId  } _onconnectionstatechange(${  this.peerConnection.connectionState  })`)
+            trace(`${this.remoteId} _onconnectionstatechange(${this.peerConnection.connectionState})`)
             switch (this.peerConnection.connectionState) {
                 case "connected": {
                     this.retryCount = 0
@@ -306,20 +309,20 @@ class PeerNegotiation {
                 case "disconnected": {
                     if (this.report)
                         this.report(ClientLogEvents.PeerDisconnected, {targetDeviceId: this.remoteId})
-                    
+
                 }
             }
         }
 
         this._ontrack = (event) => {
-            trace(`${this.remoteId  } _ontrack(${  event.track.id  })`)
+            trace(`${this.remoteId} _ontrack(${event.track.id})`)
             this.onTrack(event.track)
         }
 
         this._iceconnectionstatechange = () => {
             if (!this.peerConnection)
                 throw new Error("Not connected")
-            trace(`${this.remoteId  } _iceconnectionstatechange(${  this.peerConnection.iceConnectionState  })`)
+            trace(`${this.remoteId} _iceconnectionstatechange(${this.peerConnection.iceConnectionState})`)
             if (this.peerConnection.iceConnectionState === "failed") {
                 if (this.report)
                     this.report(ClientLogEvents.PeerIceFailed, {targetDeviceId: this.remoteId})
