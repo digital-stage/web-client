@@ -185,6 +185,9 @@ const PeerConnection = ({
                                     [k]: v
                                 }
                             })
+                            report(ClientLogEvents.PeerConnected, {
+                                targetDeviceId: targetDeviceId
+                            })
                             report(ClientLogEvents.PeerStats, {
                                 targetDeviceId,
                                 stats: formattedStats
