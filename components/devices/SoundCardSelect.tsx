@@ -84,8 +84,12 @@ const ChannelSelector = ({soundCardId}: { soundCardId: string }) => {
                             emit(ClientDeviceEvents.ChangeSoundCard, {
                                 _id: soundCardId,
                                 channels: channels.map((c, i) => {
-                                    if (i === index)
-                                        c.active = event.currentTarget.checked
+                                    if (i === index) {
+                                        return {
+                                            label: c.label,
+                                            active: event.currentTarget.checked
+                                        }
+                                    }
                                     return c
                                 })
                             })
