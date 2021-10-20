@@ -28,8 +28,8 @@ import {Switch} from "../../ui/Switch";
 
 const selectAudioDriversByDeviceId = (state: RootState, type: "input" | "output", deviceId: string): string[] =>
     [...new Set<string>(
-        state.soundCards.byDevice[deviceId]
-            ? state.soundCards.byDevice[deviceId][type].map(id => state.soundCards.byId[id].audioDriver)
+        state.soundCards[type].byDevice[deviceId]
+            ? state.soundCards[type].byDevice[deviceId].map(id => state.soundCards.byId[id].audioDriver)
             : []
     )]
 
@@ -53,10 +53,9 @@ const selectOutputSoundCardByDeviceId = (state: RootState, deviceId: string): So
 }
 
 const selectSoundCardsByDeviceAndTypeAndAudioDriver = (state: RootState, deviceId: string, type: "input" | "output", audioDriver: string) => {
-    if (state.soundCards.byDeviceAndDriver[deviceId]) {
-        if (state.soundCards.byDeviceAndDriver[deviceId][audioDriver]) {
-            console.log("HAVE ALL")
-            return state.soundCards.byDeviceAndDriver[deviceId][audioDriver][type].map(id => state.soundCards.byId[id])
+    if (state.soundCards[type].byDeviceAndDriver[deviceId]) {
+        if (state.soundCards[type].byDeviceAndDriver[deviceId][audioDriver]) {
+            return state.soundCards[type].byDeviceAndDriver[deviceId][audioDriver].map(id => state.soundCards.byId[id])
         }
     }
     return []
@@ -75,23 +74,24 @@ const ChannelSelector = ({soundCardId}: { soundCardId: string }) => {
             }}>
                 {state.soundCards.byId[soundCardId].type === "input" ? 'Eingangskanäle:' : 'Ausgangskanäle:'}
             </OptionsListItem>
-            {Object.keys(state.soundCards.byId[soundCardId].channels).map((channelName) => (
-                <OptionsListItem key={channelName} as={<label/>}>
+            {state.soundCards.byId[soundCardId].channels.map((channel, index, channels) => (
+                <OptionsListItem key={soundCardId + index} as={<label/>}>
                     <Switch
                         round
                         size="small"
-                        checked={state.soundCards.byId[soundCardId].channels[channelName]}
+                        checked={channel.active}
                         onChange={(event) =>
                             emit(ClientDeviceEvents.ChangeSoundCard, {
                                 _id: soundCardId,
-                                channels: {
-                                    ...state.soundCards.byId[soundCardId].channels,
-                                    [channelName]: event.currentTarget.checked,
-                                },
+                                channels: channels.map((c, i) => {
+                                    if (i === index)
+                                        c.active = event.currentTarget.checked
+                                    return c
+                                })
                             })
                         }
                     />
-                    {channelName}
+                    {channel.label}
                 </OptionsListItem>
             ))}
         </OptionsList>
