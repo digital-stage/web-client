@@ -25,7 +25,7 @@ const GroupItem = ({groupId, onSelect, onDeselect, selections}: {
     const customPosition = selectCustomGroupPositionByGroupId(state, groupId)
     const groupColor = state.groups.byId[groupId].color
     const localStageMemberId = state.globals.stageMemberId
-    const stageMemberIds = state.stageMembers.byGroup[groupId]
+    const stageMemberIds = state.stageMembers.byGroup[groupId] || []
     const [currentPosition, setCurrentPosition] = React.useState<RoomPositionWithAngle>({
         x: customPosition?.x || position.x,
         y: customPosition?.y || position.y,
@@ -83,9 +83,10 @@ const GroupItem = ({groupId, onSelect, onDeselect, selections}: {
         setCurrentPosition(position)
     }, [])
 
+
     return (
         <>
-            {SHOW_GROUPS && stageMemberIds.length > 0 && (
+            {SHOW_GROUPS && (stageMemberIds.length > 0) && (
                 <RoomItem
                     caption={groupName}
                     x={currentPosition.x}

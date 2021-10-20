@@ -45,7 +45,7 @@ import {
     stopProducer,
 } from "./util";
 
-const {trace} = logger('MediasoupHandler')
+const {trace, reportError} = logger('MediasoupHandler')
 
 export type ProducersList = {
     [publishedTrackId: string]: MediasoupProducer
@@ -213,6 +213,8 @@ class MediasoupHandler extends EventEmitter {
             this.producers = omit(this.producers, publishedTrackId)
             this.emit(Events.ProducerRemoved, producer)
             await unpublishTrack(this.emitToServer, publishedTrackId, producer.track?.kind === 'audio' ? 'audio' : 'video')
+                //FIXME: Currently just reporting to the console and NOT throwing, but sometimes tracks wasn't published for any reason
+                .catch(err => reportError(err))
         }
     }
 

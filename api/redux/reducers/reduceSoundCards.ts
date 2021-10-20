@@ -30,8 +30,14 @@ import {ReducerAction} from "../actions/ReducerAction";
 function reduceSoundCards(
     state: SoundCards = {
         byId: {},
-        byDevice: {},
-        byDeviceAndDriver: {},
+        input: {
+            byDevice: {},
+            byDeviceAndDriver: {},
+        },
+        output: {
+            byDevice: {},
+            byDeviceAndDriver: {}
+        },
         allIds: [],
     },
     action: ReducerAction
@@ -40,29 +46,39 @@ function reduceSoundCards(
         case ServerDeviceEvents.SoundCardAdded: {
             const soundCard: SoundCard = action.payload as ServerDevicePayloads.SoundCardAdded
             const {_id, deviceId, type, audioDriver} = soundCard
+            const input = type && type === "input" ? {
+                byDevice: {
+                    ...state.input.byDevice,
+                    [deviceId]: upsert<string>(state.input.byDevice[deviceId], _id)
+                },
+                byDeviceAndDriver: {
+                    ...state.input.byDeviceAndDriver,
+                    [deviceId]: {
+                        ...state.input.byDeviceAndDriver[deviceId],
+                        [audioDriver]: state.input.byDeviceAndDriver[deviceId] ? upsert<string>(state.input.byDeviceAndDriver[deviceId][audioDriver], _id) : [_id]
+                    }
+                }
+            } : state.input;
+            const output = type && type === "output" ? {
+                byDevice: {
+                    ...state.output.byDevice,
+                    [deviceId]: upsert<string>(state.output.byDevice[deviceId], _id)
+                },
+                byDeviceAndDriver: {
+                    ...state.output.byDeviceAndDriver,
+                    [deviceId]: {
+                        ...state.output.byDeviceAndDriver[deviceId],
+                        [audioDriver]: state.output.byDeviceAndDriver[deviceId] ? upsert<string>(state.output.byDeviceAndDriver[deviceId][audioDriver], _id) : [_id]
+                    }
+                }
+            } : state.output;
             return {
                 byId: {
                     ...state.byId,
                     [_id]: soundCard,
                 },
-                byDevice: {
-                    ...state.byDevice,
-                    [deviceId]: {
-                        input: type === 'input' ? upsert<string>(state.byDevice[deviceId].input, _id) : state.byDevice[deviceId].input,
-                        output: type === 'output' ? upsert<string>(state.byDevice[deviceId].output, _id) : state.byDevice[deviceId].output,
-                    }
-                },
-                byDeviceAndDriver: {
-                    ...state.byDeviceAndDriver,
-                    [deviceId]: {
-                        ...state.byDeviceAndDriver[deviceId],
-                        [audioDriver]: {
-                            ...state.byDeviceAndDriver[deviceId][audioDriver],
-                            input: type === 'input' ? upsert<string>(state.byDevice[deviceId].input, _id) : state.byDevice[deviceId].input,
-                            output: type === 'output' ? upsert<string>(state.byDevice[deviceId].output, _id) : state.byDevice[deviceId].output,
-                        }
-                    }
-                },
+                input,
+                output,
                 allIds: upsert<string>(state.allIds, soundCard._id),
             }
         }
@@ -83,26 +99,31 @@ function reduceSoundCards(
         case ServerDeviceEvents.SoundCardRemoved: {
             const removedId: string = action.payload as ServerDevicePayloads.SoundCardRemoved
             const {deviceId, audioDriver, type} = state.byId[removedId]
+            const input = deviceId && audioDriver && type && type === "input" ? {
+                byDevice: {
+                    [deviceId]: without(state.input.byDevice[deviceId], removedId)
+                },
+                byDeviceAndDriver: {
+                    [deviceId]: {
+                        [audioDriver]: without(state.input.byDeviceAndDriver[deviceId][audioDriver], removedId)
+                    }
+                }
+            } : state.input
+            const output = deviceId && audioDriver && type && type === "output" ? {
+                byDevice: {
+                    [deviceId]: without(state.output.byDevice[deviceId], removedId)
+                },
+                byDeviceAndDriver: {
+                    [deviceId]: {
+                        [audioDriver]: without(state.output.byDeviceAndDriver[deviceId][audioDriver], removedId)
+                    }
+                }
+            } : state.output
             return {
                 ...state,
                 byId: omit(state.byId, removedId),
-                byDevice: {
-                    ...state.byDevice,
-                    [deviceId]: {
-                        input: type === 'input' ? without(state.byDevice[deviceId].input, removedId) : state.byDevice[deviceId].input,
-                        output: type === 'output' ? without(state.byDevice[deviceId].output, removedId) : state.byDevice[deviceId].output,
-                    }
-                },
-                byDeviceAndDriver: {
-                    ...state.byDeviceAndDriver,
-                    [deviceId]: {
-                        ...state.byDeviceAndDriver[deviceId],
-                        [audioDriver]: {
-                            input: type === 'input' ? without(state.byDevice[deviceId].input, removedId) : state.byDevice[deviceId].input,
-                            output: type === 'output' ? without(state.byDevice[deviceId].output, removedId) : state.byDevice[deviceId].output,
-                        }
-                    }
-                },
+                input,
+                output,
                 allIds: state.allIds.filter((id) => id !== removedId),
             }
         }

@@ -22,7 +22,7 @@
 
 import indexOf from 'lodash/indexOf'
 
-export const upsert = <T>(arr: Readonly<T[]>, value: T): T[] => {
+export const upsert = <T>(arr: Readonly<T[]> | undefined, value: T): T[] => {
     if (!arr) {
         return [value]
     }

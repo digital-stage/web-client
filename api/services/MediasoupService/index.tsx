@@ -26,9 +26,9 @@ import {RootState} from 'api/redux/RootState'
 import {useTrackedSelector} from 'api/redux/selectors/useTrackedSelector'
 import {selectCurrentAudioType, selectCurrentStageId, selectCurrentVideoType, selectToken} from "api/redux/selectors";
 import {useEmit} from '../ConnectionService'
-import {useErrorReporting} from '../../hooks/useErrorReporting'
-import {useWebcam} from '../../provider/WebcamProvider'
-import {useMicrophone} from '../../provider/MicrophoneProvider'
+import {useErrorReporting} from 'api/hooks/useErrorReporting'
+import {useWebcam} from 'api/provider/WebcamProvider'
+import {useMicrophone} from 'api/provider/MicrophoneProvider'
 import {ConsumersList, Events, MediasoupHandler} from "./MediasoupHandler";
 
 type DispatchConsumersList = React.Dispatch<React.SetStateAction<ConsumersList>>
@@ -122,22 +122,26 @@ const MediasoupService = () => {
 
   const localVideoTrack = useWebcam()
   React.useEffect(() => {
-    if (handler && videoType === 'mediasoup' && !useP2P && localVideoTrack) {
+    if (handler && videoType === 'mediasoup' && !useP2P && localVideoTrack && reportError) {
       handler.addTrack(localVideoTrack)
+          .catch(error => reportError(error))
       return () => {
         handler.removeTrack(localVideoTrack.id)
+            .catch(error => reportError(error))
       }
     }
-  }, [handler, videoType, useP2P, localVideoTrack])
+  }, [handler, videoType, useP2P, localVideoTrack, reportError])
   const localAudioTrack = useMicrophone()
   React.useEffect(() => {
-    if (handler && audioType === 'mediasoup' && !useP2P && localAudioTrack) {
+    if (handler && audioType === 'mediasoup' && !useP2P && localAudioTrack && reportError) {
       handler.addTrack(localAudioTrack)
+          .catch(error => reportError(error))
       return () => {
         handler.removeTrack(localAudioTrack.id)
+            .catch(error => reportError(error))
       }
     }
-  }, [handler, audioType, useP2P, localAudioTrack])
+  }, [handler, audioType, useP2P, localAudioTrack, reportError])
 
   return null
 }

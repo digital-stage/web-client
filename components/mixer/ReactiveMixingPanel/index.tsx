@@ -29,7 +29,12 @@ import {
     selectStageDeviceIdsByStageMemberIdAndFilter,
     useEmit,
     useTrackedSelector
-    , useSelectStageMemberIdsByGroup, selectLocalDeviceId, selectGroupIdsByStageId
+    ,
+    useSelectStageMemberIdsByGroup,
+    selectLocalDeviceId,
+    selectGroupIdsByStageId,
+    selectStageMemberById,
+    selectUserNameByStageMemberId
 } from '@digitalstage/api-client-react'
 import React from 'react'
 import {ClientDeviceEvents, ClientDevicePayloads,DefaultVolumeProperties} from '@digitalstage/api-types'
@@ -236,8 +241,8 @@ const StageMemberPanel = ({
     const [expanded, setExpanded] = React.useState<boolean>(false)
     const state = useTrackedSelector()
     const stageDeviceIds = selectStageDeviceIdsByStageMemberIdAndFilter(state, stageMemberId)
-    const stageMember = state.stageMembers.byId[stageMemberId]
-    const user = state.users.byId[stageMember.userId]
+    const stageMember = selectStageMemberById(state, stageMemberId)
+    const userName = selectUserNameByStageMemberId(state, stageMemberId)
     const customStageMember = deviceId &&
     state.customStageMemberVolumes.byDeviceAndStageMember[deviceId] &&
     state.customStageMemberVolumes.byDeviceAndStageMember[deviceId][stageMemberId]
@@ -287,7 +292,7 @@ const StageMemberPanel = ({
             >
                 <VolumeSlider
                     id={stageMemberId}
-                    name={user.name}
+                    name={userName}
                     volume={customStageMember?.volume || stageMember.volume}
                     muted={customStageMember ? customStageMember.muted : stageMember.muted}
                     modified={

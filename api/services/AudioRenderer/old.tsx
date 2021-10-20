@@ -26,7 +26,7 @@ import {useRemoteAudioTracks} from "api/hooks/useRemoteAudioTracks";
 import {useTrackedSelector} from 'api/redux/selectors/useTrackedSelector'
 import {
   selectAudioTrackById,
-  selectCurrentStageId,
+  selectCurrentStageId, selectCurrentStateRenderReverb,
   selectCustomAudioTrackVolumeByAudioTrackId,
   selectCustomGroupVolumeByGroupId,
   selectCustomStageDeviceVolumeByStageDeviceId,
@@ -273,7 +273,6 @@ const StageDeviceRenderer = ({
   destination: AudioNode
   deviceId: string
 }): JSX.Element => {
-  console.log("RERENDER StageDeviceRenderer")
   const state = useTrackedSelector()
   const stageDevice = selectStageDeviceById(state, stageDeviceId)
   const customVolume = selectCustomStageDeviceVolumeByStageDeviceId(state, stageDeviceId)
@@ -561,7 +560,6 @@ const StageRenderer = ({
   deviceId: string
   useReverb: boolean
 }): JSX.Element => {
-  console.log("RERENDER StageRenderer")
   const state = useTrackedSelector()
   const groupIds = selectGroupIdsByStageId(state, stageId)
   const localStageDeviceId = selectLocalStageDeviceId(state)
@@ -628,6 +626,7 @@ const AudioRenderService = () => {
   if (ready && audioContext) {
     const stageId = selectCurrentStageId(state)
     const localDeviceId = selectLocalDeviceId(state)
+    const useReverb = selectCurrentStateRenderReverb(state)
 
     if (stageId && localDeviceId) {
       return (
@@ -635,7 +634,7 @@ const AudioRenderService = () => {
           stageId={stageId}
           audioContext={audioContext}
           deviceId={localDeviceId}
-          useReverb={false}
+          useReverb={useReverb}
         />
       )
     }

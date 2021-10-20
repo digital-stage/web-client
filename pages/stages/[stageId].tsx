@@ -55,7 +55,7 @@ const StageMemberItem = ({
     const adminUserIds = state.stages.byId[stageId].admins
     const soundEditorUserIds = state.stages.byId[stageId].soundEditors
     const {userId} = state.stageMembers.byId[stageMemberId]
-    const username = state.stageMembers.byId[stageMemberId].userId && state.users.byId[state.stageMembers.byId[stageMemberId].userId]?.name
+    const username = userId && state.users.byId[userId]?.name
     const emit = useEmit()
 
     const isAdmin = adminUserIds.some(id => id === userId)
@@ -65,9 +65,11 @@ const StageMemberItem = ({
         return (
             <AltListItem>
                 <div className="stageMemberRow">
-                    <Heading5>
-                        {username}
-                    </Heading5>
+                    {username && (
+                        <Heading5>
+                            {username}
+                        </Heading5>
+                    )}
                     {hasAdminRights ? (
                         <div className="stageMemberActions">
                             <label>

@@ -33,8 +33,6 @@ const useLocalAudioTracks = (): {
       state.globals.localStageDeviceId &&
       state.audioTracks.byStageDevice[state.globals.localStageDeviceId]?.filter(id => state.audioTracks.byId[id].type === "browser" || state.audioTracks.byId[id].type === "mediasoup").shift() || undefined
 
-    console.log("RERENDER useLocalAudioTracks")
-
     return React.useMemo(() => {
         if (track && audioTrackId) {
             return {

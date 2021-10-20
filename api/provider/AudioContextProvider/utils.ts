@@ -24,8 +24,11 @@
 /**
  * Create audio buffer with fallback for safari
  */
-const createBuffer = (sampleRate?: number): AudioContext => 
-     new AudioContext({
+const createBuffer = (sampleRate?: number): AudioContext => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const AudioContext = window.AudioContext || window.webkitAudioContext
+    return new AudioContext({
         latencyHint: 0, // 'interactive',
         sampleRate
     })
@@ -48,7 +51,7 @@ const createBuffer = (sampleRate?: number): AudioContext =>
         }
     }
     return context */
-
+}
 
 const startAudioContext = async (
     audioContext: AudioContext,
