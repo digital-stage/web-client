@@ -228,7 +228,7 @@ class PeerNegotiation {
   private get readyToMakeOffer() {
     if (!this.peerConnection)
       throw new Error("Not connected")
-    return !this.makingOffer && this.peerConnection.signalingState === 'stable'
+    return !this.makingOffer && this.peerConnection.signalingState === 'stable' // ?!?
   }
 
   private get readyToReceiveOffer() {
