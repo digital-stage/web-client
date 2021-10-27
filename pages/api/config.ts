@@ -19,6 +19,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+import {withSentry} from "@sentry/nextjs";
+import type {NextApiRequest, NextApiResponse} from "next"
 import getConfig from 'next/config'
 
 const {serverRuntimeConfig} = getConfig()
@@ -28,11 +30,11 @@ interface EnvConfig {
   auth: string
 }
 
-const MyHandler = (req: any, res: any) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const config: EnvConfig = {
     api: serverRuntimeConfig.apiUrl,
     auth: serverRuntimeConfig.authUrl,
   }
   res.status(200).json(config)
 }
-export default MyHandler
+export default withSentry(handler)
