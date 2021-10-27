@@ -20,20 +20,20 @@
  * SOFTWARE.
  */
 import getConfig from 'next/config'
+import * as http from "http";
 
 const {serverRuntimeConfig} = getConfig()
-
-import {NextApiRequest, NextApiResponse} from "next";
 
 interface EnvConfig {
   api: string
   auth: string
 }
-const MyHandler = (req: NextApiRequest, res: NextApiResponse) => {
+
+const MyHandler = (req: http.IncomingMessage, res: http.ServerResponse) => {
   const config: EnvConfig = {
     api: serverRuntimeConfig.apiUrl,
     auth: serverRuntimeConfig.authUrl,
   }
-  res.json(config);
+  res.status(200).json(config)
 }
 export default MyHandler
