@@ -60,7 +60,11 @@ const authMiddleware: Middleware<unknown, // Most middleware do not modify the d
     //TODO: Use InternalActionTypes.INIT for fetching env config
     case InternalActionTypes.SET_ENV: {
       const token = Cookie.get('token')
-      dispatch(initializeApplication(prevState.globals.authUrl, token))
+      const {authUrl} = action.payload as {
+        authUrl: string,
+        apiUrl: string
+      }
+      dispatch(initializeApplication(authUrl, token))
       break
     }
     case InternalActionTypes.SET_TOKEN: {
