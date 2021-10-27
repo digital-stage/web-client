@@ -22,7 +22,7 @@
 
 import {useEffect, useState} from 'react'
 import {
-  AudioTrack,
+  AudioTrack, CustomAudioTrackPosition,
   DefaultThreeDimensionalProperties,
   ThreeDimensionalProperties,
 } from '@digitalstage/api-types'
@@ -30,7 +30,7 @@ import {RootState} from 'api/redux/RootState'
 import {useTrackedSelector} from "@digitalstage/api-client-react";
 import {useStageDevicePosition} from './useStageDevicePosition'
 
-const selectCustomAudioTrackPositionByDeviceIdAndAudioTrackId = (state: RootState, deviceId: string, audioTrackId: string) =>
+const selectCustomAudioTrackPositionByDeviceIdAndAudioTrackId = (state: RootState, deviceId: string, audioTrackId: string): CustomAudioTrackPosition | undefined =>
   state.customAudioTrackPositions.byDeviceAndAudioTrack[deviceId] &&
   state.customAudioTrackPositions.byDeviceAndAudioTrack[deviceId][audioTrackId]
     ? state.customAudioTrackPositions.byId[
@@ -46,7 +46,7 @@ const useAudioTrackPosition = ({
                                }: {
   audioTrack: AudioTrack
   deviceId: string
-}) => {
+}): ThreeDimensionalProperties => {
   const [position, setPosition] = useState<ThreeDimensionalProperties>(
     DefaultThreeDimensionalProperties
   )

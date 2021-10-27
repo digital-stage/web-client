@@ -65,7 +65,7 @@ const selectSoundCardsByDeviceAndTypeAndAudioDriver = (state: RootState, deviceI
   return []
 }
 
-const ChannelSelector = ({soundCardId}: { soundCardId: string }) => {
+const ChannelSelector = ({soundCardId}: { soundCardId: string }): JSX.Element | null => {
   const state = useTrackedSelector()
   const emit = useEmit()
   if (!state.soundCards.byId[soundCardId]) return null
@@ -110,7 +110,7 @@ const SoundCardsSelector = ({
                               soundCardId,
                               soundCards,
                               onChange
-                            }: { soundCardId?: string, soundCards: SoundCard[], onChange: (soundCardId: string) => void }) => {
+                            }: { soundCardId?: string, soundCards: SoundCard[], onChange: (soundCardId: string) => void }): JSX.Element | null => {
   const handleChange = React.useCallback((event: React.ChangeEvent<HTMLSelectElement>) => {
     onChange(event.currentTarget.value)
   }, [onChange])
@@ -138,7 +138,7 @@ const SoundCardsSelector = ({
   return null
 }
 
-const SoundCardSelect = ({deviceId, type}: { deviceId: string, type: "input" | "output" }) => {
+const SoundCardSelect = ({deviceId, type}: { deviceId: string, type: "input" | "output" }): JSX.Element => {
   const state = useTrackedSelector()
   const audioDrivers: string[] = selectAudioDriversByDeviceId(state, "input", deviceId)
   const soundCard = type === "input"

@@ -89,17 +89,17 @@ const AudioTrackRenderer = ({audioTrackId, track}: { audioTrackId: string, track
         gainNode.gain.setValueAtTime(0, audioContext.currentTime)
       } else if (customVolume) {
         gainNode.gain.setValueAtTime(customVolume, audioContext.currentTime)
-      } else if (audioTrack.muted) {
+      } else if (audioTrack?.muted) {
         gainNode.gain.setValueAtTime(0, audioContext.currentTime)
       } else {
-        gainNode.gain.setValueAtTime(audioTrack.volume, audioContext.currentTime)
+        gainNode.gain.setValueAtTime(audioTrack?.volume || 0, audioContext.currentTime)
       }
     }
   }, [
     audioContext,
     gainNode,
-    audioTrack.volume,
-    audioTrack.muted,
+    audioTrack?.volume,
+    audioTrack?.muted,
     customVolume,
     customMuted,
   ])
@@ -134,7 +134,7 @@ const RemoteStageDeviceRenderer = ({stageDeviceId}: { stageDeviceId: string }) =
   )
 }
 
-const AudioRenderService = () => {
+const AudioRenderService = (): JSX.Element => {
   const state = useTrackedSelector()
   const localStageDeviceId = selectLocalStageDeviceId(state)
   const stageDeviceIds = selectStageDeviceIdsByCurrentStage(state)

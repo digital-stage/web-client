@@ -23,10 +23,10 @@
 import React from 'react'
 import {BrowserDevice} from "@digitalstage/api-types";
 import {logger} from '../logger'
-import {useAudioContextDispatch,useAudioContext} from '../provider/AudioContextProvider'
+import {useAudioContextDispatch, useAudioContext} from '../provider/AudioContextProvider'
 import {startAudioContext} from '../provider/AudioContextProvider/utils'
-import { RootState } from '../redux/RootState'
-import { useTrackedSelector } from '../redux/selectors/useTrackedSelector'
+import {RootState} from '../redux/RootState'
+import {useTrackedSelector} from '../redux/selectors/useTrackedSelector'
 
 const {trace, warn} = logger('AudioContextService')
 
@@ -34,7 +34,7 @@ const selectOutputAudioDeviceId = (state: RootState): string | undefined => stat
   ? ((state.devices.byId[state.globals.localDeviceId] as BrowserDevice).outputAudioDeviceId)
   : undefined
 
-const AudioContextService = () => {
+const AudioContextService = (): null => {
   const {audioContext, player, running} = useAudioContext()
   const dispatch = useAudioContextDispatch()
   const state = useTrackedSelector()

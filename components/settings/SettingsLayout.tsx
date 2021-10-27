@@ -26,7 +26,7 @@ import {Container} from 'ui/Container'
 import { Panel } from 'ui/Panel'
 import {Heading4} from "../../ui/Heading";
 
-const SettingsNav = () => (
+const SettingsNav = (): JSX.Element => (
     <nav className="settingsNav">
         <SecondaryHeadlineLink className="settingsNavItem" href="/settings/device">
             <Heading4 className="settingHeading">Gerät</Heading4>
@@ -36,7 +36,7 @@ const SettingsNav = () => (
         </SecondaryHeadlineLink>
     </nav>
 )
-const SettingsLayout = ({ children }: { children: React.ReactNode }) => (
+const SettingsLayout = ({ children }: { children: React.ReactNode }): JSX.Element => (
         <Container size="small">
             <Panel className="settingsPanel">
                 <SettingsNav />

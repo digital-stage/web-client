@@ -34,7 +34,7 @@ import {MicrophoneProvider} from "./provider/MicrophoneProvider";
 import {AudioNodeProvider} from "./provider/AudioNodeProvider";
 import {setEnvironment} from "./redux/actions";
 
-const EnvironmentalFetcher = () => {
+const EnvironmentalFetcher = (): null => {
   const dispatch = useDispatch();
   React.useEffect(() => {
     fetch("/api/config")
@@ -43,34 +43,32 @@ const EnvironmentalFetcher = () => {
         dispatch(setEnvironment(data.api, data.auth))
       })
       .catch(err => console.error(err))
-  }, []);
+  }, [dispatch]);
 
   return null
 }
 
-const DigitalStageProvider = ({children}: { children: React.ReactNode }): JSX.Element => {
+const DigitalStageProvider = ({children}: { children: React.ReactNode }): JSX.Element =>
+  <Provider store={store}>
+    <EnvironmentalFetcher/>
+    <ConnectionProvider>
+      <WebcamProvider>
+        <MicrophoneProvider>
+          <MediasoupProvider>
+            <WebRTCProvider>
+              <AudioContextProvider>
+                <AudioNodeProvider>
+                  <AudioLevelProvider>
+                    <DigitalStageServices/>
+                    {children}
+                  </AudioLevelProvider>
+                </AudioNodeProvider>
+              </AudioContextProvider>
+            </WebRTCProvider>
+          </MediasoupProvider>
+        </MicrophoneProvider>
+      </WebcamProvider>
+    </ConnectionProvider>
+  </Provider>
 
-  return (
-    <Provider store={store}>
-      <EnvironmentalFetcher/>
-      <ConnectionProvider>
-        <WebcamProvider>
-          <MicrophoneProvider>
-            <MediasoupProvider>
-              <WebRTCProvider>
-                <AudioContextProvider>
-                  <AudioNodeProvider>
-                    <AudioLevelProvider>
-                      <DigitalStageServices/>
-                      {children}
-                    </AudioLevelProvider>
-                  </AudioNodeProvider>
-                </AudioContextProvider>
-              </WebRTCProvider>
-            </MediasoupProvider>
-          </MicrophoneProvider>
-        </WebcamProvider>
-      </ConnectionProvider>
-    </Provider>)
-}
 export {DigitalStageProvider}

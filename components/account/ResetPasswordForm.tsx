@@ -73,7 +73,7 @@ function ResetPasswordForm({resetToken, onReset}: {
           label: translateError(err),
         })
       )
-  }, [resetToken, onReset])
+  }, [resetToken, onReset, state.globals.authUrl])
 
   return (
     <Formik

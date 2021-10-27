@@ -62,7 +62,7 @@ const ActivationForm = ({initialCode, onActivated}: { initialCode?: string, onAc
       }
       throw new Error("Not ready")
     },
-    [onActivated]
+    [onActivated, state.globals.authUrl]
   )
 
   React.useEffect(() => {

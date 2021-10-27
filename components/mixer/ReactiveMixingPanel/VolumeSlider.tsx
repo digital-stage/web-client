@@ -138,7 +138,7 @@ const VolumeSlider = ({
     modified: boolean
     onChange: (volume: number, muted: boolean) => void
     onReset: () => void
-}) => {
+}): JSX.Element => {
     const levels = useAudioLevel()
     const [value, setValue] = React.useState<number>(convertLogToLinear(volume))
     const [dbValue, setDbValue] = React.useState<string>()

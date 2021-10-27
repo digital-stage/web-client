@@ -33,7 +33,7 @@ import {
 import {Paragraph} from 'ui/Paragraph'
 import {OptionsList, OptionsListItem} from 'ui/OptionsList'
 
-const ProfileEditor = () => {
+const ProfileEditor = (): JSX.Element => {
   const emit = useEmit()
   const state = useTrackedSelector()
   const authUser = selectAuthUser(state)

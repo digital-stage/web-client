@@ -28,7 +28,7 @@ const selectFeaturedNotifications = (state: RootState) => state.notifications.al
   .map((id) => state.notifications.byId[id])
   .filter((notification) => notification.featured || notification.permanent)
 
-const NotificationBar = () => {
+const NotificationBar = (): JSX.Element => {
   const dispatch = useDispatch()
   const state = useTrackedSelector()
   const featuredNotifications = selectFeaturedNotifications(state)

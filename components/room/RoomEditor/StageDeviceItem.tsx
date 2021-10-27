@@ -29,7 +29,7 @@ const StageDeviceItem = ({
     onDeselect?: (selection: RoomSelection) => void
     groupColor: string,
     stageMemberPosition: RoomPositionWithAngle
-}) => {
+}): JSX.Element => {
     const state = useTrackedSelector()
     const isMine = state.stageDevices.byId[stageDeviceId].userId === state.globals.localUserId
     const isCurrent = state.stageDevices.byId[stageDeviceId].deviceId === state.globals.selectedDeviceId

@@ -67,7 +67,7 @@ const useLevelPublishing = (
   audioContext: AudioContext,
   audioNode?: AudioNode,
   enabled?: boolean
-) => {
+): void => {
   const dispatch = useAudioLevelDispatch()
   const analyserNode = useMemo<AnalyserNode>(() => {
     const analyser = audioContext.createAnalyser()
@@ -420,8 +420,8 @@ const StageMemberRenderer = ({
   }, [
     audioContext,
     gainNode,
-    stageMember.volume,
-    stageMember.muted,
+    stageMember?.volume,
+    stageMember?.muted,
     customVolume?.volume,
     customVolume?.muted,
   ])
@@ -490,8 +490,8 @@ const GroupRenderer = ({
   }, [
     audioContext,
     gainNode,
-    group.volume,
-    group.muted,
+    group?.volume,
+    group?.muted,
     customVolume?.volume,
     customVolume?.muted,
   ])
@@ -611,7 +611,7 @@ const StageRenderer = ({
   )
 }
 
-const AudioRenderService = () => {
+const AudioRenderService = (): JSX.Element | null => {
   const state = useTrackedSelector()
   const ready = selectReady(state)
   const {audioContext} = useAudioContext()

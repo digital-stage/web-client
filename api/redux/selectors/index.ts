@@ -1,5 +1,15 @@
 import {RootState} from "@digitalstage/api-client-react";
-import {DefaultThreeDimensionalProperties, Device, ThreeDimensionalProperties, User} from "@digitalstage/api-types";
+import {
+  AudioTrack, CustomAudioTrackVolume,
+  CustomGroupVolume, CustomStageDeviceVolume, CustomStageMemberVolume,
+  DefaultThreeDimensionalProperties,
+  Device,
+  Group, SoundCard,
+  Stage,
+  StageDevice, StageMember,
+  ThreeDimensionalProperties,
+  User
+} from "@digitalstage/api-types";
 import {BrowserDevice} from "@digitalstage/api-types/dist/model/browser";
 import {AuthUser} from "../state/Auth";
 
@@ -11,17 +21,17 @@ export const selectToken = (state: RootState): string | undefined => state.auth.
 export const selectEmail = (state: RootState): string | undefined => state.auth.user?.email
 
 // GLOBALS
-export const selectReady = (state: RootState) => state.globals.ready
-export const selectP2PEnabled = (state: RootState) => state.globals.localDeviceId ? state.devices.byId[state.globals.localDeviceId].useP2P : false
+export const selectReady = (state: RootState): boolean => state.globals.ready
+export const selectP2PEnabled = (state: RootState): boolean => state.globals.localDeviceId ? state.devices.byId[state.globals.localDeviceId].useP2P : false
 export const selectLocalUserId = (state: RootState): string | undefined => state.globals.localUserId
-export const selectLocalUser = (state: RootState) => state.globals.localUserId ? state.users.byId[state.globals.localUserId] : undefined
+export const selectLocalUser = (state: RootState): User | undefined => state.globals.localUserId ? state.users.byId[state.globals.localUserId] : undefined
 export const selectLocalDeviceId = (state: RootState): string | undefined => state.globals.localDeviceId
-export const selectLocalStageDeviceId = (state: RootState) => state.globals.localStageDeviceId
+export const selectLocalStageDeviceId = (state: RootState): string | undefined => state.globals.localStageDeviceId
 export const selectShowOffline = (state: RootState): boolean => state.globals.localDeviceId && state.devices.byId[state.globals.localDeviceId].showOffline || false
 export const selectSelectedDeviceId = (state: RootState): string | undefined => state.globals.selectedDeviceId
 export const selectSelectedDevice = (state: RootState): Device | undefined => state.globals.selectedDeviceId ? state.devices.byId[state.globals.selectedDeviceId] : undefined
-export const selectSelectMode = (state: RootState) => state.globals.selectedMode
-export const selectStageDeviceIdOfSelectedDevice = (state: RootState) => state.globals.stageId &&
+export const selectSelectMode = (state: RootState): "global" | "personal" => state.globals.selectedMode
+export const selectStageDeviceIdOfSelectedDevice = (state: RootState): string | undefined => state.globals.stageId &&
 state.globals.selectedDeviceId &&
 state.stageDevices.byStageAndDevice[state.globals.stageId] &&
 state.stageDevices.byStageAndDevice[state.globals.stageId][state.globals.selectedDeviceId]
@@ -35,24 +45,24 @@ export const selectUserNameByStageMemberId = (state: RootState, stageMemberId: s
 
 
 // STAGE RELATED
-export const selectCurrentStageId = (state: RootState) => state.globals.stageId
-export const selectCurrentGroupId = (state: RootState) => state.globals.stageId ? state.globals.groupId : undefined
-export const selectCurrentStageMemberId = (state: RootState) => state.globals.stageMemberId
-export const selectIsCurrentlyAdmin = (state: RootState) => state.globals.stageId && state.globals.localUserId
+export const selectCurrentStageId = (state: RootState): string | undefined => state.globals.stageId
+export const selectCurrentGroupId = (state: RootState): string | undefined => state.globals.stageId ? state.globals.groupId : undefined
+export const selectCurrentStageMemberId = (state: RootState): string | undefined => state.globals.stageMemberId
+export const selectIsCurrentlyAdmin = (state: RootState): boolean => state.globals.stageId && state.globals.localUserId
   ? state.stages.byId[state.globals.stageId].admins.some((id) => id === state.globals.localUserId)
   : false
-export const selectCurrentAudioType = (state: RootState) => state.globals.stageId && state.stages.byId[state.globals.stageId].audioType || undefined
-export const selectCurrentVideoType = (state: RootState) => state.globals.stageId && state.stages.byId[state.globals.stageId].videoType || undefined
+export const selectCurrentAudioType = (state: RootState): string | undefined => state.globals.stageId && state.stages.byId[state.globals.stageId].audioType || undefined
+export const selectCurrentVideoType = (state: RootState): string | undefined => state.globals.stageId && state.stages.byId[state.globals.stageId].videoType || undefined
 export const selectCurrentStateRenderReverb = (state: RootState): boolean => state.globals.stageId && state.stages.byId[state.globals.stageId].renderReverb || false
-export const selectTurnServers = (state: RootState) => state.globals.turn?.urls || []
-export const selectTurnUsername = (state: RootState) => state.globals.turn?.username
-export const selectTurnCredential = (state: RootState) => state.globals.turn?.credential
-export const selectAllStageIds = (state: RootState) => state.stages.allIds
-export const selectStageById = (state: RootState, id: string) => state.stages.byId[id]
+export const selectTurnServers = (state: RootState): string[] => state.globals.turn?.urls || []
+export const selectTurnUsername = (state: RootState): string | undefined => state.globals.turn?.username
+export const selectTurnCredential = (state: RootState): string | undefined => state.globals.turn?.credential
+export const selectAllStageIds = (state: RootState): string[] => state.stages.allIds
+export const selectStageById = (state: RootState, id: string): Stage => state.stages.byId[id]
 export const selectVideoTypeByStageId = (state: RootState, stageId: string): 'mediasoup' | 'jammer' | 'ov' => state.stages.byId[stageId].videoType as 'mediasoup' | 'jammer' | 'ov'
 export const selectAudioTypeByStageId = (state: RootState, stageId: string): 'mediasoup' | 'jammer' | 'ov' => state.stages.byId[stageId].audioType as 'mediasoup' | 'jammer' | 'ov'
 
-export const selectStageDeviceIdsByStageMemberIdAndFilter = (state: RootState, stageMemberId: string) => {
+export const selectStageDeviceIdsByStageMemberIdAndFilter = (state: RootState, stageMemberId: string): string[] => {
   if (state.stageDevices.byStage[stageMemberId]) {
     if (state.globals.localDeviceId && state.devices.byId[state.globals.localDeviceId].showOffline) {
       return state.stageDevices.byStage[stageMemberId]
@@ -63,10 +73,10 @@ export const selectStageDeviceIdsByStageMemberIdAndFilter = (state: RootState, s
 }
 
 // GROUP
-export const selectGroupById = (state: RootState, id: string) => state.groups.byId[id]
-export const selectGroupIdsByStageId = (state: RootState, stageId: string) => state.groups.byStage[stageId] || []
-export const selectGroupsByStageId = (state: RootState, stageId: string) => state.groups.byStage[stageId]?.map(id => state.groups.byId[id]) || []
-export const selectCustomGroupVolumeByGroupId = (state: RootState, groupId: string) =>
+export const selectGroupById = (state: RootState, id: string): Group => state.groups.byId[id]
+export const selectGroupIdsByStageId = (state: RootState, stageId: string): string[] => state.groups.byStage[stageId] || []
+export const selectGroupsByStageId = (state: RootState, stageId: string): Group[] => state.groups.byStage[stageId]?.map(id => state.groups.byId[id]) || []
+export const selectCustomGroupVolumeByGroupId = (state: RootState, groupId: string): CustomGroupVolume | undefined =>
   state.globals.selectedDeviceId &&
   state.customGroupVolumes.byDeviceAndGroup[state.globals.selectedDeviceId] &&
   state.customGroupVolumes.byDeviceAndGroup[state.globals.selectedDeviceId][groupId]
@@ -125,13 +135,13 @@ export const selectGroupPositionOfListener = (state: RootState): ThreeDimensiona
 
 
 /* STAGE MEMBER */
-export const selectStageMemberById = (state: RootState, id: string) => state.stageMembers.byId[id]
-export const selectStageMemberIdsByGroupId = (state: RootState, groupId: string) => state.stageMembers.byGroup[groupId] || []
+export const selectStageMemberById = (state: RootState, id: string): StageMember => state.stageMembers.byId[id]
+export const selectStageMemberIdsByGroupId = (state: RootState, groupId: string): string[] => state.stageMembers.byGroup[groupId] || []
 export const selectNameOfStageMemberId = (state: RootState, stageMemberId: string): string =>
   state.stageMembers.byId[stageMemberId].userId &&
   state.users.byId[state.stageMembers.byId[stageMemberId].userId]?.name
   || stageMemberId
-export const selectCustomStageMemberVolumeByStageMemberId = (state: RootState, stageMemberId: string) =>
+export const selectCustomStageMemberVolumeByStageMemberId = (state: RootState, stageMemberId: string): CustomStageMemberVolume | undefined =>
   state.globals.selectedDeviceId &&
   state.customStageMemberVolumes.byDeviceAndStageMember[state.globals.selectedDeviceId] &&
   state.customStageMemberVolumes.byDeviceAndStageMember[state.globals.selectedDeviceId][stageMemberId]
@@ -190,10 +200,10 @@ export const selectStageMemberPositionOfListener = (state: RootState): ThreeDime
 
 
 // STAGE DEVICE
-export const selectStageDeviceById = (state: RootState, id: string) => state.stageDevices.byId[id]
-export const selectStageDeviceIdsByStageMemberId = (state: RootState, stageMemberId: string) => state.stageDevices.byStageMember[stageMemberId] || []
-export const selectStageDeviceIdsByCurrentStage = (state: RootState) => state.globals.stageId ? state.stageDevices.byStage[state.globals.stageId] : []
-export const selectCustomStageDeviceVolumeByStageDeviceId = (state: RootState, stageDeviceId: string) =>
+export const selectStageDeviceById = (state: RootState, id: string): StageDevice => state.stageDevices.byId[id]
+export const selectStageDeviceIdsByStageMemberId = (state: RootState, stageMemberId: string): string[] => state.stageDevices.byStageMember[stageMemberId] || []
+export const selectStageDeviceIdsByCurrentStage = (state: RootState): string[] => state.globals.stageId ? state.stageDevices.byStage[state.globals.stageId] : []
+export const selectCustomStageDeviceVolumeByStageDeviceId = (state: RootState, stageDeviceId: string): CustomStageDeviceVolume | undefined =>
   state.globals.selectedDeviceId &&
   state.customStageDeviceVolumes.byDeviceAndStageDevice[state.globals.selectedDeviceId] &&
   state.customStageDeviceVolumes.byDeviceAndStageDevice[state.globals.selectedDeviceId][stageDeviceId]
@@ -245,8 +255,8 @@ export const selectStageDevicePositionOfListener = (state: RootState): ThreeDime
 }
 
 // AUDIO TRACK
-export const selectAudioTrackById = (state: RootState, audioTrackId: string) => state.audioTracks.byId[audioTrackId]
-export const selectCustomAudioTrackVolumeByAudioTrackId = (state: RootState, audioTrackId: string) =>
+export const selectAudioTrackById = (state: RootState, audioTrackId: string): AudioTrack => state.audioTracks.byId[audioTrackId]
+export const selectCustomAudioTrackVolumeByAudioTrackId = (state: RootState, audioTrackId: string): CustomAudioTrackVolume | undefined =>
   state.globals.selectedDeviceId &&
   state.customAudioTrackVolumes.byDeviceAndAudioTrack[state.globals.selectedDeviceId] &&
   state.customAudioTrackVolumes.byDeviceAndAudioTrack[state.globals.selectedDeviceId][audioTrackId]
@@ -292,7 +302,7 @@ export const selectCustomAudioTrackPositionByAudioTrackId = (state: RootState, a
 }
 
 // DEVICE
-export const selectDeviceNameByStageDeviceId = (state: RootState, stageDeviceId: string) => {
+export const selectDeviceNameByStageDeviceId = (state: RootState, stageDeviceId: string): string => {
   const device = state.stageDevices.byId[stageDeviceId]
   if (device.userId === state.globals.localUserId && device.type === "browser") {
     // Use device instead of stage device for naming
@@ -304,8 +314,8 @@ export const selectDeviceNameByStageDeviceId = (state: RootState, stageDeviceId:
 }
 
 // SOUND CARD
-export const selectSoundCardById = (state: RootState, id: string) => state.soundCards.byId[id]
+export const selectSoundCardById = (state: RootState, id: string): SoundCard | undefined => state.soundCards.byId[id]
 
 
 // 3D RELATED
-export const selectRender3DAudio = (state: RootState) => state.globals.stageId ? state.stages.byId[state.globals.stageId].render3DAudio : false
+export const selectRender3DAudio = (state: RootState): boolean => state.globals.stageId ? state.stages.byId[state.globals.stageId].render3DAudio : false

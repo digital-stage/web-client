@@ -28,7 +28,7 @@ import {addNotification} from '../redux/actions/clientActions'
 
 type NotificationContextT = (report: {
     kind?: KIND[keyof KIND]
-    message: any
+    message: string
     link?: string
     permanent?: boolean
 }) => void
@@ -44,35 +44,21 @@ const useNotification = (): NotificationContextT => {
              permanent,
          }: {
             kind?: KIND[keyof KIND]
-            message: any
+            message: string
             link?: string
             permanent?: boolean
         }) => {
-            if (typeof message === 'string') {
-                dispatch(
-                    addNotification({
-                        id: uuidv4(),
-                        date: new Date().getTime(),
-                        kind,
-                        link,
-                        message,
-                        permanent: (permanent || false),
-                        featured: true,
-                    })
-                )
-            } else if (message.toString !== undefined) {
-                dispatch(
-                    addNotification({
-                        id: uuidv4(),
-                        date: new Date().getTime(),
-                        kind,
-                        link,
-                        message: message.toString(),
-                        permanent: (permanent || false),
-                        featured: true,
-                    })
-                )
-            }
+          dispatch(
+            addNotification({
+              id: uuidv4(),
+              date: new Date().getTime(),
+              kind,
+              link,
+              message,
+              permanent: (permanent || false),
+              featured: true,
+            })
+          )
         },
         [dispatch]
     )

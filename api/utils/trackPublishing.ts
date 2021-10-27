@@ -33,7 +33,7 @@ const publishTrack = (
   stageId: string,
   kind: 'video' | 'audio',
   additionalPayload?: Partial<Omit<VideoTrack, "_id" | "userId" | "deviceId" | "stageMemberId" | "stageDeviceId">>
-) =>
+): Promise<VideoTrack | AudioTrack> =>
   new Promise<VideoTrack | AudioTrack>((resolve, reject) => {
     let payload: ClientDevicePayloads.CreateVideoTrack & ClientDevicePayloads.CreateAudioTrack =
       {
@@ -75,7 +75,7 @@ const unpublishTrack = (
   emit: (event: SocketEvent, ...args: unknown[]) => boolean,
   publishedId: string,
   kind: 'video' | 'audio'
-) =>
+): Promise<void> =>
   new Promise<void>((resolve, reject) => {
     if (kind === 'video') {
       emit(ClientDeviceEvents.RemoveVideoTrack, publishedId, (error: string | null) => {

@@ -27,7 +27,7 @@ import {useEmit} from '@digitalstage/api-client-react'
 import {Paragraph} from 'ui/Paragraph'
 import {NotificationItem} from 'ui/NotificationItem'
 
-const DeleteModal = ({deviceId, onClose}: { deviceId: string; onClose: () => void }) => {
+const DeleteModal = ({deviceId, onClose}: { deviceId: string; onClose: () => void }): JSX.Element => {
   const emit = useEmit()
   const [error, setError] = React.useState<string>()
   const deleteDevice = React.useCallback(() => {

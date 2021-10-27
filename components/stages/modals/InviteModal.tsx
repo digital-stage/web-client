@@ -40,7 +40,7 @@ const InviteModal = ({
     onClose: () => void
     stageId: string
     groupId: string
-}) => {
+}): JSX.Element => {
     const emit = useEmit()
     const [resetOpen, setResetOpen] = React.useState<boolean>(false)
     const [code, setCode] = React.useState<string>()

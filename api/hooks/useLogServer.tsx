@@ -37,7 +37,7 @@ const useLogServer = (): LogServerReportFn => {
   const deviceId = selectLocalDeviceId(state)
   const stageId = selectCurrentStageId(state)
 
-  return React.useCallback((event: string, payload: any): void => {
+  return React.useCallback((event: string, payload: Record<string, unknown>): void => {
     if (process.env.NEXT_PUBLIC_LOG_URL) {
       if (userId && deviceId && email && stageId) {
         fetch(`${process.env.NEXT_PUBLIC_LOG_URL  }/${  event}`,

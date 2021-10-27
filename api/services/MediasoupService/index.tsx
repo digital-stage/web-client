@@ -34,7 +34,7 @@ import {ConsumersList, Events, MediasoupHandler} from "./MediasoupHandler";
 type DispatchConsumersList = React.Dispatch<React.SetStateAction<ConsumersList>>
 const ConsumersListContext = React.createContext<ConsumersList | null>(null)
 const DispatchConsumersListContext = React.createContext<DispatchConsumersList | null>(null)
-const MediasoupProvider = ({children}: { children: React.ReactNode }) => {
+const MediasoupProvider = ({children}: { children: React.ReactNode }): JSX.Element => {
   const [consumers, setConsumers] = React.useState<ConsumersList>({})
   return (
     <DispatchConsumersListContext.Provider value={setConsumers}>
@@ -80,7 +80,7 @@ const selectCurrentMediasoupAudioTracks = (state: RootState) =>
       ) as MediasoupAudioTrack[])
     : []
 
-const MediasoupService = () => {
+const MediasoupService = (): JSX.Element | null => {
   const emit = useEmit()
   const state = useTrackedSelector()
   const token = selectToken(state)
@@ -124,10 +124,10 @@ const MediasoupService = () => {
   React.useEffect(() => {
     if (handler && videoType === 'mediasoup' && !useP2P && localVideoTrack && reportError) {
       handler.addTrack(localVideoTrack)
-          .catch(error => reportError(error))
+        .catch(error => reportError(error))
       return () => {
         handler.removeTrack(localVideoTrack.id)
-            .catch(error => reportError(error))
+          .catch(error => reportError(error))
       }
     }
   }, [handler, videoType, useP2P, localVideoTrack, reportError])
@@ -135,10 +135,10 @@ const MediasoupService = () => {
   React.useEffect(() => {
     if (handler && audioType === 'mediasoup' && !useP2P && localAudioTrack && reportError) {
       handler.addTrack(localAudioTrack)
-          .catch(error => reportError(error))
+        .catch(error => reportError(error))
       return () => {
         handler.removeTrack(localAudioTrack.id)
-            .catch(error => reportError(error))
+          .catch(error => reportError(error))
       }
     }
   }, [handler, audioType, useP2P, localAudioTrack, reportError])

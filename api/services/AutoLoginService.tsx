@@ -49,7 +49,7 @@ const AutoLoginService = (): null => {
         dispatch(setInitialized(true))
       }
     }
-  }, [dispatch])
+  }, [dispatch, state.globals.authUrl])
   return null
 }
 export {AutoLoginService}

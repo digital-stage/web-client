@@ -22,7 +22,7 @@ const StageMemberItem = ({stageMemberId, local, selections, onSelect, onDeselect
   onDeselect?: (selection: RoomSelection) => void
   groupColor: string,
   groupPosition: RoomPositionWithAngle
-}) => {
+}): JSX.Element => {
   const state = useTrackedSelector()
   const position = selectStageMemberPositionByStageMemberId(state, stageMemberId)
   const customPosition = selectCustomStageMemberPositionByStageMemberId(state, stageMemberId)

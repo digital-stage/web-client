@@ -39,7 +39,7 @@ class PeerConnection {
         this.connection.close();
     }
 
-    public addTrack(track: MediaStreamTrack) {
+    public addTrack(track: MediaStreamTrack): void {
         this.connection.addTrack(track);
     }
 

@@ -45,7 +45,7 @@ const DEFAULT_POSITION = {
     rZ: 0,
 }
 
-const ResetPanel = ({deviceId, selections}: { deviceId?: string; selections: RoomSelection[] }) => {
+const ResetPanel = ({deviceId, selections}: { deviceId?: string; selections: RoomSelection[] }): JSX.Element => {
     const emit = useEmit()
     const state = useTrackedSelector()
     const customGroupIds = React.useMemo(() =>

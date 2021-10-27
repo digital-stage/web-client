@@ -291,20 +291,20 @@ const stageLeft = (): ReducerAction => ({
     type: ServerDeviceEvents.StageLeft,
 })
 
-const localDeviceReady = (device: Device) => ({
+const localDeviceReady = (device: Device): ReducerAction => ({
     type: ServerDeviceEvents.LocalDeviceReady,
     payload: device,
 })
 
-const addDevice = (device: Device) => ({
+const addDevice = (device: Device): ReducerAction => ({
     type: ServerDeviceEvents.DeviceAdded,
     payload: device,
 })
-const changeDevice = (device: Partial<Device>) => ({
+const changeDevice = (device: Partial<Device>): ReducerAction => ({
     type: ServerDeviceEvents.DeviceChanged,
     payload: device,
 })
-const removeDevice = (deviceId: string) => ({
+const removeDevice = (deviceId: string): ReducerAction => ({
     type: ServerDeviceEvents.DeviceRemoved,
     payload: deviceId,
 })

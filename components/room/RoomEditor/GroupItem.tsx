@@ -19,7 +19,7 @@ const GroupItem = ({groupId, onSelect, onDeselect, selections}: {
     selections: RoomSelection[],
     onSelect?: (selection: RoomSelection) => void
     onDeselect?: (selection: RoomSelection) => void
-}) => {
+}): JSX.Element => {
     const state = useTrackedSelector()
     const position = selectGroupPositionByGroupId(state, groupId)
     const customPosition = selectCustomGroupPositionByGroupId(state, groupId)

@@ -26,7 +26,7 @@ import Link from 'next/link'
 import {selectAuthUser, selectLocalUser, selectSignedIn, useTrackedSelector} from "@digitalstage/api-client-react";
 import {Heading5} from "../../ui/Heading";
 
-const ProfileMenu = () => {
+const ProfileMenu = (): JSX.Element | null => {
     const [open, setOpen] = React.useState<boolean>(false)
     const state = useTrackedSelector()
     const signedIn = selectSignedIn(state)

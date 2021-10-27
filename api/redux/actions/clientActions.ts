@@ -55,7 +55,7 @@ export const selectDevice = (deviceId: string): ReducerAction => ({
     payload: deviceId,
 })
 
-export const addMediasoupVideoProducer = (id: string, producer: Producer) => ({
+export const addMediasoupVideoProducer = (id: string, producer: Producer): ReducerAction => ({
     type: InternalActionTypes.ADD_MEDIASOUP_VIDEO_PRODUCER,
     payload: {
         id,

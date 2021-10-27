@@ -41,7 +41,7 @@ const GroupModal = ({
     onClose: () => void
     stageId: string
     groupId?: string | null
-}) => {
+}): JSX.Element => {
     const [error, setError] = React.useState<string>()
     const emit = useEmit()
     const state = useTrackedSelector()

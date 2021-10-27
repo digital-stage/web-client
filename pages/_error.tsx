@@ -22,13 +22,12 @@
 
 import NextErrorComponent, {ErrorProps} from 'next/error'
 import * as Sentry from '@sentry/nextjs'
-import {NextPageContext} from 'next/dist/shared/lib/utils'
 
 const MyError = ({statusCode, hasGetInitialPropsRun, err}: {
   statusCode: number, hasGetInitialPropsRun: boolean, err: (Error & {
     statusCode?: number;
   }) | null
-}) => {
+}): JSX.Element => {
   if (!hasGetInitialPropsRun && err) {
     // getInitialProps is not called in case of
     // https://github.com/vercel/next.js/issues/8592. As a workaround, we pass
@@ -40,15 +39,15 @@ const MyError = ({statusCode, hasGetInitialPropsRun, err}: {
   return <NextErrorComponent statusCode={statusCode}/>
 }
 
-MyError.getInitialProps = async ({res, err, asPath}: NextPageContext): Promise<ErrorProps> => {
-  const errorInitialProps = await NextErrorComponent.getInitialProps({
+MyError.getInitialProps = async ({res, err, asPath}: any): Promise<ErrorProps> => {
+  const errorInitialProps: any = await NextErrorComponent.getInitialProps({
     res,
     err,
-  } as NextPageContext)
+  } as any)
 
   // Workaround for https://github.com/vercel/next.js/issues/8592, mark when
   // getInitialProps has run
-  // errorInitialProps.hasGetInitialPropsRun = true
+  errorInitialProps.hasGetInitialPropsRun = true
 
   // Running on the server, the response object (`res`) is available.
   //

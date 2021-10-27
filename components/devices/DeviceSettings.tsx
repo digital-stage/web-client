@@ -32,7 +32,7 @@ import {BrowserDevice} from "@digitalstage/api-types/dist/model/browser";
 import {Heading4} from "../../ui/Heading";
 import {SoundCardSelect} from './SoundCardSelect'
 
-const DeviceSettings = ({deviceId}: { deviceId: string }) => {
+const DeviceSettings = ({deviceId}: { deviceId: string }): JSX.Element | null => {
     const state = useTrackedSelector()
     const device = React.useMemo(() => state.devices.byId[deviceId], [state.devices.byId, deviceId])
     const emit = useEmit()

@@ -32,7 +32,7 @@ import {
 } from '@digitalstage/api-client-react'
 import {translateError} from './translateError'
 
-const SignUpForm = ({onSignedUp}: { onSignedUp: () => void }) => {
+const SignUpForm = ({onSignedUp}: { onSignedUp: () => void }): JSX.Element => {
   const state = useTrackedSelector()
   const [error, setError] = React.useState<string>()
   const notify = useNotification()
@@ -51,7 +51,7 @@ const SignUpForm = ({onSignedUp}: { onSignedUp: () => void }) => {
           .then(() => onSignedUp())
           .catch((err: AuthError) => setError(translateError(err)))
     },
-    [onSignedUp, notify]
+    [onSignedUp, notify, state.globals.authUrl]
   )
 
   return (

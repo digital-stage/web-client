@@ -38,6 +38,10 @@ import {NotificationBar} from '../components/global/NotifcationBar'
 import {logger} from '../api/logger'
 import {useForwardToLoginWhenSignedOut} from "../lib/useForwardToLoginWhenSignedOut";
 
+interface WorkaroundAppProps extends AppProps {
+  err: unknown;
+}
+
 const CheckAuthWrapper = (): JSX.Element | null => {
   useForwardToLoginWhenSignedOut()
   return null
@@ -57,7 +61,7 @@ const TitleProvider = (): JSX.Element => {
   )
 }
 
-function MyApp({Component, pageProps}: AppProps): JSX.Element {
+function MyApp({Component, pageProps, err}: WorkaroundAppProps): JSX.Element {
   return (
     <>
       <Head>
@@ -78,7 +82,7 @@ function MyApp({Component, pageProps}: AppProps): JSX.Element {
             <Background/>
             <div className="appInner">
               <NotificationBar/>
-              <Component {...pageProps} />
+              <Component {...pageProps} err={err}/>
             </div>
             <Sidebar/>
           </div>

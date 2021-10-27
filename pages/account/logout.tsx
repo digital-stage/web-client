@@ -53,7 +53,7 @@ const Logout = (): JSX.Element => {
           })
         )
     }
-  }, [dispatch, initialized, token])
+  }, [dispatch, initialized, token, state.globals.authUrl])
 
   return (
     <Loading message="Melde Dich ab..."/>

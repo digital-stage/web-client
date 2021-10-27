@@ -137,7 +137,7 @@ const ConnectionService = (): JSX.Element | null => {
         dispatch(clientActions.reset())
       }
     }
-  }, [dispatch, notify, setConnection, token, userId])
+  }, [dispatch, notify, setConnection, token, userId, state.globals.apiUrl])
 
   return null
 }

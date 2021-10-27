@@ -38,7 +38,7 @@ const DeviceSelector = ({
                           className,
                           ...props
                         }: Omit<React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
-  'children'>) => {
+  'children'>): JSX.Element | null => {
   const emit = useEmit()
   const dispatch = useDispatch()
   const state = useTrackedSelector()

@@ -65,7 +65,7 @@ const LoginForm = (): JSX.Element => {
           .catch((err) => setError(translateError(err)))
       }
     },
-    [dispatch]
+    [dispatch, state.globals.authUrl]
   )
 
   return (

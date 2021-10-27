@@ -22,12 +22,12 @@
 
 import {useEffect, useState} from 'react'
 import {
-  DefaultThreeDimensionalProperties,
+  DefaultThreeDimensionalProperties, StageMember,
   ThreeDimensionalProperties,
 } from '@digitalstage/api-types'
 import {RootState, selectStageDeviceById, useTrackedSelector} from "@digitalstage/api-client-react";
 
-const selectStageMemberByStageDeviceId = (state: RootState, stageDeviceId: string) => state.stageMembers.byId[state.stageDevices.byId[stageDeviceId].stageMemberId]
+const selectStageMemberByStageDeviceId = (state: RootState, stageDeviceId: string): StageMember => state.stageMembers.byId[state.stageDevices.byId[stageDeviceId].stageMemberId]
 
 const useStageDevicePosition = ({
                                   stageDeviceId,

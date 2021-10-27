@@ -42,7 +42,7 @@ const StageModal = ({
     open: boolean
     onClose: () => void
     stageId?: string
-}) => {
+}): JSX.Element => {
     const [error, setError] = React.useState<string>()
     const emit = useEmit()
     const state = useTrackedSelector()

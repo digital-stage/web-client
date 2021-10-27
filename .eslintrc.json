@@ -21,6 +21,8 @@
     // We need underscore dangle for our data model
     "no-underscore-dangle": "off",
     // No, use explicit exports when possible
-    "import/prefer-default-export": "off"
+    "import/prefer-default-export": "off",
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/no-explicit-any": "off"
   }
 }

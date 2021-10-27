@@ -200,12 +200,13 @@ class SimpleReverb extends AudioNode {
 
     }
 
-    initTail(reverbTime = 1) {
+    /*
+    public initTail(reverbTime = 1) {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         const OfflineAudioContext = window.OfflineAudioContext || window.webkitOfflineAudioContext;
         const tailContext = new OfflineAudioContext( 2, this.context.sampleRate * reverbTime, this.context.sampleRate );
-    }
+    }*/
 }
 
 

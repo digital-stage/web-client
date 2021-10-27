@@ -50,7 +50,7 @@ const MessagePane = ({
   hasErrors: boolean
   localUserId: string
   users: Users
-}): JSX.Element | null => {
+}): JSX.Element => {
   const messagesEndRef = React.useRef<HTMLDivElement>(null)
   const forceUpdate = useForceUpdate()
 
@@ -72,26 +72,26 @@ const MessagePane = ({
   return (
     <div className={`chatMessages ${hasErrors ? 'chatMessagesWithError' : ''}`}>
       {messages.map((msg, index) => (
-          <div
-            /* eslint-disable-next-line react/no-array-index-key */
-            key={`${msg.time}${index}`}
-            className={`chatMessageWrapper ${
-              localUserId === msg.userId && 'chatMessageWrapperSelf'
-            }`}
-          >
-            {msg.userId !== localUserId && (
-              <Heading5 className="chatMessageName">{users.byId[msg.userId]?.name}</Heading5>
-            )}
-            <div className="chatMessage">{msg.message}</div>
-            <div className="chatMessageTime">{convertTime(msg.time)}</div>
-          </div>
-        ))}
+        <div
+          /* eslint-disable-next-line react/no-array-index-key */
+          key={`${msg.time}${index}`}
+          className={`chatMessageWrapper ${
+            localUserId === msg.userId && 'chatMessageWrapperSelf'
+          }`}
+        >
+          {msg.userId !== localUserId && (
+            <Heading5 className="chatMessageName">{users.byId[msg.userId]?.name}</Heading5>
+          )}
+          <div className="chatMessage">{msg.message}</div>
+          <div className="chatMessageTime">{convertTime(msg.time)}</div>
+        </div>
+      ))}
       <div ref={messagesEndRef}/>
     </div>
   )
 }
 
-const ChatPanel = () => {
+const ChatPanel = (): JSX.Element | null => {
   const [error, setError] = React.useState<string>()
   const state = useTrackedSelector()
   const messages = state.chatMessages
