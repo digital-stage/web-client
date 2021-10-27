@@ -166,6 +166,14 @@ export const reportError = (error: Error, stack?: string): ReducerAction =>
         featured: true,
     })
 
+export const setEnvironment = (apiUrl: string, authUrl: string): ReducerAction => ({
+    type: InternalActionTypes.SET_ENV,
+    payload: {
+        apiUrl: apiUrl,
+        authUrl: authUrl
+    },
+})
+
 export const setInitialized = (initialized: boolean): ReducerAction => ({
     type: InternalActionTypes.SET_INITIALIZED,
     payload: initialized,
@@ -188,6 +196,8 @@ export type {AddNotificationPayload, ChangeNotificationPayload, RemoveNotificati
 const clientActions = {
     init,
     reset,
+
+    setEnvironment,
 
     /* Stage management */
     requestJoin,

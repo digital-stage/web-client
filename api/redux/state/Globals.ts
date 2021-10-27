@@ -21,6 +21,9 @@
  */
 
 interface Globals {
+    apiUrl?: string,
+    authUrl?: string,
+
     ready: boolean
 
     /* Information about this device */

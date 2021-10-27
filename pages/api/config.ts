@@ -19,37 +19,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+import getConfig from 'next/config'
 
-import {batch, useDispatch} from 'react-redux'
-import React from 'react'
-import cookie from 'js-cookie'
-import {setInitialized, setToken, setUser, signInWithToken} from '../redux/actions'
-import {useTrackedSelector} from "@digitalstage/api-client-react";
+const {serverRuntimeConfig} = getConfig()
 
-const AutoLoginService = (): null => {
-  const dispatch = useDispatch()
-  const state = useTrackedSelector()
+import {NextApiRequest, NextApiResponse} from "next";
 
-  React.useEffect(() => {
-    if (state.globals.authUrl) {
-      const token = cookie.get('token')
-      if (token) {
-        signInWithToken(state.globals.authUrl, token)
-          .then((user) => {
-            batch(() => {
-              dispatch(setUser(user))
-              dispatch(setToken(token))
-            })
-          })
-          .catch((err) => {
-            console.error(err)
-          })
-          .finally(() => dispatch(setInitialized(true)))
-      } else {
-        dispatch(setInitialized(true))
-      }
-    }
-  }, [dispatch])
-  return null
+interface EnvConfig {
+  api: string
+  auth: string
 }
-export {AutoLoginService}
+const MyHandler = (req: NextApiRequest, res: NextApiResponse) => {
+  const config: EnvConfig = {
+    api: serverRuntimeConfig.apiUrl,
+    auth: serverRuntimeConfig.authUrl,
+  }
+  res.json(config);
+}
+export default MyHandler

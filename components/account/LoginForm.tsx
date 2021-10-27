@@ -22,7 +22,12 @@
 
 import React, {useCallback} from 'react'
 import {Field, Form, Formik, FormikProps} from 'formik'
-import {getUserByToken, signInWithEmailAndPassword,InternalActionTypes} from '@digitalstage/api-client-react'
+import {
+  getUserByToken,
+  signInWithEmailAndPassword,
+  InternalActionTypes,
+  useTrackedSelector
+} from '@digitalstage/api-client-react'
 import * as Yup from 'yup'
 import {TextInput} from 'ui/TextInput'
 import {NotificationItem} from 'ui/NotificationItem'
@@ -32,29 +37,34 @@ import {Switch} from "../../ui/Switch";
 
 const LoginForm = (): JSX.Element => {
   const [error, setError] = React.useState<string>()
+  const state = useTrackedSelector()
   const dispatch = useDispatch()
 
   const handleSubmit = useCallback(
-    (values) =>
-      signInWithEmailAndPassword(values.email, values.password)
-        .then(async (token) => {
-          const user = await getUserByToken(token)
-          batch(() => {
-            dispatch({
-              type: InternalActionTypes.SET_USER,
-              payload: user,
+    (values) => {
+      if (state.globals.authUrl) {
+        const authUrl = state.globals.authUrl
+        return signInWithEmailAndPassword(authUrl, values.email, values.password)
+          .then(async (token) => {
+            const user = await getUserByToken(authUrl, token)
+            batch(() => {
+              dispatch({
+                type: InternalActionTypes.SET_USER,
+                payload: user,
+              })
+              dispatch({
+                type: InternalActionTypes.SET_TOKEN,
+                payload: {
+                  token,
+                  staySignedIn: values.staySignedIn,
+                },
+              })
             })
-            dispatch({
-              type: InternalActionTypes.SET_TOKEN,
-              payload: {
-                token,
-                staySignedIn: values.staySignedIn,
-              },
-            })
+            setError(undefined)
           })
-          setError(undefined)
-        })
-        .catch((err) => setError(translateError(err))),
+          .catch((err) => setError(translateError(err)))
+      }
+    },
     [dispatch]
   )
 
@@ -70,7 +80,7 @@ const LoginForm = (): JSX.Element => {
         staySignedIn: Yup.boolean(),
       })}
     >
-      {(props: FormikProps<{email: string, password: string}>) => (
+      {(props: FormikProps<{ email: string, password: string }>) => (
         <Form
           onReset={props.handleReset}
           onSubmit={props.handleSubmit}
@@ -99,7 +109,7 @@ const LoginForm = (): JSX.Element => {
             maxLength={20}
           />
           <label className="staySignedInLabel">
-            <Field id="staySignedIn" name="staySignedIn" type="checkbox" as={Switch} size="small" round />
+            <Field id="staySignedIn" name="staySignedIn" type="checkbox" as={Switch} size="small" round/>
             Angemeldet bleiben
           </label>
           {error && <NotificationItem kind="error">{error}</NotificationItem>}

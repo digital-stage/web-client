@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-import {Provider} from 'react-redux'
+import {Provider, useDispatch} from 'react-redux'
 import * as React from 'react'
 import {store} from './redux/store'
 import {AudioContextProvider} from './provider/AudioContextProvider'
@@ -32,28 +32,44 @@ import {WebRTCProvider} from './services/WebRTCService'
 import {WebcamProvider} from "./provider/WebcamProvider";
 import {MicrophoneProvider} from "./provider/MicrophoneProvider";
 import {AudioNodeProvider} from "./provider/AudioNodeProvider";
+import {setEnvironment} from "./redux/actions";
 
+const EnvironmentalFetcher = () => {
+  const dispatch = useDispatch();
+  React.useEffect(() => {
+    fetch("/api/config")
+      .then(result => result.json())
+      .then((data: { apiUrl: string, authUrl: string }) => {
+        dispatch(setEnvironment(data.apiUrl, data.authUrl))
+      })
+  }, []);
 
-const DigitalStageProvider = ({children}: { children: React.ReactNode }): JSX.Element => (
+  return null
+}
+
+const DigitalStageProvider = ({children}: { children: React.ReactNode }): JSX.Element => {
+
+  return (
     <Provider store={store}>
-        <ConnectionProvider>
-            <WebcamProvider>
-                <MicrophoneProvider>
-                    <MediasoupProvider>
-                        <WebRTCProvider>
-                            <AudioContextProvider>
-                                <AudioNodeProvider>
-                                    <AudioLevelProvider>
-                                        <DigitalStageServices/>
-                                        {children}
-                                    </AudioLevelProvider>
-                                </AudioNodeProvider>
-                            </AudioContextProvider>
-                        </WebRTCProvider>
-                    </MediasoupProvider>
-                </MicrophoneProvider>
-            </WebcamProvider>
-        </ConnectionProvider>
-    </Provider>
-)
+      <EnvironmentalFetcher/>
+      <ConnectionProvider>
+        <WebcamProvider>
+          <MicrophoneProvider>
+            <MediasoupProvider>
+              <WebRTCProvider>
+                <AudioContextProvider>
+                  <AudioNodeProvider>
+                    <AudioLevelProvider>
+                      <DigitalStageServices/>
+                      {children}
+                    </AudioLevelProvider>
+                  </AudioNodeProvider>
+                </AudioContextProvider>
+              </WebRTCProvider>
+            </MediasoupProvider>
+          </MicrophoneProvider>
+        </WebcamProvider>
+      </ConnectionProvider>
+    </Provider>)
+}
 export {DigitalStageProvider}

@@ -21,6 +21,8 @@
  */
 
 enum InternalActionTypes {
+    SET_ENV = 'env',
+
     INIT = 'init',
     RESET = 'reset',
 

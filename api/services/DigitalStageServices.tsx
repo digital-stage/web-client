@@ -31,16 +31,16 @@ import {AudioContextService} from "./AudioContextService";
 import {MediaCaptureService} from "./MediaCaptureService";
 
 const DigitalStageServices = () => (
-        <>
-            <ConnectionService/>
-            <AutoLoginService/>
-            <MediaCaptureService/>
-            <AudioContextService/>
-            <AudioRenderService/>
-            <MediasoupService/>
-            <WebRTCService/>
-        </>
-    )
+  <>
+    <ConnectionService/>
+    <AutoLoginService/>
+    <MediaCaptureService/>
+    <AudioContextService/>
+    <AudioRenderService/>
+    <MediasoupService/>
+    <WebRTCService/>
+  </>
+)
 
 const MemoizedDigitalStageServices = React.memo(DigitalStageServices)
 

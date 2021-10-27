@@ -57,7 +57,6 @@ const TitleProvider = (): JSX.Element => {
   )
 }
 
-
 function MyApp({Component, pageProps}: AppProps): JSX.Element {
   return (
     <>

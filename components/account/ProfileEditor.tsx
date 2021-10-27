@@ -61,8 +61,8 @@ const ProfileEditor = () => {
         <OptionsListItem>
           <button
             onClick={() => {
-              if (authUser)
-                requestPasswordReset(authUser.email)
+              if (authUser && state.globals.authUrl)
+                requestPasswordReset(state.globals.authUrl, authUser.email)
                   .then(() =>
                     setMessage(
                       'Wir haben Dir eine E-Mail mit einem Link zum Zurücksetzen Deines Passwortes geschickt!'

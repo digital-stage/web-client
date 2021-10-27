@@ -73,7 +73,8 @@ const ConnectionService = (): JSX.Element | null => {
   const notify = useNotification()
 
   React.useEffect(() => {
-    if (setConnection && token && userId && notify) {
+    const apiUrl = state.globals.apiUrl
+    if (apiUrl && setConnection && token && userId && notify) {
       let isActive = true
       let conn: ITeckosClient
 
@@ -82,11 +83,8 @@ const ConnectionService = (): JSX.Element | null => {
         .then((initialDevice) => {
           if (isActive) {
             trace('Creating new connection to API server')
-            if (!process.env.NEXT_PUBLIC_API_URL) {
-              throw new Error("NEXT_PUBLIC_API_UR is not defined")
-            }
             return new TeckosClientWithJWT(
-              process.env.NEXT_PUBLIC_API_URL,
+              apiUrl,
               {
                 reconnection: true,
                 debug: true,
