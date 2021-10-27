@@ -1,6 +1,4 @@
 // next.config.js
-const {withSentryConfig} = require('@sentry/nextjs')
-
 const moduleExports = {
     // Your existing module.exports
     reactStrictMode: true,
@@ -24,5 +22,5 @@ const sentryWebpackPluginOptions = {
     // For all available options, see:
     // https://github.com/getsentry/sentry-webpack-plugin#options.
 }
-
-module.exports = (process.env.SENTRY_DSN || process.env.NEXT_PUBLIC_SENTRY_DSN) ? withSentryConfig(moduleExports, sentryWebpackPluginOptions) : moduleExports
+module.exports = moduleExports
+//module.exports = (process.env.SENTRY_DSN || process.env.NEXT_PUBLIC_SENTRY_DSN) ? require('@sentry/nextjs').withSentryConfig(moduleExports, sentryWebpackPluginOptions) : moduleExports
