@@ -20,7 +20,6 @@
  * SOFTWARE.
  */
 import getConfig from 'next/config'
-import * as http from "http";
 
 const {serverRuntimeConfig} = getConfig()
 
