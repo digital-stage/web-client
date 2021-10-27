@@ -36,7 +36,7 @@ const RemoveGroupModal = ({
     groupId?: string
     open: boolean
     onClose: () => void
-}) => {
+}): JSX.Element | null => {
     const emit = useEmit()
     const state = useTrackedSelector()
     const name = groupId ? state.groups.byId[groupId]?.name : undefined

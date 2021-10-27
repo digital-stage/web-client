@@ -24,7 +24,8 @@
       "@digitalstage/api-client-react": [
         "api"
       ]
-    }
+    },
+    "incremental": true
   },
   "include": [
     "next-env.d.ts",

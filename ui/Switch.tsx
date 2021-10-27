@@ -36,7 +36,7 @@ const Switch = ({
     'size'> & {
     size?: SIZE[keyof SIZE]
     round?: boolean
-}) => (
+}): JSX.Element => (
     <div className={`switch ${size || ''} ${className || ''}`}>
         <input type="checkbox" {...props} />
         <span className={`slider ${round ? 'round' : ''}`}/>

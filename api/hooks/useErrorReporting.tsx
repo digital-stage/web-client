@@ -20,19 +20,19 @@
  * SOFTWARE.
  */
 
-import { useDispatch } from 'react-redux'
+import {useDispatch} from 'react-redux'
 import React from 'react'
-import { reportError } from '../redux/actions/clientActions'
+import {reportError} from '../redux/actions/clientActions'
 
-const useErrorReporting = () => {
+const useErrorReporting = (): (err: unknown) => void => {
     const dispatch = useDispatch()
     return React.useCallback(
-        (err: any) => {
+        (err: unknown) => {
             if (err instanceof Error) {
                 console.error(err)
                 dispatch(reportError(err))
             } else {
-                const error = new Error(err)
+                const error = new Error(err as string)
                 console.error(error)
                 dispatch(reportError(error))
             }
@@ -40,4 +40,4 @@ const useErrorReporting = () => {
         [dispatch]
     )
 }
-export { useErrorReporting }
+export {useErrorReporting}

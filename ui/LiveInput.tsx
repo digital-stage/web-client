@@ -34,7 +34,7 @@ const LiveInput = (
         label: string
         error?: string
     }
-) => {
+): JSX.Element => {
     const { value, onChange, ...other } = props
     const [changed, setChanged] = React.useState<boolean>(false)
     const [actualValue, setActualValue] = React.useState<string>(value || '')

@@ -30,7 +30,7 @@ const MicrophoneStateContext = React.createContext<State | null>(null)
 const MicrophoneDispatchContext = React.createContext<Dispatch | null>(null)
 
 
-const MicrophoneProvider = ({children}: { children: React.ReactNode }) => {
+const MicrophoneProvider = ({children}: { children: React.ReactNode }) : JSX.Element => {
     const [state, dispatch] = useState<MediaStreamTrack>()
 
     return (

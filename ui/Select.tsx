@@ -27,7 +27,7 @@ const Select = ({
     ...props
 }: React.DetailedHTMLProps<React.SelectHTMLAttributes<HTMLSelectElement>, HTMLSelectElement> & {
     label?: string
-}) => (
+}) : JSX.Element => (
         <label className="select">
             {label && <span>{label}</span>}
             <select {...props} />

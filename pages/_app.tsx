@@ -38,12 +38,12 @@ import {NotificationBar} from '../components/global/NotifcationBar'
 import {logger} from '../api/logger'
 import {useForwardToLoginWhenSignedOut} from "../lib/useForwardToLoginWhenSignedOut";
 
-const CheckAuthWrapper = () => {
+const CheckAuthWrapper = (): JSX.Element | null => {
   useForwardToLoginWhenSignedOut()
   return null
 }
 
-export function reportWebVitals(metric: NextWebVitalsMetric) {
+export function reportWebVitals(metric: NextWebVitalsMetric): void {
   logger('Analytics').trace(metric)
 }
 
@@ -58,7 +58,7 @@ const TitleProvider = (): JSX.Element => {
 }
 
 
-function MyApp({Component, pageProps}: AppProps) {
+function MyApp({Component, pageProps}: AppProps): JSX.Element {
   return (
     <>
       <Head>

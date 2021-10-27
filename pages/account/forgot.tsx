@@ -28,7 +28,7 @@ import {Paragraph} from '../../ui/Paragraph'
 import {useForwardToStagesWhenSignedIn} from "../../lib/useForwardToStagesWhenSignedIn";
 import {Heading3} from "../../ui/Heading";
 
-const Forgot = () => {
+const Forgot = (): JSX.Element => {
   useForwardToStagesWhenSignedIn()
   return (
     <AuthLayout>

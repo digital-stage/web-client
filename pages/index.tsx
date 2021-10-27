@@ -28,7 +28,7 @@ import {useTrackedSelector} from "@digitalstage/api-client-react";
 import {Container, SIZE} from '../ui/Container'
 
 
-const Index = () => {
+const Index = (): JSX.Element => {
     const { isReady, replace } = useRouter()
     const state = useTrackedSelector()
     const insideStage = state.globals.ready ? !!state.globals.stageId : false

@@ -1,6 +1,6 @@
 import React from "react";
 
-const Test = () => {
+const Test = (): JSX.Element => {
     const ref = React.useRef<HTMLDivElement>(null)
     const [pos, setPos] = React.useState<{ x: number, y: number }>()
     React.useEffect(() => {

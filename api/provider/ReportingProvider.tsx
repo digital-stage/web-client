@@ -50,7 +50,7 @@ const ReportingContext = React.createContext<ReportingContextT>({
     removeNotification: throwAddProviderError,
 })
 
-const ReportingProvider = ({ children }: { children: React.ReactNode }) => {
+const ReportingProvider = ({ children }: { children: React.ReactNode }) : JSX.Element => {
     const dispatch = useDispatch()
     const [, setTimeouts] = React.useState<any[]>([])
 

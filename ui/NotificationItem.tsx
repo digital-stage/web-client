@@ -23,7 +23,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react'
 
-const IoMdClose = () => (
+const IoMdClose = (): JSX.Element => (
     <svg
         stroke="currentColor"
         fill="currentColor"
@@ -55,7 +55,7 @@ const NotificationItem = ({
     kind?: KIND[keyof KIND]
     closeable?: boolean
     onClose?: () => void
-} & React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLDivElement>, HTMLDivElement>) => (
+} & React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLDivElement>, HTMLDivElement>): JSX.Element => (
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions
     <div className={`notification ${kind || ''} ${className || ''}`} {...props}>
         <div>{children}</div>

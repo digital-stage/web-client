@@ -34,7 +34,7 @@ import {MicrophoneProvider} from "./provider/MicrophoneProvider";
 import {AudioNodeProvider} from "./provider/AudioNodeProvider";
 
 
-const DigitalStageProvider = ({children}: { children: React.ReactNode }) => (
+const DigitalStageProvider = ({children}: { children: React.ReactNode }): JSX.Element => (
     <Provider store={store}>
         <ConnectionProvider>
             <WebcamProvider>

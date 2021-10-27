@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-const LoadingCube = () => (
+const LoadingCube = (): JSX.Element => (
     <>
         <div className="cssload-thecube">
             <div className="cssload-cube cssload-c1" />

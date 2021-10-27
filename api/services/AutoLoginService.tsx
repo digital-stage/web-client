@@ -26,7 +26,7 @@ import cookie from 'js-cookie'
 import {setInitialized, setToken, setUser, signInWithToken } from '../redux/actions'
 
 
-const AutoLoginService = () => {
+const AutoLoginService = () : null => {
     const dispatch = useDispatch()
 
     React.useEffect(() => {

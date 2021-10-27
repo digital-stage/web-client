@@ -24,7 +24,7 @@ import {DevicesList} from '../../components/devices/DevicesList'
 import {Container} from '../../ui/Container'
 import {Heading2} from "../../ui/Heading";
 
-const Index = () => (
+const Index = () : JSX.Element=> (
         <Container size="small">
             <Heading2>Meine Geräte</Heading2>
             <DevicesList />

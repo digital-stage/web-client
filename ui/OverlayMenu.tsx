@@ -37,7 +37,7 @@ const OverlayMenu = ({
     menu: React.ReactNode
     open: boolean
     onClose: () => void
-} & React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLDivElement>, HTMLDivElement>) => {
+} & React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLDivElement>, HTMLDivElement>): JSX.Element => {
     const openState = useOpenState(open)
     return (
         <div className="nav overlay">

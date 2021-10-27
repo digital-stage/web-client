@@ -38,7 +38,7 @@ const RemoveStageModal = ({
     open: boolean
     onDelete?: () => void
     onClose: () => void
-}) => {
+}) : JSX.Element | null => {
     const emit = useEmit()
     const state = useTrackedSelector()
     const stageName = stageId ? state.stages.byId[stageId]?.name : undefined

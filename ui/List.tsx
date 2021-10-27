@@ -35,7 +35,7 @@ const ListItem = ({
 }: {
     selected?: boolean
     onSelect?: () => void
-} & React.DetailedHTMLProps<React.LiHTMLAttributes<HTMLLIElement>, HTMLLIElement>) => (
+} & React.DetailedHTMLProps<React.LiHTMLAttributes<HTMLLIElement>, HTMLLIElement>): JSX.Element => (
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions
     <li
         className={`entry ${selected ? 'selected' : ''} ${className || ''}`}
@@ -44,7 +44,7 @@ const ListItem = ({
     />
 )
 
-const List = ({ kind, className, ...props }: { kind?: KIND[keyof KIND] } & React.DetailedHTMLProps<React.HTMLAttributes<HTMLUListElement>, HTMLUListElement>) => (
+const List = ({ kind, className, ...props }: { kind?: KIND[keyof KIND] } & React.DetailedHTMLProps<React.HTMLAttributes<HTMLUListElement>, HTMLUListElement>): JSX.Element => (
     <ul className={`list ${kind || ''} ${className || ''}`} {...props}/>
 )
 export { ListItem }

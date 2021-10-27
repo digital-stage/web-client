@@ -24,7 +24,7 @@ import React from 'react'
 import {SettingsLayout} from '../../components/settings/SettingsLayout'
 import {ProfileEditor} from '../../components/account/ProfileEditor'
 
-const ProfileSettingsPage = () => (
+const ProfileSettingsPage = (): JSX.Element => (
         <SettingsLayout>
             <ProfileEditor />
         </SettingsLayout>

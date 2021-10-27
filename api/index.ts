@@ -30,6 +30,8 @@ import {useAudioLevel} from './provider/AudioLevelProvider'
 import {useStageJoiner} from './hooks/useStageJoiner'
 import {
     useWebRTCStats,
+    useWebRTCRemoteVideos,
+    useWebRTCRemoteAudioTracks
 } from './services/WebRTCService'
 import {useEmit, useConnection, ConnectionStateContext, EmitFunction} from './services/ConnectionService'
 import {useErrorReporting} from './hooks/useErrorReporting'
@@ -67,6 +69,8 @@ export {
     useConnection,
     useAuth,
     useWebRTCStats,
+    useWebRTCRemoteVideos,
+    useWebRTCRemoteAudioTracks,
     useWebcam,
     useMicrophone,
     useRemoteVideoTracks,

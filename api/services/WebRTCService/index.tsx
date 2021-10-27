@@ -1,50 +1,27 @@
-/*
- * Copyright (c) 2021 Tobias Hegemann
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
-
-import React from 'react'
-import {
-    ServerDeviceEvents
-} from '@digitalstage/api-types'
-
-import omit from 'lodash/omit'
-import round from 'lodash/round'
-import {
-    selectCurrentAudioType,
-    selectCurrentStageId,
-    selectCurrentVideoType,
-    selectP2PEnabled,
-    selectReady
-} from "api/redux/selectors";
+import React from "react";
+import round from "lodash/round";
+import {logger} from '../../logger'
 import {useTrackedSelector} from 'api/redux/selectors/useTrackedSelector'
 import {useConnection} from '../ConnectionService'
-import {PeerConnection} from './PeerConnection'
-import {logger} from '../../logger'
-import {Broker} from './Broker'
-import {useMicrophone} from "../../provider/MicrophoneProvider";
-import {useErrorReporting} from '../../hooks/useErrorReporting'
-import {useWebcam} from '../../provider/WebcamProvider'
+import {PeerConnection} from "./PeerConnection";
+import {
+    ClientDeviceEvents,
+    ClientDevicePayloads,
+    ServerDeviceEvents,
+    ServerDevicePayloads
+} from "@digitalstage/api-types";
+import {
+    selectCurrentAudioType,
+    selectCurrentStageId, selectCurrentVideoType,
+    selectP2PEnabled,
+    selectReady, selectTurnCredential, selectTurnServers, selectTurnUsername
+} from "api/redux/selectors";
+import {config} from "./config";
+import {useErrorReporting, useMicrophone, useWebcam} from "@digitalstage/api-client-react";
 import {publishTrack, unpublishTrack} from "../../utils/trackPublishing";
+import omit from "lodash/omit";
 
-const {trace, reportError: printError} = logger('WebRTCService')
+const {trace} = logger('WebRTCService')
 
 type TrackMap = { [trackId: string]: MediaStreamTrack }
 type DispatchTrackMapContext = React.Dispatch<React.SetStateAction<TrackMap>>
@@ -59,6 +36,7 @@ const DispatchRemoteAudioTracksContext = React.createContext<DispatchTrackMapCon
 
 const TrackStatsContext = React.createContext<TrackStatsMap | null>(null)
 const DispatchTrackStatsContext = React.createContext<DispatchTrackStatsMap | null>(null)
+
 
 const WebRTCProvider = ({children}: { children: React.ReactNode }) => {
     const [remoteVideoTracks, setRemoteVideoTracks] = React.useState<TrackMap>({})
@@ -149,41 +127,224 @@ const useWebRTCStats = (trackId: string): WebRTCStatistics | undefined => {
     }, [trackStats])
 }
 
+const PeerConnectionWrapper = ({
+                                   configuration,
+                                   stageDeviceId,
+                                   localStageDeviceId,
+                                   onOffer,
+                                   onAnswer,
+                                   onCandidate,
+                                   onRemoteTrack,
+                                   onRemoteStats,
+                                   remoteCandidate,
+                                   remoteSessionDescription,
+                                   videoTrack,
+                                   audioTrack,
+                               }: {
+    configuration?: RTCConfiguration,
+    stageDeviceId: string,
+    localStageDeviceId: string,
+    onOffer: (offer: ClientDevicePayloads.SendP2POffer) => unknown,
+    onAnswer: (offer: ClientDevicePayloads.SendP2PAnswer) => unknown,
+    onCandidate: (candidate: ClientDevicePayloads.SendIceCandidate) => unknown,
+    onRemoteTrack: (stageDeviceId: string, track: MediaStreamTrack) => unknown,
+    onRemoteStats: (stageDeviceId: string, stats: RTCStatsReport) => unknown,
+    remoteCandidate?: RTCIceCandidate,
+    remoteSessionDescription?: RTCSessionDescriptionInit,
+    videoTrack?: MediaStreamTrack,
+    audioTrack?: MediaStreamTrack,
+}) => {
+    // Dependencies
+    const reportError = useErrorReporting()
+
+    // Internal states
+    const [, setReceivedTracks] = React.useState<MediaStreamTrack[]>([])
+    const [peerConnection, setPeerConnection] = React.useState<PeerConnection | undefined>(undefined);
+
+    // Internal hooks
+    React.useEffect(() => {
+        if (localStageDeviceId && stageDeviceId && onOffer && onAnswer && onCandidate && onRemoteStats && onRemoteTrack) {
+            trace(`Created new peer connection ${stageDeviceId}`)
+
+            const polite = localStageDeviceId.localeCompare(stageDeviceId) > 0;
+            const connection = new PeerConnection(polite, configuration);
+            connection.onSessionDescription = ((description) => {
+                if (description.type == "offer") {
+                    onOffer({
+                        from: localStageDeviceId,
+                        to: stageDeviceId,
+                        offer: description
+                    });
+                } else if (description.type == "answer") {
+                    onAnswer({
+                        from: localStageDeviceId,
+                        to: stageDeviceId,
+                        answer: description
+                    });
+                }
+            });
+            connection.onIceCandidate = ((candidate: RTCIceCandidate | null) => {
+                onCandidate({
+                    from: localStageDeviceId,
+                    to: stageDeviceId,
+                    iceCandidate: candidate
+                });
+            });
+            connection.onRemoteTrack = (track: MediaStreamTrack, stats?: RTCStatsReport) => {
+                trace("Got new remote track")
+                onRemoteTrack(stageDeviceId, track)
+                setReceivedTracks((prev) => [...prev, track])
+                if (stats) {
+                    onRemoteStats(track.id, stats)
+                }
+                const onEnded = () =>
+                    setReceivedTracks((prev) => prev.filter((t) => t.id !== track.id))
+                track.addEventListener('mute', onEnded)
+                track.addEventListener('ended', onEnded)
+            }
+            setPeerConnection(connection)
+            return () => {
+                connection.close();
+                setPeerConnection(undefined)
+            }
+        }
+    }, [configuration, localStageDeviceId, onAnswer, onCandidate, onOffer, onRemoteStats, onRemoteTrack, stageDeviceId]);
+
+    React.useEffect(() => {
+        if (peerConnection && reportError) {
+            if (remoteSessionDescription) {
+                peerConnection.addSessionDescription(remoteSessionDescription)
+                    .catch(err => reportError(err))
+            }
+
+        }
+    }, [peerConnection, remoteSessionDescription, reportError])
+
+    React.useEffect(() => {
+        if (peerConnection && reportError) {
+            if (remoteCandidate) {
+                peerConnection.addIceCandidate(remoteCandidate)
+                    .catch(err => reportError(err))
+            }
+
+        }
+    }, [peerConnection, remoteCandidate, reportError])
+
+    React.useEffect(() => {
+        if (peerConnection && videoTrack) {
+            peerConnection.addTrack(videoTrack)
+        }
+    }, [peerConnection, videoTrack])
+
+    React.useEffect(() => {
+        if (peerConnection && audioTrack) {
+            peerConnection.addTrack(audioTrack)
+        }
+    }, [peerConnection, audioTrack])
+
+    return null;
+}
+
+type RemoteSessionDescriptions = {
+    [from: string]: RTCSessionDescriptionInit
+}
+type RemoteCandidates = {
+    [from: string]: RTCIceCandidate
+}
+
+function filterByList<T>(prev: { [from: string]: T }, idList: string[]): { [from: string]: T } {
+    return Object.keys(prev).reduce((p, currStageDeviceId) => {
+        if (!idList.some(stageDeviceId => currStageDeviceId == stageDeviceId)) {
+            return {
+                ...p,
+                [currStageDeviceId]: prev[currStageDeviceId]
+            }
+        }
+        return p
+    }, {})
+}
+
 const WebRTCService = (): JSX.Element | null => {
-    const state = useTrackedSelector()
-    const initialized = selectReady(state)
+    const reportError = useErrorReporting()
+    // Dependencies - Connection
     const connection = useConnection()
     const emit = connection ? connection.emit : undefined
-    const reportError = useErrorReporting()
-    const [connected, setConnected] = React.useState<boolean>(false)
-    const broker = React.useRef<Broker>(new Broker())
+    // Dependencies - Selectors
+    const state = useTrackedSelector()
+    const connected = selectReady(state)
+    const [initialized, setInitialized] = React.useState<boolean>(false)
+    const turnServers = selectTurnServers(state)
+    const turnUsername = selectTurnUsername(state)
+    const turnCredential = selectTurnCredential(state)
     const useP2P = selectP2PEnabled(state)
     const stageId = selectCurrentStageId(state)
     const videoType = selectCurrentVideoType(state)
     const audioType = selectCurrentAudioType(state)
-    const stageDeviceIds = state.globals.stageId && state.globals.localStageDeviceId
+    const localStageDeviceId = state.globals.localStageDeviceId
+    const stageDeviceIds = React.useMemo(() => state.globals.stageId && state.globals.localStageDeviceId
         ? state.stageDevices.byStage[state.globals.stageId]?.filter((id) => id !== state.globals.localStageDeviceId && state.stageDevices.byId[id].active) || []
-        : []
+        : [], [state.globals.localStageDeviceId, state.globals.stageId, state.stageDevices.byId, state.stageDevices.byStage]);
+
+    // Internal states
+    const [remoteSessionDescriptions, setRemoteSessionDescriptions] = React.useState<RemoteSessionDescriptions>({});
+    const [remoteCandidates, setRemoteCandidates] = React.useState<RemoteCandidates>({});
+    const configuration: RTCConfiguration = React.useMemo<RTCConfiguration>(() => {
+        return turnServers.length > 0 ? {
+            ...config,
+            iceServers: [
+                {urls: turnServers.map(url => `stun:${url}`)},
+                {
+                    urls: turnServers.map(url => `turn:${url}`),
+                    username: turnUsername,
+                    credential: turnCredential
+                }
+            ],
+            sdpSemantics: 'unified-plan'
+        } : config
+    }, [turnCredential, turnServers, turnUsername])
+
+    // Internal hooks
     React.useEffect(() => {
         if (connection) {
-            const currentBroker = broker.current
-            connection.on(ServerDeviceEvents.P2PRestart, currentBroker.handleRestart)
-            connection.on(ServerDeviceEvents.P2POfferSent, currentBroker.handleOffer)
-            connection.on(ServerDeviceEvents.P2PAnswerSent, currentBroker.handleAnswer)
-            connection.on(ServerDeviceEvents.IceCandidateSent, currentBroker.handleIceCandidate)
-            setConnected(true)
+            const handleOffer = (payload: ServerDevicePayloads.P2POfferSent) => {
+                setRemoteSessionDescriptions(prev => ({
+                    ...prev,
+                    [payload.from]: payload.offer
+                }))
+            }
+            connection.addListener(ServerDeviceEvents.P2POfferSent, handleOffer)
+            const handleAnswer = (payload: ServerDevicePayloads.P2PAnswerSent) => {
+                setRemoteSessionDescriptions(prev => ({
+                    ...prev,
+                    [payload.from]: payload.answer
+                }))
+            }
+            connection.addListener(ServerDeviceEvents.P2PAnswerSent, handleAnswer)
+            const handleCandidate = (payload: ServerDevicePayloads.IceCandidateSent) => {
+                setRemoteCandidates(prev => ({
+                    ...prev,
+                    [payload.from]: payload.iceCandidate
+                }))
+            }
+            connection.addListener(ServerDeviceEvents.IceCandidateSent, handleCandidate)
+            setInitialized(true);
             return () => {
-                setConnected(false)
-                connection.on(ServerDeviceEvents.P2PRestart, currentBroker.handleRestart)
-                connection.off(ServerDeviceEvents.P2POfferSent, currentBroker.handleOffer)
-                connection.off(ServerDeviceEvents.P2PAnswerSent, currentBroker.handleAnswer)
-                connection.off(
-                    ServerDeviceEvents.IceCandidateSent,
-                    currentBroker.handleIceCandidate
-                )
+                setInitialized(false);
+                connection.removeListener(ServerDeviceEvents.P2POfferSent, handleOffer)
+                connection.removeListener(ServerDeviceEvents.P2PAnswerSent, handleAnswer)
+                connection.removeListener(ServerDeviceEvents.IceCandidateSent, handleCandidate)
+
             }
         }
     }, [connection])
+
+    React.useEffect(() => {
+        // Clean up
+        trace("Cleaning up")
+        setRemoteSessionDescriptions(prev => filterByList<RTCSessionDescriptionInit>(prev, stageDeviceIds))
+        setRemoteCandidates(prev => filterByList<RTCIceCandidate>(prev, stageDeviceIds))
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [stageDeviceIds.length])
 
     /**
      * Capture local video track
@@ -222,7 +383,7 @@ const WebRTCService = (): JSX.Element | null => {
                     unpublishTrack(emit, publishedId, "video")
                         .then(() => trace(`Un-published local video track ${track.id} published as video ${publishedId}`))
                         //FIXME: Currently just reporting to the console and NOT throwing, but sometimes tracks wasn't published for any reason
-                        .catch(error => printError(`Could not un-publish local video track ${track?.id} published as video ${publishedId}. Reason: ${error}`))
+                        .catch(error => reportError(`Could not un-publish local video track ${track?.id} published as video ${publishedId}. Reason: ${error}`))
                 }
                 if (track) {
                     track.stop()
@@ -265,7 +426,7 @@ const WebRTCService = (): JSX.Element | null => {
                     unpublishTrack(emit, publishedId, "audio")
                         .then(() => trace(`Un-published local audio track ${track.id} published as audio ${publishedId}`))
                         //FIXME: Currently just reporting to the console and NOT throwing, but sometimes tracks wasn't published for any reason
-                        .catch((error) => printError(`Could not un-publish local audio track ${track?.id} published as audio ${publishedId}. Reason: ${error}`))
+                        .catch((error) => reportError(`Could not un-publish local audio track ${track?.id} published as audio ${publishedId}. Reason: ${error}`))
                 }
                 setPublishedAudioTrack(undefined)
                 if (track) {
@@ -275,73 +436,79 @@ const WebRTCService = (): JSX.Element | null => {
         }
     }, [useP2P, stageId, audioType, emit, reportError, localAudioTrack])
 
+    const handleOffer = React.useCallback((offer: ClientDevicePayloads.SendP2POffer) => {
+        if (emit)
+            emit(ClientDeviceEvents.SendP2POffer, offer)
+    }, [emit])
+    const handleAnswer = React.useCallback((answer: ClientDevicePayloads.SendP2PAnswer) => {
+        if (emit)
+            emit(ClientDeviceEvents.SendP2PAnswer, answer)
+    }, [emit])
+    const handleCandidate = React.useCallback((candidate: ClientDevicePayloads.SendIceCandidate) => {
+        if (emit)
+            emit(ClientDeviceEvents.SendIceCandidate, candidate)
+    }, [emit])
     const setRemoteVideoTracks = React.useContext(DispatchRemoteVideoTracksContext)
     const setRemoteAudioTracks = React.useContext(DispatchRemoteAudioTracksContext)
-
-    const onRemoteTrack = React.useCallback(
-        (stageDeviceId: string, track: MediaStreamTrack) => {
-            trace('Got track with trackId', track.id)
-            const dispatch = track.kind === 'video' ? setRemoteVideoTracks : setRemoteAudioTracks
-            if (dispatch) {
-                trace('Adding track with trackId', track.id)
-                dispatch((prev) => ({
-                    ...prev,
-                    [stageDeviceId]: track,
-                }))
-                const onTrackMuted = () => {
-                    trace(`Track ${track.id} muted`)
-                }
-                const onTrackUnmuted = () => {
-                    trace(`Track ${track.id} unmuted`)
-                }
-                const onTrackEnded = () => {
-                    trace("Track ended, removing it from internal lit")
-                    dispatch((prev) => omit(prev, stageDeviceId))
-                    track.addEventListener('mute', onTrackMuted)
-                    track.addEventListener('unmute', onTrackUnmuted)
-                    track.addEventListener('ended', onTrackEnded)
-                }
-                track.addEventListener('mute', onTrackMuted)
-                track.addEventListener('unmute', onTrackUnmuted)
-                track.addEventListener('ended', onTrackEnded)
+    const handleRemoteTrack = React.useCallback((stageDeviceId: string, track: MediaStreamTrack) => {
+        trace('Got track with trackId', track.id)
+        const dispatch = track.kind === 'video' ? setRemoteVideoTracks : setRemoteAudioTracks
+        if (dispatch) {
+            trace('Adding track with trackId', track.id)
+            dispatch((prev) => ({
+                ...prev,
+                [stageDeviceId]: track,
+            }))
+            const onTrackMuted = () => {
+                trace(`Track ${track.id} muted`)
             }
-        },
-        [setRemoteAudioTracks, setRemoteVideoTracks]
-    )
+            const onTrackUnmuted = () => {
+                trace(`Track ${track.id} unmuted`)
+            }
+            const onTrackEnded = () => {
+                trace("Track ended, removing it from internal lit")
+                dispatch((prev) => omit(prev, stageDeviceId))
+                track.removeEventListener('mute', onTrackMuted)
+                track.removeEventListener('unmute', onTrackUnmuted)
+                track.removeEventListener('ended', onTrackEnded)
+            }
+            track.addEventListener('mute', onTrackMuted)
+            track.addEventListener('unmute', onTrackUnmuted)
+            track.addEventListener('ended', onTrackEnded)
+        }
+    }, [setRemoteAudioTracks, setRemoteVideoTracks])
     const setWebRTCStats = React.useContext(DispatchTrackStatsContext)
-    const onStats = React.useCallback(
-        (trackId: string, stats: RTCStatsReport) => {
-            if (setWebRTCStats)
-                setWebRTCStats((prev) => ({
-                    ...prev,
-                    [trackId]: stats,
-                }))
-        },
-        [setWebRTCStats]
-    )
-    if (initialized && connected) {
+    const handleRemoteStats = React.useCallback((trackId: string, stats: RTCStatsReport) => {
+        if (setWebRTCStats)
+            setWebRTCStats((prev) => ({
+                ...prev,
+                [trackId]: stats,
+            }))
+    }, [setWebRTCStats])
+
+    if (connected && initialized && localStageDeviceId) {
         return (
             <>
-                {stageDeviceIds.map((stageDeviceId) => (
-                    <PeerConnection
+                {stageDeviceIds.map(stageDeviceId =>
+                    <PeerConnectionWrapper
                         key={stageDeviceId}
+                        configuration={configuration}
+                        stageDeviceId={stageDeviceId}
+                        localStageDeviceId={localStageDeviceId}
+                        onOffer={handleOffer}
+                        onAnswer={handleAnswer}
+                        onCandidate={handleCandidate}
+                        onRemoteTrack={handleRemoteTrack}
+                        onRemoteStats={handleRemoteStats}
+                        remoteCandidate={remoteCandidates[stageDeviceId]}
+                        remoteSessionDescription={remoteSessionDescriptions[stageDeviceId]}
                         videoTrack={publishedVideoTrack}
                         audioTrack={publishedAudioTrack}
-                        stageDeviceId={stageDeviceId}
-                        onRemoteTrack={onRemoteTrack}
-                        onStats={onStats}
-                        broker={broker.current}
-                    />
-                ))}
+                    />)}
             </>
         )
     }
     return null
 }
-export {
-    WebRTCService,
-    WebRTCProvider,
-    useWebRTCRemoteVideos,
-    useWebRTCRemoteAudioTracks,
-    useWebRTCStats,
-}
+
+export {WebRTCService, WebRTCProvider, useWebRTCRemoteVideos, useWebRTCRemoteAudioTracks, useWebRTCStats}

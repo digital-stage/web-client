@@ -25,7 +25,7 @@ import {StageView} from 'components/stage/StageView'
 import {Loading} from "../components/global/Loading";
 import {useStageAvailableOrForward} from "../components/global/useStageAvailableOrForward";
 
-const Stage = () => {
+const Stage = (): JSX.Element => {
     const stageAvailable = useStageAvailableOrForward()
     if (stageAvailable) {
         return <StageView/>

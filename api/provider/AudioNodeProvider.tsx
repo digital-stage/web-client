@@ -46,7 +46,7 @@ function audioNodeReducer(prevState: State, action: Action) {
     }
 }
 
-const AudioNodeProvider = ({ children }: { children: React.ReactNode }) => {
+const AudioNodeProvider = ({ children }: { children: React.ReactNode }) : JSX.Element => {
     const [state, dispatch] = React.useReducer(audioNodeReducer, {})
 
     const stateValue = React.useMemo(() => state, [state])

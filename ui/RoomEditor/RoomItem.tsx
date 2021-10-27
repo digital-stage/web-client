@@ -38,7 +38,7 @@ const RoomItem = ({
     onFinalChange?: (position: RoomPositionWithAngle) => void
     dragBounceFunc?: DragBounceFunc,
     children?: React.ReactNode
-}) => {
+}) : JSX.Element => {
     const ref = React.useRef<HTMLDivElement>(null)
     const [dragging, setDragging] = React.useState<boolean>(false)
     const dragged = React.useRef<boolean>(false)

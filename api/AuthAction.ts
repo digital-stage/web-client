@@ -102,9 +102,9 @@ const signInWithEmailAndPassword = (
             throw new AuthError(res.status, res.statusText)
         })
 
-const signInWithToken = (token: string) => getUserByToken(token)
+const signInWithToken = (token: string): Promise<AuthUser> => getUserByToken(token)
 
-const requestPasswordReset = (email: string) =>
+const requestPasswordReset = (email: string) : Promise<void> =>
     fetch(`${process.env.NEXT_PUBLIC_AUTH_URL}/forgot`, {
         headers: {
             'Content-Type': 'application/json',
@@ -118,7 +118,7 @@ const requestPasswordReset = (email: string) =>
         return undefined
     })
 
-const resetPassword = (resetToken: string, password: string) =>
+const resetPassword = (resetToken: string, password: string) : Promise<void> =>
     fetch(`${process.env.NEXT_PUBLIC_AUTH_URL}/reset`, {
         headers: {
             'Content-Type': 'application/json',

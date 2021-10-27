@@ -33,7 +33,7 @@ const WebcamDispatchContext = React.createContext<Dispatch | null>(null)
 const selectLocalVideoTracks = (state: RootState): VideoTrack[] => state.globals.localStageDeviceId &&
   state.videoTracks.byStageDevice[state.globals.localStageDeviceId]?.map(id => state.videoTracks.byId[id]) || []
 
-const WebcamProvider = ({children}: { children: React.ReactNode }) => {
+const WebcamProvider = ({children}: { children: React.ReactNode }) : JSX.Element => {
   const [state, dispatch] = React.useState<MediaStreamTrack>()
   const store = useTrackedSelector()
   const videoTracks = selectLocalVideoTracks(store)

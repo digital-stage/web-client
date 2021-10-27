@@ -32,7 +32,7 @@ import React from 'react'
 import {ClientDeviceEvents, ClientDevicePayloads} from '@digitalstage/api-types'
 import {Loading} from "../../components/global/Loading";
 
-const JoinPage = () => {
+const JoinPage = () : JSX.Element=> {
   const {isReady, query} = useRouter()
   const {join} = useStageJoiner()
   const notify = useNotification()

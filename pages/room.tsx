@@ -26,7 +26,7 @@ import React from 'react'
 import {RoomEditor} from '../components/room/RoomEditor'
 import {Loading} from "../components/global/Loading";
 
-const Room = () => {
+const Room = (): JSX.Element => {
     const {isReady, push} = useRouter()
     const state = useTrackedSelector()
     const connectionReady = state.globals.ready

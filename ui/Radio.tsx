@@ -22,7 +22,7 @@
 
 import React, {DetailedHTMLProps, InputHTMLAttributes} from 'react'
 
-const Radio = (props: DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>) => (
+const Radio = (props: DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>): JSX.Element => (
     <div className="radio">
       <input type="radio" {...props} />
       <span className="radioCheckmark"/>

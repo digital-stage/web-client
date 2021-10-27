@@ -36,7 +36,7 @@ const Panel = ({
                }: {
     kind?: KIND[keyof KIND]
     fixed?: boolean
-} & React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>) => (
+} & React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>): JSX.Element => (
         <div
             className={`panel ${kind || ''} ${
                 fixed ? 'fixed' : ''

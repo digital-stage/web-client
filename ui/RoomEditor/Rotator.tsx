@@ -7,7 +7,7 @@ const Rotator = ({
                      rZ,
                      onChange,
                      onFinalChange
-                 }: { x: number, y: number, rZ: number, onChange: (rZ: number) => void, onFinalChange: (rZ: number) => void }) => {
+                 }: { x: number, y: number, rZ: number, onChange: (rZ: number) => void, onFinalChange: (rZ: number) => void }): JSX.Element => {
     const ref = React.useRef<HTMLDivElement>(null)
     const [dragging, setDragging] = React.useState<boolean>(false)
     const lastRz = React.useRef<number>(rZ)

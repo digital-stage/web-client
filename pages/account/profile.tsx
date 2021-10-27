@@ -27,7 +27,7 @@ import {Panel} from '../../ui/Panel'
 import {useForwardToLoginWhenSignedOut} from "../../lib/useForwardToLoginWhenSignedOut";
 import {Heading2} from "../../ui/Heading";
 
-const Profile = () => {
+const Profile = (): JSX.Element => {
   useForwardToLoginWhenSignedOut()
 
   return (

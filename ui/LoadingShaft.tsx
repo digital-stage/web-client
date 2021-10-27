@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-const LoadingShaft = () => (
+const LoadingShaft = (): JSX.Element => (
     <>
         <div className="shaft-load">
             <div className="shaft1" />

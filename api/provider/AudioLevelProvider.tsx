@@ -46,7 +46,7 @@ function audioLevelReducer(prevState: State, action: Action) {
     }
 }
 
-const AudioLevelProvider = ({ children }: { children: React.ReactNode }) => {
+const AudioLevelProvider = ({ children }: { children: React.ReactNode }) : JSX.Element => {
     const [state, dispatch] = React.useReducer(audioLevelReducer, {})
 
     const stateValue = React.useMemo(() => state, [state])

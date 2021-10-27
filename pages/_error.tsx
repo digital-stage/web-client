@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-import NextErrorComponent from 'next/error'
+import NextErrorComponent, {ErrorProps} from 'next/error'
 import * as Sentry from '@sentry/nextjs'
 import {NextPageContext} from 'next/dist/shared/lib/utils'
 
@@ -40,7 +40,7 @@ const MyError = ({statusCode, hasGetInitialPropsRun, err}: {
   return <NextErrorComponent statusCode={statusCode}/>
 }
 
-MyError.getInitialProps = async ({res, err, asPath}: NextPageContext) => {
+MyError.getInitialProps = async ({res, err, asPath}: NextPageContext): Promise<ErrorProps> => {
   const errorInitialProps = await NextErrorComponent.getInitialProps({
     res,
     err,
