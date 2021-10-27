@@ -29,7 +29,7 @@ interface EnvConfig {
   auth: string
 }
 
-const MyHandler = (req: http.IncomingMessage, res: http.ServerResponse) => {
+const MyHandler = (req: any, res: any) => {
   const config: EnvConfig = {
     api: serverRuntimeConfig.apiUrl,
     auth: serverRuntimeConfig.authUrl,
