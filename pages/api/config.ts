@@ -29,7 +29,7 @@ interface EnvConfig {
   authUrl: string
 }
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
   const config: EnvConfig = {
     apiUrl: serverRuntimeConfig.apiUrl,
     authUrl: serverRuntimeConfig.authUrl,
