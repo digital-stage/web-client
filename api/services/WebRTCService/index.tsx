@@ -289,6 +289,7 @@ const WebRTCService = (): JSX.Element | null => {
   const [remoteSessionDescriptions, setRemoteSessionDescriptions] = React.useState<RemoteSessionDescriptions>({});
   const [remoteCandidates, setRemoteCandidates] = React.useState<RemoteCandidates>({});
   const configuration: RTCConfiguration = React.useMemo<RTCConfiguration>(() => {
+    trace(turnServers.length > 0 ? 'Using TURN servers' : 'Fallback to public STUN servers')
     return turnServers.length > 0 ? {
       ...config,
       iceServers: [

@@ -29,9 +29,10 @@ const ConnectionOverlay = ({children}: { children: React.ReactNode }): JSX.Eleme
   const signedIn = selectSignedIn(state)
   const connected = selectReady(state)
 
-  if (signedIn && !connected) {
-    return <Loading message="Verbinde ..."/>
+  if (!signedIn || connected) {
+    return <>{children}</>
   }
-  return <>{children}</>
+
+  return <Loading message="Verbinde ..."/>
 }
 export {ConnectionOverlay}

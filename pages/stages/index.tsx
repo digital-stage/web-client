@@ -23,11 +23,18 @@
 import {StagesList} from '../../components/stages/StagesList'
 import {Container} from '../../ui/Container'
 import {Heading2} from "../../ui/Heading";
+import {useTrackedSelector} from "@digitalstage/api-client-react";
 
-const StagesPage = (): JSX.Element => (
-        <Container size="small">
-            <Heading2>Meine Bühnen</Heading2>
-            <StagesList />
-        </Container>
+const StagesPage = (): JSX.Element | null => {
+  const state = useTrackedSelector()
+  if (state.globals.ready) {
+    return (
+      <Container size="small">
+        <Heading2>Meine Bühnen</Heading2>
+        <StagesList/>
+      </Container>
     )
+  }
+  return null
+}
 export default StagesPage
