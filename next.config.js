@@ -2,7 +2,6 @@
 const moduleExports = {
     // Your existing module.exports
     reactStrictMode: true,
-    experimental: {esmExternals: true},
     eslint: {
         dirs: ['api', 'components', 'lib', 'pages', 'ui'],
     },
