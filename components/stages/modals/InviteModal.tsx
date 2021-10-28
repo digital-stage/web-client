@@ -21,7 +21,7 @@
  */
 
 import React from 'react'
-import { useEmit } from '@digitalstage/api-client-react'
+import { useEmit } from '../../../client'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
 import { NotificationItem } from 'ui/NotificationItem'
 import  { Modal,ModalButton, ModalFooter, ModalHeader } from 'ui/Modal'

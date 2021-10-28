@@ -25,7 +25,7 @@ import {Modal, ModalButton, ModalFooter, ModalHeader} from 'ui/Modal'
 import {NotificationItem} from 'ui/NotificationItem'
 import {Paragraph} from 'ui/Paragraph'
 import dynamic from 'next/dynamic'
-import {requestJoin, useEmit} from '@digitalstage/api-client-react'
+import {requestJoin, useEmit} from '../../../client'
 import {ClientDeviceEvents, ClientDevicePayloads} from '@digitalstage/api-types'
 import {useDispatch} from 'react-redux'
 import {Heading4} from "../../../ui/Heading";

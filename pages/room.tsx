@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-import {selectRender3DAudio, useTrackedSelector} from '@digitalstage/api-client-react'
+import {selectRender3DAudio, useTrackedSelector} from '../client'
 import {useRouter} from 'next/router'
 import React from 'react'
 import {RoomEditor} from '../components/room/RoomEditor'

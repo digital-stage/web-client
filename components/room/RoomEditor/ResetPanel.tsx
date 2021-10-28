@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-import {useEmit, useTrackedSelector} from '@digitalstage/api-client-react'
+import {useEmit, useTrackedSelector} from '../../../client'
 import React from 'react'
 import {ClientDeviceEvents, ClientDevicePayloads} from '@digitalstage/api-types'
 import {BiReset} from 'react-icons/bi'

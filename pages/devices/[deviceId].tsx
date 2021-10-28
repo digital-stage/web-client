@@ -25,7 +25,7 @@ import React from 'react'
 import Link from 'next/link'
 import {IoIosArrowDropleft} from 'react-icons/io'
 import {Panel} from 'ui/Panel'
-import {selectLocalDeviceId, selectReady, useTrackedSelector} from "@digitalstage/api-client-react";
+import {selectLocalDeviceId, selectReady, useTrackedSelector} from "../../client";
 import {Container} from '../../ui/Container'
 import {DeviceSettings} from '../../components/devices/DeviceSettings'
 import {Loading} from "../../components/global/Loading";

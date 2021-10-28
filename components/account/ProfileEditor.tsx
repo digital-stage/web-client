@@ -29,7 +29,7 @@ import {
   selectAuthUser, selectLocalUser,
   useEmit,
   useTrackedSelector
-} from '@digitalstage/api-client-react'
+} from '../../client'
 import {Paragraph} from 'ui/Paragraph'
 import {OptionsList, OptionsListItem} from 'ui/OptionsList'
 

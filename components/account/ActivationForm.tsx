@@ -23,7 +23,7 @@
 import React from 'react'
 import {Field, Form, Formik, FormikHelpers} from 'formik'
 import * as Yup from 'yup'
-import {activate, AuthError, useTrackedSelector} from '@digitalstage/api-client-react'
+import {activate, AuthError, useTrackedSelector} from '../../client'
 import {TextInput} from 'ui/TextInput'
 import {KIND, NotificationItem} from 'ui/NotificationItem'
 import {translateError} from './translateError'

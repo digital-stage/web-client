@@ -26,7 +26,7 @@ import {
   useNotification,
   useStageJoiner,
   useTrackedSelector,
-} from '@digitalstage/api-client-react'
+} from '../../client'
 import {useRouter} from 'next/router'
 import React from 'react'
 import {ClientDeviceEvents, ClientDevicePayloads} from '@digitalstage/api-types'

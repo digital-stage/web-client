@@ -23,7 +23,7 @@
 import React  from 'react'
 import { OverlayMenu } from 'ui/OverlayMenu'
 import Link from 'next/link'
-import {selectAuthUser, selectLocalUser, selectSignedIn, useTrackedSelector} from "@digitalstage/api-client-react";
+import {selectAuthUser, selectLocalUser, selectSignedIn, useTrackedSelector} from "../../client";
 import {Heading5} from "../../ui/Heading";
 
 const ProfileMenu = (): JSX.Element | null => {

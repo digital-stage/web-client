@@ -28,7 +28,7 @@ import {
     selectIsCurrentlyAdmin, selectStageById, selectStageMemberIdsByGroupId,
     useEmit,
     useStageJoiner, useTrackedSelector,
-} from '@digitalstage/api-client-react'
+} from '../../client'
 import Link from 'next/link'
 import {AltList, AltListItem} from 'ui/AltList'
 import {ClientDeviceEvents, ClientDevicePayloads} from '@digitalstage/api-types'

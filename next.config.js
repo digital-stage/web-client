@@ -5,7 +5,7 @@ const moduleExports = {
     // Your existing module.exports
     reactStrictMode: true,
     eslint: {
-        dirs: ['api', 'components', 'lib', 'pages', 'ui'],
+        dirs: ['client', 'components', 'lib', 'pages', 'ui'],
     },
     serverRuntimeConfig: {
         // Will only be available on the server side

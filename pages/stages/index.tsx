@@ -23,7 +23,7 @@
 import {StagesList} from '../../components/stages/StagesList'
 import {Container} from '../../ui/Container'
 import {Heading2} from "../../ui/Heading";
-import {useTrackedSelector} from "@digitalstage/api-client-react";
+import {useTrackedSelector} from "../../client";
 
 const StagesPage = (): JSX.Element | null => {
   const state = useTrackedSelector()

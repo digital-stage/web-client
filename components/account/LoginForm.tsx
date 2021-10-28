@@ -27,7 +27,7 @@ import {
   signInWithEmailAndPassword,
   InternalActionTypes,
   useTrackedSelector
-} from '@digitalstage/api-client-react'
+} from '../../client'
 import * as Yup from 'yup'
 import {TextInput} from 'ui/TextInput'
 import {NotificationItem} from 'ui/NotificationItem'

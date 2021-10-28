@@ -35,7 +35,7 @@ import {
   selectGroupIdsByStageId,
   selectStageMemberById,
   selectUserNameByStageMemberId
-} from '@digitalstage/api-client-react'
+} from '../../../client'
 import React from 'react'
 import {ClientDeviceEvents, ClientDevicePayloads, DefaultVolumeProperties} from '@digitalstage/api-types'
 import {TextSwitch} from 'ui/TextSwitch'

@@ -21,7 +21,7 @@
  */
 
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import {selectStageById, useEmit, useTrackedSelector} from '@digitalstage/api-client-react'
+import {selectStageById, useEmit, useTrackedSelector} from '../../../client'
 import { ClientDeviceEvents, ClientDevicePayloads, Stage } from '@digitalstage/api-types'
 import React from 'react'
 import { Field, Form, Formik } from 'formik'

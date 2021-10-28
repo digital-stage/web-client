@@ -25,7 +25,7 @@ import {
   selectIsCurrentlyAdmin,
   selectStageById, selectVideoTypeByStageId,
   useTrackedSelector
-} from '@digitalstage/api-client-react'
+} from '../../client'
 import React from 'react'
 import {List, ListItem} from 'ui/List'
 import {Tag} from 'ui/Tag'
@@ -33,7 +33,7 @@ import {Paragraph} from 'ui/Paragraph'
 import Link from 'next/link'
 import {useRouter} from 'next/router'
 import {MdEdit, MdMoreHoriz} from 'react-icons/md'
-import {useStageJoiner} from '../../api/hooks/useStageJoiner'
+import {useStageJoiner} from '../../client/hooks/useStageJoiner'
 import {EnterInviteCodeModal} from './modals/EnterInviteCodeModal'
 import {StageModal} from './modals/StageModal'
 

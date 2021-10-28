@@ -23,7 +23,7 @@
 import { useDebounceCallback } from '@react-hook/debounce'
 import { useThrottleCallback } from '@react-hook/throttle'
 import React from 'react'
-import { useAudioLevel } from '@digitalstage/api-client-react'
+import { useAudioLevel } from '../../../client'
 import { BiReset } from 'react-icons/bi'
 import {LevelMeter} from './LevelMeter'
 

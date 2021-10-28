@@ -23,7 +23,7 @@ import {
   RootState,
   useEmit,
   useTrackedSelector
-} from "@digitalstage/api-client-react";
+} from "../../client";
 import {ClientDeviceEvents, ClientDevicePayloads, SoundCard} from "@digitalstage/api-types";
 import React from "react";
 import {OptionsList, OptionsListItem} from "ui/OptionsList";

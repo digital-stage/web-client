@@ -26,7 +26,7 @@ import "../styles/root.css"
 import "../styles/index.scss"
 import Head from 'next/head'
 import {AppProps, NextWebVitalsMetric} from 'next/app'
-import {DigitalStageProvider, useTrackedSelector} from '@digitalstage/api-client-react'
+import {DigitalStageProvider, useTrackedSelector} from '../client'
 import {Background} from 'components/global/Background'
 import {Sidebar} from 'components/global/Sidebar'
 import {DeviceSelector} from '../components/global/DeviceSelector'
@@ -35,7 +35,7 @@ import {ProfileMenu} from '../components/global/ProfileMenu'
 import {PlaybackOverlay} from '../components/global/PlaybackOverlay'
 import {StageJoiner} from '../components/global/StageJoiner'
 import {NotificationBar} from '../components/global/NotifcationBar'
-import {logger} from '../api/logger'
+import {logger} from '../client/logger'
 import {useForwardToLoginWhenSignedOut} from "../lib/useForwardToLoginWhenSignedOut";
 
 interface WorkaroundAppProps extends AppProps {

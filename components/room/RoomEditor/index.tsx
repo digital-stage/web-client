@@ -32,7 +32,7 @@ import {
     selectStageMemberPositionOfListener,
     useToggleShowOfflineMode,
     useTrackedSelector,
-} from "@digitalstage/api-client-react";
+} from "../../../client";
 import {HiFilter, HiOutlineFilter} from "react-icons/hi";
 import {useDispatch} from "react-redux";
 import {RoomSelection} from "../../../ui/RoomEditor/RoomSelection";

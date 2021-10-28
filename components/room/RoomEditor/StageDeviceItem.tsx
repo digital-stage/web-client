@@ -4,7 +4,7 @@ import {
     selectStageDevicePositionByStageDeviceId,
     useEmit,
     useTrackedSelector
-} from "@digitalstage/api-client-react";
+} from "../../../client";
 import React from "react";
 import {ClientDeviceEvents, ClientDevicePayloads} from "@digitalstage/api-types";
 import {RoomItem, RoomPositionWithAngle} from "../../../ui/RoomEditor";

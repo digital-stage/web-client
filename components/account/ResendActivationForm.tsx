@@ -25,7 +25,7 @@ import {Field, Form, Formik, FormikHelpers} from 'formik'
 import * as Yup from 'yup'
 import {NotificationItem} from 'ui/NotificationItem'
 import {TextInput} from 'ui/TextInput'
-import {AuthError, resendActivationLink, useTrackedSelector} from '@digitalstage/api-client-react'
+import {AuthError, resendActivationLink, useTrackedSelector} from '../../client'
 import {translateError} from './translateError'
 
 export interface Values {

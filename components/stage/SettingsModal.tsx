@@ -1,7 +1,7 @@
 import {
   useEmit,
   useTrackedSelector
-} from "@digitalstage/api-client-react";
+} from "../../client";
 import {ClientDeviceEvents, ClientDevicePayloads} from "@digitalstage/api-types";
 import React, {ChangeEvent} from "react";
 import {OptionsList, OptionsListItem} from "ui/OptionsList";

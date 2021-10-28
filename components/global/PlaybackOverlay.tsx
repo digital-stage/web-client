@@ -27,7 +27,7 @@ import {
     useAudioContext,
     useAudioContextDispatch,
     useTrackedSelector,
-} from '@digitalstage/api-client-react'
+} from '../../client'
 import { FaPlay } from 'react-icons/fa'
 
 const PlaybackOverlay = (): JSX.Element | null => {

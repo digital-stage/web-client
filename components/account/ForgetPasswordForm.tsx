@@ -28,7 +28,7 @@ import {
   requestPasswordReset,
   selectAuthUser,
   useTrackedSelector
-} from '@digitalstage/api-client-react'
+} from '../../client'
 import {NotificationItem, KIND} from 'ui/NotificationItem'
 import {TextInput} from 'ui/TextInput'
 import {translateError} from './translateError'

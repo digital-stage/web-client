@@ -22,7 +22,7 @@
 
 import React from 'react'
 import {useRouter} from 'next/router'
-import {selectReady, useEmit, useNotification, useTrackedSelector} from '@digitalstage/api-client-react'
+import {selectReady, useEmit, useNotification, useTrackedSelector} from '../../client'
 import {
     ClientDeviceEvents,
     ClientDevicePayloads,
@@ -30,7 +30,7 @@ import {
 } from '@digitalstage/api-types'
 import {Modal, ModalButton, ModalFooter} from 'ui/Modal'
 import {TextInput} from 'ui/TextInput'
-import {useStageJoiner} from '../../api/hooks/useStageJoiner'
+import {useStageJoiner} from '../../client/hooks/useStageJoiner'
 import {Heading4} from "../../ui/Heading";
 
 /**

@@ -21,7 +21,7 @@
  */
 
 import { NotificationItem } from 'ui/NotificationItem'
-import {useTrackedSelector} from '@digitalstage/api-client-react'
+import {useTrackedSelector} from '../../client'
 import React from "react";
 
 const NotificationCenter = (): JSX.Element => {

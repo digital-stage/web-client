@@ -22,7 +22,7 @@
 
 import {ChatMessage, ClientDeviceEvents, ClientDevicePayloads} from '@digitalstage/api-types'
 import React from 'react'
-import {selectLocalUserId, useEmit, Users, useTrackedSelector} from '@digitalstage/api-client-react'
+import {selectLocalUserId, useEmit, Users, useTrackedSelector} from '../../../client'
 import {NotificationItem} from 'ui/NotificationItem'
 import {Panel} from 'ui/Panel'
 import {AiOutlineSend} from 'react-icons/ai'

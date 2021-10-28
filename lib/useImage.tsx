@@ -22,7 +22,7 @@
 
 /* eslint-disable no-param-reassign */
 import React from 'react'
-import { useErrorReporting } from '@digitalstage/api-client-react'
+import { useErrorReporting } from '../client'
 
 export const useSvgImage = (
     url: string,

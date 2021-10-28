@@ -28,7 +28,7 @@ import {
   useTrackedSelector,
   selectReady,
   selectLocalDeviceId, selectCurrentStageId
-} from '@digitalstage/api-client-react'
+} from '../../client'
 import {ClientDeviceEvents, ClientDevicePayloads} from '@digitalstage/api-types'
 import {useDispatch} from 'react-redux'
 import {MdMic, MdMicOff, MdVideocam, MdVideocamOff} from 'react-icons/md'

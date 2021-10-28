@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-import { AuthError, ErrorCodes } from '@digitalstage/api-client-react'
+import { AuthError, ErrorCodes } from '../../client'
 
 const translateError = (error: AuthError): string => {
     if ((error as AuthError).code !== undefined) {

@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-import {useEmit, useTrackedSelector} from '@digitalstage/api-client-react'
+import {useEmit, useTrackedSelector} from '../../client'
 import {ClientDeviceEvents, ClientDevicePayloads} from '@digitalstage/api-types'
 import React from 'react'
 import {LiveInput} from 'ui/LiveInput'

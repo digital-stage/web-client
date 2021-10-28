@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-import {selectReady, selectSignedIn, useTrackedSelector} from '@digitalstage/api-client-react'
+import {selectReady, selectSignedIn, useTrackedSelector} from '../../client'
 import React from 'react'
 import {Loading} from "./Loading";
 

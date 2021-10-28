@@ -3,7 +3,7 @@ import {
   selectCustomAudioTrackPositionByAudioTrackId,
   useEmit,
   useTrackedSelector
-} from "@digitalstage/api-client-react";
+} from "../../../client";
 import React from "react";
 import {ClientDeviceEvents, ClientDevicePayloads} from "@digitalstage/api-types";
 import {IoVolumeHigh, IoVolumeMute} from "react-icons/io5";

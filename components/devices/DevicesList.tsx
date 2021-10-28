@@ -23,7 +23,7 @@
 import {
   selectDevice,
   useEmit
-} from '@digitalstage/api-client-react'
+} from '../../client'
 import {useDispatch} from 'react-redux'
 import React from 'react'
 import Link from 'next/link'
@@ -35,7 +35,7 @@ import {MdEdit, MdMic, MdMicOff, MdVideocam, MdVideocamOff} from 'react-icons/md
 import {GoBrowser, GoDeviceDesktop} from 'react-icons/go'
 import {FaRaspberryPi, FaTrash} from 'react-icons/fa'
 import {DeleteModal} from './DeleteModal'
-import {useTrackedSelector} from "../../api/redux/selectors/useTrackedSelector";
+import {useTrackedSelector} from "../../client/redux/selectors/useTrackedSelector";
 
 const TypeIcons = {
   jammer: <GoDeviceDesktop/>,

@@ -1,4 +1,4 @@
-import {selectSignedIn, useTrackedSelector} from "@digitalstage/api-client-react";
+import {selectSignedIn, useTrackedSelector} from "../client";
 import {useRouter} from "next/router";
 import React from "react";
 

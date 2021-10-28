@@ -21,7 +21,7 @@
  */
 
 import * as React from 'react'
-import {logout, InternalActionTypes, useTrackedSelector} from '@digitalstage/api-client-react'
+import {logout, InternalActionTypes, useTrackedSelector} from '../../client'
 import {batch, useDispatch} from 'react-redux'
 import {Loading} from 'components/global/Loading';
 import {useRouter} from "next/router";

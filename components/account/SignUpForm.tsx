@@ -29,7 +29,7 @@ import {
   AuthError,
   createUserWithEmailAndPassword,
   useNotification, useTrackedSelector,
-} from '@digitalstage/api-client-react'
+} from '../../client'
 import {translateError} from './translateError'
 
 const SignUpForm = ({onSignedUp}: { onSignedUp: () => void }): JSX.Element => {
