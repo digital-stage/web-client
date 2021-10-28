@@ -254,3 +254,6 @@ dist
 
 # vercel
 .vercel
+
+# Sentry
+.sentryclirc

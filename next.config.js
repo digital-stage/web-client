@@ -1,4 +1,6 @@
 // next.config.js
+const { withSentryConfig } = require('@sentry/nextjs');
+
 const moduleExports = {
     // Your existing module.exports
     reactStrictMode: true,
@@ -10,7 +12,7 @@ const moduleExports = {
         apiUrl: process.env.NEXT_PUBLIC_API_URL, // Pass through env variables
         authUrl: process.env.NEXT_PUBLIC_AUTH_URL, // Pass through env variables
     },
-}
+};
 
 const sentryWebpackPluginOptions = {
     // Additional config options for the Sentry Webpack plugin. Keep in mind that
@@ -19,8 +21,10 @@ const sentryWebpackPluginOptions = {
     //   release, url, org, project, authToken, configFile, stripPrefix,
     //   urlPrefix, include, ignore
 
+    silent: true, // Suppresses all logs
     // For all available options, see:
     // https://github.com/getsentry/sentry-webpack-plugin#options.
-}
+};
+
 module.exports = moduleExports
 //module.exports = (process.env.SENTRY_DSN || process.env.NEXT_PUBLIC_SENTRY_DSN) ? require('@sentry/nextjs').withSentryConfig(moduleExports, sentryWebpackPluginOptions) : moduleExports
