@@ -36,7 +36,8 @@ import {PlaybackOverlay} from '../components/global/PlaybackOverlay'
 import {StageJoiner} from '../components/global/StageJoiner'
 import {NotificationBar} from '../components/global/NotifcationBar'
 import {logger} from '../client/logger'
-import {useForwardToLoginWhenSignedOut} from "../lib/useForwardToLoginWhenSignedOut";
+import {useForwardToLoginWhenSignedOut} from "../lib/useForwardToLoginWhenSignedOut"
+import "scripts/wdyr"
 
 interface WorkaroundAppProps extends AppProps {
   err: unknown;
