@@ -338,10 +338,10 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@digitalstage/api-types@^0.6.4":
-  version "0.6.4"
-  resolved "https://registry.yarnpkg.com/@digitalstage/api-types/-/api-types-0.6.4.tgz#0fe1e2494408d3564d93cd5aa3d3237b1e9146a9"
-  integrity sha512-2U0gEhyOe7ozw7kd46qe5ZpsrY6zCLDpoBpIYaC7DlW9xJdFqEiJL/JjAirU1mWHLbf1U31i9PUgQHxMplwyNg==
+"@digitalstage/api-types@^0.6.5":
+  version "0.6.5"
+  resolved "https://registry.yarnpkg.com/@digitalstage/api-types/-/api-types-0.6.5.tgz#39e2b590be46779649d1f716a9002bd28bd36b4a"
+  integrity sha512-KpePJ11fKmqINKRsyB8wXccSUftS4iYgs6vaSBmdtRtzfBKvOzM4LzAv/FTkHzl2af9fQ9P3jogqErZHaVqiKw==
 
 "@eslint/eslintrc@^0.4.3":
   version "0.4.3"
@@ -5429,10 +5429,17 @@ redux-thunk@^2.3.0:
   resolved "https://registry.yarnpkg.com/redux-thunk/-/redux-thunk-2.3.0.tgz#51c2c19a185ed5187aaa9a2d08b666d0d6467622"
   integrity sha512-km6dclyFnmcvxhAcrQV2AkZmPQjzPDjgVlQtR0EQjxZPyJ0BnMf3in1ryuR8A2qU0HldVRfxYXbFSKlI3N7Slw==
 
-redux@^4.0.0, redux@^4.1.0, redux@^4.1.1:
+redux@^4.0.0, redux@^4.1.0:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/redux/-/redux-4.1.1.tgz#76f1c439bb42043f985fbd9bf21990e60bd67f47"
   integrity sha512-hZQZdDEM25UY2P493kPYuKqviVwZ58lEmGQNeQ+gXa+U0gYPUBf7NKYazbe3m+bs/DzM/ahN12DbF+NG8i0CWw==
+  dependencies:
+    "@babel/runtime" "^7.9.2"
+
+redux@^4.1.2:
+  version "4.1.2"
+  resolved "https://registry.yarnpkg.com/redux/-/redux-4.1.2.tgz#140f35426d99bb4729af760afcf79eaaac407104"
+  integrity sha512-SH8PglcebESbd/shgf6mii6EIoRM0zrQyjcuQ+ojmfxjTtE0z9Y8pa62iA/OJ58qjP6j27uyW4kUF4jl/jd6sw==
   dependencies:
     "@babel/runtime" "^7.9.2"
 
