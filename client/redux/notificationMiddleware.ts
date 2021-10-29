@@ -44,7 +44,7 @@ const validateOvConfiguration = (state: RootState, dispatch: Dispatch<AnyAction>
   const hasOvDeviceOrderId = state.globals.localStageDeviceId ?
     state.stageDevices.byId[state.globals.localStageDeviceId].order !== -1 : false
   dispatch(setCheck({
-    isOvRunning: state.devices.allIds.some(id => state.devices.byId[id].type === "ov"),
+    isOvRunning: state.devices.allIds.some(id => state.devices.byId[id].type === "ov" && state.devices.byId[id].online),
     hasOvDeviceOrderId: hasOvDeviceOrderId
   }));
 }
@@ -52,7 +52,7 @@ const validateOvConfiguration = (state: RootState, dispatch: Dispatch<AnyAction>
 const validateJammerConfiguration = (state: RootState, dispatch: Dispatch<AnyAction>): void => {
   // Has this user at least one active jammer client running?
   dispatch(setCheck({
-    isJammerRunning: state.devices.allIds.some(id => state.devices.byId[id].type === "jammer")
+    isJammerRunning: state.devices.allIds.some(id => state.devices.byId[id].type === "jammer" && state.devices.byId[id].online)
   }));
 }
 
