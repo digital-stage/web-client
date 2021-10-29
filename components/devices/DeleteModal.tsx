@@ -23,11 +23,11 @@
 import React from 'react'
 import {Modal, ModalButton, ModalFooter, ModalHeader} from 'ui/Modal'
 import {ClientDeviceEvents, ClientDevicePayloads} from '@digitalstage/api-types'
-import {useEmit} from '@digitalstage/api-client-react'
+import {useEmit} from '../../client'
 import {Paragraph} from 'ui/Paragraph'
 import {NotificationItem} from 'ui/NotificationItem'
 
-const DeleteModal = ({deviceId, onClose}: { deviceId: string; onClose: () => void }) => {
+const DeleteModal = ({deviceId, onClose}: { deviceId: string; onClose: () => void }): JSX.Element => {
   const emit = useEmit()
   const [error, setError] = React.useState<string>()
   const deleteDevice = React.useCallback(() => {

@@ -19,169 +19,178 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-import {RootState, useEmit, useTrackedSelector} from "@digitalstage/api-client-react";
+import {
+  RootState,
+  useEmit,
+  useTrackedSelector
+} from "../../client";
 import {ClientDeviceEvents, ClientDevicePayloads, SoundCard} from "@digitalstage/api-types";
-import React, {useState} from "react";
+import React from "react";
 import {OptionsList, OptionsListItem} from "ui/OptionsList";
 import {Select} from "../../ui/Select";
 import {Switch} from "../../ui/Switch";
 
 const selectAudioDriversByDeviceId = (state: RootState, type: "input" | "output", deviceId: string): string[] =>
-    [...new Set<string>(
-        state.soundCards[type].byDevice[deviceId]
-            ? state.soundCards[type].byDevice[deviceId].map(id => state.soundCards.byId[id].audioDriver)
-            : []
-    )]
+  [...new Set<string>(
+    state.soundCards[type].byDevice[deviceId]
+      ? state.soundCards[type].byDevice[deviceId].map(id => state.soundCards.byId[id].audioDriver)
+      : []
+  )]
 
 const selectInputSoundCardByDeviceId = (state: RootState, deviceId: string): SoundCard | undefined => {
-    if (state.devices.byId[deviceId]) {
-        const id: string | null = state.devices.byId[deviceId].inputSoundCardId
-        if (id) {
-            return state.soundCards.byId[id]
-        }
+  if (state.devices.byId[deviceId]) {
+    const id: string | null = state.devices.byId[deviceId].inputSoundCardId
+    if (id) {
+      return state.soundCards.byId[id]
     }
-    return undefined
+  }
+  return undefined
 }
 const selectOutputSoundCardByDeviceId = (state: RootState, deviceId: string): SoundCard | undefined => {
-    if (state.devices.byId[deviceId]) {
-        const id: string | null = state.devices.byId[deviceId].outputSoundCardId
-        if (id) {
-            return state.soundCards.byId[id]
-        }
+  if (state.devices.byId[deviceId]) {
+    const id: string | null = state.devices.byId[deviceId].outputSoundCardId
+    if (id) {
+      return state.soundCards.byId[id]
     }
-    return undefined
+  }
+  return undefined
 }
 
 const selectSoundCardsByDeviceAndTypeAndAudioDriver = (state: RootState, deviceId: string, type: "input" | "output", audioDriver: string) => {
-    if (state.soundCards[type].byDeviceAndDriver[deviceId]) {
-        if (state.soundCards[type].byDeviceAndDriver[deviceId][audioDriver]) {
-            return state.soundCards[type].byDeviceAndDriver[deviceId][audioDriver].map(id => state.soundCards.byId[id])
-        }
+  if (state.soundCards[type].byDeviceAndDriver[deviceId]) {
+    if (state.soundCards[type].byDeviceAndDriver[deviceId][audioDriver]) {
+      return state.soundCards[type].byDeviceAndDriver[deviceId][audioDriver].map(id => state.soundCards.byId[id])
     }
-    return []
+  }
+  return []
 }
 
-const ChannelSelector = ({soundCardId}: { soundCardId: string }) => {
-    const state = useTrackedSelector()
-    const emit = useEmit()
-    if (!state.soundCards.byId[soundCardId]) return null
-    if (!emit) return null
+const ChannelSelector = ({soundCardId}: { soundCardId: string }): JSX.Element | null => {
+  const state = useTrackedSelector()
+  const emit = useEmit()
+  if (!state.soundCards.byId[soundCardId]) return null
+  if (!emit) return null
 
-    return (
-        <OptionsList>
-            <OptionsListItem style={{
-                paddingTop: '8px'
-            }}>
-                {state.soundCards.byId[soundCardId].type === "input" ? 'Eingangskanäle:' : 'Ausgangskanäle:'}
-            </OptionsListItem>
-            {state.soundCards.byId[soundCardId].channels.map((channel, index, channels) => (
-                <OptionsListItem key={soundCardId + index} as={<label/>}>
-                    <Switch
-                        round
-                        size="small"
-                        checked={channel.active}
-                        onChange={(event) =>
-                            emit(ClientDeviceEvents.ChangeSoundCard, {
-                                _id: soundCardId,
-                                channels: channels.map((c, i) => {
-                                    if (i === index) {
-                                        return {
-                                            label: c.label,
-                                            active: event.currentTarget.checked
-                                        }
-                                    }
-                                    return c
-                                })
-                            })
-                        }
-                    />
-                    {channel.label}
-                </OptionsListItem>
-            ))}
-        </OptionsList>
-    )
+  return (
+    <OptionsList>
+      <OptionsListItem style={{
+        paddingTop: '8px'
+      }}>
+        {state.soundCards.byId[soundCardId].type === "input" ? 'Eingangskanäle:' : 'Ausgangskanäle:'}
+      </OptionsListItem>
+      {state.soundCards.byId[soundCardId].channels.map((channel, index, channels) => (
+        <OptionsListItem key={soundCardId + index} as={<label/>}>
+          <Switch
+            round
+            size="small"
+            checked={channel.active}
+            onChange={(event) =>
+              emit(ClientDeviceEvents.ChangeSoundCard, {
+                _id: soundCardId,
+                channels: channels.map((c, i) => {
+                  if (i === index) {
+                    return {
+                      label: c.label,
+                      active: event.currentTarget.checked
+                    }
+                  }
+                  return c
+                })
+              })
+            }
+          />
+          {channel.label}
+        </OptionsListItem>
+      ))}
+    </OptionsList>
+  )
 }
 
 const SoundCardsSelector = ({
-                                soundCardId,
-                                soundCards,
-                                onChange
-                            }: { soundCardId?: string, soundCards: SoundCard[], onChange: (soundCardId: string) => void }) => {
-    const handleChange = React.useCallback((event: React.ChangeEvent<HTMLSelectElement>) => {
-        onChange(event.currentTarget.value)
-    }, [onChange])
-    if (soundCards.length > 0) {
-        return (
-            <>
-                <Select
-                    onChange={handleChange}
-                    value={soundCardId || ""}
-                    label="Soundkarte"
-                >
-                    <option disabled value="">
-                        --- Bitte wähle eine Soundkarte aus ---
-                    </option>
-                    {soundCards.map((soundCard) => (
-                        <option key={soundCard._id} value={soundCard._id}>
-                            {soundCard.label} ({soundCard.audioDriver})
-                        </option>
-                    ))}
-                </Select>
-                {soundCardId && <ChannelSelector soundCardId={soundCardId}/>}
-            </>
-        )
-    }
-    return null
+                              soundCardId,
+                              soundCards,
+                              onChange
+                            }: { soundCardId?: string, soundCards: SoundCard[], onChange: (soundCardId: string) => void }): JSX.Element | null => {
+  const handleChange = React.useCallback((event: React.ChangeEvent<HTMLSelectElement>) => {
+    onChange(event.currentTarget.value)
+  }, [onChange])
+  if (soundCards.length > 0) {
+    return (
+      <>
+        <Select
+          onChange={handleChange}
+          value={soundCardId || ""}
+          label="Soundkarte"
+        >
+          <option disabled value="">
+            --- Bitte wähle eine Soundkarte aus ---
+          </option>
+          {soundCards.map((soundCard) => (
+            <option key={soundCard._id} value={soundCard._id}>
+              {soundCard.label} ({soundCard.audioDriver})
+            </option>
+          ))}
+        </Select>
+        {soundCardId && <ChannelSelector soundCardId={soundCardId}/>}
+      </>
+    )
+  }
+  return null
 }
 
-const SoundCardSelect = ({deviceId, type}: { deviceId: string, type: "input" | "output" }) => {
-    const state = useTrackedSelector()
-    const audioDrivers: string[] = selectAudioDriversByDeviceId(state, "input", deviceId)
-    const soundCard = type === "input"
-        ? selectInputSoundCardByDeviceId(state, deviceId)
-        : selectOutputSoundCardByDeviceId(state, deviceId)
-    const [audioDriver, setAudioDriver] = useState<string | undefined>(soundCard?.audioDriver);
-    const soundCards = audioDriver ? selectSoundCardsByDeviceAndTypeAndAudioDriver(state, deviceId, type, audioDriver) : []
-    const onAudioDriverSelected = React.useCallback((event: React.ChangeEvent<HTMLSelectElement>) => {
-        setAudioDriver(event.currentTarget.value);
-    }, []);
-    const emit = useEmit()
-    const onSoundCardSelected = React.useCallback((soundCardId: string) => {
-        if (emit && deviceId && type) {
-            if (type == "input") {
-                emit(ClientDeviceEvents.ChangeDevice, {
-                    _id: deviceId,
-                    inputSoundCardId: soundCardId
-                } as ClientDevicePayloads.ChangeDevice)
-            } else {
-                emit(ClientDeviceEvents.ChangeDevice, {
-                    _id: deviceId,
-                    outputSoundCardId: soundCardId
+const SoundCardSelect = ({deviceId, type}: { deviceId: string, type: "input" | "output" }): JSX.Element => {
+  const state = useTrackedSelector()
+  const audioDrivers: string[] = selectAudioDriversByDeviceId(state, "input", deviceId)
+  const soundCard = type === "input"
+    ? selectInputSoundCardByDeviceId(state, deviceId)
+    : selectOutputSoundCardByDeviceId(state, deviceId)
+  const audioDriver = state.devices.byId[deviceId]?.audioDriver
+  const soundCards = audioDriver ? selectSoundCardsByDeviceAndTypeAndAudioDriver(state, deviceId, type, audioDriver) : []
+  const emit = useEmit()
+  const onAudioDriverSelected = React.useCallback((event: React.ChangeEvent<HTMLSelectElement>) => {
+    if (emit && deviceId) {
+      emit(ClientDeviceEvents.ChangeDevice, {
+        _id: deviceId,
+        audioDriver: event.currentTarget.value
+      })
+    }
+  }, [emit, deviceId]);
+  const onSoundCardSelected = React.useCallback((soundCardId: string) => {
+    if (emit && deviceId && type) {
+      if (type == "input") {
+        emit(ClientDeviceEvents.ChangeDevice, {
+          _id: deviceId,
+          inputSoundCardId: soundCardId
+        } as ClientDevicePayloads.ChangeDevice)
+      } else {
+        emit(ClientDeviceEvents.ChangeDevice, {
+          _id: deviceId,
+          outputSoundCardId: soundCardId
 
-                } as ClientDevicePayloads.ChangeDevice)
-            }
-        }
-    }, [deviceId, emit, type]);
+        } as ClientDevicePayloads.ChangeDevice)
+      }
+    }
+  }, [deviceId, emit, type]);
 
-    return (
-        <>
-            <Select
-                onChange={onAudioDriverSelected}
-                value={audioDriver || soundCard?.audioDriver || ''}
-                label="Audiotreiber"
-            >
-                <option disabled value="">
-                    --- Bitte wähle einen Audiotreiber aus ---
-                </option>
-                {audioDrivers.map((audioDriver) => (
-                    <option key={audioDriver} value={audioDriver}>
-                        {audioDriver}
-                    </option>
-                ))}
-            </Select>
-            <SoundCardsSelector soundCardId={soundCard?._id} soundCards={soundCards} onChange={onSoundCardSelected}/>
-        </>
-    )
+  return (
+    <>
+      <Select
+        onChange={onAudioDriverSelected}
+        value={audioDriver || ''}
+        label="Audiotreiber"
+      >
+        <option disabled value="">
+          --- Bitte wähle einen Audiotreiber aus ---
+        </option>
+        {audioDrivers.map((audioDriver) => (
+          <option key={audioDriver} value={audioDriver}>
+            {audioDriver}
+          </option>
+        ))}
+      </Select>
+      <SoundCardsSelector soundCardId={soundCard?._id} soundCards={soundCards} onChange={onSoundCardSelected}/>
+    </>
+  )
 }
 
 export {SoundCardSelect}

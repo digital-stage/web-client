@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-import {selectGroupById, useEmit, useTrackedSelector} from '@digitalstage/api-client-react'
+import {selectGroupById, useEmit, useTrackedSelector} from '../../../client'
 import { ClientDeviceEvents, ClientDevicePayloads, Group } from '@digitalstage/api-types'
 import React, { useCallback } from 'react'
 import { Field, Form, Formik } from 'formik'
@@ -41,7 +41,7 @@ const GroupModal = ({
     onClose: () => void
     stageId: string
     groupId?: string | null
-}) => {
+}): JSX.Element => {
     const [error, setError] = React.useState<string>()
     const emit = useEmit()
     const state = useTrackedSelector()

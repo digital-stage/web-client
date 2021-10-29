@@ -21,10 +21,10 @@
  */
 
 import { NotificationItem } from 'ui/NotificationItem'
-import {useTrackedSelector} from '@digitalstage/api-client-react'
+import {useTrackedSelector} from '../../client'
 import React from "react";
 
-const NotificationCenter = () => {
+const NotificationCenter = (): JSX.Element => {
     const state = useTrackedSelector()
     const notifications = state.notifications.allIds.map((id) => state.notifications.byId[id])
     return (

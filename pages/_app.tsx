@@ -26,7 +26,7 @@ import "../styles/root.css"
 import "../styles/index.scss"
 import Head from 'next/head'
 import {AppProps, NextWebVitalsMetric} from 'next/app'
-import {DigitalStageProvider, useTrackedSelector} from '@digitalstage/api-client-react'
+import {DigitalStageProvider, useTrackedSelector} from '../client'
 import {Background} from 'components/global/Background'
 import {Sidebar} from 'components/global/Sidebar'
 import {DeviceSelector} from '../components/global/DeviceSelector'
@@ -35,15 +35,20 @@ import {ProfileMenu} from '../components/global/ProfileMenu'
 import {PlaybackOverlay} from '../components/global/PlaybackOverlay'
 import {StageJoiner} from '../components/global/StageJoiner'
 import {NotificationBar} from '../components/global/NotifcationBar'
-import {logger} from '../api/logger'
-import {useForwardToLoginWhenSignedOut} from "../lib/useForwardToLoginWhenSignedOut";
+import {logger} from '../client/logger'
+import {useForwardToLoginWhenSignedOut} from "../lib/useForwardToLoginWhenSignedOut"
+import "scripts/wdyr"
 
-const CheckAuthWrapper = () => {
+interface WorkaroundAppProps extends AppProps {
+  err: unknown;
+}
+
+const CheckAuthWrapper = (): JSX.Element | null => {
   useForwardToLoginWhenSignedOut()
   return null
 }
 
-export function reportWebVitals(metric: NextWebVitalsMetric) {
+export function reportWebVitals(metric: NextWebVitalsMetric): void {
   logger('Analytics').trace(metric)
 }
 
@@ -57,8 +62,7 @@ const TitleProvider = (): JSX.Element => {
   )
 }
 
-
-function MyApp({Component, pageProps}: AppProps) {
+function MyApp({Component, pageProps, err}: WorkaroundAppProps): JSX.Element {
   return (
     <>
       <Head>
@@ -79,7 +83,7 @@ function MyApp({Component, pageProps}: AppProps) {
             <Background/>
             <div className="appInner">
               <NotificationBar/>
-              <Component {...pageProps} />
+              <Component {...pageProps} err={err}/>
             </div>
             <Sidebar/>
           </div>

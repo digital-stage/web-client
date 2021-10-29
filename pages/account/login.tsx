@@ -26,7 +26,7 @@ import React from 'react'
 import {AuthLayout} from 'components/account/AuthLayout'
 import {useForwardToStagesWhenSignedIn} from "../../lib/useForwardToStagesWhenSignedIn";
 
-const Login = () => {
+const Login = (): JSX.Element => {
   useForwardToStagesWhenSignedIn()
 
   return (

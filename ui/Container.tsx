@@ -36,7 +36,7 @@ const Container = ({
 }: { size?: keyof typeof SIZE; flex?: boolean } & React.DetailedHTMLProps<
     React.HTMLAttributes<HTMLDivElement>,
     HTMLDivElement
->) => (
+>): JSX.Element => (
         <div
             className={`container ${flex ? 'flex' : ''}  ${size || ''} ${className || ''}`}
             {...props}

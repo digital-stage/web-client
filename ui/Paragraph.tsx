@@ -34,6 +34,6 @@ const Paragraph = ({
                    }: {
                        kind?: KIND[keyof KIND]
                    } & React.DetailedHTMLProps<React.HTMLAttributes<HTMLParagraphElement>, HTMLParagraphElement>
-) => <p className={`paragraph ${kind || ''} ${className || ''}`} {...props}/>
+): JSX.Element => <p className={`paragraph ${kind || ''} ${className || ''}`} {...props}/>
 
 export { Paragraph }

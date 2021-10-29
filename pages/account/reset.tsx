@@ -29,7 +29,7 @@ import {Paragraph} from '../../ui/Paragraph'
 import {Loading} from "../../components/global/Loading";
 import {Heading3} from "../../ui/Heading";
 
-const Reset = () => {
+const Reset = () : JSX.Element=> {
   const {query, push, isReady} = useRouter()
   const [resetToken, setResetToken] = React.useState<string>()
 

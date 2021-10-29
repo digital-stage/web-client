@@ -22,9 +22,10 @@
     "baseUrl": ".",
     "paths": {
       "@digitalstage/api-client-react": [
-        "api"
+        "client"
       ]
-    }
+    },
+    "incremental": true
   },
   "include": [
     "next-env.d.ts",

@@ -21,43 +21,43 @@
  */
 
 import * as React from 'react'
-import {logout, InternalActionTypes, useTrackedSelector} from '@digitalstage/api-client-react'
+import {logout, InternalActionTypes, useTrackedSelector} from '../../client'
 import {batch, useDispatch} from 'react-redux'
 import {Loading} from 'components/global/Loading';
 import {useRouter} from "next/router";
 
 const Logout = (): JSX.Element => {
-    const dispatch = useDispatch()
-    const state = useTrackedSelector()
-    const {initialized} = state.auth
-    const {token} = state.auth
-    const {isReady, replace} = useRouter()
-    const signedOut = state.auth.initialized && !state.auth.user
-    React.useEffect(() => {
-        if (isReady && signedOut) {
-            replace('/account/login')
-        }
-    }, [isReady, replace, signedOut])
+  const dispatch = useDispatch()
+  const state = useTrackedSelector()
+  const {initialized} = state.auth
+  const {token} = state.auth
+  const {isReady, replace} = useRouter()
+  const signedOut = state.auth.initialized && !state.auth.user
+  React.useEffect(() => {
+    if (isReady && signedOut) {
+      replace('/account/login')
+    }
+  }, [isReady, replace, signedOut])
 
-    React.useEffect(() => {
-        if (initialized && token) {
-            logout(token)
-                .then(() =>
-                    batch(() => {
-                        dispatch({
-                            type: InternalActionTypes.LOGOUT,
-                        })
-                        dispatch({
-                            type: InternalActionTypes.RESET,
-                        })
-                    })
-                )
-        }
-    }, [dispatch, initialized, token])
+  React.useEffect(() => {
+    if (initialized && token && state.globals.authUrl) {
+      logout(state.globals.authUrl, token)
+        .then(() =>
+          batch(() => {
+            dispatch({
+              type: InternalActionTypes.LOGOUT,
+            })
+            dispatch({
+              type: InternalActionTypes.RESET,
+            })
+          })
+        )
+    }
+  }, [dispatch, initialized, token, state.globals.authUrl])
 
-    return (
-        <Loading message="Melde Dich ab..."/>
-    )
+  return (
+    <Loading message="Melde Dich ab..."/>
+  )
 }
 
 export default Logout

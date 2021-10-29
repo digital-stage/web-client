@@ -20,13 +20,13 @@
  * SOFTWARE.
  */
 
-import {selectRender3DAudio, useTrackedSelector} from '@digitalstage/api-client-react'
+import {selectRender3DAudio, useTrackedSelector} from '../client'
 import {useRouter} from 'next/router'
 import React from 'react'
 import {RoomEditor} from '../components/room/RoomEditor'
 import {Loading} from "../components/global/Loading";
 
-const Room = () => {
+const Room = (): JSX.Element => {
     const {isReady, push} = useRouter()
     const state = useTrackedSelector()
     const connectionReady = state.globals.ready

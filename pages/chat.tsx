@@ -26,7 +26,7 @@ import {Container} from '../ui/Container'
 import {Loading} from "../components/global/Loading";
 import {useStageAvailableOrForward} from "../components/global/useStageAvailableOrForward";
 
-const Chat = () => {
+const Chat = (): JSX.Element => {
     const stageAvailable = useStageAvailableOrForward()
 
     if (stageAvailable) {

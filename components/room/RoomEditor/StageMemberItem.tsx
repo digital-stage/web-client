@@ -3,7 +3,7 @@ import {
   selectNameOfStageMemberId, selectStageMemberPositionByStageMemberId,
   useEmit,
   useSelectStageDeviceIdsByStageMember, useTrackedSelector,
-} from "@digitalstage/api-client-react";
+} from "../../../client";
 import React from "react";
 import {ClientDeviceEvents, ClientDevicePayloads} from "@digitalstage/api-types";
 import {RoomItem, RoomPositionWithAngle} from "../../../ui/RoomEditor";
@@ -22,7 +22,7 @@ const StageMemberItem = ({stageMemberId, local, selections, onSelect, onDeselect
   onDeselect?: (selection: RoomSelection) => void
   groupColor: string,
   groupPosition: RoomPositionWithAngle
-}) => {
+}): JSX.Element => {
   const state = useTrackedSelector()
   const position = selectStageMemberPositionByStageMemberId(state, stageMemberId)
   const customPosition = selectCustomStageMemberPositionByStageMemberId(state, stageMemberId)

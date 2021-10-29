@@ -23,7 +23,7 @@
 import React from 'react'
 import {Field, Form, Formik, FormikHelpers} from 'formik'
 import * as Yup from 'yup'
-import {activate, AuthError} from '@digitalstage/api-client-react'
+import {activate, AuthError, useTrackedSelector} from '../../client'
 import {TextInput} from 'ui/TextInput'
 import {KIND, NotificationItem} from 'ui/NotificationItem'
 import {translateError} from './translateError'
@@ -33,6 +33,7 @@ export interface Values {
 }
 
 const ActivationForm = ({initialCode, onActivated}: { initialCode?: string, onActivated: () => void }): JSX.Element => {
+  const state = useTrackedSelector()
   const [message, setMessage] = React.useState<{
     kind: KIND[keyof KIND]
     content: string
@@ -40,25 +41,28 @@ const ActivationForm = ({initialCode, onActivated}: { initialCode?: string, onAc
 
   const handleActivation = React.useCallback(
     (code: string) => {
-      setMessage(undefined)
-      return activate(code)
-        .then(() => {
-          setMessage({
-            kind: 'success',
-            content: 'Account aktiviert!',
+      if (state.globals.authUrl) {
+        setMessage(undefined)
+        return activate(state.globals.authUrl, code)
+          .then(() => {
+            setMessage({
+              kind: 'success',
+              content: 'Account aktiviert!',
+            })
+            return setTimeout(() => {
+              onActivated()
+            }, 1000)
           })
-          return setTimeout(() => {
-            onActivated()
-          }, 1000)
-        })
-        .catch((error: AuthError) => {
-          setMessage({
-            kind: 'error',
-            content: translateError(error),
+          .catch((error: AuthError) => {
+            setMessage({
+              kind: 'error',
+              content: translateError(error),
+            })
           })
-        })
+      }
+      throw new Error("Not ready")
     },
-    [onActivated]
+    [onActivated, state.globals.authUrl]
   )
 
   React.useEffect(() => {
@@ -85,7 +89,7 @@ const ActivationForm = ({initialCode, onActivated}: { initialCode?: string, onAc
         })}
         onSubmit={onSubmit}
       >
-        {({errors, touched, handleSubmit, handleReset, dirty,  values}) => (
+        {({errors, touched, handleSubmit, handleReset, dirty, values}) => (
           <Form onReset={handleReset} onSubmit={handleSubmit} autoComplete="on">
             <Field
               as={TextInput}

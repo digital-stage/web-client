@@ -30,7 +30,7 @@ import {useForwardToStagesWhenSignedIn} from "../../lib/useForwardToStagesWhenSi
 import {Loading} from "../../components/global/Loading";
 import {Heading3} from "../../ui/Heading";
 
-const Activate = () => {
+const Activate = (): JSX.Element => {
   useForwardToStagesWhenSignedIn()
   const {isReady, query, push, prefetch} = useRouter()
 

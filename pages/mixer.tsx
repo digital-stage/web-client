@@ -27,7 +27,7 @@ import { Loading } from 'components/global/Loading';
 import {useStageAvailableOrForward} from "../components/global/useStageAvailableOrForward";
 import {ReactiveMixingPanel} from '../components/mixer/ReactiveMixingPanel'
 
-const Mixer = () => {
+const Mixer = (): JSX.Element => {
     const stageAvailable = useStageAvailableOrForward()
 
     if (stageAvailable) {

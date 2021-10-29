@@ -21,12 +21,12 @@
  */
 
 import React from 'react'
-import {selectSignedIn, useTrackedSelector} from '@digitalstage/api-client-react'
+import {selectSignedIn, useTrackedSelector} from '../../client'
 import {useRouter} from 'next/router'
 import {SignUpForm} from 'components/account/SignUpForm'
 import {AuthLayout} from 'components/account/AuthLayout'
 
-const SignUp = () => {
+const SignUp = (): JSX.Element => {
   const {isReady, push, replace} = useRouter()
   const state = useTrackedSelector()
   const signedIn = selectSignedIn(state)

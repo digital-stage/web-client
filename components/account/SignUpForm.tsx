@@ -28,28 +28,30 @@ import {TextInput} from 'ui/TextInput'
 import {
   AuthError,
   createUserWithEmailAndPassword,
-  useNotification,
-} from '@digitalstage/api-client-react'
+  useNotification, useTrackedSelector,
+} from '../../client'
 import {translateError} from './translateError'
 
-const SignUpForm = ({onSignedUp}: { onSignedUp: () => void }) => {
+const SignUpForm = ({onSignedUp}: { onSignedUp: () => void }): JSX.Element => {
+  const state = useTrackedSelector()
   const [error, setError] = React.useState<string>()
   const notify = useNotification()
 
   const handleSubmit = React.useCallback(
     (values) => {
-      createUserWithEmailAndPassword(values.email, values.password, values.name)
-        .then(() =>
-          notify({
-            kind: 'info',
-            message:
-              'Bitte schaue in Deinen Mails nach - wir haben Dir einen Bestätigungscode geschickt',
-          })
-        )
-        .then(() => onSignedUp())
-        .catch((err: AuthError) => setError(translateError(err)))
+      if (state.globals.authUrl)
+        return createUserWithEmailAndPassword(state.globals.authUrl, values.email, values.password, values.name)
+          .then(() =>
+            notify({
+              kind: 'info',
+              message:
+                'Bitte schaue in Deinen Mails nach - wir haben Dir einen Bestätigungscode geschickt',
+            })
+          )
+          .then(() => onSignedUp())
+          .catch((err: AuthError) => setError(translateError(err)))
     },
-    [onSignedUp, notify]
+    [onSignedUp, notify, state.globals.authUrl]
   )
 
   return (
@@ -76,7 +78,7 @@ const SignUpForm = ({onSignedUp}: { onSignedUp: () => void }) => {
           .required('Ein Name wird benötigt'),
       })}
     >
-      {(props: FormikProps<{email: string, password: string, passwordRepeat: string, name: string}>) => (
+      {(props: FormikProps<{ email: string, password: string, passwordRepeat: string, name: string }>) => (
         <Form onReset={props.handleReset} onSubmit={props.handleSubmit} autoComplete="on">
           <Field
             as={TextInput}

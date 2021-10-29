@@ -28,7 +28,7 @@ import {
     selectIsCurrentlyAdmin, selectStageById, selectStageMemberIdsByGroupId,
     useEmit,
     useStageJoiner, useTrackedSelector,
-} from '@digitalstage/api-client-react'
+} from '../../client'
 import Link from 'next/link'
 import {AltList, AltListItem} from 'ui/AltList'
 import {ClientDeviceEvents, ClientDevicePayloads} from '@digitalstage/api-types'
@@ -50,7 +50,7 @@ const StageMemberItem = ({
                              stageId,
                              stageMemberId,
                              hasAdminRights
-                         }: { stageId: string, stageMemberId: string, hasAdminRights: boolean }) => {
+                         }: { stageId: string, stageMemberId: string, hasAdminRights: boolean }): JSX.Element | null  => {
     const state = useTrackedSelector()
     const adminUserIds = state.stages.byId[stageId].admins
     const soundEditorUserIds = state.stages.byId[stageId].soundEditors
@@ -155,7 +155,7 @@ const StageMemberList = ({
     )
 }
 
-const StageView = () => {
+const StageView = (): JSX.Element => {
     // Dependencies
     const {isReady, query, replace} = useRouter()
     const stageId = useMemo<string | undefined>(() => {
@@ -379,6 +379,6 @@ const StageView = () => {
             </Container>
         )
     }
-    return Loading
+    return <Loading/>
 }
 export default StageView

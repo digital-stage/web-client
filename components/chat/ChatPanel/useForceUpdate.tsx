@@ -20,11 +20,11 @@
  * SOFTWARE.
  */
 
-import { useState } from 'react'
+import {useState} from 'react'
 
-function useForceUpdate() {
-    const [, setValue] = useState(0) // integer state
-    return () => setValue((v) => v + 1) // update the state to force render
+function useForceUpdate(): () => void {
+  const [, setValue] = useState(0) // integer state
+  return () => setValue((v) => v + 1) // update the state to force render
 }
 
-export { useForceUpdate }
+export {useForceUpdate}

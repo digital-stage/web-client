@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-import {useEmit, useTrackedSelector} from '@digitalstage/api-client-react'
+import {useEmit, useTrackedSelector} from '../../../client'
 import { ClientDeviceEvents, ClientDevicePayloads } from '@digitalstage/api-types'
 import { Modal, ModalButton, ModalFooter, ModalHeader } from 'ui/Modal'
 import React  from 'react'
@@ -36,7 +36,7 @@ const RemoveGroupModal = ({
     groupId?: string
     open: boolean
     onClose: () => void
-}) => {
+}): JSX.Element | null => {
     const emit = useEmit()
     const state = useTrackedSelector()
     const name = groupId ? state.groups.byId[groupId]?.name : undefined

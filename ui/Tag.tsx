@@ -37,6 +37,6 @@ const Tag = ({
                  ...props
              }: {
     kind?: KIND[keyof KIND]
-} & React.DetailedHTMLProps<React.HTMLAttributes<HTMLSpanElement>, HTMLSpanElement>) => <span
+} & React.DetailedHTMLProps<React.HTMLAttributes<HTMLSpanElement>, HTMLSpanElement>): JSX.Element => <span
     className={`tag micro ${kind || ''} ${className || ''}`} {...props}/>
 export { Tag }

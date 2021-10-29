@@ -1,8 +1,8 @@
-import {selectSignedOut, useTrackedSelector} from "@digitalstage/api-client-react";
+import {selectSignedOut, useTrackedSelector} from "../client";
 import {useRouter} from "next/router";
 import React from "react";
 
-const useForwardToLoginWhenSignedOut = () => {
+const useForwardToLoginWhenSignedOut = (): JSX.Element | null => {
   const {isReady, pathname, replace} = useRouter()
   const state = useTrackedSelector()
   const signedOut = selectSignedOut(state)

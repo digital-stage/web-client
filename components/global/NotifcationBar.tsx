@@ -21,14 +21,14 @@
  */
 
 import {NotificationItem} from 'ui/NotificationItem'
-import {changeNotification, RootState, useTrackedSelector} from '@digitalstage/api-client-react'
+import {changeNotification, RootState, useTrackedSelector} from '../../client'
 import {useDispatch} from 'react-redux'
 
 const selectFeaturedNotifications = (state: RootState) => state.notifications.allIds
   .map((id) => state.notifications.byId[id])
   .filter((notification) => notification.featured || notification.permanent)
 
-const NotificationBar = () => {
+const NotificationBar = (): JSX.Element => {
   const dispatch = useDispatch()
   const state = useTrackedSelector()
   const featuredNotifications = selectFeaturedNotifications(state)

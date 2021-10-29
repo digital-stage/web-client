@@ -28,7 +28,7 @@ import {
   requestPasswordReset,
   selectAuthUser,
   useTrackedSelector
-} from '@digitalstage/api-client-react'
+} from '../../client'
 import {NotificationItem, KIND} from 'ui/NotificationItem'
 import {TextInput} from 'ui/TextInput'
 import {translateError} from './translateError'
@@ -61,21 +61,23 @@ const ForgetPasswordForm = (): JSX.Element => {
       initialValues={{email: '', repeatEmail: ''}}
       validationSchema={ForgetPasswordSchema}
       // eslint-disable-next-line max-len
-      onSubmit={async (values: Values, {resetForm}: FormikHelpers<Values>) =>
-        requestPasswordReset(values.email)
-          .then(() =>
-            setMsg({
-              kind: 'success',
-              label: 'Wir haben Dir eine E-Mail mit einem Link zum Zurücksetzen Deines Passwortes geschickt!',
+      onSubmit={async (values: Values, {resetForm}: FormikHelpers<Values>) => {
+        if (state.globals.authUrl)
+          return requestPasswordReset(state.globals.authUrl, values.email)
+            .then(() =>
+              setMsg({
+                kind: 'success',
+                label: 'Wir haben Dir eine E-Mail mit einem Link zum Zurücksetzen Deines Passwortes geschickt!',
+              })
+            )
+            .then(() => resetForm())
+            .catch((err: AuthError) => {
+              setMsg({
+                kind: 'error',
+                label: translateError(err),
+              })
             })
-          )
-          .then(() => resetForm())
-          .catch((err: AuthError) => {
-            setMsg({
-              kind: 'error',
-              label: translateError(err),
-            })
-          })
+      }
       }
     >
       {({errors, touched, handleReset, handleSubmit, dirty}) => (

@@ -25,7 +25,7 @@ import {Field, Form, Formik, FormikHelpers} from 'formik'
 import * as Yup from 'yup'
 import {NotificationItem} from 'ui/NotificationItem'
 import {TextInput} from 'ui/TextInput'
-import {AuthError, resendActivationLink} from '@digitalstage/api-client-react'
+import {AuthError, resendActivationLink, useTrackedSelector} from '../../client'
 import {translateError} from './translateError'
 
 export interface Values {
@@ -34,6 +34,7 @@ export interface Values {
 
 const ResendActivationForm = (): JSX.Element => {
   const [message, setMessage] = React.useState<string>()
+  const state = useTrackedSelector()
 
   const Schema = Yup.object().shape({
     email: Yup.string()
@@ -48,10 +49,12 @@ const ResendActivationForm = (): JSX.Element => {
       }}
       validationSchema={Schema}
       onSubmit={(values: Values, {resetForm}: FormikHelpers<Values>) => {
-        setMessage(undefined)
-        return resendActivationLink(values.email)
-          .then(() => resetForm(undefined))
-          .catch((err: AuthError) => setMessage(translateError(err)))
+        if (state.globals.authUrl) {
+          setMessage(undefined)
+          return resendActivationLink(state.globals.authUrl, values.email)
+            .then(() => resetForm(undefined))
+            .catch((err: AuthError) => setMessage(translateError(err)))
+        }
       }}
     >
       {({errors, touched, handleReset, handleSubmit, dirty}) => (

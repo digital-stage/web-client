@@ -3,7 +3,7 @@ import {
   useRemoteVideoTracks,
   useTrackedSelector,
   useWebcam
-,useSelectStageMemberIdsByGroup} from "@digitalstage/api-client-react";
+,useSelectStageMemberIdsByGroup} from "../../client";
 import React from "react";
 import {FaMusic} from "react-icons/fa";
 import {AiOutlineAudioMuted} from "react-icons/ai";

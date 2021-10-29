@@ -21,7 +21,7 @@
  */
 
 import React from "react";
-import { Heading2 } from "ui/Heading";
+import {Heading2} from "ui/Heading";
 import {LoadingShaft} from "../../ui/LoadingShaft";
 
 const RandomSentence = [
@@ -36,10 +36,10 @@ const RandomSentence = [
 
 const Loading = ({message}: {
     message?: string
-}) => {
+}): JSX.Element => {
     const [sentence, setSentence] = React.useState<string | undefined>(message)
     React.useEffect(() => {
-        if(!message) {
+        if (!message) {
             setSentence(RandomSentence[Math.floor(Math.random() * RandomSentence.length)])
         }
     }, [message])

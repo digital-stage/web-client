@@ -23,7 +23,7 @@
 import { useDebounceCallback } from '@react-hook/debounce'
 import { useThrottleCallback } from '@react-hook/throttle'
 import React from 'react'
-import { useAudioLevel } from '@digitalstage/api-client-react'
+import { useAudioLevel } from '../../../client'
 import { BiReset } from 'react-icons/bi'
 import {LevelMeter} from './LevelMeter'
 
@@ -138,7 +138,7 @@ const VolumeSlider = ({
     modified: boolean
     onChange: (volume: number, muted: boolean) => void
     onReset: () => void
-}) => {
+}): JSX.Element => {
     const levels = useAudioLevel()
     const [value, setValue] = React.useState<number>(convertLogToLinear(volume))
     const [dbValue, setDbValue] = React.useState<string>()

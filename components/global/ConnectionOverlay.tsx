@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-import {selectReady, selectSignedIn, useTrackedSelector} from '@digitalstage/api-client-react'
+import {selectReady, selectSignedIn, useTrackedSelector} from '../../client'
 import React from 'react'
 import {Loading} from "./Loading";
 
@@ -29,9 +29,10 @@ const ConnectionOverlay = ({children}: { children: React.ReactNode }): JSX.Eleme
   const signedIn = selectSignedIn(state)
   const connected = selectReady(state)
 
-  if (signedIn && !connected) {
-    return <Loading message="Verbinde ..."/>
+  if (!signedIn || connected) {
+    return <>{children}</>
   }
-  return <>{children}</>
+
+  return <Loading message="Verbinde ..."/>
 }
 export {ConnectionOverlay}

@@ -24,7 +24,7 @@ import React from 'react'
 
 import {ChromePicker} from 'react-color'
 
-const ColorPicker = ({ color, onChange }: { color: string; onChange: (color: string) => void }) => {
+const ColorPicker = ({ color, onChange }: { color: string; onChange: (color: string) => void }): JSX.Element => {
     const [currentColor, setCurrentColor] = React.useState<string>(color)
 
     React.useEffect(() => {

@@ -23,7 +23,7 @@
 import {Container} from '../ui/Container'
 import {NotificationCenter} from '../components/notification/NotificationCenter'
 
-const NotificationsPage = () => (
+const NotificationsPage = (): JSX.Element => (
     <Container size="small">
         <NotificationCenter />
     </Container>

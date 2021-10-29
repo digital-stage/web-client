@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-import {useEmit, useTrackedSelector} from '@digitalstage/api-client-react'
+import {useEmit, useTrackedSelector} from '../../../client'
 import {ClientDeviceEvents, ClientDevicePayloads} from '@digitalstage/api-types'
 import React from 'react'
 import {Modal, ModalButton, ModalFooter, ModalHeader} from 'ui/Modal'
@@ -38,9 +38,9 @@ const LeaveStageForGoodModal = ({
   open: boolean
   onLeave: () => void
   onClose: () => void
-}) => {
+}): JSX.Element | null => {
   const emit = useEmit()
-    const state = useTrackedSelector()
+  const state = useTrackedSelector()
   const stageName = stageId ? state.stages.byId[stageId]?.name : undefined
   const [isLeaving, setLeaving] = React.useState<boolean>(false)
   const [error, setError] = React.useState<string>()

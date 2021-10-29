@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-import {useEmit, useTrackedSelector} from '@digitalstage/api-client-react'
+import {useEmit, useTrackedSelector} from '../../../client'
 import React from 'react'
 import {ClientDeviceEvents, ClientDevicePayloads} from '@digitalstage/api-types'
 import {BiReset} from 'react-icons/bi'
@@ -45,7 +45,7 @@ const DEFAULT_POSITION = {
     rZ: 0,
 }
 
-const ResetPanel = ({deviceId, selections}: { deviceId?: string; selections: RoomSelection[] }) => {
+const ResetPanel = ({deviceId, selections}: { deviceId?: string; selections: RoomSelection[] }): JSX.Element => {
     const emit = useEmit()
     const state = useTrackedSelector()
     const customGroupIds = React.useMemo(() =>

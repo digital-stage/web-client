@@ -29,11 +29,11 @@ import {
   selectAuthUser, selectLocalUser,
   useEmit,
   useTrackedSelector
-} from '@digitalstage/api-client-react'
+} from '../../client'
 import {Paragraph} from 'ui/Paragraph'
 import {OptionsList, OptionsListItem} from 'ui/OptionsList'
 
-const ProfileEditor = () => {
+const ProfileEditor = (): JSX.Element => {
   const emit = useEmit()
   const state = useTrackedSelector()
   const authUser = selectAuthUser(state)
@@ -61,8 +61,8 @@ const ProfileEditor = () => {
         <OptionsListItem>
           <button
             onClick={() => {
-              if (authUser)
-                requestPasswordReset(authUser.email)
+              if (authUser && state.globals.authUrl)
+                requestPasswordReset(state.globals.authUrl, authUser.email)
                   .then(() =>
                     setMessage(
                       'Wir haben Dir eine E-Mail mit einem Link zum Zurücksetzen Deines Passwortes geschickt!'

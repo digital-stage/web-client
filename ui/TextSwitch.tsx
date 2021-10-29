@@ -32,7 +32,7 @@ const TextSwitch = ({
     value: string
     onSelect?: (key: React.Key) => void
     children: Array<ReactElement<{ key: React.Key }>>
-}) => (
+}): JSX.Element => (
         <div className={`text-switch ${className || ''}`}>
             {Array.isArray(children)
                 ? children.map((child) => {

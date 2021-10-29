@@ -20,12 +20,12 @@
  * SOFTWARE.
  */
 
-import {useTrackedSelector} from '@digitalstage/api-client-react'
+import {useTrackedSelector} from '../../client'
 import React from 'react'
 import {SettingsLayout} from 'components/settings/SettingsLayout'
 import {DeviceSettings} from '../../components/devices/DeviceSettings'
 
-const DeviceSettingsPage = () => {
+const DeviceSettingsPage = (): JSX.Element | null => {
   const state = useTrackedSelector()
   const {selectedDeviceId} = state.globals
   if (selectedDeviceId) {

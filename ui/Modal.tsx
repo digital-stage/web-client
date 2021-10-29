@@ -35,17 +35,17 @@ interface SIZE {
   Auto: 'auto'
 }
 
-const ModalHeader = ({children}: { children: React.ReactNode }) => <header>{children}</header>
+const ModalHeader = ({children}: { children: React.ReactNode }): JSX.Element => <header>{children}</header>
 
 const ModalButton = (
   {type, ...props}: React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>
-) => (
+): JSX.Element => (
     <div className="modal-button">
       <button type={type || "button"} {...props} />
     </div>
   )
 
-const ModalFooter = ({children}: { children: React.ReactNode }) => <footer>{children}</footer>
+const ModalFooter = ({children}: { children: React.ReactNode }): JSX.Element => <footer>{children}</footer>
 
 const Modal = (
   {

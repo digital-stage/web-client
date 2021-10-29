@@ -28,7 +28,7 @@ import {Paragraph} from '../../ui/Paragraph'
 import {useForwardToStagesWhenSignedIn} from "../../lib/useForwardToStagesWhenSignedIn";
 import {Heading4} from "../../ui/Heading";
 
-const ReActivate = () => {
+const ReActivate = () : JSX.Element=> {
   useForwardToStagesWhenSignedIn()
 
     return (

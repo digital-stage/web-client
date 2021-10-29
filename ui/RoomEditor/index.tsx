@@ -14,7 +14,7 @@ const Room = ({children, onClick, width, height, center, rotation, className, fa
     rotation?: number,
     factor?: number,
     className?: string
-}) => {
+}): JSX.Element => {
     const ref = React.useRef<HTMLDivElement>(null)
     const interactionRef = React.useRef<HTMLDivElement>(null)
 

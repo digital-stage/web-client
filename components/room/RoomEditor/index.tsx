@@ -32,7 +32,7 @@ import {
     selectStageMemberPositionOfListener,
     useToggleShowOfflineMode,
     useTrackedSelector,
-} from "@digitalstage/api-client-react";
+} from "../../../client";
 import {HiFilter, HiOutlineFilter} from "react-icons/hi";
 import {useDispatch} from "react-redux";
 import {RoomSelection} from "../../../ui/RoomEditor/RoomSelection";
@@ -53,7 +53,7 @@ const useListenerPosition = (): RoomPositionWithAngle => {
     }), [groupPosition.rZ, groupPosition.x, groupPosition.y, position.rZ, position.x, position.y, stageMemberPosition.rZ, stageMemberPosition.x, stageMemberPosition.y])
 }
 
-const RoomEditor = () => {
+const RoomEditor = (): JSX.Element => {
     const state = useTrackedSelector()
     const stageWidth = state.globals.stageId ? state.stages.byId[state.globals.stageId].width : 0
     const stageHeight = state.globals.stageId ? state.stages.byId[state.globals.stageId].height : 0

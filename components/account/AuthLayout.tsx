@@ -27,13 +27,13 @@ import {Container} from 'ui/Container'
 import {Panel} from 'ui/Panel'
 import {Heading4} from "../../ui/Heading";
 
-const AuthLogo = () => (
+const AuthLogo = (): JSX.Element => (
   <div className="authLogo">
     <Image alt="Digital Stage" src="/logo-full.svg" width={180} height={93}/>
   </div>
 )
 
-const AuthNav = () => (
+const AuthNav = (): JSX.Element => (
   <nav className="authNav">
     <SecondaryHeadlineLink className="authNavItem" href="/account/login">
       <Heading4>Login</Heading4>
@@ -44,15 +44,15 @@ const AuthNav = () => (
   </nav>
 )
 
-const AuthLayout = ({children, showMenu}: { children: React.ReactNode; showMenu?: boolean }) => (
-    <Container className="authLayout" size="tiny">
-      <AuthLogo/>
-      <Panel kind="black">
-        {showMenu && <AuthNav/>}
-        {children}
-      </Panel>
-    </Container>
-  )
+const AuthLayout = ({children, showMenu}: { children: React.ReactNode; showMenu?: boolean }): JSX.Element => (
+  <Container className="authLayout" size="tiny">
+    <AuthLogo/>
+    <Panel kind="black">
+      {showMenu && <AuthNav/>}
+      {children}
+    </Panel>
+  </Container>
+)
 AuthLayout.defaultProps = {
   showMenu: undefined,
 }

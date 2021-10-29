@@ -1,8 +1,8 @@
-import {selectSignedIn, useTrackedSelector} from "@digitalstage/api-client-react";
+import {selectSignedIn, useTrackedSelector} from "../client";
 import {useRouter} from "next/router";
 import React from "react";
 
-const useForwardToStagesWhenSignedIn = () => {
+const useForwardToStagesWhenSignedIn = (): JSX.Element | null => {
   const {isReady, push, prefetch} = useRouter()
   const state = useTrackedSelector()
   const signedIn = selectSignedIn(state)

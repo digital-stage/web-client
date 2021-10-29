@@ -25,7 +25,7 @@ import {Formik, Field, FormikHelpers, Form} from 'formik'
 import * as Yup from 'yup'
 import {NotificationItem, KIND} from 'ui/NotificationItem'
 import {TextInput} from 'ui/TextInput'
-import {AuthError, resetPassword} from '@digitalstage/api-client-react'
+import {AuthError, resetPassword, useTrackedSelector} from '../../client'
 import {translateError} from './translateError'
 
 interface Values {
@@ -38,6 +38,7 @@ function ResetPasswordForm({resetToken, onReset}: {
   resetToken: string
   onReset: () => void
 }): JSX.Element {
+  const state = useTrackedSelector()
   const [msg, setMsg] = React.useState<| {
     kind: KIND[keyof KIND]
     label: string
@@ -61,7 +62,9 @@ function ResetPasswordForm({resetToken, onReset}: {
     if (!values.password) {
       throw new Error("Missing password")
     }
-    return resetPassword(resetToken, values.password)
+    if (!state.globals.authUrl)
+      throw new Error("Not ready")
+    return resetPassword(state.globals.authUrl, resetToken, values.password)
       .then(() => resetForm(undefined))
       .then(() => onReset())
       .catch((err: AuthError) =>
@@ -70,7 +73,7 @@ function ResetPasswordForm({resetToken, onReset}: {
           label: translateError(err),
         })
       )
-  }, [resetToken, onReset])
+  }, [resetToken, onReset, state.globals.authUrl])
 
   return (
     <Formik

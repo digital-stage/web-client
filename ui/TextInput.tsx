@@ -22,7 +22,7 @@
 
 import React from 'react'
 
-export const BsEyeSlashFill = () => (
+export const BsEyeSlashFill = (): JSX.Element => (
     <svg
         stroke="currentColor"
         fill="currentColor"
@@ -42,7 +42,7 @@ export const BsEyeSlashFill = () => (
     </svg>
 )
 
-export const BsFillEyeFill = () => (
+export const BsFillEyeFill = (): JSX.Element => (
     <svg
         stroke="currentColor"
         fill="currentColor"
@@ -72,7 +72,7 @@ const TextInput = ({
     label?: string
     error?: string
     light?: boolean
-}) => {
+}): JSX.Element => {
     const [inputType, setInputType] = React.useState<string | undefined>(type)
     const errorRef = React.useRef<HTMLDivElement>(null)
 
