@@ -27,40 +27,40 @@ import {KIND} from '../redux/state/Notifications'
 import {addNotification} from '../redux/actions/clientActions'
 
 type NotificationContextT = (report: {
-    kind?: KIND[keyof KIND]
-    message: string
-    link?: string
-    permanent?: boolean
+  kind?: KIND[keyof KIND]
+  message: string
+  link?: string
+  permanent?: boolean
 }) => void
 
 const useNotification = (): NotificationContextT => {
-    const dispatch = useDispatch()
+  const dispatch = useDispatch()
 
-    return useCallback(
-        ({
-             kind = 'info',
-             message,
-             link,
-             permanent,
-         }: {
-            kind?: KIND[keyof KIND]
-            message: string
-            link?: string
-            permanent?: boolean
-        }) => {
-          dispatch(
-            addNotification({
-              id: uuidv4(),
-              date: new Date().getTime(),
-              kind,
-              link,
-              message,
-              permanent: (permanent || false),
-              featured: true,
-            })
-          )
-        },
-        [dispatch]
-    )
+  return useCallback(
+    ({
+       kind = 'info',
+       message,
+       link,
+       closeable,
+     }: {
+      kind?: KIND[keyof KIND]
+      message: string
+      link?: string
+      closeable?: boolean
+    }) => {
+      dispatch(
+        addNotification({
+          id: uuidv4(),
+          date: new Date().getTime(),
+          kind,
+          link,
+          message,
+          closeable: (closeable || true),
+          featured: true,
+        })
+      )
+    },
+    [dispatch]
+  )
 }
 export {useNotification}

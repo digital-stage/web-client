@@ -23,6 +23,7 @@
 interface Globals {
     apiUrl?: string,
     authUrl?: string,
+    jnUrl?: string,
 
     ready: boolean
 

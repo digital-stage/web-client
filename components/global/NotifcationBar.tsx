@@ -26,7 +26,26 @@ import {useDispatch} from 'react-redux'
 
 const selectFeaturedNotifications = (state: RootState) => state.notifications.allIds
   .map((id) => state.notifications.byId[id])
-  .filter((notification) => notification.featured || notification.permanent)
+  .filter((notification) => notification.featured || !notification.closeable)
+
+const CheckNotifications = (): JSX.Element => {
+  const state = useTrackedSelector()
+  const showJammerWarning = state.globals.stageId
+    ? state.stages.byId[state.globals.stageId].audioType === "jammer"
+    && !state.notifications.checks.isJammerRunning
+    : false
+
+  return (
+    <>
+      {state.globals.jnUrl && showJammerWarning && (
+        <NotificationItem closeable={false} kind="error">
+          Audio-Wiedergabe und Aufnahme ist deaktiviert, da Du keine PC Version gestartet hast.
+          Du kannst <a href={state.globals.jnUrl} title="PC Version herunterladen">DigitalStagePC hier</a> herunterladen
+        </NotificationItem>
+      )}
+    </>
+  );
+}
 
 const NotificationBar = (): JSX.Element => {
   const dispatch = useDispatch()
@@ -34,9 +53,10 @@ const NotificationBar = (): JSX.Element => {
   const featuredNotifications = selectFeaturedNotifications(state)
   return (
     <>
+      <CheckNotifications/>
       {featuredNotifications.map((notification) => (
         <NotificationItem
-          closeable={!notification.permanent}
+          closeable={notification.closeable}
           onClose={() =>
             dispatch(
               changeNotification({

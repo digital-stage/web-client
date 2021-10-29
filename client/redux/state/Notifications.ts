@@ -21,27 +21,37 @@
  */
 
 export interface KIND {
-    info: 'info'
-    warn: 'warn'
-    success: 'success'
-    error: 'error'
+  info: 'info'
+  warn: 'warn'
+  success: 'success'
+  error: 'error'
 }
 
 export interface Notification {
-    id: string
-    date: number
-    kind: KIND[keyof KIND]
-    message: string
-    link?: string
-    stack?: string
-    featured: boolean
-    featureTimeout?: number
-    permanent: boolean
+  id: string
+  date: number
+  kind: KIND[keyof KIND]
+  message: string
+  link?: string
+  stack?: string
+  featured: boolean
+  featureTimeout?: number
+  closeable: boolean
 }
 
 export interface Notifications {
-    byId: {
-        [id: string]: Notification
-    }
-    allIds: string[]
+  checks: {
+    isOvRunning: boolean,
+    hasOvDeviceOrderId: boolean,
+    isJammerRunning: boolean,
+    [name: string]: boolean
+  },
+  byId: {
+    [id: string]: Notification
+  },
+  success: string[],
+  info: string[],
+  warning: string[],
+  error: string[],
+  allIds: string[]
 }

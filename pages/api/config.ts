@@ -29,12 +29,14 @@ const {serverRuntimeConfig} = getConfig()
 interface EnvConfig {
   apiUrl: string
   authUrl: string
+  cnUrl: string
 }
 
 const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
   const config: EnvConfig = {
     apiUrl: serverRuntimeConfig.apiUrl,
     authUrl: serverRuntimeConfig.authUrl,
+    cnUrl: serverRuntimeConfig.cnUrl
   }
   res.status(200).json(config)
 }
