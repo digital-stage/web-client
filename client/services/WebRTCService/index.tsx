@@ -214,7 +214,10 @@ const PeerConnectionWrapper = ({
     if (peerConnection && reportError) {
       if (remoteSessionDescription) {
         peerConnection.addSessionDescription(remoteSessionDescription)
-          .catch(err => reportError(err))
+          .catch(err => {
+            console.error(err)
+            reportError(err)
+          })
       }
 
     }
@@ -224,7 +227,10 @@ const PeerConnectionWrapper = ({
     if (peerConnection && reportError) {
       if (remoteCandidate) {
         peerConnection.addIceCandidate(remoteCandidate)
-          .catch(err => reportError(err))
+          .catch(err => {
+            console.error(err)
+            reportError(err)
+          })
       }
 
     }
@@ -293,7 +299,7 @@ const WebRTCService = (): JSX.Element | null => {
     return turnServers.length > 0 ? {
       ...config,
       iceServers: [
-        {urls: turnServers.map(url => `stun:${url}`)},
+        //{urls: turnServers.map(url => `stun:${url}`)},
         {
           urls: turnServers.map(url => `turn:${url}`),
           username: turnUsername,

@@ -54,12 +54,14 @@ function reduceGlobals(
     case InternalActionTypes.SET_ENV: {
       const payload = action.payload as {
         apiUrl: string,
-        authUrl: string
+        authUrl: string,
+        jnUrl: string
       }
       return {
         ...state,
         apiUrl: payload.apiUrl,
-        authUrl: payload.authUrl
+        authUrl: payload.authUrl,
+        jnUrl: payload.jnUrl
       }
     }
     case ServerDeviceEvents.Ready: {

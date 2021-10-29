@@ -41,6 +41,7 @@ enum InternalActionTypes {
 
     // Notification states
     ADD_NOTIFICATION = 'add-notification',
+    SET_CHECK = 'set-check',
     CHANGE_NOTIFICATION = 'change-notification',
     REMOVE_NOTIFICATION = 'remove-notification',
 

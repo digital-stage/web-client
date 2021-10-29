@@ -11,6 +11,7 @@ const moduleExports = {
         // Will only be available on the server side
         apiUrl: process.env.NEXT_PUBLIC_API_URL, // Pass through env variables
         authUrl: process.env.NEXT_PUBLIC_AUTH_URL, // Pass through env variables
+        jnUrl: process.env.NEXT_PUBLIC_JN_DOWNLOAD_URL, // Pass through env variables
     },
 };
 

@@ -22,55 +22,77 @@
 
 import omit from 'lodash/omit'
 import without from 'lodash/without'
-import { InternalActionTypes } from '../actions/InternalActionTypes'
-import { Notifications } from '../state/Notifications'
+import {InternalActionTypes} from '../actions/InternalActionTypes'
+import {Notifications} from '../state/Notifications'
 import {
-    AddNotificationPayload,
-    ChangeNotificationPayload,
-    RemoveNotificationPayload,
+  AddNotificationPayload,
+  ChangeNotificationPayload,
+  RemoveNotificationPayload, SetCheckPayload,
 } from '../actions/clientActions'
 import {ReducerAction} from "../actions/ReducerAction";
 
 function reduceNotifications(
-    state: Notifications = {
-        byId: {},
-        allIds: [],
+  state: Notifications = {
+    checks: {
+      isOvRunning: false,
+      isJammerRunning: false,
+      hasOvDeviceOrderId: false
     },
-    action: ReducerAction
+    byId: {},
+    success: [],
+    info: [],
+    warning: [],
+    error: [],
+    allIds: [],
+  },
+  action: ReducerAction
 ): Notifications {
-    switch (action.type) {
-        case InternalActionTypes.ADD_NOTIFICATION:
-            const notification = action.payload as AddNotificationPayload
-            return {
-                byId: {
-                    ...state.byId,
-                    [notification.id]: notification,
-                },
-                allIds: [...state.allIds, notification.id],
-            }
-        case InternalActionTypes.CHANGE_NOTIFICATION: {
-            const update = action.payload as ChangeNotificationPayload
-            return {
-                ...state,
-                byId: {
-                    ...state.byId,
-                    [update.id]: {
-                        ...state.byId[update.id],
-                        ...update,
-                    },
-                },
-            }
-        }
-        case InternalActionTypes.REMOVE_NOTIFICATION: {
-            const id = action.payload as RemoveNotificationPayload
-            return {
-                byId: omit(state.byId, id),
-                allIds: without<string>(state.allIds, id),
-            }
-        }
-        default:
-            return state
+  switch (action.type) {
+    case InternalActionTypes.ADD_NOTIFICATION: {
+      const notification = action.payload as AddNotificationPayload
+      return {
+        ...state,
+        byId: {
+          ...state.byId,
+          [notification.id]: notification,
+        },
+        allIds: [...state.allIds, notification.id],
+      }
     }
+    case InternalActionTypes.SET_CHECK: {
+      const checks = action.payload as SetCheckPayload
+      return {
+        ...state,
+        checks: {
+          ...state.checks,
+          ...checks
+        }
+      }
+    }
+    case InternalActionTypes.CHANGE_NOTIFICATION: {
+      const update = action.payload as ChangeNotificationPayload
+      return {
+        ...state,
+        byId: {
+          ...state.byId,
+          [update.id]: {
+            ...state.byId[update.id],
+            ...update,
+          },
+        },
+      }
+    }
+    case InternalActionTypes.REMOVE_NOTIFICATION: {
+      const id = action.payload as RemoveNotificationPayload
+      return {
+        ...state,
+        byId: omit(state.byId, id),
+        allIds: without<string>(state.allIds, id),
+      }
+    }
+    default:
+      return state
+  }
 }
 
-export { reduceNotifications }
+export {reduceNotifications}
