@@ -22,7 +22,7 @@
 
 import {
     selectAllStageIds, selectAudioTypeByStageId, selectGroupIdsByStageId,
-    selectIsCurrentlyStageAdmin, selectIsStageAdmin,
+    selectIsStageAdmin,
     selectStageById, selectVideoTypeByStageId,
     useTrackedSelector
 } from '../../client'

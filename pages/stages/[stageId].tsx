@@ -25,7 +25,7 @@ import {useRouter} from 'next/router'
 import {
     selectCurrentGroupId,
     selectCurrentStageId, selectGroupsByStageId,
-    selectIsCurrentlyStageAdmin, selectIsStageAdmin, selectStageById, selectStageMemberIdsByGroupId,
+    selectIsStageAdmin, selectStageById, selectStageMemberIdsByGroupId,
     useEmit,
     useStageJoiner, useTrackedSelector,
 } from '../../client'
