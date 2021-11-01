@@ -23,7 +23,7 @@
 import React from "react";
 import {
     selectGroupPositionOfListener,
-    selectIsCurrentlyAdmin,
+    selectIsCurrentlyStageAdmin,
     selectMode,
     selectSelectedDeviceId,
     selectSelectMode,
@@ -72,7 +72,7 @@ const RoomEditor = (): JSX.Element => {
         setSelections((prev) => prev.filter(sel => sel.id !== id))
     }, [])
 
-    const isStageAdmin = selectIsCurrentlyAdmin(state)
+    const isStageAdmin = selectIsCurrentlyStageAdmin(state)
     const selectedMode = selectSelectMode(state)
     const selectedDeviceId = selectedMode === "personal" ? selectSelectedDeviceId(state) : undefined
     const dispatch = useDispatch()

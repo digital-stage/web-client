@@ -21,7 +21,7 @@
  */
 
 import {
-  selectIsCurrentlyAdmin,
+  selectIsCurrentlyStageAdmin,
   selectMode,
   selectSelectedDeviceId,
   selectSelectMode,
@@ -476,7 +476,7 @@ const StagePanel = ({stageId}: { stageId: string }): JSX.Element => {
   const state = useTrackedSelector()
   const selectedDeviceId = selectSelectedDeviceId(state)
   const selectedMode = selectSelectMode(state)
-  const isStageAdmin = selectIsCurrentlyAdmin(state)
+  const isStageAdmin = selectIsCurrentlyStageAdmin(state)
   const groupIds = selectGroupIdsByStageId(state, stageId)
   const showOffline = selectShowOffline(state)
   const localDeviceId = selectLocalDeviceId(state)

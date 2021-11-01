@@ -21,10 +21,10 @@
  */
 
 import {
-  selectAllStageIds, selectAudioTypeByStageId, selectGroupIdsByStageId,
-  selectIsCurrentlyAdmin,
-  selectStageById, selectVideoTypeByStageId,
-  useTrackedSelector
+    selectAllStageIds, selectAudioTypeByStageId, selectGroupIdsByStageId,
+    selectIsStageAdmin,
+    selectStageById, selectVideoTypeByStageId,
+    useTrackedSelector
 } from '../../client'
 import React from 'react'
 import {List, ListItem} from 'ui/List'
@@ -51,7 +51,7 @@ const StageItem = ({stageId}: { stageId: string }): JSX.Element => {
   const audioType = selectAudioTypeByStageId(state, stageId)
   const hasGroups = selectGroupIdsByStageId(state, stageId).length > 0
   const isActive = state.globals.stageId && state.globals.stageId === stageId
-  const isStageAdmin = selectIsCurrentlyAdmin(state)
+  const isStageAdmin = selectIsStageAdmin(state, stageId)
   const {join, leave} = useStageJoiner()
   const onListClicked = React.useCallback(() => {
     if (hasGroups) {
