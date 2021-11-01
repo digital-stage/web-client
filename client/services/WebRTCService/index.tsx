@@ -245,7 +245,7 @@ const PeerConnectionWrapper = ({
         }
       }
       const onIceCandidateError = (error: RTCPeerConnectionIceErrorEvent) => {
-        reportError(`ICE Candidate error ${error.errorCode}: ${error.errorText}`);
+        reportError(`ICE Candidate error ${error.errorCode}: ${error.errorText} using STUN server ${error.url} and connected as ${error.address} on port ${error.port}`);
       }
       const polite = localStageDeviceId.localeCompare(stageDeviceId) > 0;
       const connection = new PeerConnection({
