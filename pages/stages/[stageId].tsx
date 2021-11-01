@@ -25,7 +25,7 @@ import {useRouter} from 'next/router'
 import {
     selectCurrentGroupId,
     selectCurrentStageId, selectGroupsByStageId,
-    selectIsCurrentlyAdmin, selectStageById, selectStageMemberIdsByGroupId,
+    selectIsCurrentlyStageAdmin, selectIsStageAdmin, selectStageById, selectStageMemberIdsByGroupId,
     useEmit,
     useStageJoiner, useTrackedSelector,
 } from '../../client'
@@ -50,7 +50,7 @@ const StageMemberItem = ({
                              stageId,
                              stageMemberId,
                              hasAdminRights
-                         }: { stageId: string, stageMemberId: string, hasAdminRights: boolean }): JSX.Element | null  => {
+                         }: { stageId: string, stageMemberId: string, hasAdminRights: boolean }): JSX.Element | null => {
     const state = useTrackedSelector()
     const adminUserIds = state.stages.byId[stageId].admins
     const soundEditorUserIds = state.stages.byId[stageId].soundEditors
@@ -170,7 +170,7 @@ const StageView = (): JSX.Element => {
     const currentGroupId = selectCurrentGroupId(state)
     const stage = stageId ? selectStageById(state, stageId) : undefined
     const groups = stageId ? selectGroupsByStageId(state, stageId) : []
-    const isStageAdmin = selectIsCurrentlyAdmin(state)
+    const isStageAdmin = stageId ? selectIsStageAdmin(state, stageId) : false
     const {join} = useStageJoiner()
 
     // Internal state

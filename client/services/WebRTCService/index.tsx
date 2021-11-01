@@ -265,7 +265,7 @@ const PeerConnectionWrapper = ({
         setPeerConnection(undefined)
       }
     }
-  }, [configuration, localStageDeviceId, onAnswer, onCandidate, onOffer, onRemoteStats, onRemoteTrack, stageDeviceId, targetDeviceId, log]);
+  }, [configuration, localStageDeviceId, onAnswer, onCandidate, onOffer, onRemoteStats, onRemoteTrack, stageDeviceId, targetDeviceId, log, reportError]);
 
   React.useEffect(() => {
     if (peerConnection && reportError) {
