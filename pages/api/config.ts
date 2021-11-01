@@ -22,6 +22,7 @@
 import type {NextApiRequest, NextApiResponse} from "next"
 import getConfig from 'next/config'
 import {withSentry} from "@sentry/nextjs";
+import {server} from "@reduxjs/toolkit/src/query/tests/mocks/server";
 
 
 const {serverRuntimeConfig} = getConfig()
@@ -30,6 +31,7 @@ interface EnvConfig {
   apiUrl: string
   authUrl: string
   jnUrl: string
+  logUrl?: string
 }
 
 const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
@@ -37,6 +39,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
     apiUrl: serverRuntimeConfig.apiUrl,
     authUrl: serverRuntimeConfig.authUrl,
     jnUrl: serverRuntimeConfig.jnUrl,
+    logUrl: serverRuntimeConfig.logUrl
   }
   res.status(200).json(config)
 }
