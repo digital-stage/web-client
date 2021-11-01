@@ -243,7 +243,9 @@ const PeerConnectionWrapper = ({
             break;
           }
         }
-
+      }
+      const onIceCandidateError = (error: RTCPeerConnectionIceErrorEvent) => {
+        reportError(`ICE Candidate error ${error.errorCode}: ${error.errorText}`);
       }
       const polite = localStageDeviceId.localeCompare(stageDeviceId) > 0;
       const connection = new PeerConnection({
@@ -254,7 +256,8 @@ const PeerConnectionWrapper = ({
         onIceCandidate,
         onRemoteStream,
         onIceConnectionStateChange,
-        onConnectionStateChange
+        onConnectionStateChange,
+        onIceCandidateError
       });
       setPeerConnection(connection)
       return () => {
@@ -283,7 +286,6 @@ const PeerConnectionWrapper = ({
         peerConnection.addIceCandidate(remoteCandidate)
           .catch(err => {
             console.error(err)
-            reportError(err)
           })
       }
 
@@ -349,11 +351,10 @@ const WebRTCService = (): JSX.Element | null => {
   const [remoteSessionDescriptions, setRemoteSessionDescriptions] = React.useState<RemoteSessionDescriptions>({});
   const [remoteCandidates, setRemoteCandidates] = React.useState<RemoteCandidates>({});
   const configuration: RTCConfiguration = React.useMemo<RTCConfiguration>(() => {
-    trace(turnServers.length > 0 ? 'Using TURN servers' : 'Fallback to public STUN servers')
+    trace(turnServers.length > 0 ? `Using TURN servers ${turnServers}` : 'Fallback to public STUN servers')
     return turnServers.length > 0 ? {
       ...config,
       iceServers: [
-        //{urls: turnServers.map(url => `stun:${url}`)},
         {
           urls: turnServers.map(url => `turn:${url}`),
           username: turnUsername,

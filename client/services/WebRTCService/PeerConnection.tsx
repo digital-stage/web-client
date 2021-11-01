@@ -21,7 +21,8 @@ class PeerConnection {
                 onRemoteTrack,
                 onSessionDescription,
                 onConnectionStateChange,
-                onIceConnectionStateChange
+                onIceConnectionStateChange,
+                onIceCandidateError,
               }: {
     polite: boolean,
     configuration?: RTCConfiguration,
@@ -31,6 +32,7 @@ class PeerConnection {
     onRemoteStream: (audioTrackId: string, buffer: ArrayBuffer) => Promise<unknown> | unknown,
     onConnectionStateChange?: (state: RTCPeerConnectionState) => unknown,
     onIceConnectionStateChange?: (state: RTCIceConnectionState) => unknown,
+    onIceCandidateError?: (error: RTCPeerConnectionIceErrorEvent) => unknown
   }) {
     this.polite = polite;
     this.onSessionDescription = onSessionDescription;
@@ -38,6 +40,11 @@ class PeerConnection {
     if (onConnectionStateChange) {
       this.connection.onconnectionstatechange = () => {
         onConnectionStateChange(this.connection.connectionState)
+      }
+    }
+    if (onIceCandidateError) {
+      this.connection.onicecandidateerror = (event) => {
+        onIceCandidateError(event as RTCPeerConnectionIceErrorEvent)
       }
     }
     this.connection.oniceconnectionstatechange = () => {

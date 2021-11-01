@@ -22,8 +22,6 @@
 import type {NextApiRequest, NextApiResponse} from "next"
 import getConfig from 'next/config'
 import {withSentry} from "@sentry/nextjs";
-import {server} from "@reduxjs/toolkit/src/query/tests/mocks/server";
-
 
 const {serverRuntimeConfig} = getConfig()
 
