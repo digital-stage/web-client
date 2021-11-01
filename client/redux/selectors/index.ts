@@ -45,7 +45,7 @@ export const selectUserNameByStageMemberId = (state: RootState, stageMemberId: s
 
 
 // STAGE RELATED
-export const selectIsStageAdmin = (state: RootState, stageId: string): boolean => state.globals.localUserId ? state.stages.byId[stageId].admins.some((id) => id === state.globals.localUserId) : false
+export const selectIsStageAdmin = (state: RootState, stageId: string): boolean => state.globals.localUserId && state.stages.byId[stageId] ? state.stages.byId[stageId].admins.some((id) => id === state.globals.localUserId) : false
 export const selectCurrentStageId = (state: RootState): string | undefined => state.globals.stageId
 export const selectCurrentGroupId = (state: RootState): string | undefined => state.globals.stageId ? state.globals.groupId : undefined
 export const selectCurrentStageMemberId = (state: RootState): string | undefined => state.globals.stageMemberId
