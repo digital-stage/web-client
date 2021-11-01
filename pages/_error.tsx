@@ -1,4 +1,4 @@
-import * as Sentry from '@sentry/node'
+import * as Sentry from '@sentry/nextjs'
 import NextErrorComponent, {ErrorProps as NextErrorProps} from 'next/error'
 import {NextPageContext} from 'next'
 import React from "react";
@@ -19,7 +19,7 @@ const ErrorPage = (props: ErrorPageProps): JSX.Element => {
   const {statusCode, isReadyToRender, err, children = null} = props
   // eslint-disable-next-line no-debugger
 
-  if (process.env.NEXT_PUBLIC_APP_STAGE !== 'development') {
+  if (process.env.NODE_ENV !== 'development') {
     console.warn(
       'ErrorPage - Unexpected error caught, it was captured and sent to Sentry. Error details:'
     )
@@ -45,7 +45,7 @@ ErrorPage.getInitialProps = async (
     } as NextPageContext
   )) as ErrorProps
 
-  if (process.env.NEXT_PUBLIC_APP_STAGE !== 'production') {
+  if (process.env.NODE_ENV !== 'production') {
     console.error(
       'ErrorPage.getInitialProps - Unexpected error caught, it was captured and sent to Sentry. Error details:',
       err
