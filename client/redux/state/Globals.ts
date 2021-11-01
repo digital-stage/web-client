@@ -21,38 +21,39 @@
  */
 
 interface Globals {
-    apiUrl?: string,
-    authUrl?: string,
-    jnUrl?: string,
+  apiUrl?: string,
+  authUrl?: string,
+  jnUrl?: string,
+  logUrl?: string,
 
-    ready: boolean
+  ready: boolean
 
-    /* Information about this device */
-    localDeviceId?: string
-    localUserId?: string
+  /* Information about this device */
+  localDeviceId?: string
+  localUserId?: string
 
-    /* Information about the active stage */
-    stageId?: string
-    stageMemberId?: string
+  /* Information about the active stage */
+  stageId?: string
+  stageMemberId?: string
+  groupId?: string
+  localStageDeviceId?: string
+  // Request for joining (processed by react handlers)
+  request?: {
+    stageId: string
     groupId?: string
-    localStageDeviceId?: string
-    // Request for joining (processed by react handlers)
-    request?: {
-        stageId: string
-        groupId?: string
-        password?: string
-    }
+    password?: string
+  }
 
-    /* Selection of the device (depends on session) */
-    selectedDeviceId?: string
-    selectedMode: 'global' | 'personal'
+  /* Selection of the device (depends on session) */
+  selectedDeviceId?: string
+  selectedMode: 'global' | 'personal'
 
-    /* WebRTC related */
-    turn?: {
-        urls: string[],
-        username?: string,
-        credential?: string
-    }
+  /* WebRTC related */
+  turn?: {
+    urls: string[],
+    username?: string,
+    credential?: string
+  }
 }
 
-export type { Globals }
+export type {Globals}

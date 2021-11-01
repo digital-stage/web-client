@@ -172,11 +172,13 @@ export const reportError = (error: Error, stack?: string): ReducerAction =>
     featured: true,
   })
 
-export const setEnvironment = (apiUrl: string, authUrl: string): ReducerAction => ({
+export const setEnvironment = (apiUrl: string, authUrl: string, jnUrl: string, logUrl?: string): ReducerAction => ({
   type: InternalActionTypes.SET_ENV,
   payload: {
     apiUrl: apiUrl,
-    authUrl: authUrl
+    authUrl: authUrl,
+    jnUrl: jnUrl,
+    logUrl: logUrl
   },
 })
 

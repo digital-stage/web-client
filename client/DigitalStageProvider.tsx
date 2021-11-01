@@ -39,8 +39,8 @@ const EnvironmentalFetcher = (): null => {
   React.useEffect(() => {
     fetch("/api/config")
       .then(result => result.json())
-      .then((data: { apiUrl: string, authUrl: string }) => {
-        dispatch(setEnvironment(data.apiUrl, data.authUrl))
+      .then((data: { apiUrl: string, authUrl: string, jnUrl: string }) => {
+        dispatch(setEnvironment(data.apiUrl, data.authUrl, data.jnUrl))
       })
       .catch(err => console.error(err))
   }, [dispatch]);
