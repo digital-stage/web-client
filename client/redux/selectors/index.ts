@@ -307,7 +307,7 @@ export const selectDeviceNameByStageDeviceId = (state: RootState, stageDeviceId:
   if (device.userId === state.globals.localUserId && device.type === "browser") {
     // Use device instead of stage device for naming
     const browserDevice = state.devices.byId[device.deviceId] as BrowserDevice
-    if (browserDevice.browser)
+    if (browserDevice?.browser)
       return browserDevice.name || `${browserDevice.browser} (${browserDevice.os})`
   }
   return device.name
