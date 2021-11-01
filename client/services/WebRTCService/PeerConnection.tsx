@@ -2,23 +2,56 @@ import {logger} from '../../logger'
 
 const {trace, reportError} = logger('WebRTCService:PeerConnection')
 
+const MAX_ATTEMPTS = 10;
+
 class PeerConnection {
   private readonly connection: RTCPeerConnection;
   private readonly polite: boolean;
   private makingOffer = false;
   private ignoreOffer = false;
   private srdAnswerPending = false;
+  private readonly onSessionDescription: (description: RTCSessionDescriptionInit) => Promise<unknown> | unknown;
+  private iceAttempts = 0;
 
-  public onIceCandidate?: (candidate: RTCIceCandidate | null) => unknown;
-  public onSessionDescription?: (description: RTCSessionDescriptionInit) => Promise<unknown> | unknown;
-  public onRemoteTrack?: (track: MediaStreamTrack, stats?: RTCStatsReport) => Promise<unknown> | unknown;
-  public onRemoteStream?: (audioTrackId: string, buffer: ArrayBuffer) => Promise<unknown> | unknown;
-
-  constructor(polite: boolean, configuration?: RTCConfiguration) {
+  constructor({
+                polite,
+                configuration,
+                onIceCandidate,
+                onRemoteStream,
+                onRemoteTrack,
+                onSessionDescription,
+                onConnectionStateChange,
+                onIceConnectionStateChange
+              }: {
+    polite: boolean,
+    configuration?: RTCConfiguration,
+    onIceCandidate: (candidate: RTCIceCandidate | null) => unknown
+    onSessionDescription: (description: RTCSessionDescriptionInit) => Promise<unknown> | unknown,
+    onRemoteTrack: (track: MediaStreamTrack, stats?: RTCStatsReport) => Promise<unknown> | unknown,
+    onRemoteStream: (audioTrackId: string, buffer: ArrayBuffer) => Promise<unknown> | unknown,
+    onConnectionStateChange?: (state: RTCPeerConnectionState) => unknown,
+    onIceConnectionStateChange?: (state: RTCIceConnectionState) => unknown,
+  }) {
     this.polite = polite;
+    this.onSessionDescription = onSessionDescription;
     this.connection = new RTCPeerConnection(configuration);
-    this.connection.onconnectionstatechange = () => {
-      console.log(this.connection.connectionState)
+    if (onConnectionStateChange) {
+      this.connection.onconnectionstatechange = () => {
+        onConnectionStateChange(this.connection.connectionState)
+      }
+    }
+    this.connection.oniceconnectionstatechange = () => {
+      if (this.connection.iceConnectionState === "connected") {
+        this.iceAttempts = 0;
+      } else if (this.connection.iceConnectionState === "failed") {
+        if (this.iceAttempts < MAX_ATTEMPTS) {
+          this.connection.restartIce();
+          this.iceAttempts += 1;
+        }
+      }
+      if (onIceConnectionStateChange) {
+        onIceConnectionStateChange(this.connection.iceConnectionState)
+      }
     }
     this.connection.onnegotiationneeded = async () => {
       trace("handleNegotiationNeeded");
@@ -27,23 +60,20 @@ class PeerConnection {
         .catch(err => reportError(err));
     };
     this.connection.onicecandidate = (ev: RTCPeerConnectionIceEvent) => {
-      if (this.onIceCandidate)
-        this.onIceCandidate(ev.candidate);
+      onIceCandidate(ev.candidate);
     }
     this.connection.ontrack = async (ev: RTCTrackEvent) => {
-      if (this.onRemoteTrack) {
+      if (onRemoteTrack) {
         const track = ev.track;
         const stats = await this.connection.getStats(track);
-        this.onRemoteTrack(ev.track, stats);
+        onRemoteTrack(ev.track, stats);
       }
     }
     this.connection.ondatachannel = ({channel}: RTCDataChannelEvent) => {
       trace("NEW CHANNEL " +
         channel.label);
       channel.onmessage = (event: MessageEvent) => {
-        if (this.onRemoteStream) {
-          this.onRemoteStream(channel.label, event.data as ArrayBuffer);
-        }
+        onRemoteStream(channel.label, event.data as ArrayBuffer);
       }
     }
   }
@@ -59,7 +89,6 @@ class PeerConnection {
   public async makeOffer(): Promise<void> {
     trace("makeOffer");
     try {
-      if (!this.onSessionDescription) throw new Error("onSessionDescription not set");
       if (this.makingOffer) throw new Error("Already making an offer");
       this.makingOffer = true;
       await this.connection.setLocalDescription();
@@ -73,7 +102,6 @@ class PeerConnection {
 
   public async addSessionDescription(description: RTCSessionDescriptionInit): Promise<void> {
     trace("addSessionDescription");
-    if (!this.onSessionDescription) throw new Error("onSessionDescription not set");
     const isStable =
       this.connection.signalingState == 'stable' ||
       (this.connection.signalingState == 'have-local-offer' && this.srdAnswerPending);

@@ -9,9 +9,10 @@ const moduleExports = {
     },
     serverRuntimeConfig: {
         // Will only be available on the server side
-        apiUrl: process.env.NEXT_PUBLIC_API_URL, // Pass through env variables
-        authUrl: process.env.NEXT_PUBLIC_AUTH_URL, // Pass through env variables
-        jnUrl: process.env.NEXT_PUBLIC_JN_DOWNLOAD_URL, // Pass through env variables
+        apiUrl: process.env.NEXT_PUBLIC_API_URL,
+        authUrl: process.env.NEXT_PUBLIC_AUTH_URL,
+        jnUrl: process.env.NEXT_PUBLIC_JN_DOWNLOAD_URL,
+        logUrl: process.env.NEXT_PUBLIC_LOG_URL
     },
 };
 
@@ -27,5 +28,5 @@ const sentryWebpackPluginOptions = {
     // https://github.com/getsentry/sentry-webpack-plugin#options.
 };
 
-module.exports = moduleExports
-//module.exports = (process.env.SENTRY_DSN || process.env.NEXT_PUBLIC_SENTRY_DSN) ? require('@sentry/nextjs').withSentryConfig(moduleExports, sentryWebpackPluginOptions) : moduleExports
+//module.exports = moduleExports
+module.exports = (process.env.SENTRY_DSN || process.env.NEXT_PUBLIC_SENTRY_DSN) ? require('@sentry/nextjs').withSentryConfig(moduleExports, sentryWebpackPluginOptions) : moduleExports

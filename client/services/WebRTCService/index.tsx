@@ -6,7 +6,7 @@ import {useConnection} from '../ConnectionService'
 import {PeerConnection} from "./PeerConnection";
 import {
   ClientDeviceEvents,
-  ClientDevicePayloads,
+  ClientDevicePayloads, ClientLogEvents, ClientLogPayloads,
   ServerDeviceEvents,
   ServerDevicePayloads
 } from "@digitalstage/api-types";
@@ -20,6 +20,7 @@ import {config} from "./config";
 import {useErrorReporting, useMicrophone, useWebcam} from "../..";
 import {publishTrack, unpublishTrack} from "../../utils/trackPublishing";
 import omit from "lodash/omit";
+import {useLogServer} from "../../hooks/useLogServer";
 
 const {trace} = logger('WebRTCService')
 
@@ -87,6 +88,7 @@ export interface WebRTCStatistics {
 
 const useWebRTCStats = (trackId: string): WebRTCStatistics | undefined => {
   const state = React.useContext(TrackStatsContext)
+  const log = useLogServer()
   if (state === null) throw new Error('useWebRTCStats must be used within a WebRTCProvider')
   const trackStats = state[trackId]
   return React.useMemo(() => {
@@ -120,11 +122,15 @@ const useWebRTCStats = (trackId: string): WebRTCStatistics | undefined => {
             1000
           )
         }
+        // Also send to log server
+        log(ClientLogEvents.PeerStats, {
+          stats: trackStats
+        } as ClientLogPayloads.PeerStats)
       })
       return stats
     }
     return undefined
-  }, [trackStats])
+  }, [trackStats, log])
 }
 
 const PeerConnectionWrapper = ({
@@ -156,6 +162,9 @@ const PeerConnectionWrapper = ({
 }): JSX.Element | null => {
   // Dependencies
   const reportError = useErrorReporting()
+  const log = useLogServer()
+  const state = useTrackedSelector()
+  const targetDeviceId = state.stageDevices.byId[stageDeviceId].deviceId
 
   // Internal states
   const [, setReceivedTracks] = React.useState<MediaStreamTrack[]>([])
@@ -163,12 +172,10 @@ const PeerConnectionWrapper = ({
 
   // Internal hooks
   React.useEffect(() => {
-    if (localStageDeviceId && stageDeviceId && onOffer && onAnswer && onCandidate && onRemoteStats && onRemoteTrack) {
+    if (localStageDeviceId && targetDeviceId && stageDeviceId && onOffer && onAnswer && onCandidate && onRemoteStats && onRemoteTrack && log) {
       trace(`Created new peer connection ${stageDeviceId}`)
 
-      const polite = localStageDeviceId.localeCompare(stageDeviceId) > 0;
-      const connection = new PeerConnection(polite, configuration);
-      connection.onSessionDescription = ((description) => {
+      const onSessionDescription = ((description: RTCSessionDescriptionInit) => {
         if (description.type == "offer") {
           onOffer({
             from: localStageDeviceId,
@@ -183,14 +190,14 @@ const PeerConnectionWrapper = ({
           });
         }
       });
-      connection.onIceCandidate = ((candidate: RTCIceCandidate | null) => {
+      const onIceCandidate = ((candidate: RTCIceCandidate | null) => {
         onCandidate({
           from: localStageDeviceId,
           to: stageDeviceId,
           iceCandidate: candidate
         });
       });
-      connection.onRemoteTrack = (track: MediaStreamTrack, stats?: RTCStatsReport) => {
+      const onRemoteWebRTCTrack = (track: MediaStreamTrack, stats?: RTCStatsReport) => {
         trace("Got new remote track")
         onRemoteTrack(stageDeviceId, track)
         setReceivedTracks((prev) => [...prev, track])
@@ -202,13 +209,60 @@ const PeerConnectionWrapper = ({
         track.addEventListener('mute', onEnded)
         track.addEventListener('ended', onEnded)
       }
+      const onRemoteStream = () => {
+        // TODO: WebRTC Data channel handling
+      }
+      const onIceConnectionStateChange = (state: RTCIceConnectionState) => {
+        switch (state) {
+          case "failed": {
+            log(ClientLogEvents.PeerIceFailed, {
+              targetDeviceId
+            } as ClientLogPayloads.PeerIceFailed)
+            break;
+          }
+        }
+      }
+      const onConnectionStateChange = (state: RTCPeerConnectionState) => {
+        switch (state) {
+          case "connecting": {
+            log(ClientLogEvents.PeerConnecting, {
+              targetDeviceId
+            } as ClientLogPayloads.PeerConnecting)
+            break;
+          }
+          case "connected": {
+            log(ClientLogEvents.PeerConnected, {
+              targetDeviceId
+            } as ClientLogPayloads.PeerConnected)
+            break;
+          }
+          case "disconnected": {
+            log(ClientLogEvents.PeerDisconnected, {
+              targetDeviceId
+            } as ClientLogPayloads.PeerDisconnected)
+            break;
+          }
+        }
+
+      }
+      const polite = localStageDeviceId.localeCompare(stageDeviceId) > 0;
+      const connection = new PeerConnection({
+        polite,
+        configuration,
+        onRemoteTrack: onRemoteWebRTCTrack,
+        onSessionDescription,
+        onIceCandidate,
+        onRemoteStream,
+        onIceConnectionStateChange,
+        onConnectionStateChange
+      });
       setPeerConnection(connection)
       return () => {
         connection.close();
         setPeerConnection(undefined)
       }
     }
-  }, [configuration, localStageDeviceId, onAnswer, onCandidate, onOffer, onRemoteStats, onRemoteTrack, stageDeviceId]);
+  }, [configuration, localStageDeviceId, onAnswer, onCandidate, onOffer, onRemoteStats, onRemoteTrack, stageDeviceId, targetDeviceId, log]);
 
   React.useEffect(() => {
     if (peerConnection && reportError) {

@@ -32,15 +32,16 @@ export type LogServerReportFn = (event: string, payload: any) => void
 
 const useLogServer = (): LogServerReportFn => {
   const state = useTrackedSelector()
+  const logUrl = state.globals.logUrl
   const userId = selectLocalUserId(state)
   const email = selectEmail(state)
   const deviceId = selectLocalDeviceId(state)
   const stageId = selectCurrentStageId(state)
 
   return React.useCallback((event: string, payload: Record<string, unknown>): void => {
-    if (process.env.NEXT_PUBLIC_LOG_URL) {
+    if (logUrl) {
       if (userId && deviceId && email && stageId) {
-        fetch(`${process.env.NEXT_PUBLIC_LOG_URL  }/${  event}`,
+        fetch(`${logUrl}/${event}`,
           {
             method: "POST",
             body: JSON.stringify({
@@ -58,6 +59,6 @@ const useLogServer = (): LogServerReportFn => {
           })
       }
     }
-  }, [deviceId, email, stageId, userId])
+  }, [deviceId, email, stageId, userId, logUrl])
 }
 export {useLogServer}
