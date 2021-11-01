@@ -55,13 +55,15 @@ function reduceGlobals(
       const payload = action.payload as {
         apiUrl: string,
         authUrl: string,
-        jnUrl: string
+        jnUrl: string,
+        logUrl?: string
       }
       return {
         ...state,
         apiUrl: payload.apiUrl,
         authUrl: payload.authUrl,
-        jnUrl: payload.jnUrl
+        jnUrl: payload.jnUrl,
+        logUrl: payload.logUrl
       }
     }
     case ServerDeviceEvents.Ready: {
