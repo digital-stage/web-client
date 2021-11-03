@@ -120,6 +120,11 @@ const notificationMiddleware: Middleware<unknown, // Most middleware do not modi
       validateOvConfiguration(state, dispatch)
       break;
     }
+    case ServerDeviceEvents.DeviceChanged: {
+      validateJammerConfiguration(state, dispatch)
+      validateOvConfiguration(state, dispatch)
+      break;
+    }
     case ServerDeviceEvents.DeviceRemoved: {
       validateJammerConfiguration(state, dispatch)
       validateOvConfiguration(state, dispatch)
