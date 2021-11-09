@@ -31,6 +31,9 @@ import {OptionsList, OptionsListItem} from 'ui/OptionsList'
 import {BrowserDevice} from "@digitalstage/api-types/dist/model/browser";
 import {Heading4} from "../../ui/Heading";
 import {SoundCardSelect} from './SoundCardSelect'
+import {Input} from "postcss";
+import {TextInput} from "../../ui/TextInput";
+import {toString} from "lodash";
 
 const DeviceSettings = ({deviceId}: { deviceId: string }): JSX.Element | null => {
     const state = useTrackedSelector()
@@ -255,6 +258,25 @@ const DeviceSettings = ({deviceId}: { deviceId: string }): JSX.Element | null =>
                                 </>
                             ) : (
                                 <>
+                                    <OptionsListItem as={<label/>}>
+                                        Größe des Empfängerzwischenspeichers
+                                        <LiveInput
+                                            type="number"
+                                            min={512}
+                                            step={256}
+                                            max={20480}
+                                            label="Größe in Samples"
+                                            value={toString(device.buffer)}
+                                            onChange={(v) => {
+                                                const buffer = parseInt(v)
+                                                if (Number.isInteger(buffer)) {
+                                                    emit(ClientDeviceEvents.ChangeDevice, {
+                                                        _id: deviceId,
+                                                        buffer: buffer
+                                                    } as ClientDevicePayloads.ChangeDevice)
+                                                }
+                                            }}/>
+                                    </OptionsListItem>
                                     <OptionsListItem style={{
                                         alignItems: 'flex-start'
                                     }}>
