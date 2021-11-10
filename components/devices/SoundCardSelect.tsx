@@ -29,6 +29,8 @@ import React from "react";
 import {OptionsList, OptionsListItem} from "ui/OptionsList";
 import {Select} from "../../ui/Select";
 import {Switch} from "../../ui/Switch";
+import {TextSwitch} from "../../ui/TextSwitch";
+import {toString} from "lodash";
 
 const selectAudioDriversByDeviceId = (state: RootState, type: "input" | "output", deviceId: string): string[] =>
   [...new Set<string>(
@@ -189,6 +191,29 @@ const SoundCardSelect = ({deviceId, type}: { deviceId: string, type: "input" | "
         ))}
       </Select>
       <SoundCardsSelector soundCardId={soundCard?._id} soundCards={soundCards} onChange={onSoundCardSelected}/>
+      {soundCard && (
+        <OptionsListItem as={<label/>}>
+          Puffergröße
+          <TextSwitch
+            className="switch"
+            value={toString(soundCard.bufferSize)}
+            onSelect={(v) => {
+              const bufferSize = parseInt(v as string)
+              if (emit && Number.isInteger(bufferSize)) {
+                emit(ClientDeviceEvents.ChangeSoundCard, {
+                  _id: soundCard._id,
+                  bufferSize: bufferSize
+                } as ClientDevicePayloads.ChangeSoundCard)
+              }
+            }}
+          >
+            <span key="128">128</span>
+            <span key="256">256</span>
+            <span key="512">512</span>
+            <span key="1024">1024</span>
+          </TextSwitch>
+        </OptionsListItem>
+      )}
     </>
   )
 }
