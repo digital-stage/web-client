@@ -537,14 +537,61 @@ const WebRTCService = (): JSX.Element | null => {
             track.addEventListener('ended', onTrackEnded)
         }
     }, [setRemoteAudioTracks, setRemoteVideoTracks])
-    const setWebRTCStats = React.useContext(DispatchTrackStatsContext)
-    const handleRemoteStats = React.useCallback((trackId: string, stats: RTCStatsReport) => {
-        if (setWebRTCStats)
-            setWebRTCStats((prev) => ({
-                ...prev,
-                [trackId]: stats,
-            }))
-    }, [setWebRTCStats])
+    const log = useLogServer()
+    const handleRemoteStats = React.useCallback((trackId: string, trackStats: RTCStatsReport) => {
+        const stats: WebRTCStatistics = {}
+        trackStats.forEach((value, key) => {
+            if (key.startsWith('RTCIceCandidatePair')) {
+                if (value.currentRoundTripTime) {
+                    stats.roundTripTime = round(parseFloat(value.currentRoundTripTime) * 1000)
+                } else if (value.roundTripTime) {
+                    stats.roundTripTime = round(parseFloat(value.roundTripTime) * 1000)
+                } else if (value.totalRoundTripTime && value.roundTripTimeMeasurements) {
+                    stats.roundTripTime = round(
+                        (parseFloat(value.roundTripTime) /
+                            parseFloat(value.roundTripTimeMeasurements)) *
+                        1000
+                    )
+                }
+            }
+            if (key.startsWith('RTCInboundRTP') && value.jitter) {
+                stats.jitter = round(parseFloat(value.jitter), 2)
+            }
+            if (
+                key.startsWith('RTCMediaStreamTrack') &&
+                value.jitterBufferDelay &&
+                value.jitterBufferEmittedCount
+            ) {
+                stats.jitterBufferDelay = round(
+                    (parseFloat(value.jitterBufferDelay) /
+                        parseInt(value.jitterBufferEmittedCount)) *
+                    1000
+                )
+            }
+            // Also send to log server
+            let trace = {};
+            trackStats.forEach((value, key) => {
+                trace = {
+                    ...trace,
+                    [key]: value
+                };
+            })
+            log(ClientLogEvents.PeerStats, {
+                stats: trackStats
+            } as ClientLogPayloads.PeerStats)
+        })
+        // Also send to log server
+        let trace = {};
+        trackStats.forEach((value, key) => {
+            trace = {
+                ...trace,
+                [key]: value
+            };
+        })
+        log(ClientLogEvents.PeerStats, {
+            stats: trace
+        } as ClientLogPayloads.PeerStats)
+    }, [log])
 
     if (connected && initialized && localStageDeviceId) {
         return (
