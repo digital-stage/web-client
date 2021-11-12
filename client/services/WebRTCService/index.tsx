@@ -540,6 +540,7 @@ const WebRTCService = (): JSX.Element | null => {
     const log = useLogServer()
     const handleRemoteStats = React.useCallback((trackId: string, trackStats: RTCStatsReport) => {
         const stats: WebRTCStatistics = {}
+        let trace = {};
         trackStats.forEach((value, key) => {
             if (key.startsWith('RTCIceCandidatePair')) {
                 if (value.currentRoundTripTime) {
@@ -568,26 +569,12 @@ const WebRTCService = (): JSX.Element | null => {
                     1000
                 )
             }
-            // Also send to log server
-            let trace = {};
-            trackStats.forEach((value, key) => {
-                trace = {
-                    ...trace,
-                    [key]: value
-                };
-            })
-            log(ClientLogEvents.PeerStats, {
-                stats: trackStats
-            } as ClientLogPayloads.PeerStats)
-        })
-        // Also send to log server
-        let trace = {};
-        trackStats.forEach((value, key) => {
             trace = {
                 ...trace,
                 [key]: value
             };
         })
+        // Also send to log server
         log(ClientLogEvents.PeerStats, {
             stats: trace
         } as ClientLogPayloads.PeerStats)

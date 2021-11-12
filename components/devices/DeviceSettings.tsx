@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-import {selectMode, useEmit, useTrackedSelector} from '../../client'
+import {useEmit, useTrackedSelector} from '../../client'
 import {ClientDeviceEvents, ClientDevicePayloads} from '@digitalstage/api-types'
 import React from 'react'
 import {LiveInput} from 'ui/LiveInput'
@@ -31,10 +31,7 @@ import {OptionsList, OptionsListItem} from 'ui/OptionsList'
 import {BrowserDevice} from "@digitalstage/api-types/dist/model/browser";
 import {Heading4} from "../../ui/Heading";
 import {SoundCardSelect} from './SoundCardSelect'
-import {Input} from "postcss";
-import {TextInput} from "../../ui/TextInput";
 import {toString} from "lodash";
-import {TextSwitch} from "../../ui/TextSwitch";
 
 const DeviceSettings = ({deviceId}: { deviceId: string }): JSX.Element | null => {
   const state = useTrackedSelector()
