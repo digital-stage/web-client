@@ -232,7 +232,7 @@ const DeviceSettings = ({deviceId}: { deviceId: string }): JSX.Element | null =>
                       }
                     />
                   </OptionsListItem>
-                  <OptionsListItem as={<label/>} kind="sub">
+                  {/*<OptionsListItem as={<label/>} kind="sub">
                     Audio-Ausgabegerät
                     <Select
                       value={state.devices.byId[deviceId].outputAudioDeviceId}
@@ -252,7 +252,7 @@ const DeviceSettings = ({deviceId}: { deviceId: string }): JSX.Element | null =>
                         </option>
                       ))}
                     </Select>
-                  </OptionsListItem>
+                  </OptionsListItem>*/}
                 </>
               ) : (
                 <>
