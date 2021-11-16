@@ -40,7 +40,7 @@ const CheckNotifications = (): JSX.Element => {
       {state.globals.jnUrl && showJammerWarning && (
         <NotificationItem closeable={false} kind="error">
           Audio-Wiedergabe und Aufnahme ist deaktiviert, da Du keine PC Version gestartet hast.
-          Du kannst <a href={state.globals.jnUrl} title="PC Version herunterladen">DigitalStagePC hier</a> herunterladen
+          Du kannst <a href={state.globals.jnUrl} target="_blank" title="PC Version herunterladen" rel="noreferrer">digitalStagePC hier</a> herunterladen
         </NotificationItem>
       )}
     </>
