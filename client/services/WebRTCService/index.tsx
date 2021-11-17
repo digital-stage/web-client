@@ -422,9 +422,9 @@ const WebRTCService = (): JSX.Element | null => {
             let publishedId: string
             const track = localVideoTrack.clone()
             const settings = localVideoTrack.getSettings()
-            const capabilities = !!localVideoTrack.getCapabilities && localVideoTrack.getCapabilities()
+            //const capabilities = !!localVideoTrack.getCapabilities && localVideoTrack.getCapabilities()
             publishTrack(emit, stageId, 'video', {
-                capabilities,
+                //capabilities,
                 ...settings,
                 trackId: localVideoTrack.id,
                 type: 'browser',
@@ -468,9 +468,9 @@ const WebRTCService = (): JSX.Element | null => {
             let publishedId: string | undefined
             const track = localAudioTrack.clone()
             const settings = localAudioTrack.getSettings()
-            const capabilities = localAudioTrack.getCapabilities()
+            //const capabilities = localAudioTrack.getCapabilities()
             publishTrack(emit, stageId, 'audio', {
-                capabilities,
+                //capabilities,
                 ...settings,
                 trackId: localAudioTrack.id,
                 type: 'browser',

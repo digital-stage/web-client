@@ -121,10 +121,9 @@ class MediasoupHandler extends EventEmitter {
     try {
       const kind = track.kind === 'audio' ? 'audio' : 'video'
       const settings = track.getSettings()
-      const capabilities = track.getCapabilities && track.getCapabilities()
+      //const capabilities = track.getCapabilities && track.getCapabilities()
       const publishedTrack = await publishTrack(this.emitToServer, this.stageId, kind, {
         producerId: producer.id,
-        capabilities,
         ...settings,
         type: "mediasoup",
       }) as MediasoupVideoTrack | MediasoupAudioTrack
