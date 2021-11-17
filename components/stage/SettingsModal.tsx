@@ -19,7 +19,7 @@ const SettingsModal = ({open, onClose}: {
   const {localDeviceId} = state.globals
   const displayMode = localDeviceId && state.devices.byId[localDeviceId].displayMode || "boxes"
   const numLanes = localDeviceId && state.devices.byId[localDeviceId].numLanes || 3
-  const numBoxes = localDeviceId && state.devices.byId[localDeviceId].numBoxes || 2
+  const numBoxes = localDeviceId && state.devices.byId[localDeviceId].numBoxes || 4
   const showOffline = localDeviceId && state.devices.byId[localDeviceId].showOffline || false
 
   const toggleShowOffline = React.useCallback((e: ChangeEvent<HTMLInputElement>) => {
